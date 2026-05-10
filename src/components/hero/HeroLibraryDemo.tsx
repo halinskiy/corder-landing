@@ -535,7 +535,7 @@ function RightPanel({
 
         <TimelineRow
           name="Kostiantyn Halynskyi"
-          stats="43% · 1m 58s"
+          stats="43%, 1m 58s"
           ticks={[3, 5, 7, 9, 11, 13, 15, 18, 30, 32, 34, 36, 38, 40, 42, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82]}
           color="var(--hl-speaker-purple)"
           showCursor={isActive}
@@ -543,7 +543,7 @@ function RightPanel({
 
         <TimelineRow
           name="Vadym Grosko"
-          stats="7% · 17s"
+          stats="7%, 17s"
           ticks={[23, 25, 27, 50, 52, 54, 88, 90, 92]}
           color="var(--hl-accent)"
         />

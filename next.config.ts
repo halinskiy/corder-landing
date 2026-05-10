@@ -1,19 +1,16 @@
 import type { NextConfig } from "next";
 
+const isProd = process.env.NODE_ENV === "production";
+const repo = "corder-landing";
+
 const config: NextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@aisoldier/ui-kit"],
-  experimental: {
-    externalDir: true,
-  },
+  output: "export",
+  basePath: isProd ? `/${repo}` : "",
+  assetPrefix: isProd ? `/${repo}/` : "",
+  trailingSlash: true,
   images: {
     unoptimized: true,
-  },
-  webpack: (config) => {
-    if (config.resolve) {
-      config.resolve.symlinks = false;
-    }
-    return config;
   },
 };
 
