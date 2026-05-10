@@ -1,0 +1,382 @@
+{
+  "meta": {
+    "lang": "en",
+    "title": "Corder: Record what was said.",
+    "description": "Corder records system audio and transcribes your meetings with Gemini 2.5 Flash. Speaker labels, searchable transcript, no bot in the call. Free to download for macOS 14+.",
+    "ogTitle": "Corder. The Mac recorder with no bot in the call.",
+    "ogDescription": "Record any meeting on macOS. Speakers labelled, transcript searchable. Google transcribes the audio and deletes it. No third participant ever joins your call."
+  },
+  "nav": {
+    "links": [
+      { "label": "Features", "href": "#features" },
+      { "label": "Privacy", "href": "#privacy" },
+      { "label": "Pricing", "href": "#pricing" }
+    ],
+    "ctaPrimary": "Download for macOS"
+  },
+  "hero": {
+    "eyebrow": "Mac meeting recorder",
+    "headline": "Record everything around you.",
+    "headlinePrompt": "Record:",
+    "rotatingWords": [
+      "your meetings",
+      "your customer calls",
+      "your design reviews",
+      "your thinking aloud"
+    ],
+    "subhead": "Keeps the {{Transcript}} on your Mac. No bot joins the call.",
+    "ctaPrimary": "Download for macOS · Free",
+    "ctaSecondary": "How it works",
+    "qualifier": "Free to download"
+  },
+  "audienceLine": {
+    "text": "For founders taking investor calls, consultants on client kickoffs, and anyone who thinks out loud and needs it written down.",
+    "_accentRangesNote": "Word indices are 0-based, half-open [start, end). End is exclusive. AudienceLine.tsx reads these directly.",
+    "accentRanges": [
+      [1, 5],
+      [5, 9],
+      [10, 15]
+    ]
+  },
+  "privacy": {
+    "eyebrow": "What happens to your audio",
+    "heading": "Your audio goes to Google. Then it is gone.",
+    "subhead": "Audio leaves your Mac once, for the transcription step. Google discards it when the call finishes. The transcript and the local audio file stay on your Mac until you delete them.",
+    "cards": [
+      {
+        "tag": "Default",
+        "heading": "Fast, accurate, free.",
+        "body": "Audio uploads to Google's Gemini 2.5 Flash over HTTPS. Gemini transcribes it, returns a labelled transcript, and discards the audio. No retention. No training on your data. The endpoint is public: generativelanguage.googleapis.com.",
+        "specList": [
+          { "key": "Engine", "value": "Gemini 2.5 Flash" },
+          { "key": "Transit", "value": "HTTPS to generativelanguage.googleapis.com" },
+          { "key": "Audio retention", "value": "Discarded after transcription completes" },
+          { "key": "Cost", "value": "Included in all tiers" }
+        ]
+      },
+      {
+        "tag": "Local storage",
+        "heading": "Your files, your Mac.",
+        "body": "The transcript and the original audio live in ~/Library/Application Support/Corder/ until you delete them. Optional Dropbox archive uploads a copy to your own Dropbox app folder. It is off by default. Corder never uploads to any server other than Gemini for the transcription step.",
+        "specList": [
+          { "key": "Transcript", "value": "~/Library/Application Support/Corder/" },
+          { "key": "Audio", "value": "Same folder, .m4a format" },
+          { "key": "Dropbox archive", "value": "Off by default, your Dropbox only" },
+          { "key": "Delete", "value": "Remove the file from Finder, that is all" }
+        ]
+      }
+    ]
+  },
+  "how": {
+    "eyebrow": "How it works",
+    "heading": "",
+    "steps": [
+      {
+        "number": "01",
+        "heading": "No bot in your call.",
+        "body": "Otter, Fireflies, Fathom — they all work the same way: a participant called something like 'Notetaker' joins your call, records from inside, uploads to their servers. Corder records what your Mac plays and what your microphone hears. Nothing joins your meeting. The other side never sees a third participant.",
+        "liveDemo": "no-bot"
+      },
+      {
+        "number": "02",
+        "heading": "Granola-grade transcript, with playback.",
+        "body": "We send your microphone and the system audio to Gemini as two separate parallel calls. Mic to one run, system to another, then merge by timestamp. Single-stream tools mix everything and ask one model to guess who said what during silences. Two tracks in, one transcript out, speakers in the right column.",
+        "liveDemo": "transcript"
+      },
+      {
+        "number": "03",
+        "heading": "Re-transcribe is free.",
+        "body": "Wrong number of speakers? Re-run for nothing. We cache the raw Gemini turns by audio hash in your local SQLite. Re-mapping speakers, splitting one voice into two, re-running after a Dropbox archive — costs zero API calls. Cloud SaaS literally cannot match this without breaking their margin model.",
+        "liveDemo": "clarify"
+      },
+      {
+        "number": "04",
+        "heading": "No subscription. BYO Gemini key.",
+        "body": "Granola is $14–35/seat/month. Otter, $17–30. Read.ai, $15–40. Corder is bring-your-own Gemini API key, you pay Google about $0.30 per recorded hour at Flash rates. Download the app once. Run it forever.",
+        "liveDemo": "byok"
+      }
+    ]
+  },
+  "features": {
+    "eyebrow": "Built for the Mac",
+    "heading": "Built like a Mac app.",
+    "cells": [
+      {
+        "eyebrow": "TIMELINE",
+        "heading": "Per-speaker timeline.",
+        "body": "A colour-coded bar per voice in the right pane. Click any tick to jump to that moment in the audio.",
+        "visualHint": "mini-timeline-fragment"
+      },
+      {
+        "eyebrow": "SEARCH",
+        "heading": "Search the whole library.",
+        "body": "Full-text search across every transcript you have ever made. Find any phrase, across any recording, from last month or this morning.",
+        "visualHint": "typographic-mark"
+      },
+      {
+        "eyebrow": "OUTPUT",
+        "heading": "Drag, don't export.",
+        "body": "Drop a session into Notion, Obsidian, or Apple Notes. Text lands plain, without formatting clutter. No export dialog, no file picker, no CSV.",
+        "visualHint": "split-cell-illustration"
+      },
+      {
+        "eyebrow": "MAC NATIVE",
+        "heading": "Real Mac app, not a wrapper.",
+        "body": "Cmd+W closes windows. The system Edit menu works. Sparkle delivers signed updates without the App Store. No Electron, no web runtime.",
+        "visualHint": "kbd-cap-glyph",
+        "kbdGlyph": "⌘W"
+      },
+      {
+        "eyebrow": "ARCHIVE",
+        "heading": "Optional Dropbox archive.",
+        "body": "Auto-upload audio and transcript to your own Dropbox app folder. Off by default. Enable it once from the menu bar; it runs quietly after that.",
+        "visualHint": "monospace-path",
+        "monoPath": "~/Dropbox/Corder/2026-05-09 17:09.txt"
+      },
+      {
+        "eyebrow": "UPDATES",
+        "heading": "Sparkle auto-updates.",
+        "body": "Signed updates ship through the standard Mac mechanism. No App Store review delay, no manual downloads. You get the fix the day it ships.",
+        "visualHint": "version-sequence",
+        "versionSequence": "v1.4.2 → v1.4.3 → v1.5.0"
+      }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "heading": "One app, three ways.",
+    "subhead": "Every tier includes speaker labels, full-text search, drag-out to any app, Sparkle auto-updates, and optional Dropbox archive.",
+    "annualToggleLabel": "Pay annually, get 3 months free",
+    "tiers": [
+      {
+        "name": "Free",
+        "price": { "monthly": "$0", "annual": "$0" },
+        "priceSuffix": "forever",
+        "subline": "Transcribe up to 300 minutes a month with Gemini 2.5 Flash. No bot, no credit card, no catch.",
+        "features": [
+          "300 minutes of Gemini 2.5 Flash per month",
+          "Up to 60 minutes per recording",
+          "Speaker labels and full-text search",
+          "Drag-out to Notion, Obsidian, Apple Notes",
+          "Optional Dropbox archive",
+          "Resets on the 1st of each month"
+        ],
+        "cta": "Download for macOS",
+        "ctaStyle": "secondary",
+        "highlight": false
+      },
+      {
+        "name": "Personal",
+        "price": { "monthly": "$9", "annual": "$6.75" },
+        "priceSuffix": "per month",
+        "annualNote": "$81 billed annually",
+        "subline": "600 minutes of Flash transcription a month for people who record every call.",
+        "features": [
+          "600 minutes of Gemini 2.5 Flash per month",
+          "No limit on individual recording length",
+          "All Free tier features",
+          "3 months free when you pay annually"
+        ],
+        "cta": "Get Personal",
+        "ctaStyle": "primary",
+        "highlight": false
+      },
+      {
+        "name": "Pro",
+        "price": { "monthly": "$14", "annual": "$10.50" },
+        "priceSuffix": "per month",
+        "annualNote": "$126 billed annually",
+        "subline": "Flash for standard calls, Pro for hard ones. You choose the model. 600 + 300 minutes per month.",
+        "features": [
+          "600 Gemini 2.5 Flash minutes per month",
+          "300 Gemini 2.5 Pro minutes per month",
+          "Choose the model per recording",
+          "Priority support, direct line to the maker",
+          "Early access to new features",
+          "3 months free when you pay annually"
+        ],
+        "cta": "Get Pro",
+        "ctaStyle": "primary",
+        "highlight": true
+      }
+    ],
+    "lifetime": {
+      "name": "Lifetime",
+      "price": "$99",
+      "priceSuffix": "one time",
+      "badge": "Launch offer",
+      "subline": "Unlimited Gemini 2.5 Flash forever. Includes a 30-day Pro trial, then Flash free or $14/month to stay on Pro.",
+      "features": [
+        "Unlimited Gemini 2.5 Flash, forever",
+        "30-day Gemini 2.5 Pro trial included",
+        "All current and future Free tier features",
+        "No monthly bill"
+      ],
+      "cta": "Get Lifetime Access",
+      "ctaStyle": "secondary"
+    },
+    "microcopy": "Pricing in USD. No credit card to download. Cancel anytime."
+  },
+  "faq": {
+    "eyebrow": "Questions",
+    "heading": "Things people ask.",
+    "items": [
+      {
+        "q": "Does Corder send my audio to the cloud?",
+        "a": "Yes, for the transcription step. Audio uploads over HTTPS to Google's Gemini 2.5 Flash at generativelanguage.googleapis.com. Google transcribes it and discards the audio when the call finishes. The transcript and the local audio file stay on your Mac in ~/Library/Application Support/Corder/ until you delete them."
+      },
+      {
+        "q": "Does the other side know I am recording?",
+        "a": "Corder records system audio at the OS level. No third participant joins your call. The other side sees nothing different in their participant list and receives no recording-disclosure prompt from a SaaS. Whether you tell the other side you are recording is a legal and professional question that depends on your jurisdiction. Corder does not handle disclosure for you."
+      },
+      {
+        "q": "Where does my audio live?",
+        "a": "On your Mac, in ~/Library/Application Support/Corder/. If you turn on Dropbox archive, a copy goes to your own Dropbox app folder. Delete the file from Finder to remove it. Corder has no server-side storage."
+      },
+      {
+        "q": "Does it record Zoom, Meet, Discord?",
+        "a": "Yes. Corder captures system audio at the OS level, so it works with anything that plays sound on your Mac: Zoom, Google Meet, Discord, Teams, FaceTime, or a room mic plugged into the audio interface. The platform does not matter."
+      },
+      {
+        "q": "Which languages does it support?",
+        "a": "Gemini 2.5 Flash handles most major languages. English, Russian, and mixed-language calls work well. Other languages work too; accuracy depends on the model. If you need consistent accuracy on a specific language, test the free tier first."
+      },
+      {
+        "q": "Does it need an internet connection?",
+        "a": "For transcription, yes. Recording itself works offline. The audio files locally and the transcript fills in once you reconnect. If you close the app before reconnecting, transcription runs the next time you open it."
+      },
+      {
+        "q": "Which version of macOS does it require?",
+        "a": "macOS 14 Sonoma or later. Apple Silicon is recommended; Intel Macs work too."
+      },
+      {
+        "q": "Can I export the transcript?",
+        "a": "Select any part of the transcript and drag it into Notion, Obsidian, Apple Notes, or any text editor. Text lands plain. There is no export dialog, no file format to choose, no download button. If you want a plain text file, drag to the Finder."
+      },
+      {
+        "q": "What is the difference between Flash and Pro?",
+        "a": "Gemini 2.5 Flash is fast, accurate, and included in every tier. It handles most calls well. Gemini 2.5 Pro is a larger model with better accuracy on noisy rooms, cross-talk, heavy accents, and fast speakers. On the Pro tier, you choose the model before each recording."
+      },
+      {
+        "q": "Is there a free trial for the Pro model?",
+        "a": "The Free and Personal tiers use Flash only. The Lifetime tier includes a 30-day Pro trial. Pro subscribers access Gemini 2.5 Pro from day one. There is no separate trial for Pro outside of those paths."
+      }
+    ]
+  },
+  "fit": {
+    "heading": "Is Corder for you?",
+    "subhead": "Quick check before you download.",
+    "yes": {
+      "heading": "Yes, if:",
+      "items": [
+        "You record customer calls, design reviews, or your own thoughts out loud.",
+        "You don't want a third-party bot named 'Notetaker' joining your meeting.",
+        "You speak Russian, or switch between Russian and English in calls.",
+        "You want to keep the audio after the call, not just the transcript.",
+        "You already pay for too many SaaS subscriptions.",
+        "You use a Mac."
+      ]
+    },
+    "no": {
+      "heading": "Not for you, if:",
+      "items": [
+        "You need team-shared transcripts, dashboards, or workspace permissions.",
+        "You want a polished AI summary, not a transcript. Granola is better at that.",
+        "You want live captions while the call is happening. Corder transcribes after Stop, in about 30 seconds.",
+        "You're on Windows or Linux.",
+        "You record once a year. You don't need a tool for this."
+      ]
+    }
+  },
+  "comparison": {
+    "heading": "How Corder is different.",
+    "subhead": "We don't name competitors on most of the page, but here's where Corder lands when you put us next to everyone.",
+    "headers": ["", "Corder", "Granola", "Otter", "Grain", "Fireflies", "Fathom", "tl;dv", "Read.ai", "MacWhisper"],
+    "rows": [
+      {
+        "feature": "No bot in the call",
+        "values": ["Yes", "Yes", "No", "No", "Partial", "No", "Partial", "No", "Yes"],
+        "highlight": [true, true, false, false, false, false, false, false, true]
+      },
+      {
+        "feature": "Native Swift macOS app",
+        "values": ["Yes", "Yes", "No", "No", "No", "No", "No", "No", "Yes"],
+        "highlight": [true, true, false, false, false, false, false, false, true]
+      },
+      {
+        "feature": "Live meeting capture",
+        "values": ["Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Partial"],
+        "highlight": [false, false, false, false, false, false, false, false, false]
+      },
+      {
+        "feature": "Audio playback after the call",
+        "values": ["Yes", "No", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes"],
+        "highlight": [true, false, false, false, false, false, false, false, false]
+      },
+      {
+        "feature": "Dual-track speaker model",
+        "values": ["Yes", "No", "No", "No", "No", "No", "No", "No", "No"],
+        "highlight": [true, false, false, false, false, false, false, false, false]
+      },
+      {
+        "feature": "Re-transcribe at zero extra cost",
+        "values": ["Yes", "No", "No", "No", "No", "No", "No", "No", "Yes"],
+        "highlight": [true, false, false, false, false, false, false, false, true]
+      },
+      {
+        "feature": "No subscription",
+        "values": ["Yes", "No", "No", "No", "No", "No", "No", "No", "Yes (one-time)"],
+        "highlight": [true, false, false, false, false, false, false, false, true]
+      },
+      {
+        "feature": "Russian language quality",
+        "values": ["Yes", "Yes", "No", "Partial", "Yes", "Partial", "Yes", "Partial", "Yes"],
+        "highlight": [false, false, false, false, false, false, false, false, false]
+      },
+      {
+        "feature": "Local-first storage (audio + DB)",
+        "values": ["Yes", "No", "No", "No", "No", "No", "No", "No", "Yes"],
+        "highlight": [true, false, false, false, false, false, false, false, true]
+      }
+    ]
+  },
+  "finalCta": {
+    "preheading": "Pay Google, not us.",
+    "calculatorPrefix": "For",
+    "calculatorSuffix": "hours of meetings a month,",
+    "lineGoogle": "you'd pay Google about",
+    "lineUs": "you'd pay us nothing.",
+    "cta": "Download for macOS · Free",
+    "ctaHref": "#download",
+    "footer": "macOS 14+ · Apple Silicon · Bring your own Gemini API key",
+    "ratePerHour": 0.30,
+    "defaultHours": 30,
+    "minHours": 1,
+    "maxHours": 100
+  },
+  "footer": {
+    "brandMark": "Corder",
+    "slogan": "A meeting recorder that doesn't join the meeting.",
+    "madeIn": "Made on a MacBook in Leicester, UK.",
+    "columns": [
+      {
+        "heading": "Product",
+        "links": [
+          { "label": "Features", "href": "#features" },
+          { "label": "Privacy", "href": "#privacy" },
+          { "label": "Pricing", "href": "#pricing" },
+          { "label": "Changelog", "href": "#" }
+        ]
+      },
+      {
+        "heading": "Resources",
+        "links": [
+          { "label": "Source", "href": "#" },
+          { "label": "Brand kit", "href": "#" },
+          { "label": "Contact", "href": "#" }
+        ]
+      }
+    ],
+    "baseline": "© 2026 Corder. Back to top."
+  }
+}
