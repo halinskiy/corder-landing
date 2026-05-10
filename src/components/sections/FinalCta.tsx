@@ -42,42 +42,29 @@ export function FinalCta() {
           </p>
 
           <div className="final-cta-calc__row">
-            <span className="final-cta-calc__phrase">
-              {finalCta.calculatorPrefix}{" "}
-            </span>
+            <output
+              className="final-cta-calc__hours"
+              aria-live="polite"
+              htmlFor="hours"
+            >
+              ${cost}
+            </output>
 
-            <span className="final-cta-calc__slot">
-              <input
-                type="range"
-                min={finalCta.minHours}
-                max={finalCta.maxHours}
-                step={1}
-                value={hours}
-                onChange={(e) => setHours(Number(e.target.value))}
-                aria-label="Hours of meetings per month"
-                className="final-cta-calc__range"
-              />
-              <output
-                className="final-cta-calc__hours"
-                aria-live="polite"
-                htmlFor="hours"
-              >
-                {hours}
-              </output>
-            </span>
+            <input
+              type="range"
+              min={finalCta.minHours}
+              max={finalCta.maxHours}
+              step={1}
+              value={hours}
+              onChange={(e) => setHours(Number(e.target.value))}
+              aria-label="Hours of meetings per month"
+              className="final-cta-calc__range"
+            />
 
             <span className="final-cta-calc__phrase">
-              {" "}
-              {finalCta.calculatorSuffix}
+              for {hours} {finalCta.calculatorSuffix}
             </span>
           </div>
-
-          <p className="final-cta-calc__line">
-            {finalCta.lineGoogle}{" "}
-            <span className="final-cta-calc__cost" aria-live="polite">
-              ${cost}
-            </span>
-          </p>
 
           <p className="final-cta-calc__line final-cta-calc__line--us">
             {finalCta.lineUs}

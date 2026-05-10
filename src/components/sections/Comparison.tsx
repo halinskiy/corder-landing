@@ -115,7 +115,7 @@ export function Comparison() {
  * CellGlyph — pure typography cell. No emoji. We translate the raw value
  * into a glyph + screen-reader label:
  *  - "Yes" / "Yes (one-time)" → ✓ + visible "Yes (one-time)" if suffix present
- *  - "No"                     → — (em-style dash, visually muted)
+ *  - "No"                     → "No" plain text, visually muted
  *  - "Partial"                → "Partial" lowercase italic muted
  */
 function CellGlyph({ value, win }: { value: string; win: boolean }) {
@@ -123,7 +123,7 @@ function CellGlyph({ value, win }: { value: string; win: boolean }) {
   if (trimmed === "No") {
     return (
       <span className="comparison-glyph comparison-glyph--no" aria-label="No">
-        <span aria-hidden="true">–</span>
+        No
       </span>
     );
   }
