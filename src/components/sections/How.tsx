@@ -226,7 +226,7 @@ function TranscriptDualTrackPanel() {
             <span className="how-pipeline__arrow">→</span>
             <span className="how-pipeline__chip how-pipeline__chip--system">system.wav</span>
             <span className="how-pipeline__arrow">→</span>
-            <span className="how-pipeline__chip how-pipeline__chip--out">Gemini · merged</span>
+            <span className="how-pipeline__chip how-pipeline__chip--out">Gemini, merged</span>
           </div>
         </div>
         <div className="hl-detail">
@@ -276,7 +276,7 @@ function ClarifyPanel() {
           <div className="hl-spacer" />
           <span className="how-cache-tag" aria-hidden="true">
             <span className="how-cache-tag__dot" />
-            cached locally · 0 API calls
+            cached locally, 0 API calls
           </span>
         </div>
         <div className="hl-detail">
@@ -377,7 +377,7 @@ function ByokPanel() {
         </button>
         <div className="how-byok__popover-meta">
           <span>Gemini 2.5 Flash</span>
-          <span className="how-byok__popover-dot" aria-hidden="true">·</span>
+          <span className="how-byok__popover-dot" aria-hidden="true" />
           <span>Your API key</span>
         </div>
       </div>
@@ -397,7 +397,7 @@ function ByokPanel() {
           <span className="how-byok__math-unit">/ month</span>
         </p>
         <p className="how-byok__math-foot">
-          Granola charges $14–35. Otter, $17–30. Read.ai, $15–40.
+          Granola charges $14 to $35. Otter, $17 to $30. Read.ai, $15 to $40.
         </p>
       </div>
     </div>
@@ -578,7 +578,7 @@ function RightPanelStatic({
 
         <TimelineRow
           name="Kostiantyn Halynskyi"
-          stats="43% · 1m 58s"
+          stats="43%, 1m 58s"
           ticks={[3, 5, 7, 9, 11, 13, 15, 18, 30, 32, 34, 36, 38, 40, 42, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82]}
           color="var(--hl-speaker-purple)"
           showCursor={playing}
@@ -587,7 +587,7 @@ function RightPanelStatic({
 
         <TimelineRow
           name="Vadym Grosko"
-          stats="7% · 17s"
+          stats="7%, 17s"
           ticks={[23, 25, 27, 50, 52, 54, 88, 90, 92]}
           color="var(--hl-accent)"
           glow={highlightSpeaker === "green"}

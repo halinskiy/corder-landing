@@ -25,7 +25,7 @@
       "your thinking aloud"
     ],
     "subhead": "Keeps the {{Transcript}} on your Mac. No bot joins the call.",
-    "ctaPrimary": "Download for macOS · Free",
+    "ctaPrimary": "Try For Free",
     "ctaSecondary": "How it works",
     "qualifier": "Free to download"
   },
@@ -74,7 +74,7 @@
       {
         "number": "01",
         "heading": "No bot in your call.",
-        "body": "Otter, Fireflies, Fathom — they all work the same way: a participant called something like 'Notetaker' joins your call, records from inside, uploads to their servers. Corder records what your Mac plays and what your microphone hears. Nothing joins your meeting. The other side never sees a third participant.",
+        "body": "Otter, Fireflies, Fathom: they all work the same way. A participant called something like 'Notetaker' joins your call, records from inside, uploads to their servers. Corder records what your Mac plays and what your microphone hears. Nothing joins your meeting. The other side never sees a third participant.",
         "liveDemo": "no-bot"
       },
       {
@@ -86,13 +86,13 @@
       {
         "number": "03",
         "heading": "Re-transcribe is free.",
-        "body": "Wrong number of speakers? Re-run for nothing. We cache the raw Gemini turns by audio hash in your local SQLite. Re-mapping speakers, splitting one voice into two, re-running after a Dropbox archive — costs zero API calls. Cloud SaaS literally cannot match this without breaking their margin model.",
+        "body": "Wrong number of speakers? Re-run for nothing. We cache the raw Gemini turns by audio hash in your local SQLite. Re-mapping speakers, splitting one voice into two, re-running after a Dropbox archive: costs zero API calls. Cloud SaaS literally cannot match this without breaking their margin model.",
         "liveDemo": "clarify"
       },
       {
         "number": "04",
         "heading": "No subscription. BYO Gemini key.",
-        "body": "Granola is $14–35/seat/month. Otter, $17–30. Read.ai, $15–40. Corder is bring-your-own Gemini API key, you pay Google about $0.30 per recorded hour at Flash rates. Download the app once. Run it forever.",
+        "body": "Granola is $14 to $35 per seat each month. Otter, $17 to $30. Read.ai, $15 to $40. Corder is bring your own Gemini API key, you pay Google about $0.30 per recorded hour at Flash rates. Download the app once. Run it forever.",
         "liveDemo": "byok"
       }
     ]
@@ -346,9 +346,9 @@
     "calculatorSuffix": "hours of meetings a month,",
     "lineGoogle": "you'd pay Google about",
     "lineUs": "you'd pay us nothing.",
-    "cta": "Download for macOS · Free",
+    "cta": "Free Download for macOS",
     "ctaHref": "#download",
-    "footer": "macOS 14+ · Apple Silicon · Bring your own Gemini API key",
+    "footer": "macOS 14+, Apple Silicon, Bring your own Gemini API key",
     "ratePerHour": 0.30,
     "defaultHours": 30,
     "minHours": 1,

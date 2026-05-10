@@ -1,6 +1,6 @@
 "use client";
 
-import { FAQAccordion } from "@aisoldier/ui-kit";
+import { FAQAccordion } from "@/lib/ui-vendor/FAQAccordion";
 
 import { copy } from "@/content/copy";
 

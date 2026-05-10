@@ -916,7 +916,12 @@ button:focus:not(:focus-visible) {
   color: var(--hl-fg-muted);
 }
 .how-byok__popover-dot {
-  color: var(--hl-fg-dim);
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--hl-fg-dim);
+  vertical-align: middle;
 }
 
 .how-byok__math {
@@ -1718,13 +1723,14 @@ button:focus:not(:focus-visible) {
 }
 
 .pricing-card__feature::before {
-  content: "·";
+  content: "";
   display: inline-block;
-  font-family: var(--font-sans);
-  color: var(--color-accent);
-  font-size: 24px;
-  line-height: 1;
-  text-align: center;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  margin-top: 9px;
+  justify-self: center;
 }
 
 .pricing-card__cta {
@@ -1821,11 +1827,10 @@ button:focus:not(:focus-visible) {
 
 .fit-card__heading {
   font-family: var(--font-serif);
-  font-style: italic;
   font-weight: 500;
-  font-size: clamp(28px, 3vw, 36px);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: clamp(24px, 2.6vw, 32px);
+  line-height: 1.15;
+  letter-spacing: -0.018em;
   color: var(--color-text);
   margin: 0 0 24px 0;
 }
