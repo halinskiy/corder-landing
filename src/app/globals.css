@@ -1,9 +1,5 @@
 @import "tailwindcss";
-@import "../../../../ui-kit/tokens.css";
 @import "../../tokens.css";
-
-@source "../../../../ui-kit/components/**/*.{ts,tsx}";
-@source "../../../../ui-kit/patterns/**/*.{ts,tsx}";
 
 @theme {
   --font-sans: var(--font-plex-sans), "IBM Plex Sans", system-ui, -apple-system, sans-serif;
