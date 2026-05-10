@@ -1,9 +1,7 @@
 /*
- * corder-landing — Project token overrides
+ * corder-landing — Complete token set
  *
- * Imported AFTER ui-kit/tokens.css in globals.css so these win.
- * Forest-green accent #1f7a4f, white background, IBM Plex serif/sans/mono.
- *
+ * Forest-green accent #217a50, white background, IBM Plex serif/sans/mono.
  * The neutral palette is shifted slightly warm to match the macOS app's
  * --bg-elev #f7f7f6 and --border #ececea so the live UI demo nests inside
  * the page chrome without looking foreign.
@@ -38,6 +36,8 @@
   /* =====================================================================
    * TYPOGRAPHY — Plex trio, fluid display scale
    * ===================================================================== */
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, serif;
   --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   /* Display scale tuned for hero's "Record what was said." line. */
@@ -61,6 +61,12 @@
 
   --ls-display: -0.018em;
   --ls-eyebrow: 0.062em;
+
+  /* =====================================================================
+   * RADIUS — rounded corners
+   * ===================================================================== */
+  --radius-window: 12px;
+  --radius-pill: 999px;
 }
 
 ::selection {
