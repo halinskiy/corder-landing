@@ -1787,89 +1787,26 @@ button:focus:not(:focus-visible) {
  * ---------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------
- *  Section — Fit (right-fit / wrong-fit dual card)
+ *  Section — Fit
+ *
+ *  Reuses .privacy-card frame end-to-end. The only delta is a single-column
+ *  spec-row variant: each fit item is one hairline-separated line of text,
+ *  no key/value split.
  * ---------------------------------------------------------------------- */
 
-.fit-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  margin-top: 56px;
-}
-
-@media (min-width: 768px) {
-  .fit-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-  }
-}
-
-.fit-card {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-window, 12px);
-  padding: 32px;
-  background: var(--color-bg);
-  display: flex;
-  flex-direction: column;
-}
-
-.fit-card--yes {
-  border-top: 4px solid var(--color-accent);
-}
-
-.fit-card--no {
-  border-top: 4px solid #b8443c;
-}
-
-.fit-card__heading {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: clamp(24px, 2.6vw, 32px);
-  line-height: 1.15;
-  letter-spacing: -0.018em;
-  color: var(--color-text);
-  margin: 0 0 24px 0;
-}
-
-.fit-card__list {
+.privacy-card__spec--single {
   list-style: none;
   padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
 }
 
-.fit-card__item {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 18px 0;
-  border-top: 1px solid var(--color-border);
+.privacy-card__spec-row--single {
+  grid-template-columns: 1fr;
+  padding-block: 16px;
 }
 
-.fit-card__item:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.fit-card__icon {
-  flex-shrink: 0;
-  display: inline-flex;
-  margin-top: 2px;
-}
-
-.fit-card--yes .fit-card__icon {
-  color: var(--color-accent);
-}
-
-.fit-card--no .fit-card__icon {
-  color: #b8443c;
-}
-
-.fit-card__text {
-  font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 1.5;
+.privacy-card__spec-row--single .privacy-card__spec-value {
+  font-size: var(--text-body);
+  line-height: 1.55;
   color: var(--color-text);
 }
 

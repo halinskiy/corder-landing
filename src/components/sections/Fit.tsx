@@ -5,8 +5,9 @@ const DATA_SOURCE = "projects/corder-landing/src/components/sections/Fit.tsx";
 /**
  * Section — Is Corder for you?
  *
- * Right-fit / wrong-fit dual card. Plain language, no jargon. Helps
- * cold-traffic skeptics self-select before reading pricing.
+ * Reuses the Privacy two-card visual language: tag, serif heading, body, then
+ * a hairline-row list of qualifying lines. Card 1 (yes) carries the accent
+ * tag, card 2 (no) is neutral. Same frame, same spacing, same hairline rows.
  */
 export function Fit() {
   const { fit } = copy;
@@ -16,7 +17,7 @@ export function Fit() {
       id="fit"
       data-component="Fit"
       data-source={DATA_SOURCE}
-      data-tokens="color-text,color-text-muted,color-border,color-accent,color-danger,radius-window,font-serif"
+      data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,font-serif"
       className="relative w-full"
     >
       <div className="page-container py-24 md:py-32">
@@ -26,6 +27,7 @@ export function Fit() {
               className="section-heading"
               data-component="FitHeading"
               data-source={DATA_SOURCE}
+              data-tokens="display-md,font-serif,lh-display,ls-display,color-text"
             >
               {fit.heading}
             </h2>
@@ -33,15 +35,28 @@ export function Fit() {
               className="section-subhead"
               data-component="FitSubhead"
               data-source={DATA_SOURCE}
+              data-tokens="body-lg,lh-body,color-text-muted,font-sans"
             >
               {fit.subhead}
             </p>
           </div>
         </div>
 
-        <div className="fit-grid">
-          <FitCard tone="yes" heading={fit.yes.heading} items={fit.yes.items} />
-          <FitCard tone="no" heading={fit.no.heading} items={fit.no.items} />
+        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 md:gap-8">
+          <FitCard
+            variant="default"
+            tag={fit.yes.tag}
+            heading={fit.yes.heading}
+            body={fit.yes.body}
+            items={fit.yes.items}
+          />
+          <FitCard
+            variant="local"
+            tag={fit.no.tag}
+            heading={fit.no.heading}
+            body={fit.no.body}
+            items={fit.no.items}
+          />
         </div>
       </div>
     </section>
@@ -49,71 +64,36 @@ export function Fit() {
 }
 
 function FitCard({
-  tone,
+  variant,
+  tag,
   heading,
+  body,
   items,
 }: {
-  tone: "yes" | "no";
+  variant: "default" | "local";
+  tag: string;
   heading: string;
+  body: string;
   items: readonly string[];
 }) {
   return (
     <article
-      className={`fit-card fit-card--${tone}`}
+      className={`privacy-card privacy-card--${variant}`}
       data-component="FitCard"
       data-source={DATA_SOURCE}
-      data-tone={tone}
+      data-tokens="color-bg,color-border,radius-window,font-serif,font-sans"
     >
-      <h3 className="fit-card__heading">{heading}</h3>
-      <ul className="fit-card__list">
+      <span className="privacy-card__tag">{tag}</span>
+      <h3 className="privacy-card__heading">{heading}</h3>
+      <p className="privacy-card__body">{body}</p>
+
+      <ul className="privacy-card__spec privacy-card__spec--single">
         {items.map((item) => (
-          <li key={item} className="fit-card__item">
-            <span className="fit-card__icon" aria-hidden="true">
-              {tone === "yes" ? <CheckGlyph /> : <CrossGlyph />}
-            </span>
-            <span className="fit-card__text">{item}</span>
+          <li key={item} className="privacy-card__spec-row privacy-card__spec-row--single">
+            <span className="privacy-card__spec-value">{item}</span>
           </li>
         ))}
       </ul>
     </article>
-  );
-}
-
-function CheckGlyph() {
-  return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="10" />
-      <path d="m7 11 3 3 5-6" />
-    </svg>
-  );
-}
-
-function CrossGlyph() {
-  return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="10" />
-      <path d="m8 8 6 6" />
-      <path d="m14 8-6 6" />
-    </svg>
   );
 }
