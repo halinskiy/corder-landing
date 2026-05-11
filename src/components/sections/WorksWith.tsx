@@ -88,17 +88,21 @@ export function WorksWith() {
   );
 }
 
+const TRACK_COPIES = 8;
+
 function Row({ apps, reverse }: { apps: readonly string[]; reverse: boolean }) {
-  // Two copies + translate -50% is the standard seamless marquee pattern.
-  // Every tile carries its own trailing margin (CSS) so the track width is
-  // an exact multiple of the per-tile cell, and the -50% snap lands on a
-  // copy boundary without a visible jump.
+  // Eight copies of the apps array, translated by -12.5% (== one copy width)
+  // per cycle. The high duplication count guarantees the visible viewport
+  // is always shorter than (N-1) copies worth of track, even for the
+  // 3-tile Store row on wide screens — so no empty gap appears on the
+  // right edge before the snap back.
+  const tiles = Array.from({ length: TRACK_COPIES }).flatMap(() => apps);
   return (
     <div className="works-with-marquee">
       <div
         className={`works-with-track${reverse ? " works-with-track--reverse" : ""}`}
       >
-        {[...apps, ...apps].map((app, i) => (
+        {tiles.map((app, i) => (
           <AppTile key={`${app}-${i}`} name={app} />
         ))}
       </div>
