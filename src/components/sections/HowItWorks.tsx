@@ -2,24 +2,38 @@
 
 import { useRef } from "react";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/HowItWorks.tsx";
 
+// Spring physics for the snap motion. Tuned for a noticeable ease-in-out
+// settle without overshoot — the window should feel like it lifts off the
+// page, glides to the next slot, and lands.
+const SPRING = { stiffness: 105, damping: 24, mass: 0.7 } as const;
+
 /**
- * HowItWorks — three real rows of step copy with a single shared window
- * that slides diagonally across the section as you scroll.
+ * HowItWorks — three real rows with a single shared window block that
+ * snaps between slots as the user scrolls past each threshold.
  *
- * Layout: each row is its own 100vh slab with text aligned to one side
- * (right for steps 1 and 3, left for step 2). The window block is
- * absolutely positioned inside the section, its vertical position
- * linearly tracks scroll progress so it stays at the viewport's vertical
- * centre, and its horizontal position triangle-waves between left (0%)
- * and right (52%) — producing the diagonal motion the brief asked for.
+ * Snap behaviour: target top/left are step functions of scrollYProgress
+ * (flat at row centres, sharp transitions at progress 0.34/0.36 and
+ * 0.64/0.66). The targets feed a useSpring so the perceived motion is a
+ * smooth ease-in-out into each new slot rather than a 1-to-1 scroll
+ * follow. A lift pulse peaks during each transition and drives a subtle
+ * scale + drop-shadow on the window inner wrap, so it feels like the
+ * block is lifted, dragged, and placed.
  *
- * Reduced-motion fallback: vertical static stack, one window per row.
+ * Each row carries a faint dashed ghost in the slot where the window
+ * will eventually land — visual scaffolding so the user reads the
+ * destination before the snap.
  */
 export function HowItWorks() {
   const { howItWorks } = copy;
@@ -31,15 +45,40 @@ export function HowItWorks() {
     offset: ["start start", "end end"],
   });
 
-  // Linear vertical motion keeps the window centred on the active row.
-  // The CSS layer applies translateY(-50%), so these `top` values are
-  // the desired window CENTRE in section coordinates: row 1 centre at
-  // 50vh, row 3 centre at 250vh.
-  const windowTop = useTransform(scrollYProgress, [0, 1], ["50vh", "250vh"]);
+  // Stepped numeric targets in vh and %.
+  const targetTop = useTransform(
+    scrollYProgress,
+    [0, 0.34, 0.36, 0.64, 0.66, 1],
+    [50, 50, 150, 150, 250, 250],
+  );
+  const targetLeft = useTransform(
+    scrollYProgress,
+    [0, 0.34, 0.36, 0.64, 0.66, 1],
+    [0, 0, 52, 52, 0, 0],
+  );
 
-  // Triangle wave: 0% → 52% → 0%. Steps 1 and 3 keep the window on the
-  // left (text right). Step 2 swings it across to the right (text left).
-  const windowLeft = useTransform(scrollYProgress, [0, 0.5, 1], ["0%", "52%", "0%"]);
+  // Spring-smoothed for the ease-in-out settle on each snap.
+  const topNum = useSpring(targetTop, SPRING);
+  const leftNum = useSpring(targetLeft, SPRING);
+
+  const windowTop = useTransform(topNum, (v) => `${v}vh`);
+  const windowLeft = useTransform(leftNum, (v) => `${v}%`);
+
+  // Lift pulse — small bumps centred on each threshold. Drives scale +
+  // drop-shadow so the window appears to lift, travel, and settle.
+  const liftPulse = useTransform(
+    scrollYProgress,
+    [0.3, 0.35, 0.4, 0.6, 0.65, 0.7],
+    [0, 1, 0, 0, 1, 0],
+  );
+  const scale = useTransform(liftPulse, [0, 1], [1, 1.035]);
+  const filterShadow = useTransform(
+    liftPulse,
+    (v) =>
+      `drop-shadow(0 ${10 + v * 24}px ${22 + v * 36}px rgba(10, 10, 10, ${
+        0.1 + v * 0.18
+      }))`,
+  );
 
   return (
     <section
@@ -71,28 +110,34 @@ export function HowItWorks() {
           ))}
         </div>
       ) : (
-        <div ref={sectionRef} className="hiw-track">
-          {/* The single moving window, animated by scrollYProgress.
-              Lives above the rows in the stacking order but does not
-              intercept pointer events. */}
+        <div ref={sectionRef} className="hiw-track page-container">
+          {/* Animated window — z above all row content. */}
           <motion.div
             className="hiw-window-wrap"
             style={{ top: windowTop, left: windowLeft }}
             aria-hidden="true"
           >
-            <WindowFrame />
+            <motion.div
+              className="hiw-window-inner"
+              style={{ scale, filter: filterShadow }}
+            >
+              <WindowFrame />
+            </motion.div>
           </motion.div>
 
           {howItWorks.steps.map((step, i) => (
             <article
               key={step.number}
-              className={`hiw-row${i === 1 ? " hiw-row--text-left" : " hiw-row--text-right"}`}
+              className={`hiw-row${
+                i === 1 ? " hiw-row--text-left" : " hiw-row--text-right"
+              }`}
             >
               <div className="hiw-text">
                 <p className="hiw-text__eyebrow">{step.number}</p>
                 <h3 className="hiw-text__heading">{step.heading}</h3>
                 <p className="hiw-text__body">{step.body}</p>
               </div>
+              <div className="hiw-ghost" aria-hidden="true" />
             </article>
           ))}
         </div>
