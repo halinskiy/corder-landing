@@ -375,7 +375,7 @@
     }
   },
   "comparison": {
-    "heading": "How Corder is different",
+    "heading": "Why Corder",
     "subhead": "We don't name competitors on most of the page, but here's where Corder lands when you put us next to everyone",
     "headers": [
       "",
@@ -572,5 +572,30 @@
     "placeholder": "Your email",
     "cta": "Subscribe",
     "successMessage": "Thanks. You'll hear from us when something ships"
+  },
+  "howItWorks": {
+    "eyebrow": "How it works",
+    "heading": "Start, talk, stop. That is the loop",
+    "subhead": "Three moments, one menu bar app. No participant joins, no SaaS in between you and the recording",
+    "steps": [
+      {
+        "number": "01",
+        "side": "right",
+        "heading": "Start from the menu bar",
+        "body": "Open Corder from the macOS menu bar and hit Record. The app starts capturing system audio and your microphone at the OS level. No bot joins the call, the other side sees no third participant"
+      },
+      {
+        "number": "02",
+        "side": "left",
+        "heading": "Have your meeting",
+        "body": "Run your call on Zoom, Meet, Teams, Discord, anywhere. Corder records two parallel tracks, your microphone and everything that plays through your Mac. It works for as long as the meeting runs"
+      },
+      {
+        "number": "03",
+        "side": "right",
+        "heading": "Stop, read, drag",
+        "body": "Hit Stop. The transcript fills in with speaker labels. The audio file sits next to it on your Mac. Drag either one into Notion, Apple Notes, anywhere you keep your work"
+      }
+    ]
   }
 }
