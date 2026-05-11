@@ -206,26 +206,7 @@
           "Optional Dropbox archive",
           "Resets on the 1st of each month"
         ],
-        "cta": "Download for macOS",
-        "ctaStyle": "secondary",
-        "highlight": false
-      },
-      {
-        "name": "Personal",
-        "price": {
-          "monthly": "$9",
-          "annual": "$6.75"
-        },
-        "priceSuffix": "per month",
-        "annualNote": "$81 billed annually",
-        "subline": "600 minutes of Flash transcription a month for people who record every call",
-        "features": [
-          "600 minutes of Gemini 2.5 Flash per month",
-          "No limit on individual recording length",
-          "All Free tier features",
-          "3 months free when you pay annually"
-        ],
-        "cta": "Get Personal",
+        "cta": "Try For Free",
         "ctaStyle": "primary",
         "highlight": false
       },
@@ -249,6 +230,25 @@
         "cta": "Get Pro",
         "ctaStyle": "primary",
         "highlight": true
+      },
+      {
+        "name": "Personal",
+        "price": {
+          "monthly": "$9",
+          "annual": "$6.75"
+        },
+        "priceSuffix": "per month",
+        "annualNote": "$81 billed annually",
+        "subline": "600 minutes of Flash transcription a month for people who record every call",
+        "features": [
+          "600 minutes of Gemini 2.5 Flash per month",
+          "No limit on individual recording length",
+          "All Free tier features",
+          "3 months free when you pay annually"
+        ],
+        "cta": "Try For Free",
+        "ctaStyle": "primary",
+        "highlight": false
       }
     ],
     "lifetime": {

@@ -1617,7 +1617,7 @@ button:focus:not(:focus-visible) {
 }
 
 .pricing-card--highlight {
-  border-color: var(--color-text);
+  border-color: var(--color-accent);
   background: var(--color-surface-2);
 }
 
