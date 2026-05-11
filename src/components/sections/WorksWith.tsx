@@ -110,8 +110,8 @@ function AppTile({ name }: { name: string }) {
         <img
           src={`${ASSET_PREFIX}/logos/${file}`}
           alt=""
-          width={22}
-          height={22}
+          width={26}
+          height={26}
           className="works-with-tile__logo"
           loading="lazy"
         />
