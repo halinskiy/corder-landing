@@ -207,7 +207,7 @@
           "Resets on the 1st of each month"
         ],
         "cta": "Try For Free",
-        "ctaStyle": "primary",
+        "ctaStyle": "secondary",
         "highlight": false
       },
       {
@@ -247,7 +247,7 @@
           "3 months free when you pay annually"
         ],
         "cta": "Try For Free",
-        "ctaStyle": "primary",
+        "ctaStyle": "secondary",
         "highlight": false
       }
     ],
