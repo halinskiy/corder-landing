@@ -566,9 +566,9 @@
     "successMessage": "Thanks. You'll hear from us when something ships"
   },
   "howItWorks": {
-    "eyebrow": "How it works",
-    "heading": "Start, talk, stop. That is the loop",
-    "subhead": "Three moments, one menu bar app. No participant joins, no SaaS in between you and the recording",
+    "eyebrow": "",
+    "heading": "How Corder works",
+    "subhead": "Start, talk, stop. Three moments, one menu bar app, no participant joins your call",
     "steps": [
       {
         "number": "01",

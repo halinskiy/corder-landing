@@ -271,7 +271,10 @@ button:focus:not(:focus-visible) {
 
 .page-container {
   width: 100%;
-  max-width: 1280px;
+  /* max-width matches .hero-library-demo's 1180px content width plus
+     the lg+ horizontal padding (40px x 2 = 80px), so every section
+     aligns precisely with the hero demo's left and right edges. */
+  max-width: 1260px;
   margin-inline: auto;
   padding-inline: 24px;
 }
@@ -2078,7 +2081,7 @@ button:focus:not(:focus-visible) {
 .hiw-row {
   position: relative;
   z-index: 1;
-  height: 100vh;
+  height: 80vh;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2097,13 +2100,36 @@ button:focus:not(:focus-visible) {
 }
 
 /* Ghost placeholder: same footprint as the live window, dashed faint
-   outline so the user reads the destination before the snap lands. */
+   outline so the user reads the destination before the snap lands.
+   The dashes are SVG strokes with non-scaling-stroke, so 3px width
+   and 18/12 dasharray stay constant regardless of container size. */
 .hiw-ghost {
+  position: relative;
   width: 48%;
   aspect-ratio: 16 / 10;
-  border: 1.5px dashed rgba(10, 10, 10, 0.18);
-  border-radius: var(--radius-window);
-  background: transparent;
+}
+
+.hiw-ghost__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.hiw-ghost__chrome {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  display: flex;
+  gap: 8px;
+}
+
+.hiw-ghost__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(10, 10, 10, 0.12);
 }
 
 .hiw-text__eyebrow {

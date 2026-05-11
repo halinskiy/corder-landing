@@ -45,11 +45,12 @@ export function HowItWorks() {
     offset: ["start start", "end end"],
   });
 
-  // Stepped numeric targets in vh and %.
+  // Stepped numeric targets in vh and %. Row centres at 40, 120, 200vh
+  // (rows are 80vh tall, section total 240vh).
   const targetTop = useTransform(
     scrollYProgress,
     [0, 0.34, 0.36, 0.64, 0.66, 1],
-    [50, 50, 150, 150, 250, 250],
+    [40, 40, 120, 120, 200, 200],
   );
   const targetLeft = useTransform(
     scrollYProgress,
@@ -137,12 +138,43 @@ export function HowItWorks() {
                 <h3 className="hiw-text__heading">{step.heading}</h3>
                 <p className="hiw-text__body">{step.body}</p>
               </div>
-              <div className="hiw-ghost" aria-hidden="true" />
+              <Ghost />
             </article>
           ))}
         </div>
       )}
     </section>
+  );
+}
+
+function Ghost() {
+  return (
+    <div className="hiw-ghost" aria-hidden="true">
+      <svg
+        className="hiw-ghost__frame"
+        viewBox="0 0 1180 738"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <rect
+          x="6"
+          y="6"
+          width="1168"
+          height="726"
+          rx="14"
+          fill="none"
+          stroke="rgba(10, 10, 10, 0.22)"
+          strokeWidth="3"
+          strokeDasharray="18 12"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+      <div className="hiw-ghost__chrome" aria-hidden="true">
+        <span className="hiw-ghost__dot" />
+        <span className="hiw-ghost__dot" />
+        <span className="hiw-ghost__dot" />
+      </div>
+    </div>
   );
 }
 
