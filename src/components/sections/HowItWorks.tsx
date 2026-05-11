@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   motion,
@@ -196,19 +196,90 @@ function Header({
   );
 }
 
+const TILT_MAX_X = 3;
+const TILT_MAX_Y = 4;
+const TILT_LIFT = 4;
+
 function WindowFrame() {
+  const tiltRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = tiltRef.current;
+    if (!el) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    let targetRX = 0;
+    let targetRY = 0;
+    let targetLift = 0;
+    let curRX = 0;
+    let curRY = 0;
+    let curLift = 0;
+
+    const onPointerMove = (event: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      const dx = (event.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+      const dy = (event.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+      targetRY = Math.max(-1, Math.min(1, dx)) * TILT_MAX_Y;
+      targetRX = -Math.max(-1, Math.min(1, dy)) * TILT_MAX_X;
+      targetLift = TILT_LIFT;
+      schedule();
+    };
+
+    const onPointerLeave = () => {
+      targetRX = 0;
+      targetRY = 0;
+      targetLift = 0;
+      schedule();
+    };
+
+    const schedule = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(tick);
+    };
+
+    const tick = () => {
+      frame = 0;
+      curRX += (targetRX - curRX) * 0.18;
+      curRY += (targetRY - curRY) * 0.18;
+      curLift += (targetLift - curLift) * 0.18;
+      el.style.transform = `perspective(1600px) rotateX(${curRX.toFixed(2)}deg) rotateY(${curRY.toFixed(2)}deg) translateY(${(-curLift).toFixed(2)}px)`;
+      const dxLeft = Math.abs(targetRX - curRX);
+      const dxRight = Math.abs(targetRY - curRY);
+      const dxLift = Math.abs(targetLift - curLift);
+      if (dxLeft + dxRight + dxLift > 0.05) {
+        schedule();
+      } else if (targetRX === 0 && targetRY === 0 && targetLift === 0) {
+        el.style.transform = "";
+      }
+    };
+
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerleave", onPointerLeave);
+    return () => {
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerleave", onPointerLeave);
+      if (frame) window.cancelAnimationFrame(frame);
+      el.style.transform = "";
+    };
+  }, []);
+
   return (
     <div
-      className="how-window hero-library-demo how-window--app"
+      ref={tiltRef}
+      className="hiw-window-tilt"
       data-component="HowItWorksWindow"
       data-source={DATA_SOURCE}
       role="img"
       aria-label="Corder app placeholder"
     >
-      <div className="hl-titlebar" aria-hidden="true">
-        <span className="hl-traffic close" />
-        <span className="hl-traffic minimize" />
-        <span className="hl-traffic maximize" />
+      <div className="how-window hero-library-demo how-window--app">
+        <div className="hl-titlebar" aria-hidden="true">
+          <span className="hl-traffic close" />
+          <span className="hl-traffic minimize" />
+          <span className="hl-traffic maximize" />
+        </div>
       </div>
     </div>
   );
