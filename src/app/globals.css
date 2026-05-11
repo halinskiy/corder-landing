@@ -391,16 +391,31 @@ button:focus:not(:focus-visible) {
 
 .how-grid {
   display: grid;
-  gap: 64px;
+  gap: 32px;
   grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  .how-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 56px;
+    align-items: start;
+  }
 }
 
 .how-sticky {
   position: relative;
   width: 100%;
-  max-width: 1100px;
-  margin-inline: auto;
+  display: none;
   perspective: 1600px;
+}
+
+@media (min-width: 1024px) {
+  .how-sticky {
+    position: sticky;
+    top: 96px;
+    display: block;
+  }
 }
 
 /* The How window reuses the .hero-library-demo token base from
@@ -966,8 +981,18 @@ button:focus:not(:focus-visible) {
 /* ---- Chapter list (right column) -------------------------------------- */
 
 .how-chapter {
-  padding-block: 32px;
+  padding-block: 24px;
   border-top: 1px solid var(--color-border);
+  min-height: 320px;
+}
+
+@media (min-width: 1024px) {
+  .how-chapter {
+    min-height: clamp(360px, 60vh, 720px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
 .how-chapter:first-child {
