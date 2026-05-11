@@ -983,18 +983,8 @@ button:focus:not(:focus-visible) {
 /* ---- Chapter list (right column) -------------------------------------- */
 
 .how-chapter {
-  padding-block: 24px;
+  padding-block: 40px;
   border-top: 1px solid var(--color-border);
-  min-height: 320px;
-}
-
-@media (min-width: 1024px) {
-  .how-chapter {
-    min-height: clamp(360px, 60vh, 720px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
 }
 
 .how-chapter:first-child {
