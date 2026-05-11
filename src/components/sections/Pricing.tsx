@@ -129,7 +129,7 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
         )}
       </div>
 
-      <p className="pricing-card__subline">{tier.subline}</p>
+      {tier.subline && <p className="pricing-card__subline">{tier.subline}</p>}
 
       <div className="pricing-card__divider" />
 
