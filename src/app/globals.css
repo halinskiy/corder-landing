@@ -2067,36 +2067,13 @@ button:focus:not(:focus-visible) {
 .works-with-rows {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.works-with-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  align-items: center;
-}
-
-@media (min-width: 768px) {
-  .works-with-row {
-    grid-template-columns: 88px 1fr;
-    gap: 20px;
-  }
-}
-
-.works-with-row__label {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  padding-left: 4px;
+  gap: 18px;
 }
 
 .works-with-marquee {
   position: relative;
   overflow: hidden;
+  padding-block: 12px;
   mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
 }
@@ -2108,7 +2085,11 @@ button:focus:not(:focus-visible) {
   animation: works-with-scroll 80s linear infinite;
 }
 
-.works-with-row:hover .works-with-track {
+.works-with-track--reverse {
+  animation-direction: reverse;
+}
+
+.works-with-marquee:hover .works-with-track {
   animation-play-state: paused;
 }
 
@@ -2148,17 +2129,11 @@ button:focus:not(:focus-visible) {
 }
 
 .works-with-tile__logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-}
-
-.works-with-tile__logo svg {
   width: 22px;
   height: 22px;
   display: block;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
 .works-with-tile__name {
