@@ -983,7 +983,8 @@ button:focus:not(:focus-visible) {
 /* ---- Chapter list (right column) -------------------------------------- */
 
 .how-chapter {
-  padding-block: 40px;
+  padding-top: 40px;
+  padding-bottom: 0;
   border-top: 1px solid var(--color-border);
 }
 
@@ -992,12 +993,11 @@ button:focus:not(:focus-visible) {
     min-height: clamp(280px, 40vh, 520px);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
   }
-}
-
-.how-chapter:last-child {
-  padding-bottom: 0;
+  .how-chapter:last-child {
+    min-height: 0;
+  }
 }
 
 .how-chapter:first-child {
@@ -1164,23 +1164,14 @@ button:focus:not(:focus-visible) {
   font-weight: 500;
 }
 .comparison-glyph__check {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-accent);
   line-height: 1;
 }
 .comparison-glyph--yes-win {
   color: var(--color-accent);
   font-weight: 600;
-}
-.comparison-glyph--yes-win .comparison-glyph__check {
-  color: var(--color-accent);
-}
-.comparison-glyph__suffix {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  letter-spacing: 0.01em;
 }
 
 .comparison-glyph--no {
@@ -1190,11 +1181,11 @@ button:focus:not(:focus-visible) {
   letter-spacing: 0.04em;
 }
 
-.comparison-glyph--partial {
-  color: var(--color-text-muted);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 13px;
+.comparison-glyph--dash {
+  color: var(--color-text-faint);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
 }
 
 /* ---- Scroll hint (mobile) -------------------------------------------- */

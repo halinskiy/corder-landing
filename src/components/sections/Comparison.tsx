@@ -127,26 +127,24 @@ function CellGlyph({ value, win }: { value: string; win: boolean }) {
       </span>
     );
   }
-  if (trimmed === "Partial") {
+  if (trimmed === "—") {
     return (
-      <span className="comparison-glyph comparison-glyph--partial" aria-label="Partial">
-        Partial
+      <span className="comparison-glyph comparison-glyph--dash" aria-label="Not really">
+        —
       </span>
     );
   }
-  if (trimmed.startsWith("Yes")) {
-    const suffix = trimmed.slice(3).trim(); // "" or "(one-time)"
+  if (trimmed === "Yes") {
     return (
       <span
         className={`comparison-glyph comparison-glyph--yes${
           win ? " comparison-glyph--yes-win" : ""
         }`}
-        aria-label={trimmed}
+        aria-label="Yes"
       >
         <span className="comparison-glyph__check" aria-hidden="true">
           ✓
         </span>
-        {suffix && <span className="comparison-glyph__suffix">{suffix}</span>}
       </span>
     );
   }
