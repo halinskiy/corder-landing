@@ -9,64 +9,37 @@ import { copy } from "@/content/copy";
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/HowItWorks.tsx";
 
 /**
- * HowItWorks — pinned-scroll flow section above Fit.
+ * HowItWorks — three real rows of step copy with a single shared window
+ * that slides diagonally across the section as you scroll.
  *
- * A 300vh outer track holds a sticky 100vh stage. The single window block
- * sits absolutely positioned inside the stage; its `left` is interpolated
- * from scroll progress so it slides left→right→left across three steps,
- * Webflow-style. The three step copy blocks live in their final left/right
- * slots and fade in/out as the scroll window passes them.
+ * Layout: each row is its own 100vh slab with text aligned to one side
+ * (right for steps 1 and 3, left for step 2). The window block is
+ * absolutely positioned inside the section, its vertical position
+ * linearly tracks scroll progress so it stays at the viewport's vertical
+ * centre, and its horizontal position triangle-waves between left (0%)
+ * and right (52%) — producing the diagonal motion the brief asked for.
  *
- * Reduced-motion fallback: vertical stack of step + window pairs, no
- * sticky pinning, no transforms.
+ * Reduced-motion fallback: vertical static stack, one window per row.
  */
 export function HowItWorks() {
   const { howItWorks } = copy;
-  const trackRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
 
   const { scrollYProgress } = useScroll({
-    target: trackRef,
+    target: sectionRef,
     offset: ["start start", "end end"],
   });
 
-  // Window slides: 0% (left slot) → 52% (right slot) → 0% (left slot).
+  // Linear vertical motion keeps the window centred on the active row.
+  // The CSS layer applies translateY(-50%), so these `top` values are
+  // the desired window CENTRE in section coordinates: row 1 centre at
+  // 50vh, row 3 centre at 250vh.
+  const windowTop = useTransform(scrollYProgress, [0, 1], ["50vh", "250vh"]);
+
+  // Triangle wave: 0% → 52% → 0%. Steps 1 and 3 keep the window on the
+  // left (text right). Step 2 swings it across to the right (text left).
   const windowLeft = useTransform(scrollYProgress, [0, 0.5, 1], ["0%", "52%", "0%"]);
-
-  // Per-step opacity windows. Each step is visible across roughly a third
-  // of the scroll, with short cross-fades at the seams.
-  const step1Opacity = useTransform(scrollYProgress, [0, 0.05, 0.28, 0.38], [1, 1, 1, 0]);
-  const step2Opacity = useTransform(scrollYProgress, [0.28, 0.38, 0.62, 0.72], [0, 1, 1, 0]);
-  const step3Opacity = useTransform(scrollYProgress, [0.62, 0.72, 0.95, 1], [0, 1, 1, 1]);
-
-  if (reduced) {
-    return (
-      <section
-        id="how-it-works"
-        data-component="HowItWorks"
-        data-source={DATA_SOURCE}
-        className="relative w-full"
-      >
-        <div className="page-container py-24 md:py-32">
-          <Header heading={howItWorks.heading} eyebrow={howItWorks.eyebrow} subhead={howItWorks.subhead} />
-          <div className="hiw-static mt-16">
-            {howItWorks.steps.map((step) => (
-              <article key={step.number} className="hiw-static__row">
-                <div className="hiw-static__text">
-                  <p className="hiw-text__eyebrow">{step.number}</p>
-                  <h3 className="hiw-text__heading">{step.heading}</h3>
-                  <p className="hiw-text__body">{step.body}</p>
-                </div>
-                <div className="how-window hero-library-demo how-window--app hiw-static__window">
-                  <Chrome />
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section
@@ -74,67 +47,67 @@ export function HowItWorks() {
       data-component="HowItWorks"
       data-source={DATA_SOURCE}
       data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,font-serif"
-      className="hiw"
+      className="relative w-full"
     >
       <div className="page-container pt-24 md:pt-32">
-        <Header heading={howItWorks.heading} eyebrow={howItWorks.eyebrow} subhead={howItWorks.subhead} />
+        <Header
+          eyebrow={howItWorks.eyebrow}
+          heading={howItWorks.heading}
+          subhead={howItWorks.subhead}
+        />
       </div>
 
-      <div ref={trackRef} className="hiw-track">
-        <div className="hiw-pin">
-          <div className="hiw-stage">
-            <motion.div className="hiw-window-wrap" style={{ left: windowLeft }}>
-              <div
-                className="how-window hero-library-demo how-window--app"
-                data-component="HowItWorksWindow"
-                data-source={DATA_SOURCE}
-                role="img"
-                aria-label="Corder app placeholder"
-              >
-                <Chrome />
+      {reduced ? (
+        <div className="page-container hiw-static mt-16">
+          {howItWorks.steps.map((step) => (
+            <article key={step.number} className="hiw-static__row">
+              <div className="hiw-text">
+                <p className="hiw-text__eyebrow">{step.number}</p>
+                <h3 className="hiw-text__heading">{step.heading}</h3>
+                <p className="hiw-text__body">{step.body}</p>
               </div>
-            </motion.div>
-
-            <motion.div
-              className="hiw-text hiw-text--right"
-              style={{ opacity: step1Opacity }}
-            >
-              <p className="hiw-text__eyebrow">{howItWorks.steps[0].number}</p>
-              <h3 className="hiw-text__heading">{howItWorks.steps[0].heading}</h3>
-              <p className="hiw-text__body">{howItWorks.steps[0].body}</p>
-            </motion.div>
-
-            <motion.div
-              className="hiw-text hiw-text--left"
-              style={{ opacity: step2Opacity }}
-            >
-              <p className="hiw-text__eyebrow">{howItWorks.steps[1].number}</p>
-              <h3 className="hiw-text__heading">{howItWorks.steps[1].heading}</h3>
-              <p className="hiw-text__body">{howItWorks.steps[1].body}</p>
-            </motion.div>
-
-            <motion.div
-              className="hiw-text hiw-text--right"
-              style={{ opacity: step3Opacity }}
-            >
-              <p className="hiw-text__eyebrow">{howItWorks.steps[2].number}</p>
-              <h3 className="hiw-text__heading">{howItWorks.steps[2].heading}</h3>
-              <p className="hiw-text__body">{howItWorks.steps[2].body}</p>
-            </motion.div>
-          </div>
+              <WindowFrame />
+            </article>
+          ))}
         </div>
-      </div>
+      ) : (
+        <div ref={sectionRef} className="hiw-track">
+          {/* The single moving window, animated by scrollYProgress.
+              Lives above the rows in the stacking order but does not
+              intercept pointer events. */}
+          <motion.div
+            className="hiw-window-wrap"
+            style={{ top: windowTop, left: windowLeft }}
+            aria-hidden="true"
+          >
+            <WindowFrame />
+          </motion.div>
+
+          {howItWorks.steps.map((step, i) => (
+            <article
+              key={step.number}
+              className={`hiw-row${i === 1 ? " hiw-row--text-left" : " hiw-row--text-right"}`}
+            >
+              <div className="hiw-text">
+                <p className="hiw-text__eyebrow">{step.number}</p>
+                <h3 className="hiw-text__heading">{step.heading}</h3>
+                <p className="hiw-text__body">{step.body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
 
 function Header({
-  heading,
   eyebrow,
+  heading,
   subhead,
 }: {
-  heading: string;
   eyebrow?: string;
+  heading: string;
   subhead?: string;
 }) {
   return (
@@ -148,12 +121,20 @@ function Header({
   );
 }
 
-function Chrome() {
+function WindowFrame() {
   return (
-    <div className="hl-titlebar" aria-hidden="true">
-      <span className="hl-traffic close" />
-      <span className="hl-traffic minimize" />
-      <span className="hl-traffic maximize" />
+    <div
+      className="how-window hero-library-demo how-window--app"
+      data-component="HowItWorksWindow"
+      data-source={DATA_SOURCE}
+      role="img"
+      aria-label="Corder app placeholder"
+    >
+      <div className="hl-titlebar" aria-hidden="true">
+        <span className="hl-traffic close" />
+        <span className="hl-traffic minimize" />
+        <span className="hl-traffic maximize" />
+      </div>
     </div>
   );
 }
