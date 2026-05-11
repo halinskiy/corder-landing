@@ -89,12 +89,16 @@ export function WorksWith() {
 }
 
 function Row({ apps, reverse }: { apps: readonly string[]; reverse: boolean }) {
+  // Two copies + translate -50% is the standard seamless marquee pattern.
+  // Every tile carries its own trailing margin (CSS) so the track width is
+  // an exact multiple of the per-tile cell, and the -50% snap lands on a
+  // copy boundary without a visible jump.
   return (
     <div className="works-with-marquee">
       <div
         className={`works-with-track${reverse ? " works-with-track--reverse" : ""}`}
       >
-        {[...apps, ...apps, ...apps].map((app, i) => (
+        {[...apps, ...apps].map((app, i) => (
           <AppTile key={`${app}-${i}`} name={app} />
         ))}
       </div>
