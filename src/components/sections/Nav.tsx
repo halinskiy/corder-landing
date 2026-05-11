@@ -79,7 +79,7 @@ export function Nav() {
         </nav>
 
         <a
-          href="#download"
+          href="#pricing"
           data-component="NavCta"
           data-source={DATA_SOURCE}
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
@@ -95,7 +95,7 @@ export function Nav() {
 
         {/* Mobile: compact CTA only */}
         <a
-          href="#download"
+          href="#pricing"
           data-component="NavCta"
           data-source={DATA_SOURCE}
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
