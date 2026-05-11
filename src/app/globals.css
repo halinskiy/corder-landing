@@ -1777,11 +1777,13 @@ button:focus:not(:focus-visible) {
 
 .pricing-microcopy {
   margin-top: 32px;
+  margin-inline: auto;
   font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.6;
   color: var(--color-text-subtle);
   max-width: 64ch;
+  text-align: center;
 }
 
 /* ----------------------------------------------------------------------
