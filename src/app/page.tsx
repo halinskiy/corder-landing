@@ -7,6 +7,7 @@ import { Footer } from "@/components/sections/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { How } from "@/components/sections/How";
 import { Nav } from "@/components/sections/Nav";
+import { Newsletter } from "@/components/sections/Newsletter";
 import { Pricing } from "@/components/sections/Pricing";
 
 export default function HomePage() {
@@ -27,6 +28,8 @@ export default function HomePage() {
       <hr className="section-divider" />
       <Faq />
       <FinalCta />
+      <hr className="section-divider" />
+      <Newsletter />
       <hr className="section-divider" />
       <Footer />
     </main>

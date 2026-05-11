@@ -86,7 +86,7 @@ export function Hero() {
             animate="visible"
             variants={variants}
             transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
-            className="mt-[42px] flex items-center justify-center"
+            className="mt-[42px] flex flex-col items-center justify-center gap-3"
             data-component="HeroCtas"
             data-source={DATA_SOURCE}
             data-tokens="radius-pill,color-accent,color-bg,ease-out"
@@ -97,6 +97,14 @@ export function Hero() {
             >
               {hero.ctaPrimary}
             </a>
+            <p
+              className="hero-qualifier"
+              data-component="HeroQualifier"
+              data-source={DATA_SOURCE}
+              data-tokens="body-sm,color-text-muted,font-sans"
+            >
+              {hero.qualifier}
+            </p>
           </motion.div>
         </div>
 
