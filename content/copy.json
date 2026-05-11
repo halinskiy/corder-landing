@@ -278,10 +278,10 @@
     "no": {
       "heading": "Probably not, if you:",
       "items": [
-        "Need team-shared transcripts, dashboards, or workspace permissions.",
-        "Want a polished AI summary, not a transcript. Granola does that better.",
+        "Are on Windows or Linux.",
         "Want live captions while the call is happening.",
-        "Are on Windows or Linux."
+        "Need team-shared transcripts, dashboards, or workspace permissions.",
+        "Compliance won't allow cloud transcription."
       ]
     }
   },
