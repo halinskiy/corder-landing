@@ -1,15 +1,11 @@
 "use client";
 
-import { useState } from "react";
-
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/FinalCta.tsx";
 
 export function FinalCta() {
   const { finalCta } = copy;
-  const [hours, setHours] = useState<number>(finalCta.defaultHours);
-  const cost = (hours * finalCta.ratePerHour).toFixed(2);
 
   return (
     <section
@@ -44,31 +40,6 @@ export function FinalCta() {
           <p className="final-cta-calc__line final-cta-calc__line--us">
             {finalCta.lineUs}
           </p>
-
-          <div className="final-cta-calc__row">
-            <output
-              className="final-cta-calc__hours"
-              aria-live="polite"
-              htmlFor="hours"
-            >
-              ${cost}
-            </output>
-
-            <input
-              type="range"
-              min={finalCta.minHours}
-              max={finalCta.maxHours}
-              step={1}
-              value={hours}
-              onChange={(e) => setHours(Number(e.target.value))}
-              aria-label="Hours of meetings per month"
-              className="final-cta-calc__range"
-            />
-
-            <span className="final-cta-calc__phrase">
-              for {hours} {finalCta.calculatorSuffix}
-            </span>
-          </div>
 
           <div className="final-cta-calc__cta-row">
             <a

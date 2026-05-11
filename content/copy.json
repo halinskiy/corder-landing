@@ -21,7 +21,7 @@
         "href": "#pricing"
       }
     ],
-    "ctaPrimary": "Free Download for macOS"
+    "ctaPrimary": "Download for Mac"
   },
   "hero": {
     "eyebrow": "Mac meeting recorder",
@@ -34,9 +34,9 @@
       "your thinking aloud"
     ],
     "subhead": "Keeps the {{Transcript}} on your Mac. No bot joins the call",
-    "ctaPrimary": "Try For Free",
+    "ctaPrimary": "Download for Mac",
     "ctaSecondary": "How it works",
-    "qualifier": "Free to download"
+    "qualifier": "Free forever. No subscription, no credit card"
   },
   "audienceLine": {
     "text": "For founders taking investor calls, consultants on client kickoffs, and anyone who thinks out loud and needs it written down",
@@ -203,7 +203,7 @@
           "Speaker labels and full-text search",
           "Drag-out to Notion, Obsidian, Apple Notes"
         ],
-        "cta": "Try For Free",
+        "cta": "Download for Mac",
         "ctaStyle": "secondary",
         "highlight": false
       },
@@ -222,7 +222,7 @@
           "Early access to new features",
           "3 months free when you pay annually"
         ],
-        "cta": "Get Pro",
+        "cta": "Download for Mac",
         "ctaStyle": "primary",
         "highlight": true
       },
@@ -240,7 +240,7 @@
           "All Free tier features",
           "3 months free when you pay annually"
         ],
-        "cta": "Try For Free",
+        "cta": "Download for Mac",
         "ctaStyle": "secondary",
         "highlight": false
       }
@@ -467,8 +467,8 @@
     "calculatorPrefix": "For",
     "calculatorSuffix": "hours of meetings a month,",
     "lineGoogle": "you'd pay Google about",
-    "lineUs": "you'd pay us nothing",
-    "cta": "Free Download for macOS",
+    "lineUs": "Free download. About $0.30 per recorded hour goes to Google",
+    "cta": "Download for Mac",
     "ctaHref": "#download",
     "footer": "macOS 14+, Apple Silicon, Bring your own Gemini API key",
     "ratePerHour": 0.3,
@@ -521,5 +521,12 @@
       }
     ],
     "baseline": "© 2026 Corder. Back to top"
+  },
+  "newsletter": {
+    "heading": "Be the first to know",
+    "subhead": "Pro discounts, new feature drops, the occasional release note. No spam",
+    "placeholder": "Your email",
+    "cta": "Subscribe",
+    "successMessage": "Thanks. You'll hear from us when something ships"
   }
 }
