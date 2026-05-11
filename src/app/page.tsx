@@ -9,7 +9,6 @@ import { Nav } from "@/components/sections/Nav";
 import { Newsletter } from "@/components/sections/Newsletter";
 import { Pricing } from "@/components/sections/Pricing";
 import { WorksWith } from "@/components/sections/WorksWith";
-import { WorksWithDock } from "@/components/sections/WorksWithDock";
 
 export default function HomePage() {
   return (
@@ -22,8 +21,6 @@ export default function HomePage() {
       <How />
       <hr className="section-divider" />
       <WorksWith />
-      <hr className="section-divider" />
-      <WorksWithDock />
       <hr className="section-divider" />
       <Features />
       <hr className="section-divider" />

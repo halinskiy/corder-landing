@@ -1,49 +1,35 @@
-"use client";
-
-import type { IconType } from "react-icons";
-import {
-  SiApple,
-  SiDiscord,
-  SiDropbox,
-  SiGoogledrive,
-  SiGooglemeet,
-  SiIcloud,
-  SiLinear,
-  SiNotion,
-  SiObsidian,
-  SiSlack,
-  SiZoom,
-} from "react-icons/si";
-
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/WorksWith.tsx";
 
-type Logo = { icon: IconType | null; color: string };
+// next.config.ts sets basePath="/corder-landing" only in production. Static
+// SVGs under /public must carry that prefix when referenced in markup so they
+// resolve correctly on GitHub Pages. In dev (basePath="") the prefix is empty.
+const ASSET_PREFIX = process.env.NODE_ENV === "production" ? "/corder-landing" : "";
 
-const LOGOS: Record<string, Logo> = {
-  Zoom: { icon: SiZoom, color: "#0B5CFF" },
-  "Google Meet": { icon: SiGooglemeet, color: "#00897B" },
-  "Microsoft Teams": { icon: null, color: "#6264A7" },
-  Discord: { icon: SiDiscord, color: "#5865F2" },
-  "Slack huddle": { icon: SiSlack, color: "#4A154B" },
-  Notion: { icon: SiNotion, color: "#000000" },
-  Obsidian: { icon: SiObsidian, color: "#7C3AED" },
-  "Apple Notes": { icon: SiApple, color: "#000000" },
-  Bear: { icon: null, color: "#D8442C" },
-  Linear: { icon: SiLinear, color: "#5E6AD2" },
-  Dropbox: { icon: SiDropbox, color: "#0061FF" },
-  "iCloud Drive": { icon: SiIcloud, color: "#3693F3" },
-  "Google Drive": { icon: SiGoogledrive, color: "#1FA463" },
+const LOGO_FILE: Record<string, string> = {
+  Zoom: "zoom.svg",
+  "Google Meet": "google-meet.svg",
+  "Microsoft Teams": "microsoft-teams.svg",
+  Discord: "discord.svg",
+  "Slack huddle": "slack.svg",
+  Notion: "notion.svg",
+  Obsidian: "obsidian.svg",
+  "Apple Notes": "apple-notes.svg",
+  Bear: "bear.svg",
+  Linear: "linear.svg",
+  Dropbox: "dropbox.svg",
+  "iCloud Drive": "icloud.svg",
+  "Google Drive": "google-drive.svg",
 };
 
 /**
- * WorksWith — section 4.5
+ * WorksWith — three marquee rows of brand pills, no cluster labels.
  *
- * Plain compatibility strip: three cluster rows (Call / Note / Store)
- * with colour brand pills marquee'd horizontally at a readable pace.
- * No window chrome, no app dropdown framing. The Teams bot-block fact
- * sits in the footnote so cluster rows stay clean.
+ * Rows 1 and 3 scroll left to right; row 2 scrolls in the opposite
+ * direction so the strip reads as motion in both directions, similar
+ * to the Granola / Cursor "wall of integrations" pattern. Hover on a
+ * row pauses its track so the user can read what they hovered.
  */
 export function WorksWith() {
   const { worksWith } = copy;
@@ -89,8 +75,8 @@ export function WorksWith() {
         </div>
 
         <div className="works-with-rows mt-12 md:mt-16">
-          {worksWith.clusters.map((cluster) => (
-            <ClusterRow key={cluster.label} cluster={cluster} />
+          {worksWith.clusters.map((cluster, idx) => (
+            <Row key={cluster.label} apps={cluster.apps} reverse={idx === 1} />
           ))}
         </div>
 
@@ -102,84 +88,35 @@ export function WorksWith() {
   );
 }
 
-function ClusterRow({
-  cluster,
-}: {
-  cluster: (typeof copy.worksWith.clusters)[number];
-}) {
+function Row({ apps, reverse }: { apps: readonly string[]; reverse: boolean }) {
   return (
-    <div className="works-with-row">
-      <span className="works-with-row__label">{cluster.label}</span>
-      <div className="works-with-marquee" aria-hidden="true">
-        <div className="works-with-track">
-          {[...cluster.apps, ...cluster.apps, ...cluster.apps].map((app, i) => (
-            <AppTile key={`${app}-${i}`} name={app} />
-          ))}
-        </div>
+    <div className="works-with-marquee">
+      <div
+        className={`works-with-track${reverse ? " works-with-track--reverse" : ""}`}
+      >
+        {[...apps, ...apps, ...apps].map((app, i) => (
+          <AppTile key={`${app}-${i}`} name={app} />
+        ))}
       </div>
     </div>
   );
 }
 
 function AppTile({ name }: { name: string }) {
-  const logo = LOGOS[name];
-  const Icon = logo?.icon;
+  const file = LOGO_FILE[name];
   return (
     <div className="works-with-tile">
-      <span
-        className="works-with-tile__logo"
-        style={{ color: logo?.color ?? "var(--color-text)" }}
-      >
-        {Icon ? <Icon /> : <CustomLogo name={name} />}
-      </span>
+      {file && (
+        <img
+          src={`${ASSET_PREFIX}/logos/${file}`}
+          alt=""
+          width={22}
+          height={22}
+          className="works-with-tile__logo"
+          loading="lazy"
+        />
+      )}
       <span className="works-with-tile__name">{name}</span>
     </div>
-  );
-}
-
-function CustomLogo({ name }: { name: string }) {
-  if (name === "Microsoft Teams") return <TeamsMark />;
-  if (name === "Bear") return <BearMark />;
-  return <GenericMark name={name} />;
-}
-
-function TeamsMark() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M20.5 8.5h-4V6h4a1.5 1.5 0 0 0 0-3 1.5 1.5 0 0 0-1.5 1.5h-3A4.5 4.5 0 0 1 20.5 0a4.5 4.5 0 0 1 0 9 4.4 4.4 0 0 1-1.5-.3v.3a1.5 1.5 0 0 0 1.5 1.5zm-9 11A1.5 1.5 0 0 1 10 18V8H4v10a1.5 1.5 0 0 0 1.5 1.5h6zM14 7H1.5A1.5 1.5 0 0 0 0 8.5v10A1.5 1.5 0 0 0 1.5 20H14a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 14 7zm-2.5 4.5H9V17H6.5v-5.5H4V10h7.5z"
-      />
-    </svg>
-  );
-}
-
-function BearMark() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M5 3a3 3 0 0 1 3 3 3 3 0 0 1-.3 1.3A8 8 0 0 1 12 6a8 8 0 0 1 4.3 1.3A3 3 0 0 1 16 6a3 3 0 1 1 5.7 1.3A8 8 0 0 1 22 11a8 8 0 0 1-3 6.2V19a2 2 0 0 1-2 2h-1.5a2 2 0 0 1-2-2v-.5h-3V19a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-1.8A8 8 0 0 1 2 11a8 8 0 0 1 .3-3.7A3 3 0 0 1 2 6a3 3 0 0 1 3-3zm4 9.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"
-      />
-    </svg>
-  );
-}
-
-function GenericMark({ name }: { name: string }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor" opacity="0.18" />
-      <text
-        x="12"
-        y="16"
-        textAnchor="middle"
-        fontFamily="var(--font-sans)"
-        fontWeight={600}
-        fontSize="11"
-        fill="currentColor"
-      >
-        {name.slice(0, 2).toUpperCase()}
-      </text>
-    </svg>
   );
 }
