@@ -413,8 +413,10 @@ button:focus:not(:focus-visible) {
 @media (min-width: 1024px) {
   .how-sticky {
     position: sticky;
-    top: 96px;
-    display: block;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
   }
 }
 
