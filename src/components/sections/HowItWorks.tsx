@@ -45,12 +45,12 @@ export function HowItWorks() {
     offset: ["start start", "end end"],
   });
 
-  // Stepped numeric targets in vh and %. Row centres at 40, 120, 200vh
-  // (rows are 80vh tall, section total 240vh).
+  // Stepped numeric targets in vh and %. Row centres at 35, 105, 175vh
+  // (rows are 70vh tall, section total 210vh).
   const targetTop = useTransform(
     scrollYProgress,
     [0, 0.34, 0.36, 0.64, 0.66, 1],
-    [40, 40, 120, 120, 200, 200],
+    [35, 35, 105, 105, 175, 175],
   );
   const targetLeft = useTransform(
     scrollYProgress,
@@ -102,7 +102,6 @@ export function HowItWorks() {
           {howItWorks.steps.map((step) => (
             <article key={step.number} className="hiw-static__row">
               <div className="hiw-text">
-                <p className="hiw-text__eyebrow">{step.number}</p>
                 <h3 className="hiw-text__heading">{step.heading}</h3>
                 <p className="hiw-text__body">{step.body}</p>
               </div>
@@ -134,7 +133,6 @@ export function HowItWorks() {
               }`}
             >
               <div className="hiw-text">
-                <p className="hiw-text__eyebrow">{step.number}</p>
                 <h3 className="hiw-text__heading">{step.heading}</h3>
                 <p className="hiw-text__body">{step.body}</p>
               </div>
@@ -163,7 +161,7 @@ function Ghost() {
           height="726"
           rx="14"
           fill="none"
-          stroke="rgba(10, 10, 10, 0.22)"
+          stroke="rgba(10, 10, 10, 0.12)"
           strokeWidth="3"
           strokeDasharray="18 12"
           vectorEffect="non-scaling-stroke"
