@@ -47,6 +47,11 @@ export const metadata: Metadata = {
 // before any React work so AudienceLine words never flash in their initial state.
 const MOTION_BOOTSTRAP_SCRIPT = `(function(){try{var s=new URLSearchParams(location.search).get('motion')==='0';var r=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(s||r){document.documentElement.dataset.motion='off';}}catch(e){}})();`;
 
+// Microsoft Clarity — heatmaps + session recordings. Project ID "wphp8abt99".
+// Injected as a static <script> in <head> so it survives `output: "export"`
+// (Next.js next/script doesn't fit static exports cleanly).
+const CLARITY_SCRIPT = `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "wphp8abt99");`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -58,6 +63,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP_SCRIPT }}
+        />
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: CLARITY_SCRIPT }}
         />
       </head>
       <body>
