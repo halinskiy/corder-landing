@@ -348,8 +348,7 @@
       "Fireflies",
       "Fathom",
       "tl;dv",
-      "Read.ai",
-      "MacWhisper"
+      "Read.ai"
     ],
     "rows": [
       {
@@ -362,8 +361,7 @@
           "—",
           "No",
           "—",
-          "No",
-          "Yes"
+          "No"
         ],
         "highlight": [
           true,
@@ -373,8 +371,7 @@
           false,
           false,
           false,
-          false,
-          true
+          false
         ]
       },
       {
@@ -387,8 +384,7 @@
           "No",
           "No",
           "No",
-          "No",
-          "Yes"
+          "No"
         ],
         "highlight": [
           true,
@@ -398,8 +394,7 @@
           false,
           false,
           false,
-          false,
-          true
+          false
         ]
       },
       {
@@ -412,8 +407,7 @@
           "No",
           "No",
           "No",
-          "No",
-          "Yes"
+          "No"
         ],
         "highlight": [
           true,
@@ -423,8 +417,7 @@
           false,
           false,
           false,
-          false,
-          true
+          false
         ]
       },
       {
@@ -437,11 +430,9 @@
           "Yes",
           "Yes",
           "Yes",
-          "Yes",
-          "—"
+          "Yes"
         ],
         "highlight": [
-          false,
           false,
           false,
           false,
@@ -462,12 +453,10 @@
           "Yes",
           "Yes",
           "Yes",
-          "Yes",
           "Yes"
         ],
         "highlight": [
           true,
-          false,
           false,
           false,
           false,
@@ -487,12 +476,10 @@
           "No",
           "No",
           "No",
-          "No",
           "No"
         ],
         "highlight": [
           true,
-          false,
           false,
           false,
           false,
@@ -512,8 +499,7 @@
           "No",
           "No",
           "No",
-          "No",
-          "Yes"
+          "No"
         ],
         "highlight": [
           true,
@@ -523,8 +509,7 @@
           false,
           false,
           false,
-          false,
-          true
+          false
         ]
       }
     ]
