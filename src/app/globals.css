@@ -2031,6 +2031,11 @@ button:focus:not(:focus-visible) {
 .final-cta-calc__line--us {
   color: var(--color-text-muted);
   font-style: italic;
+  margin-top: -16px;
+}
+
+@media (min-width: 768px) {
+  .final-cta-calc__line--us { margin-top: -24px; }
 }
 
 .final-cta-calc__cost {

@@ -41,6 +41,10 @@ export function FinalCta() {
             {finalCta.preheading}
           </p>
 
+          <p className="final-cta-calc__line final-cta-calc__line--us">
+            {finalCta.lineUs}
+          </p>
+
           <div className="final-cta-calc__row">
             <output
               className="final-cta-calc__hours"
@@ -65,10 +69,6 @@ export function FinalCta() {
               for {hours} {finalCta.calculatorSuffix}
             </span>
           </div>
-
-          <p className="final-cta-calc__line final-cta-calc__line--us">
-            {finalCta.lineUs}
-          </p>
 
           <div className="final-cta-calc__cta-row">
             <a
