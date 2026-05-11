@@ -267,28 +267,20 @@
     "heading": "Is Corder for you?",
     "subhead": "Two cards. Read the one that sounds like you.",
     "yes": {
-      "tag": "Right fit",
       "heading": "Yes, if you:",
-      "body": "Corder is built for people who record their own conversations and want the file kept on their Mac, not on a vendor's server.",
       "items": [
         "Record customer calls, design reviews, or your own thoughts out loud.",
         "Don't want a third-party bot named 'Notetaker' joining your meeting.",
-        "Speak Russian, or switch between Russian and English in the same call.",
-        "Want to keep the audio after the call, not just the transcript.",
-        "Already pay for too many SaaS subscriptions.",
-        "Use a Mac on macOS 14 or later."
+        "Want to keep the audio after the call, not just the transcript."
       ]
     },
     "no": {
-      "tag": "Maybe not yet",
       "heading": "Probably not, if you:",
-      "body": "Corder is a single-user macOS tool. It does not try to be a team workspace, a live captioning service, or an AI summary product.",
       "items": [
         "Need team-shared transcripts, dashboards, or workspace permissions.",
         "Want a polished AI summary, not a transcript. Granola does that better.",
-        "Want live captions while the call is happening. Corder transcribes after Stop, in about 30 seconds.",
-        "Are on Windows or Linux.",
-        "Record once a year. You don't need a tool for this."
+        "Want live captions while the call is happening.",
+        "Are on Windows or Linux."
       ]
     }
   },

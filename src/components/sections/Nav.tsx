@@ -29,7 +29,7 @@ export function Nav() {
       className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4"
     >
       <div
-        className="nav-pill flex items-center gap-2 rounded-full pl-4 pr-2"
+        className="nav-pill flex w-full items-center justify-between gap-2 rounded-full pl-4 pr-2 md:w-auto md:justify-start"
         style={{
           height: "56px",
           backgroundColor: scrolled

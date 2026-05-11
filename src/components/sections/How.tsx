@@ -130,34 +130,8 @@ function HowWindow({ activeStep }: { activeStep: StepNumber }) {
       data-tokens="hl-bg,hl-border-strong,radius-window,ease-out"
       data-active-step={activeStep}
       role="img"
-      aria-label="Corder app demonstrating the current pillar"
-    >
-      <div className="hl-titlebar" aria-hidden="true">
-        <span className="hl-traffic close" />
-        <span className="hl-traffic minimize" />
-        <span className="hl-traffic maximize" />
-      </div>
-
-      {/* Step 01 — Library window: sidebar + main pane (no bot, just Mac UI) */}
-      <div className="how-step-pane" data-step="01">
-        <NoBotPanel />
-      </div>
-
-      {/* Step 02 — Transcript pane + RightPanel (dual-track quality) */}
-      <div className="how-step-pane" data-step="02">
-        <TranscriptDualTrackPanel />
-      </div>
-
-      {/* Step 03 — SpeakersClarifyBanner above transcript (free re-transcribe) */}
-      <div className="how-step-pane" data-step="03">
-        <ClarifyPanel />
-      </div>
-
-      {/* Step 04 — Menu-bar popover + cost-math (BYO Gemini, no subscription) */}
-      <div className="how-step-pane" data-step="04">
-        <ByokPanel />
-      </div>
-    </div>
+      aria-label="Placeholder for the How it works live demo"
+    />
   );
 }
 

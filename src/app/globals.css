@@ -406,12 +406,14 @@ button:focus:not(:focus-visible) {
 .how-sticky {
   position: relative;
   width: 100%;
+  display: none;
 }
 
 @media (min-width: 1024px) {
   .how-sticky {
     position: sticky;
     top: 96px;
+    display: block;
   }
 }
 
@@ -421,7 +423,7 @@ button:focus:not(:focus-visible) {
    `.how-window--app` overrides only the layout box: aspect ratio, fixed
    height, and the cross-fade machinery. */
 .how-window--app {
-  aspect-ratio: 1180 / 760;
+  aspect-ratio: 1180 / 920;
   margin: 0;
   max-width: 100%;
   position: relative;
@@ -1789,10 +1791,14 @@ button:focus:not(:focus-visible) {
 /* ----------------------------------------------------------------------
  *  Section — Fit
  *
- *  Reuses .privacy-card frame end-to-end. The only delta is a single-column
- *  spec-row variant: each fit item is one hairline-separated line of text,
- *  no key/value split.
+ *  Reuses .privacy-card frame end-to-end. Each row is one hairline-separated
+ *  line preceded by a small leading glyph (filled accent check for the yes
+ *  card, neutral minus for the no card).
  * ---------------------------------------------------------------------- */
+
+.privacy-card__heading--top {
+  margin-top: 0;
+}
 
 .privacy-card__spec--single {
   list-style: none;
@@ -1800,14 +1806,36 @@ button:focus:not(:focus-visible) {
 }
 
 .privacy-card__spec-row--single {
-  grid-template-columns: 1fr;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
   padding-block: 16px;
+  align-items: center;
 }
 
 .privacy-card__spec-row--single .privacy-card__spec-value {
   font-size: var(--text-body);
   line-height: 1.55;
   color: var(--color-text);
+}
+
+.fit-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.fit-glyph--check {
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.fit-glyph--minus {
+  background: var(--color-border);
+  color: var(--color-text-muted);
 }
 
 /* ----------------------------------------------------------------------
