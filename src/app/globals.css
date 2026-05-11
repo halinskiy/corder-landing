@@ -2059,68 +2059,46 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
- *  HowItWorks — pinned-scroll flow above Fit.
+ *  HowItWorks — three real 100vh rows with a single shared window block
+ *  that travels diagonally across the section as the user scrolls.
  *
- *  Outer .hiw-track is 300vh tall and drives a scrollYProgress signal.
- *  Inside, .hiw-pin sticks at top:0 and holds a 100vh stage with one
- *  animated window block and three step copy panels in their final
- *  left/right slots. Window's `left` is set inline by Framer Motion.
+ *  .hiw-track is the containing block (position: relative). Each row is
+ *  a 100vh slab with text anchored to either side. The window is
+ *  absolutely positioned inside the track; Framer Motion sets its top
+ *  (linear scroll-tracking) and left (triangle wave 0% → 52% → 0%).
  * ---------------------------------------------------------------------- */
-
-.hiw {
-  position: relative;
-  width: 100%;
-}
 
 .hiw-track {
   position: relative;
-  height: 300vh;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 24px;
+  margin-top: 24px;
 }
 
-.hiw-pin {
-  position: sticky;
-  top: 0;
+.hiw-row {
+  position: relative;
+  z-index: 2;
   height: 100vh;
   display: flex;
   align-items: center;
 }
 
-.hiw-stage {
-  position: relative;
-  width: 100%;
-  max-width: 1280px;
-  margin-inline: auto;
-  padding-inline: 24px;
-  height: min(82vh, 720px);
+.hiw-row--text-right .hiw-text {
+  margin-left: auto;
+  width: 44%;
 }
 
-.hiw-window-wrap {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 48%;
-  transform: translateY(-50%);
-  z-index: 1;
-}
-
-.hiw-window-wrap .how-window--app {
-  width: 100%;
-  height: auto;
+.hiw-row--text-left .hiw-text {
+  margin-right: auto;
+  width: 44%;
 }
 
 .hiw-text {
-  position: absolute;
-  top: 50%;
-  width: 44%;
-  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 16px;
-  z-index: 2;
 }
-
-.hiw-text--left { left: 0; }
-.hiw-text--right { right: 0; }
 
 .hiw-text__eyebrow {
   font-family: var(--font-serif);
@@ -2151,37 +2129,51 @@ button:focus:not(:focus-visible) {
   max-width: 46ch;
 }
 
-/* Mobile fallback — stack on narrow viewports: keep the sticky structure
-   but reflow to single column and let the texts stack vertically. */
+.hiw-window-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 48%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hiw-window-wrap .how-window--app {
+  width: 100%;
+  height: auto;
+}
+
+/* Mobile: drop the diagonal-scroll choreography. Each step becomes a
+   normal 1-column row with the window stacked above the text. */
 @media (max-width: 767px) {
-  .hiw-track { height: auto; }
-  .hiw-pin {
-    position: relative;
-    top: auto;
-    height: auto;
-    padding-block: 32px;
+  .hiw-track {
+    padding-inline: 0;
   }
-  .hiw-stage {
+  .hiw-row {
     height: auto;
-    display: flex;
+    padding-block: 56px;
     flex-direction: column;
-    gap: 32px;
+    align-items: stretch;
+    gap: 24px;
+  }
+  .hiw-row--text-right .hiw-text,
+  .hiw-row--text-left .hiw-text {
+    width: 100%;
+    margin: 0;
   }
   .hiw-window-wrap {
     position: relative;
-    top: auto;
+    top: auto !important;
     left: auto !important;
     width: 100%;
-    transform: none;
   }
-  .hiw-text {
-    position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    width: 100%;
-    transform: none;
-    opacity: 1 !important;
+  /* Only one window block needs to render on mobile; hide the
+     animated one (it has aria-hidden), the static fallback covers
+     desktop reduced-motion users. */
+  .hiw-track > .hiw-window-wrap { display: none; }
+  .hiw-row .hiw-text::after {
+    content: "";
   }
 }
 
@@ -2200,12 +2192,13 @@ button:focus:not(:focus-visible) {
 }
 
 @media (min-width: 768px) {
-  .hiw-static__row { grid-template-columns: 1fr 1fr; gap: 48px; }
-  .hiw-static__row:nth-child(even) .hiw-static__text { order: 2; }
-}
-
-.hiw-static__window {
-  width: 100%;
+  .hiw-static__row {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  .hiw-static__row:nth-child(even) .hiw-text {
+    order: 2;
+  }
 }
 
 /* ----------------------------------------------------------------------
