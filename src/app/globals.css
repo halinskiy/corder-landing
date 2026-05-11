@@ -2080,7 +2080,7 @@ button:focus:not(:focus-visible) {
 
 .works-with-track {
   display: flex;
-  gap: 12px;
+  gap: 0;
   width: max-content;
   animation: works-with-scroll 80s linear infinite;
 }
@@ -2095,7 +2095,7 @@ button:focus:not(:focus-visible) {
 
 @keyframes works-with-scroll {
   from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-33.3333%, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2109,6 +2109,7 @@ button:focus:not(:focus-visible) {
   gap: 10px;
   height: 48px;
   padding: 0 18px;
+  margin-right: 12px;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: var(--color-bg);
