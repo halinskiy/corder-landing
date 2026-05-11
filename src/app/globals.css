@@ -2059,6 +2059,196 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
+ *  WorksWith — Corder fits into the stack the buyer already runs.
+ *
+ *  Shell is the .hl-* hero-library-demo window (titlebar + chrome). Body
+ *  holds three cluster rows; each row is a horizontal marquee of brand
+ *  tiles that pauses on hover. The whole thing reads as a Corder menu-bar
+ *  dropdown showing the apps it talks to.
+ * ---------------------------------------------------------------------- */
+
+.works-with-shell {
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+.works-with-window {
+  position: relative;
+  border-radius: var(--radius-window);
+  background: var(--hl-bg);
+  border: 1px solid var(--hl-border);
+  overflow: hidden;
+  padding-top: 36px;
+}
+
+.works-with-window .hl-titlebar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 36px;
+}
+
+.works-with-titlebar__name {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--hl-fg-muted);
+  letter-spacing: 0.02em;
+}
+
+.works-with-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.works-with-cluster {
+  border-top: 1px solid var(--hl-border);
+  padding: 20px 0 24px;
+}
+
+.works-with-cluster:first-child {
+  border-top: 0;
+}
+
+.works-with-cluster__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 16px;
+  padding: 0 24px 14px;
+}
+
+.works-with-cluster__label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.works-with-cluster__note {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--hl-fg-muted);
+  max-width: 64ch;
+}
+
+.works-with-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+
+.works-with-track {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  padding-inline: 24px;
+  animation: works-with-scroll 60s linear infinite;
+}
+
+.works-with-cluster:hover .works-with-track {
+  animation-play-state: paused;
+}
+
+@keyframes works-with-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-33.3333%, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .works-with-track { animation: none; }
+}
+
+.works-with-tile {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--hl-border);
+  border-radius: 999px;
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.works-with-tile:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.works-with-tile__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: var(--color-text);
+}
+
+.works-with-tile__logo svg {
+  width: 22px;
+  height: 22px;
+}
+
+.works-with-tile__name {
+  white-space: nowrap;
+}
+
+.works-with-catchall {
+  margin: 4px 24px 24px;
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 18px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.works-with-catchall__plus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.works-with-footnote {
+  margin: 16px auto 0;
+  max-width: 64ch;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+/* ----------------------------------------------------------------------
  *  Hero qualifier — micro-line under the primary CTA
  * ---------------------------------------------------------------------- */
 
