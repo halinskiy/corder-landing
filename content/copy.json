@@ -378,6 +378,31 @@
         ]
       },
       {
+        "feature": "No subscription",
+        "values": [
+          "Yes",
+          "No",
+          "No",
+          "No",
+          "No",
+          "No",
+          "No",
+          "No",
+          "Yes"
+        ],
+        "highlight": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
         "feature": "Native Swift macOS app",
         "values": [
           "Yes",
@@ -479,81 +504,6 @@
       },
       {
         "feature": "Re-transcribe at zero extra cost",
-        "values": [
-          "Yes",
-          "No",
-          "No",
-          "No",
-          "No",
-          "No",
-          "No",
-          "No",
-          "Yes"
-        ],
-        "highlight": [
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          true
-        ]
-      },
-      {
-        "feature": "No subscription",
-        "values": [
-          "Yes",
-          "No",
-          "No",
-          "No",
-          "No",
-          "No",
-          "No",
-          "No",
-          "Yes"
-        ],
-        "highlight": [
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          true
-        ]
-      },
-      {
-        "feature": "Russian language quality",
-        "values": [
-          "Yes",
-          "Yes",
-          "No",
-          "—",
-          "Yes",
-          "—",
-          "Yes",
-          "—",
-          "Yes"
-        ],
-        "highlight": [
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ]
-      },
-      {
-        "feature": "Local-first storage (audio + DB)",
         "values": [
           "Yes",
           "No",
