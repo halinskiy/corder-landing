@@ -48,9 +48,15 @@ export function Nav() {
         <a
           href="#top"
           aria-label="Corder, home"
-          className="inline-flex items-center"
+          className="inline-flex items-center gap-2"
         >
           <CorderMark />
+          <span
+            className="font-serif text-[18px] font-medium md:hidden"
+            style={{ color: "var(--color-text)", letterSpacing: "-0.01em" }}
+          >
+            Corder
+          </span>
         </a>
 
         <span
@@ -93,14 +99,14 @@ export function Nav() {
           data-component="NavCta"
           data-source={DATA_SOURCE}
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
-          className="nav-cta ml-2 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[15px] font-medium md:hidden"
+          className="nav-cta ml-2 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-medium md:hidden"
           style={{
             border: "1px solid var(--color-accent)",
             color: "var(--color-bg)",
             backgroundColor: "var(--color-accent)",
           }}
         >
-          Download
+          Download for macOS
         </a>
       </div>
     </header>
