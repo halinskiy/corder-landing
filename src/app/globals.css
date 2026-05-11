@@ -2172,12 +2172,25 @@ button:focus:not(:focus-visible) {
   transform: translateY(-50%);
   z-index: 5;
   pointer-events: none;
+  transform-style: preserve-3d;
 }
 
 .hiw-window-inner {
   width: 100%;
   border-radius: var(--radius-window);
   will-change: transform, filter;
+  transform-style: preserve-3d;
+}
+
+/* Tilt layer: pointer-driven rotateX/rotateY mirror of the hero demo.
+   Sits inside the Framer-controlled wraps; receives pointer events even
+   though .hiw-window-wrap is pointer-events: none. The perspective is
+   carried inside the JS-set transform value (perspective(1600px) ...). */
+.hiw-window-tilt {
+  width: 100%;
+  pointer-events: auto;
+  will-change: transform;
+  transform-style: preserve-3d;
 }
 
 .hiw-window-wrap .how-window--app {
