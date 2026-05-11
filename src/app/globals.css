@@ -2120,21 +2120,6 @@ button:focus:not(:focus-visible) {
   overflow: visible;
 }
 
-.hiw-ghost__chrome {
-  position: absolute;
-  top: 14px;
-  left: 18px;
-  display: flex;
-  gap: 8px;
-}
-
-.hiw-ghost__dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(10, 10, 10, 0.12);
-}
-
 .hiw-text__eyebrow {
   font-family: var(--font-serif);
   font-weight: 500;
