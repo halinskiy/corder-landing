@@ -2059,6 +2059,156 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
+ *  HowItWorks — pinned-scroll flow above Fit.
+ *
+ *  Outer .hiw-track is 300vh tall and drives a scrollYProgress signal.
+ *  Inside, .hiw-pin sticks at top:0 and holds a 100vh stage with one
+ *  animated window block and three step copy panels in their final
+ *  left/right slots. Window's `left` is set inline by Framer Motion.
+ * ---------------------------------------------------------------------- */
+
+.hiw {
+  position: relative;
+  width: 100%;
+}
+
+.hiw-track {
+  position: relative;
+  height: 300vh;
+}
+
+.hiw-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.hiw-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 24px;
+  height: min(82vh, 720px);
+}
+
+.hiw-window-wrap {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 48%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.hiw-window-wrap .how-window--app {
+  width: 100%;
+  height: auto;
+}
+
+.hiw-text {
+  position: absolute;
+  top: 50%;
+  width: 44%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 2;
+}
+
+.hiw-text--left { left: 0; }
+.hiw-text--right { right: 0; }
+
+.hiw-text__eyebrow {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(56px, 6vw, 96px);
+  line-height: 0.9;
+  letter-spacing: -0.025em;
+  color: var(--color-accent);
+  margin: 0;
+}
+
+.hiw-text__heading {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.hiw-text__body {
+  font-family: var(--font-sans);
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 46ch;
+}
+
+/* Mobile fallback — stack on narrow viewports: keep the sticky structure
+   but reflow to single column and let the texts stack vertically. */
+@media (max-width: 767px) {
+  .hiw-track { height: auto; }
+  .hiw-pin {
+    position: relative;
+    top: auto;
+    height: auto;
+    padding-block: 32px;
+  }
+  .hiw-stage {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .hiw-window-wrap {
+    position: relative;
+    top: auto;
+    left: auto !important;
+    width: 100%;
+    transform: none;
+  }
+  .hiw-text {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    transform: none;
+    opacity: 1 !important;
+  }
+}
+
+/* Reduced-motion fallback layout */
+.hiw-static {
+  display: flex;
+  flex-direction: column;
+  gap: 96px;
+}
+
+.hiw-static__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .hiw-static__row { grid-template-columns: 1fr 1fr; gap: 48px; }
+  .hiw-static__row:nth-child(even) .hiw-static__text { order: 2; }
+}
+
+.hiw-static__window {
+  width: 100%;
+}
+
+/* ----------------------------------------------------------------------
  *  WorksWith — three labelled rows of brand pills, each row marquee'd.
  *  No window chrome, no titlebar. Logos render in their brand colour
  *  via inline style on .works-with-tile__logo. Rows pause on hover.
@@ -2108,8 +2258,8 @@ button:focus:not(:focus-visible) {
   align-items: center;
   gap: 10px;
   height: 48px;
-  padding: 0 18px;
-  margin-right: 12px;
+  padding: 0 16px;
+  margin-right: 6px;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: var(--color-bg);
