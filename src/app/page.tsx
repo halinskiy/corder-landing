@@ -2,7 +2,6 @@ import { Comparison } from "@/components/sections/Comparison";
 import { Fit } from "@/components/sections/Fit";
 import { Faq } from "@/components/sections/Faq";
 import { Features } from "@/components/sections/Features";
-import { FinalCta } from "@/components/sections/FinalCta";
 import { Footer } from "@/components/sections/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { How } from "@/components/sections/How";
@@ -30,7 +29,6 @@ export default function HomePage() {
       <Pricing />
       <hr className="section-divider" />
       <Faq />
-      <FinalCta />
       <hr className="section-divider" />
       <Newsletter />
       <hr className="section-divider" />

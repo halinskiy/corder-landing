@@ -19,27 +19,31 @@ import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/WorksWith.tsx";
 
-const LOGO_BY_NAME: Record<string, IconType> = {
-  Zoom: SiZoom,
-  "Google Meet": SiGooglemeet,
-  Discord: SiDiscord,
-  "Slack huddle": SiSlack,
-  Notion: SiNotion,
-  Obsidian: SiObsidian,
-  "Apple Notes": SiApple,
-  Linear: SiLinear,
-  Dropbox: SiDropbox,
-  "iCloud Drive": SiIcloud,
-  "Google Drive": SiGoogledrive,
+type Logo = { icon: IconType | null; color: string };
+
+const LOGOS: Record<string, Logo> = {
+  Zoom: { icon: SiZoom, color: "#0B5CFF" },
+  "Google Meet": { icon: SiGooglemeet, color: "#00897B" },
+  "Microsoft Teams": { icon: null, color: "#6264A7" },
+  Discord: { icon: SiDiscord, color: "#5865F2" },
+  "Slack huddle": { icon: SiSlack, color: "#4A154B" },
+  Notion: { icon: SiNotion, color: "#000000" },
+  Obsidian: { icon: SiObsidian, color: "#7C3AED" },
+  "Apple Notes": { icon: SiApple, color: "#000000" },
+  Bear: { icon: null, color: "#D8442C" },
+  Linear: { icon: SiLinear, color: "#5E6AD2" },
+  Dropbox: { icon: SiDropbox, color: "#0061FF" },
+  "iCloud Drive": { icon: SiIcloud, color: "#3693F3" },
+  "Google Drive": { icon: SiGoogledrive, color: "#1FA463" },
 };
 
 /**
  * WorksWith — section 4.5
  *
- * Visual treatment: the whole block sits inside a Corder-app "window"
- * (titlebar + dropdown shell, reusing the `.hl-*` token base). Inside
- * are three cluster rows (Call / Note / Store) with horizontally
- * marquee'd logo tiles. Slow, readable loop, hover-to-pause.
+ * Plain compatibility strip: three cluster rows (Call / Note / Store)
+ * with colour brand pills marquee'd horizontally at a readable pace.
+ * No window chrome, no app dropdown framing. The Teams bot-block fact
+ * sits in the footnote so cluster rows stay clean.
  */
 export function WorksWith() {
   const { worksWith } = copy;
@@ -49,7 +53,7 @@ export function WorksWith() {
       id="works-with"
       data-component="WorksWith"
       data-source={DATA_SOURCE}
-      data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,font-serif"
+      data-tokens="color-text,color-text-muted,color-border,color-accent,font-serif"
       className="relative w-full"
     >
       <div className="page-container py-24 md:py-32">
@@ -84,40 +88,15 @@ export function WorksWith() {
           </div>
         </div>
 
-        <div className="works-with-shell mt-12 md:mt-16">
-          <div
-            className="hero-library-demo works-with-window"
-            data-component="WorksWithWindow"
-            data-source={DATA_SOURCE}
-            data-tokens="hl-bg,hl-border,radius-window"
-            role="img"
-            aria-label="Corder fits into a familiar Mac stack"
-          >
-            <div className="hl-titlebar" aria-hidden="true">
-              <span className="hl-traffic close" />
-              <span className="hl-traffic minimize" />
-              <span className="hl-traffic maximize" />
-              <span className="works-with-titlebar__name">Corder</span>
-            </div>
-
-            <div className="works-with-body">
-              {worksWith.clusters.map((cluster) => (
-                <ClusterRow key={cluster.label} cluster={cluster} />
-              ))}
-
-              <div className="works-with-catchall" aria-hidden="true">
-                <span className="works-with-catchall__plus">+</span>
-                <span className="works-with-catchall__label">
-                  {worksWith.catchallTile}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {worksWith.footnote && (
-            <p className="works-with-footnote">{worksWith.footnote}</p>
-          )}
+        <div className="works-with-rows mt-12 md:mt-16">
+          {worksWith.clusters.map((cluster) => (
+            <ClusterRow key={cluster.label} cluster={cluster} />
+          ))}
         </div>
+
+        {worksWith.footnote && (
+          <p className="works-with-footnote">{worksWith.footnote}</p>
+        )}
       </div>
     </section>
   );
@@ -128,18 +107,12 @@ function ClusterRow({
 }: {
   cluster: (typeof copy.worksWith.clusters)[number];
 }) {
-  const apps = cluster.apps;
   return (
-    <div className="works-with-cluster" data-cluster={cluster.label.toLowerCase()}>
-      <div className="works-with-cluster__head">
-        <span className="works-with-cluster__label">{cluster.label}</span>
-        {cluster.note && (
-          <span className="works-with-cluster__note">{cluster.note}</span>
-        )}
-      </div>
+    <div className="works-with-row">
+      <span className="works-with-row__label">{cluster.label}</span>
       <div className="works-with-marquee" aria-hidden="true">
         <div className="works-with-track">
-          {[...apps, ...apps, ...apps].map((app, i) => (
+          {[...cluster.apps, ...cluster.apps, ...cluster.apps].map((app, i) => (
             <AppTile key={`${app}-${i}`} name={app} />
           ))}
         </div>
@@ -149,10 +122,14 @@ function ClusterRow({
 }
 
 function AppTile({ name }: { name: string }) {
-  const Icon = LOGO_BY_NAME[name];
+  const logo = LOGOS[name];
+  const Icon = logo?.icon;
   return (
     <div className="works-with-tile">
-      <span className="works-with-tile__logo">
+      <span
+        className="works-with-tile__logo"
+        style={{ color: logo?.color ?? "var(--color-text)" }}
+      >
         {Icon ? <Icon /> : <CustomLogo name={name} />}
       </span>
       <span className="works-with-tile__name">{name}</span>
@@ -191,7 +168,7 @@ function BearMark() {
 function GenericMark({ name }: { name: string }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor" opacity="0.15" />
+      <rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor" opacity="0.18" />
       <text
         x="12"
         y="16"

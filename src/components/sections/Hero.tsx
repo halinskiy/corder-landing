@@ -92,7 +92,7 @@ export function Hero() {
             data-tokens="radius-pill,color-accent,color-bg,ease-out"
           >
             <a
-              href="#download"
+              href="#pricing"
               className="cta-pill cta-pill--primary inline-flex h-12 min-w-[220px] items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[16px] font-medium"
             >
               {hero.ctaPrimary}

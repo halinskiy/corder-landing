@@ -2059,84 +2059,39 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
- *  WorksWith — Corder fits into the stack the buyer already runs.
- *
- *  Shell is the .hl-* hero-library-demo window (titlebar + chrome). Body
- *  holds three cluster rows; each row is a horizontal marquee of brand
- *  tiles that pauses on hover. The whole thing reads as a Corder menu-bar
- *  dropdown showing the apps it talks to.
+ *  WorksWith — three labelled rows of brand pills, each row marquee'd.
+ *  No window chrome, no titlebar. Logos render in their brand colour
+ *  via inline style on .works-with-tile__logo. Rows pause on hover.
  * ---------------------------------------------------------------------- */
 
-.works-with-shell {
-  max-width: 1100px;
-  margin-inline: auto;
-}
-
-.works-with-window {
-  position: relative;
-  border-radius: var(--radius-window);
-  background: var(--hl-bg);
-  border: 1px solid var(--hl-border);
-  overflow: hidden;
-  padding-top: 36px;
-}
-
-.works-with-window .hl-titlebar {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 36px;
-}
-
-.works-with-titlebar__name {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--hl-fg-muted);
-  letter-spacing: 0.02em;
-}
-
-.works-with-body {
+.works-with-rows {
   display: flex;
   flex-direction: column;
-  padding: 0;
+  gap: 24px;
 }
 
-.works-with-cluster {
-  border-top: 1px solid var(--hl-border);
-  padding: 20px 0 24px;
+.works-with-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: center;
 }
 
-.works-with-cluster:first-child {
-  border-top: 0;
+@media (min-width: 768px) {
+  .works-with-row {
+    grid-template-columns: 88px 1fr;
+    gap: 20px;
+  }
 }
 
-.works-with-cluster__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 10px 16px;
-  padding: 0 24px 14px;
-}
-
-.works-with-cluster__label {
+.works-with-row__label {
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-accent);
-}
-
-.works-with-cluster__note {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--hl-fg-muted);
-  max-width: 64ch;
+  color: var(--color-text-muted);
+  padding-left: 4px;
 }
 
 .works-with-marquee {
@@ -2150,11 +2105,10 @@ button:focus:not(:focus-visible) {
   display: flex;
   gap: 12px;
   width: max-content;
-  padding-inline: 24px;
-  animation: works-with-scroll 60s linear infinite;
+  animation: works-with-scroll 80s linear infinite;
 }
 
-.works-with-cluster:hover .works-with-track {
+.works-with-row:hover .works-with-track {
   animation-play-state: paused;
 }
 
@@ -2172,22 +2126,25 @@ button:focus:not(:focus-visible) {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--hl-border);
+  height: 48px;
+  padding: 0 18px;
+  border: 1px solid var(--color-border);
   border-radius: 999px;
   background: var(--color-bg);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--color-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .works-with-tile:hover {
-  border-color: var(--color-accent);
+  border-color: var(--color-text);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .works-with-tile__logo {
@@ -2196,54 +2153,24 @@ button:focus:not(:focus-visible) {
   justify-content: center;
   width: 22px;
   height: 22px;
-  color: var(--color-text);
 }
 
 .works-with-tile__logo svg {
   width: 22px;
   height: 22px;
+  display: block;
 }
 
 .works-with-tile__name {
   white-space: nowrap;
 }
 
-.works-with-catchall {
-  margin: 4px 24px 24px;
-  display: inline-flex;
-  align-self: flex-start;
-  align-items: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 18px;
-  border: 1px dashed var(--color-border-strong);
-  border-radius: 999px;
-  background: transparent;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--color-text-muted);
-}
-
-.works-with-catchall__plus {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  background: var(--color-accent-subtle);
-  color: var(--color-accent);
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1;
-}
-
 .works-with-footnote {
-  margin: 16px auto 0;
+  margin: 32px auto 0;
   max-width: 64ch;
   text-align: center;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
   color: var(--color-text-muted);
 }

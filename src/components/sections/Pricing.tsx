@@ -142,7 +142,7 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
       </ul>
 
       <a
-        href="#download"
+        href="#pricing"
         className={
           ctaPrimary
             ? "pricing-card__cta cta-pill cta-pill--primary"
