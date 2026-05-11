@@ -421,52 +421,6 @@
         ]
       },
       {
-        "feature": "Live meeting capture",
-        "values": [
-          "Yes",
-          "Yes",
-          "Yes",
-          "Yes",
-          "Yes",
-          "Yes",
-          "Yes",
-          "Yes"
-        ],
-        "highlight": [
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ]
-      },
-      {
-        "feature": "Audio playback after the call",
-        "values": [
-          "Yes",
-          "No",
-          "Yes",
-          "Yes",
-          "Yes",
-          "Yes",
-          "Yes",
-          "Yes"
-        ],
-        "highlight": [
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ]
-      },
-      {
         "feature": "Dual-track speaker model",
         "values": [
           "Yes",
