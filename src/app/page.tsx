@@ -4,7 +4,7 @@ import { Faq } from "@/components/sections/Faq";
 import { Features } from "@/components/sections/Features";
 import { Footer } from "@/components/sections/Footer";
 import { Hero } from "@/components/sections/Hero";
-import { How } from "@/components/sections/How";
+import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Nav } from "@/components/sections/Nav";
 import { Newsletter } from "@/components/sections/Newsletter";
 import { Pricing } from "@/components/sections/Pricing";
@@ -16,9 +16,9 @@ export default function HomePage() {
       <Nav />
       <Hero />
       <hr className="section-divider" />
-      <Fit />
+      <HowItWorks />
       <hr className="section-divider" />
-      <How />
+      <Fit />
       <hr className="section-divider" />
       <WorksWith />
       <hr className="section-divider" />
