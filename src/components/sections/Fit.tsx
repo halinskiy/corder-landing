@@ -5,9 +5,10 @@ const DATA_SOURCE = "projects/corder-landing/src/components/sections/Fit.tsx";
 /**
  * Section — Is Corder for you?
  *
- * Reuses the Privacy two-card visual language: tag, serif heading, body, then
- * a hairline-row list of qualifying lines. Card 1 (yes) carries the accent
- * tag, card 2 (no) is neutral. Same frame, same spacing, same hairline rows.
+ * Reuses the Privacy two-card visual language: serif heading, body, then a
+ * hairline-row list of qualifying lines. Each row carries a small leading
+ * glyph: a filled accent check for the "yes" card, a neutral minus for the
+ * "no" card. Same frame, same spacing, same hairline rows.
  */
 export function Fit() {
   const { fit } = copy;
@@ -45,16 +46,14 @@ export function Fit() {
         <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 md:gap-8">
           <FitCard
             variant="default"
-            tag={fit.yes.tag}
+            glyph="check"
             heading={fit.yes.heading}
-            body={fit.yes.body}
             items={fit.yes.items}
           />
           <FitCard
             variant="local"
-            tag={fit.no.tag}
+            glyph="minus"
             heading={fit.no.heading}
-            body={fit.no.body}
             items={fit.no.items}
           />
         </div>
@@ -65,15 +64,13 @@ export function Fit() {
 
 function FitCard({
   variant,
-  tag,
+  glyph,
   heading,
-  body,
   items,
 }: {
   variant: "default" | "local";
-  tag: string;
+  glyph: "check" | "minus";
   heading: string;
-  body: string;
   items: readonly string[];
 }) {
   return (
@@ -83,17 +80,56 @@ function FitCard({
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-border,radius-window,font-serif,font-sans"
     >
-      <span className="privacy-card__tag">{tag}</span>
-      <h3 className="privacy-card__heading">{heading}</h3>
-      <p className="privacy-card__body">{body}</p>
+      <h3 className="privacy-card__heading privacy-card__heading--top">{heading}</h3>
 
       <ul className="privacy-card__spec privacy-card__spec--single">
         {items.map((item) => (
           <li key={item} className="privacy-card__spec-row privacy-card__spec-row--single">
+            <span
+              className={`fit-glyph fit-glyph--${glyph}`}
+              aria-hidden="true"
+            >
+              {glyph === "check" ? <CheckIcon /> : <MinusIcon />}
+            </span>
             <span className="privacy-card__spec-value">{item}</span>
           </li>
         ))}
       </ul>
     </article>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 8.5l3.2 3.2L13 5" />
+    </svg>
+  );
+}
+
+function MinusIcon() {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M3.5 8h9" />
+    </svg>
   );
 }
