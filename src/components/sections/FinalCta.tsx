@@ -81,8 +81,6 @@ export function FinalCta() {
               {finalCta.cta}
             </a>
           </div>
-
-          <p className="final-cta-calc__footer">{finalCta.footer}</p>
         </div>
       </div>
     </section>
