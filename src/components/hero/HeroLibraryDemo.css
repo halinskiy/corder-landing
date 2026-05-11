@@ -841,6 +841,14 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   border-bottom-color: var(--hl-fg);
   font-weight: 500;
 }
+.hl-timeline-empty {
+  margin: 0;
+  padding: 24px 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--hl-fg-muted);
+  text-align: center;
+}
 .hl-tl-row {
   display: flex;
   flex-direction: column;
