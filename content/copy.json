@@ -199,12 +199,9 @@
         "priceSuffix": "forever",
         "subline": "Transcribe up to 300 minutes a month with Gemini 2.5 Flash. No bot, no credit card, no catch",
         "features": [
-          "300 minutes of Gemini 2.5 Flash per month",
           "Up to 60 minutes per recording",
           "Speaker labels and full-text search",
-          "Drag-out to Notion, Obsidian, Apple Notes",
-          "Optional Dropbox archive",
-          "Resets on the 1st of each month"
+          "Drag-out to Notion, Obsidian, Apple Notes"
         ],
         "cta": "Try For Free",
         "ctaStyle": "secondary",
@@ -220,8 +217,6 @@
         "annualNote": "$126 billed annually",
         "subline": "Flash for standard calls, Pro for hard ones. You choose the model. 600 + 300 minutes per month",
         "features": [
-          "600 Gemini 2.5 Flash minutes per month",
-          "300 Gemini 2.5 Pro minutes per month",
           "Choose the model per recording",
           "Priority support, direct line to the maker",
           "Early access to new features",
@@ -241,7 +236,6 @@
         "annualNote": "$81 billed annually",
         "subline": "600 minutes of Flash transcription a month for people who record every call",
         "features": [
-          "600 minutes of Gemini 2.5 Flash per month",
           "No limit on individual recording length",
           "All Free tier features",
           "3 months free when you pay annually"
