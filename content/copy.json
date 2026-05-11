@@ -139,6 +139,30 @@
       }
     ]
   },
+  "worksWith": {
+    "eyebrow": "Works with your stack",
+    "heading": "Records anything that plays through your Mac.",
+    "subhead": "Corder captures audio at the OS level. It works with any app that plays sound. The list below is where most people start.",
+    "clusters": [
+      {
+        "label": "Call",
+        "note": "Includes Teams. Bot-based recorders are being blocked in Teams meetings from mid-2026. Corder records at the OS level and is unaffected.",
+        "apps": ["Zoom", "Google Meet", "Microsoft Teams", "Discord", "Slack huddle"]
+      },
+      {
+        "label": "Note",
+        "note": "Drop text directly into any of these. No export dialog, no API connection required.",
+        "apps": ["Notion", "Obsidian", "Apple Notes", "Bear", "Linear"]
+      },
+      {
+        "label": "Store",
+        "note": "Dropbox archive is a built-in feature. iCloud Drive and Google Drive work via Finder drag.",
+        "apps": ["Dropbox", "iCloud Drive", "Google Drive"]
+      }
+    ],
+    "catchallTile": "Anything that plays through your Mac",
+    "footnote": "The list above covers the most common starting points. Any app that plays sound through your Mac works the same way."
+  },
   "features": {
     "eyebrow": "Built for the Mac",
     "heading": "Built like a Mac app",
