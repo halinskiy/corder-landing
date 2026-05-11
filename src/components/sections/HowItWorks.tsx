@@ -161,17 +161,12 @@ function Ghost() {
           height="726"
           rx="14"
           fill="none"
-          stroke="rgba(10, 10, 10, 0.12)"
+          stroke="rgba(10, 10, 10, 0.07)"
           strokeWidth="3"
           strokeDasharray="18 12"
           vectorEffect="non-scaling-stroke"
         />
       </svg>
-      <div className="hiw-ghost__chrome" aria-hidden="true">
-        <span className="hiw-ghost__dot" />
-        <span className="hiw-ghost__dot" />
-        <span className="hiw-ghost__dot" />
-      </div>
     </div>
   );
 }
