@@ -2068,36 +2068,42 @@ button:focus:not(:focus-visible) {
  *  (linear scroll-tracking) and left (triangle wave 0% → 52% → 0%).
  * ---------------------------------------------------------------------- */
 
+/* .hiw-track now reuses .page-container in markup for horizontal padding
+   and max-width; only position context and vertical rhythm live here. */
 .hiw-track {
   position: relative;
-  max-width: 1280px;
-  margin-inline: auto;
-  padding-inline: 24px;
   margin-top: 24px;
 }
 
 .hiw-row {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   height: 100vh;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
-.hiw-row--text-right .hiw-text {
-  margin-left: auto;
-  width: 44%;
-}
-
-.hiw-row--text-left .hiw-text {
-  margin-right: auto;
-  width: 44%;
-}
+.hiw-row--text-right .hiw-text { order: 2; }
+.hiw-row--text-right .hiw-ghost { order: 1; }
+.hiw-row--text-left .hiw-text { order: 1; }
+.hiw-row--text-left .hiw-ghost { order: 2; }
 
 .hiw-text {
+  width: 44%;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+/* Ghost placeholder: same footprint as the live window, dashed faint
+   outline so the user reads the destination before the snap lands. */
+.hiw-ghost {
+  width: 48%;
+  aspect-ratio: 16 / 10;
+  border: 1.5px dashed rgba(10, 10, 10, 0.18);
+  border-radius: var(--radius-window);
+  background: transparent;
 }
 
 .hiw-text__eyebrow {
@@ -2135,8 +2141,14 @@ button:focus:not(:focus-visible) {
   left: 0;
   width: 48%;
   transform: translateY(-50%);
-  z-index: 1;
+  z-index: 5;
   pointer-events: none;
+}
+
+.hiw-window-inner {
+  width: 100%;
+  border-radius: var(--radius-window);
+  will-change: transform, filter;
 }
 
 .hiw-window-wrap .how-window--app {
@@ -2172,9 +2184,7 @@ button:focus:not(:focus-visible) {
      animated one (it has aria-hidden), the static fallback covers
      desktop reduced-motion users. */
   .hiw-track > .hiw-window-wrap { display: none; }
-  .hiw-row .hiw-text::after {
-    content: "";
-  }
+  .hiw-ghost { display: none; }
 }
 
 /* Reduced-motion fallback layout */
