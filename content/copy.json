@@ -269,9 +269,10 @@
     "yes": {
       "heading": "Yes, if you:",
       "items": [
-        "Record customer calls, design reviews, or your own thoughts out loud.",
-        "Don't want a third-party bot named 'Notetaker' joining your meeting.",
-        "Want to keep the audio after the call, not just the transcript."
+        "Have meetings across several projects.",
+        "Discuss technical work on those meetings.",
+        "Don't want a third-party bot in your call.",
+        "Often come back to what was said in past meetings."
       ]
     },
     "no": {
