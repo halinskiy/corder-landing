@@ -68,7 +68,7 @@ export function Hero() {
             animate="visible"
             variants={variants}
             transition={{ duration: 0.6, ease: EASE, delay: 0.16 }}
-            className="mx-auto mt-6 max-w-[640px]"
+            className="mx-auto mt-3 max-w-[640px]"
             style={{
               fontSize: "var(--text-body-lg)",
               lineHeight: "var(--lh-body)",
@@ -97,14 +97,6 @@ export function Hero() {
             >
               {hero.ctaPrimary}
             </a>
-            <p
-              className="hero-qualifier"
-              data-component="HeroQualifier"
-              data-source={DATA_SOURCE}
-              data-tokens="body-sm,color-text-muted,font-sans"
-            >
-              {hero.qualifier}
-            </p>
           </motion.div>
         </div>
 

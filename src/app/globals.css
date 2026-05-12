@@ -2489,19 +2489,6 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
- *  Hero qualifier — micro-line under the primary CTA
- * ---------------------------------------------------------------------- */
-
-.hero-qualifier {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--color-text-muted);
-  margin: 0;
-  text-align: center;
-}
-
-/* ----------------------------------------------------------------------
  *  Newsletter block — appears between FinalCta and Footer
  * ---------------------------------------------------------------------- */
 
