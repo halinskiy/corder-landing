@@ -172,6 +172,19 @@ export function HeroLibraryDemo() {
             onStopRecording={handleStopRecording}
           />
         </div>
+
+        {/* Recording-indicator blob — bottom-right corner of the window
+          * during recording. Morphs shape, breathes red glow, mirrors the
+          * real macOS app's capture indicator. */}
+        {mode === "recording" && (
+          <button
+            type="button"
+            className="hl-rec-blob"
+            aria-label="Stop recording"
+            onClick={handleStopRecording}
+            tabIndex={-1}
+          />
+        )}
       </div>
     </div>
   );
