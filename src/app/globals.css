@@ -1064,14 +1064,40 @@ button:focus:not(:focus-visible) {
 }
 
 .comparison-scroll {
+  position: relative;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Accent rounded frame around the Corder column. Sits as a positioned
+ * overlay on top of the table so the rounded corners do not depend on
+ * per-cell border-radius (cells are rectangular, the frame is one solid
+ * rounded rectangle — no white wedges in the corners). Width matches
+ * the Corder column's fixed 84px; left edge = Feature column width
+ * (220px). table-layout: fixed keeps these constants accurate at every
+ * viewport above min-width. */
+.comparison-corder-frame {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* Same ratios as the table column widths so the frame tracks the
+   * Corder cells when the table stretches beyond min-width. */
+  left: calc(220 / 976 * 100%);
+  width: calc(84 / 976 * 100%);
+  border: 1px solid var(--color-accent);
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 3;
 }
 
 .comparison-table {
   width: 100%;
   min-width: 980px;
-  border-collapse: collapse;
+  /* separate (not collapse) — needed so the Corder column can carry
+   * solid accent borders without doubling up with neighbouring cells'
+   * grey borders. */
+  border-collapse: separate;
+  border-spacing: 0;
   font-family: var(--font-sans);
   font-size: 16px;
   color: var(--color-text);
@@ -1080,52 +1106,36 @@ button:focus:not(:focus-visible) {
 
 .comparison-table thead tr {
   background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
 }
 
 .comparison-table__th {
-  padding: 18px 12px;
+  padding: 22px 12px;
   text-align: center;
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--color-text);
   border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
-  width: 84px;
+  /* 84 / 976 — keep column widths proportional so the Corder overlay
+   * frame (positioned in %) tracks the real Corder cell width when the
+   * table stretches beyond min-width. */
+  width: calc(84 / 976 * 100%);
 }
 .comparison-table__th:last-child { border-right: 0; }
 
 .comparison-table__th--feature {
   text-align: left;
-  width: 220px;
+  width: calc(220 / 976 * 100%);
   background: var(--color-surface);
   color: var(--color-text);
 }
 
-/* Corder column — elevated pillar with accent gradient and a full
- * vertical accent border simulated via inset box-shadows on every cell
- * in the column. */
-.comparison-table__th--corder {
-  color: var(--color-accent);
-  font-weight: 700;
-  background: rgba(33, 122, 80, 0.14);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  box-shadow:
-    inset 1px 0 0 var(--color-accent),
-    inset -1px 0 0 var(--color-accent),
-    inset 0 1px 0 var(--color-accent);
-}
-
 .comparison-table tbody tr {
-  border-bottom: 1px solid var(--color-border);
   transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.comparison-table tbody tr:last-child {
-  border-bottom: 0;
 }
 .comparison-table tbody tr:nth-child(even) {
   background: rgba(0, 0, 0, 0.018);
@@ -1135,7 +1145,7 @@ button:focus:not(:focus-visible) {
 }
 
 .comparison-table__feature {
-  padding: 14px 18px;
+  padding: 18px 18px;
   text-align: left;
   font-family: var(--font-sans);
   font-weight: 500;
@@ -1144,38 +1154,43 @@ button:focus:not(:focus-visible) {
   color: var(--color-text);
   background: var(--color-surface);
   border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
-  width: 220px;
+  width: calc(220 / 976 * 100%);
 }
 
 .comparison-table__cell {
-  padding: 14px 12px;
+  padding: 18px 12px;
   font-family: var(--font-sans);
   font-size: 14px;
   color: var(--color-text-muted);
   border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
   text-align: center;
-  width: 84px;
+  width: calc(84 / 976 * 100%);
 }
 .comparison-table__cell:last-child { border-right: 0; }
 
-/* Corder column cells — share the gradient and vertical accent border.
- * Body cells get left+right inset shadow only; the last row also adds
- * a bottom inset so the column reads as a fully boxed pillar. */
+.comparison-table tbody tr:last-child .comparison-table__cell,
+.comparison-table tbody tr:last-child .comparison-table__feature {
+  border-bottom: 0;
+}
+
+/* Corder column — flat accent-tinted fill, no per-cell borders. The
+ * surrounding accent frame is drawn once by .comparison-corder-frame. */
+.comparison-table__th--corder {
+  color: var(--color-accent);
+  font-weight: 700;
+  background: rgba(33, 122, 80, 0.14);
+  border-right: 0;
+  border-bottom: 0;
+}
+
 .comparison-table__cell--corder {
   background: rgba(33, 122, 80, 0.07);
-  box-shadow:
-    inset 1px 0 0 var(--color-accent),
-    inset -1px 0 0 var(--color-accent);
-}
-.comparison-table tbody tr:last-child .comparison-table__cell--corder {
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  box-shadow:
-    inset 1px 0 0 var(--color-accent),
-    inset -1px 0 0 var(--color-accent),
-    inset 0 -1px 0 var(--color-accent);
+  border-right: 0;
+  border-bottom: 0;
 }
 
 /* Hover state — keep the Corder column readable when the row tints. */

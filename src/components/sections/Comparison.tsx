@@ -56,6 +56,10 @@ export function Comparison() {
         {/* Single matrix; scroll horizontally on narrow viewports ----------- */}
         <div className="comparison-table-wrap mt-12 md:mt-16">
           <div className="comparison-scroll" role="region" aria-label="Comparison matrix">
+            {/* Accent rounded frame over the Corder column. Sits inside
+              * .comparison-scroll so it tracks with horizontal scroll.
+              * Decorative only — table itself carries semantics. */}
+            <span className="comparison-corder-frame" aria-hidden="true" />
             <table
               className="comparison-table"
               data-component="ComparisonTable"
