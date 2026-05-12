@@ -11,6 +11,7 @@ const LOGO_FILE: Record<string, string> = {
   Zoom: "zoom.svg",
   "Google Meet": "google-meet.svg",
   "Microsoft Teams": "microsoft-teams.svg",
+  FaceTime: "facetime.svg",
   Discord: "discord.svg",
   Slack: "slack.svg",
   Notion: "notion.svg",
