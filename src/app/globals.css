@@ -2242,9 +2242,34 @@ button:focus:not(:focus-visible) {
  * ---------------------------------------------------------------------- */
 
 .works-with-rows {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0;
+}
+
+/* Side fade-out overlays — sit above the marquees and paint a
+ * background-coloured gradient so duplicated tiles dissolve into the
+ * page on the left and right edges. Replaces the previous mask-image
+ * on each marquee, which created a clipping context that cut off
+ * vertical hover shadows. */
+.works-with-rows::before,
+.works-with-rows::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6%;
+  pointer-events: none;
+  z-index: 2;
+}
+.works-with-rows::before {
+  left: 0;
+  background: linear-gradient(to right, var(--color-bg), rgba(255, 255, 255, 0));
+}
+.works-with-rows::after {
+  right: 0;
+  background: linear-gradient(to left, var(--color-bg), rgba(255, 255, 255, 0));
 }
 
 .works-with-marquee {
@@ -2252,8 +2277,6 @@ button:focus:not(:focus-visible) {
   overflow-x: clip;
   overflow-y: visible;
   padding-block: 5px;
-  mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
 }
 
 .works-with-track {
