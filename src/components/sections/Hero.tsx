@@ -93,7 +93,7 @@ export function Hero() {
           >
             <a
               href="#pricing"
-              className="cta-pill cta-pill--primary inline-flex h-12 min-w-[220px] items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[16px] font-medium"
+              className="cta-pill cta-pill--primary inline-flex h-14 min-w-[260px] items-center justify-center gap-2 rounded-[var(--radius-pill)] px-9 text-[17px] font-medium"
             >
               {hero.ctaPrimary}
             </a>
