@@ -25,7 +25,7 @@ export function Privacy() {
       data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,font-serif"
       className="relative w-full"
     >
-      <div className="page-container py-24 md:py-32">
+      <div className="page-container py-14 md:py-[88px]">
         <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <h2

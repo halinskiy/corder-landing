@@ -89,7 +89,7 @@ export function HowItWorks() {
       data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,font-serif"
       className="relative w-full"
     >
-      <div className="page-container pt-24 md:pt-32">
+      <div className="page-container pt-14 md:pt-[88px]">
         <Header
           eyebrow={howItWorks.eyebrow}
           heading={howItWorks.heading}
