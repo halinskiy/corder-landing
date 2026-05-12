@@ -197,7 +197,17 @@ function FeatureVisual({ cell }: { cell: FeatureCellData }) {
           data-source={DATA_SOURCE}
           data-tokens="color-accent,radius-pill,font-sans"
         >
-          <span className="feature-pro-pill">Pro</span>
+          <span className="feature-pro-pill">
+            <span className="feature-pro-pill__sparkles" aria-hidden>
+              <span>✦</span>
+              <span>✧</span>
+              <span>✦</span>
+              <span>✧</span>
+              <span>✦</span>
+              <span>✧</span>
+            </span>
+            <span className="feature-pro-pill__text">Pro</span>
+          </span>
         </div>
       );
 
