@@ -220,10 +220,10 @@
   transition: background-color 120ms ease;
 }
 .hl-meeting-item:hover {
-  background: #efefec;
+  background: #dededa;
 }
 .hl-meeting-item.active:hover {
-  background: #dcdcd8;
+  background: #c8c8c4;
 }
 .hl-meeting-item + .hl-meeting-item {
   border-top: 1px solid var(--hl-border);
