@@ -138,44 +138,6 @@ function FeatureVisual({ cell }: { cell: FeatureCellData }) {
         </div>
       );
 
-    case "split-cell-illustration":
-      return (
-        <div
-          className="feature-cell__visual"
-          data-component="FeatureVisualSplit"
-          data-source={DATA_SOURCE}
-          data-tokens="color-bg,color-surface,color-border,color-accent,font-mono"
-        >
-          <div className="feature-split">
-            <div className="feature-split__pane">
-              <p className="feature-split__label">Corder</p>
-              <div className="feature-split__line" />
-              <div className="feature-split__line feature-split__line--short" />
-            </div>
-            <span className="feature-split__divider" aria-hidden>
-              →
-            </span>
-            <div className="feature-split__pane feature-split__pane--target">
-              <p className="feature-split__label">Notion</p>
-              <div className="feature-split__line" />
-              <div className="feature-split__line feature-split__line--short" />
-            </div>
-          </div>
-        </div>
-      );
-
-    case "kbd-cap-glyph":
-      return (
-        <div
-          className="feature-cell__visual"
-          data-component="FeatureVisualKbd"
-          data-source={DATA_SOURCE}
-          data-tokens="color-bg,color-border-strong,font-sans"
-        >
-          <span className="kbd-cap">{cell.kbdGlyph ?? "⌘W"}</span>
-        </div>
-      );
-
     case "monospace-path":
       return (
         <div
@@ -224,6 +186,18 @@ function FeatureVisual({ cell }: { cell: FeatureCellData }) {
                 );
               })}
           </div>
+        </div>
+      );
+
+    case "pro-pill":
+      return (
+        <div
+          className="feature-cell__visual"
+          data-component="FeatureVisualProPill"
+          data-source={DATA_SOURCE}
+          data-tokens="color-accent,radius-pill,font-sans"
+        >
+          <span className="feature-pro-pill">Pro</span>
         </div>
       );
 

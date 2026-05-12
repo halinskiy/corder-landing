@@ -416,16 +416,21 @@ function Transcript({
             color="var(--hl-speaker-purple)"
             name="Kostiantyn Halynskyi"
           >
-            Right, so the next step is to validate it.{" "}
+            <span className="hl-segment-line">
+              Right, so the next step is to validate it.
+            </span>{" "}
             <span className="hl-segment-line active">
               Let us circle back on Thursday.
             </span>{" "}
-            Sounds reasonable.
+            <span className="hl-segment-line">Sounds reasonable.</span>
           </SegmentGroup>
 
           <SegmentGroup initials="VG" color="var(--hl-accent)" name="Vadym Grosko">
-            Hmm, let me think about that for a second. Good point. I will write that
-            up.
+            <span className="hl-segment-line">
+              Hmm, let me think about that for a second.
+            </span>{" "}
+            <span className="hl-segment-line">Good point.</span>{" "}
+            <span className="hl-segment-line">I will write that up.</span>
           </SegmentGroup>
 
           <SegmentGroup
@@ -433,7 +438,10 @@ function Transcript({
             color="var(--hl-speaker-purple)"
             name="Kostiantyn Halynskyi"
           >
-            What about the timeline? We can re-scope and follow up.
+            <span className="hl-segment-line">What about the timeline?</span>{" "}
+            <span className="hl-segment-line">
+              We can re-scope and follow up.
+            </span>
           </SegmentGroup>
         </div>
       )}
@@ -538,16 +546,49 @@ function RightPanel({
             <TimelineRow
               name="Kostiantyn Halynskyi"
               stats="43%, 1m 58s"
-              ticks={[3, 5, 7, 9, 11, 13, 15, 18, 30, 32, 34, 36, 38, 40, 42, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82]}
+              segments={[
+                { left: 5, width: 6 },
+                { left: 12, width: 4 },
+                { left: 17, width: 9 },
+                { left: 27, width: 3 },
+                { left: 31, width: 8 },
+                { left: 40, width: 5 },
+                { left: 58, width: 7 },
+                { left: 66, width: 11 },
+                { left: 78, width: 5 },
+                { left: 84, width: 9 },
+              ]}
               color="var(--hl-speaker-purple)"
               showCursor={isActive}
             />
 
             <TimelineRow
               name="Vadym Grosko"
-              stats="7%, 17s"
-              ticks={[23, 25, 27, 50, 52, 54, 88, 90, 92]}
+              stats="30%, 1m 22s"
+              segments={[
+                { left: 5, width: 4 },
+                { left: 10, width: 8 },
+                { left: 19, width: 5 },
+                { left: 36, width: 4 },
+                { left: 41, width: 10 },
+                { left: 52, width: 6 },
+                { left: 70, width: 5 },
+                { left: 76, width: 7 },
+                { left: 90, width: 4 },
+              ]}
               color="var(--hl-accent)"
+            />
+
+            <TimelineRow
+              name="Paul Turner"
+              stats="7%, 19s"
+              segments={[
+                { left: 5, width: 3 },
+                { left: 9, width: 2 },
+                { left: 46, width: 4 },
+                { left: 81, width: 3 },
+              ]}
+              color="var(--hl-speaker-amber)"
             />
           </>
         ) : (
@@ -563,13 +604,13 @@ function RightPanel({
 function TimelineRow({
   name,
   stats,
-  ticks,
+  segments,
   color,
   showCursor = false,
 }: {
   name: string;
   stats: string;
-  ticks: number[];
+  segments: ReadonlyArray<{ left: number; width: number }>;
   color: string;
   showCursor?: boolean;
 }) {
@@ -580,11 +621,12 @@ function TimelineRow({
         <span className="hl-tl-stats">{stats}</span>
       </div>
       <div className="hl-tl-bar">
-        {ticks.map((left, i) => (
+        <span className="hl-tl-bar-start" aria-hidden="true" />
+        {segments.map((s, i) => (
           <div
             key={i}
-            className="hl-tl-bar-tick"
-            style={{ left: `${left}%`, background: color }}
+            className="hl-tl-bar-seg"
+            style={{ left: `${s.left}%`, width: `${s.width}%`, background: color }}
           />
         ))}
         {showCursor && <div className="hl-tl-bar-cursor" />}
