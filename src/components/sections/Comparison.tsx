@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Comparison.tsx";
@@ -22,6 +24,35 @@ const DATA_SOURCE = "projects/corder-landing/src/components/sections/Comparison.
 export function Comparison() {
   const { comparison } = copy;
   const headers = comparison.headers; // 10 entries: ["", "Corder", ...8 competitors]
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLSpanElement>(null);
+  const corderHeaderRef = useRef<HTMLTableCellElement>(null);
+
+  // Align the rounded accent frame to the actual Corder column. CSS-only
+  // percentages drift when table column widths get post-adjusted by the
+  // browser (padding, box-sizing edge cases). Measuring directly is the
+  // only fully accurate path.
+  useEffect(() => {
+    const update = () => {
+      const cell = corderHeaderRef.current;
+      const scroller = scrollRef.current;
+      const frame = frameRef.current;
+      if (!cell || !scroller || !frame) return;
+      const cellRect = cell.getBoundingClientRect();
+      const scrollerRect = scroller.getBoundingClientRect();
+      frame.style.left = `${cellRect.left - scrollerRect.left + scroller.scrollLeft}px`;
+      frame.style.width = `${cellRect.width}px`;
+    };
+    update();
+    window.addEventListener("resize", update);
+    const scroller = scrollRef.current;
+    scroller?.addEventListener("scroll", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      scroller?.removeEventListener("scroll", update);
+    };
+  }, []);
 
   return (
     <section
@@ -55,11 +86,17 @@ export function Comparison() {
 
         {/* Single matrix; scroll horizontally on narrow viewports ----------- */}
         <div className="comparison-table-wrap mt-12 md:mt-16">
-          <div className="comparison-scroll" role="region" aria-label="Comparison matrix">
+          <div
+            ref={scrollRef}
+            className="comparison-scroll"
+            role="region"
+            aria-label="Comparison matrix"
+          >
             {/* Accent rounded frame over the Corder column. Sits inside
-              * .comparison-scroll so it tracks with horizontal scroll.
-              * Decorative only — table itself carries semantics. */}
-            <span className="comparison-corder-frame" aria-hidden="true" />
+              * .comparison-scroll so it tracks horizontal scroll. Its
+              * left/width are set in useEffect from the real Corder
+              * header cell's bounding rect. */}
+            <span ref={frameRef} className="comparison-corder-frame" aria-hidden="true" />
             <table
               className="comparison-table"
               data-component="ComparisonTable"
@@ -71,6 +108,7 @@ export function Comparison() {
                   {headers.map((h, i) => (
                     <th
                       key={`${h}-${i}`}
+                      ref={i === 1 ? corderHeaderRef : undefined}
                       scope="col"
                       className={`comparison-table__th${
                         i === 1 ? " comparison-table__th--corder" : ""
