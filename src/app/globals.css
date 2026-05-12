@@ -1058,6 +1058,9 @@ button:focus:not(:focus-visible) {
   background: var(--color-bg);
   position: relative;
   overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .comparison-scroll {
@@ -1081,14 +1084,14 @@ button:focus:not(:focus-visible) {
 }
 
 .comparison-table__th {
-  padding: 16px 12px;
+  padding: 18px 12px;
   text-align: center;
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-text);
+  color: var(--color-text-muted);
   border-right: 1px solid var(--color-border);
   vertical-align: middle;
   width: 84px;
@@ -1099,22 +1102,38 @@ button:focus:not(:focus-visible) {
   text-align: left;
   width: 220px;
   background: var(--color-surface);
+  color: var(--color-text);
 }
 
+/* Corder column — elevated pillar with accent gradient and a full
+ * vertical accent border simulated via inset box-shadows on every cell
+ * in the column. */
 .comparison-table__th--corder {
   color: var(--color-accent);
-  background: var(--color-accent-subtle);
+  font-weight: 700;
+  background: linear-gradient(180deg, rgba(33, 122, 80, 0.18), rgba(33, 122, 80, 0.08));
+  box-shadow:
+    inset 1px 0 0 var(--color-accent),
+    inset -1px 0 0 var(--color-accent),
+    inset 0 1px 0 var(--color-accent);
 }
 
 .comparison-table tbody tr {
   border-bottom: 1px solid var(--color-border);
+  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .comparison-table tbody tr:last-child {
   border-bottom: 0;
 }
+.comparison-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.018);
+}
+.comparison-table tbody tr:hover {
+  background: rgba(33, 122, 80, 0.045);
+}
 
 .comparison-table__feature {
-  padding: 16px 18px;
+  padding: 14px 18px;
   text-align: left;
   font-family: var(--font-sans);
   font-weight: 500;
@@ -1128,7 +1147,7 @@ button:focus:not(:focus-visible) {
 }
 
 .comparison-table__cell {
-  padding: 16px 12px;
+  padding: 14px 12px;
   font-family: var(--font-sans);
   font-size: 14px;
   color: var(--color-text-muted);
@@ -1139,54 +1158,85 @@ button:focus:not(:focus-visible) {
 }
 .comparison-table__cell:last-child { border-right: 0; }
 
+/* Corder column cells — share the gradient and vertical accent border.
+ * Body cells get left+right inset shadow only; the last row also adds
+ * a bottom inset so the column reads as a fully boxed pillar. */
 .comparison-table__cell--corder {
-  background: var(--color-accent-subtle);
+  background: linear-gradient(180deg, rgba(33, 122, 80, 0.09), rgba(33, 122, 80, 0.05));
+  box-shadow:
+    inset 1px 0 0 var(--color-accent),
+    inset -1px 0 0 var(--color-accent);
+}
+.comparison-table tbody tr:last-child .comparison-table__cell--corder {
+  box-shadow:
+    inset 1px 0 0 var(--color-accent),
+    inset -1px 0 0 var(--color-accent),
+    inset 0 -1px 0 var(--color-accent);
 }
 
-.comparison-table__cell--win .comparison-glyph {
-  color: var(--color-accent);
+/* Hover state — keep the Corder column readable when the row tints. */
+.comparison-table tbody tr:hover .comparison-table__cell--corder {
+  background: linear-gradient(180deg, rgba(33, 122, 80, 0.14), rgba(33, 122, 80, 0.08));
 }
 
 /* ---- Cell glyphs ------------------------------------------------------ */
 
 .comparison-glyph {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
-  gap: 4px;
   font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1;
   color: var(--color-text-subtle);
 }
 
+/* Yes — a small filled accent chip with a white check. Compact, clearly
+ * positive, single accent. */
 .comparison-glyph--yes {
-  color: var(--color-text);
-  font-weight: 500;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  color: #ffffff;
 }
 .comparison-glyph__check {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
   line-height: 1;
 }
+
+/* Yes-win — the Corder column's victories pulse very slightly via a
+ * soft halo so the eye is drawn down the column. */
 .comparison-glyph--yes-win {
-  color: var(--color-accent);
-  font-weight: 600;
+  box-shadow: 0 0 0 4px rgba(33, 122, 80, 0.18);
 }
 
+/* No — empty hairline ring, muted. Reads as "not available" without
+ * shouting. */
 .comparison-glyph--no {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg);
   color: var(--color-text-faint);
-  font-size: 18px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
+/* Dash — single neutral horizontal bar, sized to read at the same
+ * height as the Yes/No chips. */
 .comparison-glyph--dash {
-  color: var(--color-text-faint);
-  font-size: 18px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
+  width: 16px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--color-border-strong);
+  color: transparent;
+  overflow: hidden;
 }
 
 /* ---- Scroll hint (mobile) -------------------------------------------- */
