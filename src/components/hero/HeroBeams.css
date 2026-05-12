@@ -1,0 +1,80 @@
+/* HeroBeams — light beams radiating upward from beneath the Library
+ * window. The overlay sits in the upper half of the hero, with the
+ * origin point pinned to its bottom-centre (which is roughly the top
+ * edge of the mockup). Each beam is a long thin rotated div with a
+ * linear-gradient (bright accent at root, transparent at tip), modest
+ * blur, and an opacity + scale pulse. The mockup sits z above and
+ * occludes the inner stub so beams appear to escape from under it.
+ * Desktop only. */
+
+.hero-beams {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.hero-beams__origin {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 0;
+}
+
+.hero-beams__beam {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--beam-len);
+  height: var(--beam-thick);
+  margin-top: calc(var(--beam-thick) / -2);
+  transform-origin: 0% 50%;
+  transform: rotate(calc(var(--beam-angle) - 90deg)) scaleX(0.6);
+  background: linear-gradient(
+    to right,
+    rgba(33, 122, 80, 0.85) 0%,
+    rgba(33, 122, 80, 0.55) 12%,
+    rgba(33, 122, 80, 0.3) 32%,
+    rgba(33, 122, 80, 0.12) 60%,
+    rgba(33, 122, 80, 0) 100%
+  );
+  border-radius: 999px;
+  filter: blur(10px);
+  opacity: 0;
+  animation: hero-beam-pulse 5.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation-delay: var(--beam-delay);
+  will-change: transform, opacity;
+}
+
+@keyframes hero-beam-pulse {
+  0% {
+    opacity: 0;
+    transform: rotate(calc(var(--beam-angle) - 90deg)) scaleX(0.45);
+  }
+  18% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.78;
+    transform: rotate(calc(var(--beam-angle) - 90deg)) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(calc(var(--beam-angle) - 90deg)) scaleX(1.08);
+  }
+}
+
+@media (max-width: 879px) {
+  .hero-beams {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-beams__beam {
+    animation: none;
+    opacity: 0.55;
+    transform: rotate(calc(var(--beam-angle) - 90deg)) scaleX(0.85);
+  }
+}
