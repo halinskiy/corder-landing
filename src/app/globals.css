@@ -2249,7 +2249,8 @@ button:focus:not(:focus-visible) {
 
 .works-with-marquee {
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   padding-block: 5px;
   mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
