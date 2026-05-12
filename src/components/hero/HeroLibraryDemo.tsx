@@ -20,6 +20,7 @@ export function HeroLibraryDemo() {
   const [playing, setPlaying] = useState(false);
   const [mode, setMode] = useState<DemoMode>("recording");
   const [elapsed, setElapsed] = useState(0);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Live timer for the recording state — ticks once per second, frozen
   // when the user clicks Stop.
@@ -52,6 +53,28 @@ export function HeroLibraryDemo() {
     }, 120_000);
     return () => window.clearTimeout(id);
   }, [mode, handleStopRecording]);
+
+  // Simulated speaking cycle for the recording-indicator blob: while the
+  // recording mode is active, alternate between "silent" (2-4s) and
+  // "speaking" (3-6s) with randomised intervals so the blob feels alive.
+  useEffect(() => {
+    if (mode !== "recording") {
+      setIsSpeaking(false);
+      return;
+    }
+    let speaking = false;
+    let timer = 0;
+    const cycle = () => {
+      speaking = !speaking;
+      setIsSpeaking(speaking);
+      const next = speaking
+        ? 3200 + Math.random() * 2800
+        : 2200 + Math.random() * 1800;
+      timer = window.setTimeout(cycle, next);
+    };
+    timer = window.setTimeout(cycle, 1600);
+    return () => window.clearTimeout(timer);
+  }, [mode]);
 
   useEffect(() => {
     return () => {
@@ -180,6 +203,7 @@ export function HeroLibraryDemo() {
           <button
             type="button"
             className="hl-rec-blob"
+            data-speaking={isSpeaking ? "true" : "false"}
             aria-label="Stop recording"
             onClick={handleStopRecording}
             tabIndex={-1}
