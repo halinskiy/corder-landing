@@ -34,7 +34,6 @@ export function Footer() {
               <span className="site-footer__brand-name">{footer.brandMark}</span>
             </div>
             <p className="site-footer__slogan">{footer.slogan}</p>
-            <p className="site-footer__made-in">{footer.madeIn}</p>
           </div>
 
           {footer.columns.map((column) => (

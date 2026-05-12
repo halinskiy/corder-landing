@@ -978,3 +978,140 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
     display: none;
   }
 }
+
+/* Phone tier — strip down to the essence: only the Transcript pane, with
+ * enough height for the recording banner + transcript content. Every
+ * element scales proportionally smaller so the demo reads as a self-
+ * contained miniature app, not a clipped desktop crop. */
+@media (max-width: 640px) {
+  .hero-library-demo {
+    aspect-ratio: auto;
+    min-height: 460px;
+    font-size: 12px;
+  }
+
+  .hl-titlebar {
+    height: 24px;
+    padding: 0 10px;
+    gap: 6px;
+  }
+  .hl-traffic {
+    width: 10px;
+    height: 10px;
+  }
+
+  .hl-main-header {
+    padding: 10px 14px;
+    min-height: 48px;
+    gap: 8px;
+  }
+  .hl-breadcrumb {
+    font-size: 12px;
+    gap: 4px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .hl-breadcrumb > span:not(.hl-breadcrumb-current) {
+    display: none;
+  }
+  .hl-breadcrumb-current {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hl-spacer {
+    display: none;
+  }
+
+  .hl-boost-switch {
+    margin-left: 0;
+    padding: 0 10px 0 8px;
+    height: 28px;
+    font-size: 12px;
+    gap: 6px;
+  }
+  .hl-boost-track {
+    width: 22px;
+    height: 12px;
+  }
+  .hl-boost-thumb {
+    width: 8px;
+    height: 8px;
+    top: 2px;
+    left: 2px;
+  }
+  .hl-boost-switch[data-on="true"] .hl-boost-thumb {
+    transform: translateX(10px);
+  }
+
+  .hl-toolbar {
+    display: none;
+  }
+
+  .hl-detail-tab-col {
+    padding: 12px 14px 0;
+    gap: 16px;
+  }
+  .hl-tab {
+    font-size: 13px;
+    padding: 4px 0 10px;
+  }
+
+  .hl-transcript-toolbar {
+    padding: 12px 14px 8px;
+    gap: 8px;
+  }
+  .hl-search-field input {
+    height: 32px;
+    font-size: 12px;
+    padding: 0 12px 0 30px;
+  }
+  .hl-search-field svg {
+    left: 12px;
+    width: 12px;
+    height: 12px;
+  }
+  .hl-toolbar-icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .hl-toolbar-icon-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .hl-rec-banner {
+    margin: 0 14px;
+    padding: 12px 14px;
+    max-width: none;
+    gap: 10px;
+  }
+  .hl-rec-label {
+    font-size: 12px;
+  }
+  .hl-rec-time {
+    font-size: 16px;
+  }
+  .hl-rec-stop {
+    padding: 11px 14px;
+    font-size: 13px;
+  }
+
+  .hl-transcript {
+    padding: 4px 14px 0;
+    margin-bottom: 14px;
+    gap: 18px;
+  }
+  .hl-speaker-avatar {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+  }
+  .hl-speaker-name {
+    font-size: 13px;
+  }
+  .hl-segment-paragraph {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
