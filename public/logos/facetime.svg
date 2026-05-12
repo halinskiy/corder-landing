@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+  <defs>
+    <linearGradient id="facetime-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#56e35c"/>
+      <stop offset="1" stop-color="#1ec43c"/>
+    </linearGradient>
+  </defs>
+  <rect width="24" height="24" rx="6" fill="url(#facetime-bg)"/>
+  <path fill="#ffffff" d="M6.6 8.3c0-.94.76-1.7 1.7-1.7h5.6c.94 0 1.7.76 1.7 1.7v7.4c0 .94-.76 1.7-1.7 1.7H8.3c-.94 0-1.7-.76-1.7-1.7V8.3z"/>
+  <path fill="#ffffff" d="M17.05 9.55l-.55.55v3.8l.55.55c.6.6 1.65.18 1.65-.68v-3.54c0-.86-1.05-1.28-1.65-.68z"/>
+</svg>
