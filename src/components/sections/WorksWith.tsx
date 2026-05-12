@@ -12,7 +12,7 @@ const LOGO_FILE: Record<string, string> = {
   "Google Meet": "google-meet.svg",
   "Microsoft Teams": "microsoft-teams.svg",
   Discord: "discord.svg",
-  "Slack huddle": "slack.svg",
+  Slack: "slack.svg",
   Notion: "notion.svg",
   Obsidian: "obsidian.svg",
   "Apple Notes": "apple-notes.svg",
