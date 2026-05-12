@@ -571,7 +571,7 @@
   border-radius: 3px;
   padding: 1px 4px;
   margin-inline: -4px;
-  cursor: text;
+  cursor: pointer;
   transition: background-color 120ms ease;
 }
 .hl-segment-line:hover {

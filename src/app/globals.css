@@ -1391,8 +1391,11 @@ button:focus:not(:focus-visible) {
   color: inherit;
 }
 
-/* Feature: Pro pill — accent chip used to mark Pro-tier features */
+/* Feature: Pro pill — accent chip used to mark Pro-tier features. Shares
+ * the Pricing CTA's sparkles + diagonal shimmer pattern so the same
+ * "Pro" visual language reads across the page. */
 .feature-pro-pill {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1407,6 +1410,79 @@ button:focus:not(:focus-visible) {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-bg);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.feature-pro-pill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  transform: translateX(-100%);
+  animation: cta-shimmer 10s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  will-change: transform;
+}
+
+.feature-pro-pill__text {
+  position: relative;
+  z-index: 2;
+}
+
+/* Pro pill is bright accent — default selection blends in. Force a
+ * readable selection by inverting the highlight to a pale fill with
+ * the accent for the glyphs. */
+.feature-pro-pill__text::selection {
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--color-accent);
+}
+
+.feature-pro-pill__sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.feature-pro-pill__sparkles span {
+  position: absolute;
+  color: #ffffff;
+  line-height: 1;
+  opacity: 0;
+  animation: cta-sparkle-twinkle 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+  will-change: opacity, transform;
+}
+
+.feature-pro-pill__sparkles span:nth-child(1) { top: 3px;  left: 10%; font-size: 7px; animation-delay: 0s; }
+.feature-pro-pill__sparkles span:nth-child(2) { top: 17px; left: 18%; font-size: 6px; animation-delay: 0.55s; }
+.feature-pro-pill__sparkles span:nth-child(3) { top: 4px;  left: 28%; font-size: 8px; animation-delay: 1.15s; }
+.feature-pro-pill__sparkles span:nth-child(4) { top: 17px; left: 72%; font-size: 6px; animation-delay: 0.8s; }
+.feature-pro-pill__sparkles span:nth-child(5) { top: 3px;  left: 82%; font-size: 8px; animation-delay: 1.5s; }
+.feature-pro-pill__sparkles span:nth-child(6) { top: 17px; left: 90%; font-size: 6px; animation-delay: 0.3s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-pro-pill::after,
+  .feature-pro-pill__sparkles span {
+    animation: none;
+  }
+  .feature-pro-pill::after {
+    transform: translateX(-100%);
+  }
+  .feature-pro-pill__sparkles span {
+    opacity: 0;
+  }
 }
 
 /* Feature: kbd cap glyph */
