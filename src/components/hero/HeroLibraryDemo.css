@@ -146,6 +146,10 @@
 }
 .hl-sidebar-titlebar-pad {
   height: 36px;
+  transition: background-color 120ms ease;
+}
+.hl-sidebar-titlebar-pad:hover {
+  background: var(--hl-bg-hover);
 }
 .hl-sidebar-search {
   padding: 4px 12px 12px;
@@ -153,6 +157,11 @@
 .hl-search-field {
   position: relative;
   display: block;
+  border-radius: 999px;
+}
+.hl-search-field:hover input {
+  border-color: #b8b8b4;
+  background: var(--hl-bg-hover);
 }
 .hl-search-field svg {
   position: absolute;
@@ -207,6 +216,13 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+  transition: background-color 120ms ease;
+}
+.hl-meeting-item:hover {
+  background: var(--hl-bg-hover);
+}
+.hl-meeting-item.active:hover {
+  background: #e8e8e5;
 }
 .hl-meeting-item + .hl-meeting-item {
   border-top: 1px solid var(--hl-border);
@@ -317,7 +333,7 @@
   font-weight: 500;
   line-height: 1;
   padding: 8px 12px;
-  height: 32px;
+  height: 36px;
   border-radius: 999px;
   cursor: pointer;
   transition: background-color 80ms ease, border-color 80ms ease;
@@ -341,13 +357,13 @@
   background: transparent;
   border: 1px solid var(--hl-border-strong);
   border-radius: 999px;
-  padding: 0 14px 0 16px;
-  height: 32px;
+  padding: 0 18px 0 16px;
+  height: 36px;
   margin-left: 8px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  cursor: default;
+  cursor: pointer;
   font-family: inherit;
   font-size: 13px;
   line-height: 1;
@@ -356,6 +372,16 @@
   transition: background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
     color 220ms cubic-bezier(0.16, 1, 0.3, 1),
     border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hl-boost-switch:hover {
+  background: var(--hl-bg-hover);
+  border-color: #b8b8b4;
+}
+
+.hl-boost-switch[data-on="true"]:hover {
+  background: var(--hl-accent-pressed);
+  border-color: var(--hl-accent-pressed);
 }
 .hl-boost-track {
   width: 26px;

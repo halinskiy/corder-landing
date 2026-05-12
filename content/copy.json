@@ -148,8 +148,8 @@
     ]
   },
   "worksWith": {
-    "eyebrow": "Works with your stack",
-    "heading": "Records anything that plays through your Mac.",
+    "eyebrow": "",
+    "heading": "Records anything",
     "subhead": "Corder captures audio at the OS level. It works with any app that plays sound. The list below is where most people start.",
     "clusters": [
       {
