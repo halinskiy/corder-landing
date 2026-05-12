@@ -2,7 +2,6 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 
-import { HeroBeams } from "@/components/hero/HeroBeams";
 import { HeroLibraryDemo } from "@/components/hero/HeroLibraryDemo";
 
 import { copy } from "@/content/copy";
@@ -43,18 +42,7 @@ export function Hero() {
         }}
       />
 
-      {/* Beams radiating upward from under the Library window — desktop
-       * only. Container ends at the top edge of the mockup; the origin
-       * pinned to its bottom-centre, so beams escape from beneath the
-       * interface. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-24 z-[1] hidden h-[420px] md:block"
-      >
-        <HeroBeams />
-      </div>
-
-      <div className="page-container relative z-[2]">
+      <div className="page-container">
         <div className="mx-auto max-w-[1100px] text-center [text-wrap:balance]">
           <motion.h1
             initial="hidden"
