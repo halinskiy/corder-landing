@@ -192,31 +192,31 @@
         "visualHint": "typographic-mark"
       },
       {
-        "eyebrow": "OUTPUT",
-        "heading": "Drag, don't export",
-        "body": "Drop a session into Notion, Obsidian, or Apple Notes. Text lands plain, without formatting clutter. No export dialog, no file picker, no CSV",
-        "visualHint": "split-cell-illustration"
+        "eyebrow": "AUTO-DETECT",
+        "heading": "Catches the meeting before you do",
+        "body": "When Zoom, Meet, Teams, FaceTime or Discord opens a call, Corder offers to record from the menu bar. One click and the take is rolling",
+        "visualHint": "pro-pill"
       },
       {
-        "eyebrow": "MAC NATIVE",
-        "heading": "Real Mac app, not a wrapper",
-        "body": "Cmd+W closes windows. The system Edit menu works. Sparkle delivers signed updates without the App Store. No Electron, no web runtime",
-        "visualHint": "kbd-cap-glyph",
-        "kbdGlyph": "⌘W"
-      },
-      {
-        "eyebrow": "ARCHIVE",
-        "heading": "Optional Dropbox archive",
-        "body": "Auto-upload audio and transcript to your own Dropbox app folder. Off by default. Enable it once from the menu bar; it runs quietly after that",
+        "eyebrow": "AUDIO",
+        "heading": "System audio without a driver",
+        "body": "Captures whatever plays through your Mac natively. No BlackHole, no Loopback, no virtual loopback hops. The recording is what the meeting actually sounded like",
         "visualHint": "monospace-path",
-        "monoPath": "~/Dropbox/Corder/2026-05-09 17:09.txt"
+        "monoPath": "CoreAudio · Corder"
       },
       {
-        "eyebrow": "UPDATES",
-        "heading": "Sparkle auto-updates",
-        "body": "Signed updates ship through the standard Mac mechanism. No App Store review delay, no manual downloads. You get the fix the day it ships",
+        "eyebrow": "LIBRARY",
+        "heading": "Your library lives on your Mac",
+        "body": "Every transcript and audio file lands in ~/Library/Application Support/Corder/. Open it in Finder, back it up with the rest of your Mac, move it to another machine with rsync",
+        "visualHint": "monospace-path",
+        "monoPath": "~/Library/Application Support/Corder/"
+      },
+      {
+        "eyebrow": "RE-RUN",
+        "heading": "Re-transcribe at zero margin",
+        "body": "Better Gemini model out? Run the same audio again. You pay Google the per-minute API price, nothing extra to us. Old transcript stays alongside the new one",
         "visualHint": "version-sequence",
-        "versionSequence": "v1.4.2 → v1.4.3 → v1.5.0"
+        "versionSequence": "Flash 2.5 → Flash 3 → Pro 4"
       }
     ]
   },
