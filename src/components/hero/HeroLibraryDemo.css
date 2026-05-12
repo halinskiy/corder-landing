@@ -216,13 +216,14 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+  cursor: pointer;
   transition: background-color 120ms ease;
 }
 .hl-meeting-item:hover {
-  background: var(--hl-bg-hover);
+  background: #efefec;
 }
 .hl-meeting-item.active:hover {
-  background: #e8e8e5;
+  background: #dcdcd8;
 }
 .hl-meeting-item + .hl-meeting-item {
   border-top: 1px solid var(--hl-border);
