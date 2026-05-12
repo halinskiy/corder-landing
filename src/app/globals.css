@@ -1112,6 +1112,8 @@ button:focus:not(:focus-visible) {
   color: var(--color-accent);
   font-weight: 700;
   background: rgba(33, 122, 80, 0.14);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
   box-shadow:
     inset 1px 0 0 var(--color-accent),
     inset -1px 0 0 var(--color-accent),
@@ -1168,6 +1170,8 @@ button:focus:not(:focus-visible) {
     inset -1px 0 0 var(--color-accent);
 }
 .comparison-table tbody tr:last-child .comparison-table__cell--corder {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   box-shadow:
     inset 1px 0 0 var(--color-accent),
     inset -1px 0 0 var(--color-accent),
