@@ -24,6 +24,7 @@
   --hl-accent-pressed: #0a5e34;
   --hl-status-ready: #1f7a4f;
   --hl-speaker-purple: #5a3aa6;
+  --hl-speaker-amber: #c7741b;
 
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "IBM Plex Sans",
     system-ui, sans-serif;
@@ -563,10 +564,24 @@
   line-height: 1.7;
   display: block;
 }
+/* Sentence-scoped hover and active highlight — mirrors the real Corder
+ * transcript pane. The negative horizontal margin compensates for the
+ * inline padding so text rows do not shift on hover. */
+.hl-segment-line {
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-inline: -4px;
+  cursor: text;
+  transition: background-color 120ms ease;
+}
+.hl-segment-line:hover {
+  background: #e8e8e6;
+}
 .hl-segment-line.active {
   background: #dff1e5;
-  border-radius: 3px;
-  padding: 1px 2px;
+}
+.hl-segment-line.active:hover {
+  background: #cfe7da;
 }
 
 /* Recording banner — pre-transcript state.
@@ -905,17 +920,29 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
 }
 .hl-tl-bar {
   position: relative;
-  height: 18px;
+  height: 22px;
   background: var(--hl-bg);
   border: 1px solid var(--hl-border);
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
 }
-.hl-tl-bar-tick {
+/* Continuous speech segment — variable-width filled block. Matches the
+ * real macOS Corder timeline visual (filled coloured bars per voice). */
+.hl-tl-bar-seg {
   position: absolute;
   top: 0;
   bottom: 0;
+  border-radius: 1.5px;
+}
+/* Short black tick at the start of every speaker row — recording-start
+ * marker, copied 1:1 from the real app. */
+.hl-tl-bar-start {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2px;
   width: 2px;
+  background: var(--hl-fg);
   border-radius: 1px;
 }
 .hl-tl-bar-cursor {
