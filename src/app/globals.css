@@ -1131,7 +1131,7 @@ button:focus:not(:focus-visible) {
   background: rgba(0, 0, 0, 0.018);
 }
 .comparison-table tbody tr:hover {
-  background: rgba(33, 122, 80, 0.045);
+  background: rgba(0, 0, 0, 0.045);
 }
 
 .comparison-table__feature {
