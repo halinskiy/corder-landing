@@ -674,8 +674,10 @@
   border-radius: 1.5px;
   display: inline-block;
 }
+/* Transcribing banner — same hairline as the search field; the
+ * pulsing accent dot is the only colour signal during this state. */
 .hl-rec-banner--transcribing {
-  border-color: var(--hl-accent);
+  border-color: var(--hl-border-strong);
 }
 
 /* Recording-indicator blob — bottom-right corner of the live UI demo
