@@ -203,11 +203,12 @@ export function HeroLibraryDemo() {
           <button
             type="button"
             className="hl-rec-blob"
-            data-speaking={isSpeaking ? "true" : "false"}
             aria-label="Stop recording"
             onClick={handleStopRecording}
             tabIndex={-1}
-          />
+          >
+            <RecBlobCanvas isSpeaking={isSpeaking} />
+          </button>
         )}
       </div>
     </div>
@@ -670,6 +671,195 @@ function TimelineRow({
       </div>
     </div>
   );
+}
+
+/* ── Recording blob — canvas port of the macOS app's BlobShape ───────
+ *
+ * 12 polar points; for each frame we lerp between two of four templates
+ * (blob → star → hexagon → squircle), add a low-frequency breathing
+ * wobble, a high-frequency jitter that fades in with `activity`, and an
+ * audio-level boost that rotates around the perimeter so loud frames
+ * bulge different sides rather than uniformly inflating. The path is
+ * built from quadratic curves through midpoints of consecutive points
+ * — gives continuous tangents at every joint. Halo is layered drop
+ * shadows on the same context. Identical maths to the Swift version
+ * in /Users/3mpq/Corder/Sources/Corder/UI/RecordingHUDPanel.swift. */
+
+const BLOB_POINTS = 12;
+
+const TPL_BLOB     = [1.05, 0.92, 1.02, 0.95, 1.08, 0.94, 0.98, 1.06, 0.92, 1.04, 0.96, 1.00];
+const TPL_STAR     = [1.18, 0.62, 1.18, 0.62, 1.18, 0.62, 1.18, 0.62, 1.18, 0.62, 1.18, 0.62];
+const TPL_HEXAGON  = [1.05, 0.93, 1.05, 0.93, 1.05, 0.93, 1.05, 0.93, 1.05, 0.93, 1.05, 0.93];
+const TPL_SQUIRCLE = [1.10, 0.92, 0.85, 0.92, 1.10, 0.92, 0.85, 0.92, 1.10, 0.92, 0.85, 0.92];
+
+const CYCLE: ReadonlyArray<{ points: number[]; wobbleScale: number }> = [
+  { points: TPL_BLOB,     wobbleScale: 1.00 },
+  { points: TPL_STAR,     wobbleScale: 0.30 },
+  { points: TPL_HEXAGON,  wobbleScale: 0.45 },
+  { points: TPL_SQUIRCLE, wobbleScale: 0.45 },
+];
+const CYCLE_DURATION_SEC = 4.0;
+
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+function RecBlobCanvas({ isSpeaking }: { isSpeaking: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const activityRef = useRef(0);
+  const speakingRef = useRef(isSpeaking);
+  speakingRef.current = isSpeaking;
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const cssSize = 110;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = cssSize * dpr;
+    canvas.height = cssSize * dpr;
+    canvas.style.width = `${cssSize}px`;
+    canvas.style.height = `${cssSize}px`;
+    ctx.scale(dpr, dpr);
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const cx = cssSize / 2;
+    const cy = cssSize / 2;
+    const baseRadius = (43 / 2) * 0.78;
+
+    let raf = 0;
+    const start = performance.now();
+
+    const draw = () => {
+      const t = (performance.now() - start) / 1000;
+
+      // Smoothly ramp activity toward target (0 or 1) so silent ↔
+      // speaking transitions are gradual.
+      const target = speakingRef.current ? 1 : 0;
+      activityRef.current += (target - activityRef.current) * 0.045;
+      const activity = Math.max(0, Math.min(1, activityRef.current));
+
+      // Simulated audio level: a slow sine + a higher-frequency
+      // micro-burst, gated by activity. Mirrors real meter readings.
+      const simLevel = activity * (
+        0.18 +
+        0.16 * (0.5 + 0.5 * Math.sin(t * 5.7)) +
+        0.10 * Math.abs(Math.sin(t * 13.1))
+      );
+
+      // Where in the cycle are we?
+      const phase = (t % CYCLE_DURATION_SEC) / CYCLE_DURATION_SEC;
+      const scaled = phase * CYCLE.length;
+      const idx = Math.floor(scaled) % CYCLE.length;
+      const nextIdx = (idx + 1) % CYCLE.length;
+      let local = scaled - Math.floor(scaled);
+      local = local * local * (3 - 2 * local); // smoothstep
+
+      const from = CYCLE[idx];
+      const to = CYCLE[nextIdx];
+      const wobbleScaleMorphed = lerp(from.wobbleScale, to.wobbleScale, local);
+      const wobbleAmplitude = 0.2 + 0.8 * activity;
+
+      const points: Array<[number, number]> = [];
+      for (let i = 0; i < BLOB_POINTS; i++) {
+        const angle = (i / BLOB_POINTS) * 2 * Math.PI - Math.PI / 2;
+        const morphedR = lerp(from.points[i], to.points[i], local);
+        const staticR = TPL_BLOB[i];
+        const baseR = lerp(staticR, morphedR, activity);
+
+        const phase1 = t * 1.6 + i * 0.71;
+        const phase2 = t * 2.7 + i * 1.23;
+        const baseWobble = (Math.sin(phase1) * 0.05 + Math.sin(phase2) * 0.03)
+          * wobbleScaleMorphed * wobbleAmplitude;
+
+        const jitterPhase1 = t * 7.5 + i * 1.13;
+        const jitterPhase2 = t * 13.1 + i * 2.37;
+        const jitter = (Math.sin(jitterPhase1) * 0.07 + Math.sin(jitterPhase2) * 0.05) * activity;
+        const wobble = baseWobble + jitter;
+
+        const levelPhase = Math.sin(t * 2.1 + i * 1.2);
+        const levelBoost = simLevel * 0.55 * (0.5 + 0.5 * levelPhase);
+
+        const r = baseRadius * (baseR + wobble + levelBoost);
+        points.push([cx + Math.cos(angle) * r, cy + Math.sin(angle) * r]);
+      }
+
+      // Build the quadratic-through-midpoints path.
+      const buildPath = () => {
+        ctx.beginPath();
+        const last = points[BLOB_POINTS - 1];
+        const first = points[0];
+        ctx.moveTo((last[0] + first[0]) / 2, (last[1] + first[1]) / 2);
+        for (let i = 0; i < BLOB_POINTS; i++) {
+          const p = points[i];
+          const n = points[(i + 1) % BLOB_POINTS];
+          const mid: [number, number] = [(p[0] + n[0]) / 2, (p[1] + n[1]) / 2];
+          ctx.quadraticCurveTo(p[0], p[1], mid[0], mid[1]);
+        }
+        ctx.closePath();
+      };
+
+      // Activity-mixed palette (green ↔ red).
+      const r = Math.round(lerp(31, 185, activity));   // 0x1f -> 0xb9
+      const g = Math.round(lerp(122, 73, activity));   // 0x7a -> 0x49
+      const b = Math.round(lerp(80, 65, activity));    // 0x50 -> 0x41
+      const haloAlphaOuter = 0.32 + 0.18 * activity;
+      const haloAlphaMid   = 0.18 + 0.12 * activity;
+
+      ctx.clearRect(0, 0, cssSize, cssSize);
+
+      // Halo layers via blurred shadow draws of the same path.
+      buildPath();
+      ctx.save();
+      ctx.shadowColor = `rgba(${r},${g},${b},${haloAlphaOuter})`;
+      ctx.shadowBlur = 32 + 8 * simLevel;
+      ctx.fillStyle = `rgba(${r},${g},${b},1)`;
+      ctx.fill();
+      ctx.restore();
+
+      buildPath();
+      ctx.save();
+      ctx.shadowColor = `rgba(${r},${g},${b},${haloAlphaMid})`;
+      ctx.shadowBlur = 14 + 4 * simLevel;
+      ctx.fillStyle = `rgba(${r},${g},${b},1)`;
+      ctx.fill();
+      ctx.restore();
+
+      // Main fill — radial gradient with a slight off-centre highlight.
+      buildPath();
+      const grad = ctx.createRadialGradient(cx - 4, cy - 6, 4, cx, cy, baseRadius * 1.4);
+      const brightR = Math.round(lerp(40, 211, activity));
+      const brightG = Math.round(lerp(165, 90, activity));
+      const brightB = Math.round(lerp(96, 82, activity));
+      grad.addColorStop(0, `rgb(${brightR},${brightG},${brightB})`);
+      grad.addColorStop(0.65, `rgb(${r},${g},${b})`);
+      const darkR = Math.round(lerp(8, 168, activity));
+      const darkG = Math.round(lerp(77, 54, activity));
+      const darkB = Math.round(lerp(41, 60, activity));
+      grad.addColorStop(1, `rgb(${darkR},${darkG},${darkB})`);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Subtle top-down white highlight stroke.
+      buildPath();
+      const strokeGrad = ctx.createLinearGradient(cx, cy - baseRadius, cx, cy + baseRadius);
+      strokeGrad.addColorStop(0, "rgba(255,255,255,0.32)");
+      strokeGrad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.strokeStyle = strokeGrad;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      if (!reduced) {
+        raf = requestAnimationFrame(draw);
+      }
+    };
+
+    draw();
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return <canvas ref={canvasRef} className="hl-rec-blob__canvas" aria-hidden="true" />;
 }
 
 /* ── Icons ─────────────────────────────────────────────────── */
