@@ -977,32 +977,35 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   bottom: 0;
   border-radius: 1.5px;
 }
-/* Short black tick at the start of every speaker row — recording-start
- * marker, copied 1:1 from the real app. */
-.hl-tl-bar-start {
+
+/* Container for all timeline rows; positioning context for the shared
+ * playhead cursor that spans every row. */
+.hl-tl-bars {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Single shared playhead cursor — spans all timeline rows from top to
+ * bottom. mix-blend-mode: difference keeps it readable against the
+ * white card, the purple/green/amber segments, and any zebra fill. */
+.hl-tl-shared-cursor {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 2px;
   width: 2px;
-  background: var(--hl-fg);
-  border-radius: 1px;
-}
-.hl-tl-bar-cursor {
-  position: absolute;
-  top: -2px;
-  bottom: -2px;
-  width: 2px;
-  background: var(--hl-fg);
-  z-index: 2;
+  background: #ffffff;
+  mix-blend-mode: difference;
+  z-index: 3;
+  pointer-events: none;
   left: 18%;
   animation: hl-cursor 18s linear infinite;
   animation-play-state: paused;
 }
-.hero-library-demo[data-playing="true"] .hl-tl-bar-cursor {
+.hero-library-demo[data-playing="true"] .hl-tl-shared-cursor {
   animation-play-state: running;
 }
-
 @keyframes hl-cursor {
   0% { left: 18%; }
   100% { left: 86%; }
@@ -1010,7 +1013,7 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
 
 @media (prefers-reduced-motion: reduce) {
   .hl-audio-scrub-fill,
-  .hl-tl-bar-cursor {
+  .hl-tl-shared-cursor {
     animation: none !important;
   }
 }
