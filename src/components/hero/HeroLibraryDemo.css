@@ -978,22 +978,26 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   border-radius: 1.5px;
 }
 
-/* Container for all timeline rows; positioning context for the shared
- * playhead cursor that spans every row. */
+/* Container for all timeline rows. */
 .hl-tl-bars {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* Single shared playhead cursor — spans all timeline rows from top to
- * bottom. mix-blend-mode: difference keeps it readable against the
- * white card, the purple/green/amber segments, and any zebra fill. */
-.hl-tl-shared-cursor {
+/* Per-row playhead cursor — one in every .hl-tl-bar, all driven by
+ * the same keyframe so they march in lockstep but stay clipped to the
+ * bar (no line through the speaker name above). mix-blend-mode:
+ * difference keeps the cursor readable against white, purple, accent
+ * green, and amber. isolation on the bar so the blend mode doesn't
+ * leak through to the card / page below. */
+.hl-tl-bar {
+  isolation: isolate;
+}
+.hl-tl-bar-cursor {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: -2px;
+  bottom: -2px;
   width: 2px;
   background: #ffffff;
   mix-blend-mode: difference;
@@ -1003,7 +1007,7 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   animation: hl-cursor 18s linear infinite;
   animation-play-state: paused;
 }
-.hero-library-demo[data-playing="true"] .hl-tl-shared-cursor {
+.hero-library-demo[data-playing="true"] .hl-tl-bar-cursor {
   animation-play-state: running;
 }
 @keyframes hl-cursor {
@@ -1013,7 +1017,7 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
 
 @media (prefers-reduced-motion: reduce) {
   .hl-audio-scrub-fill,
-  .hl-tl-shared-cursor {
+  .hl-tl-bar-cursor {
     animation: none !important;
   }
 }
