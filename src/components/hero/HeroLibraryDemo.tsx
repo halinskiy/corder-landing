@@ -623,11 +623,6 @@ function RightPanel({
               ]}
               color="var(--hl-speaker-amber)"
             />
-
-            {/* Single cursor spanning every row. Uses mix-blend-mode:
-              * difference so it stays contrasted against the white card,
-              * the purple/green/amber segments, and any in-between. */}
-            <div className="hl-tl-shared-cursor" aria-hidden="true" />
           </div>
         ) : (
           <p className="hl-timeline-empty" aria-hidden="true">
@@ -664,6 +659,10 @@ function TimelineRow({
             style={{ left: `${s.left}%`, width: `${s.width}%`, background: color }}
           />
         ))}
+        {/* Per-row playhead. All three rows share the same animation
+          * (same keyframe, same duration, same delay) so they march in
+          * lockstep, but the cursor doesn't cross the row-head labels. */}
+        <span className="hl-tl-bar-cursor" aria-hidden="true" />
       </div>
     </div>
   );
