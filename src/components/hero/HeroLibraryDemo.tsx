@@ -580,7 +580,7 @@ function RightPanel({
         </div>
 
         {isActive ? (
-          <>
+          <div className="hl-tl-bars">
             <TimelineRow
               name="Kostiantyn Halynskyi"
               stats="43%, 1m 58s"
@@ -597,7 +597,6 @@ function RightPanel({
                 { left: 84, width: 9 },
               ]}
               color="var(--hl-speaker-purple)"
-              showCursor={isActive}
             />
 
             <TimelineRow
@@ -628,7 +627,12 @@ function RightPanel({
               ]}
               color="var(--hl-speaker-amber)"
             />
-          </>
+
+            {/* Single cursor spanning every row. Uses mix-blend-mode:
+              * difference so it stays contrasted against the white card,
+              * the purple/green/amber segments, and any in-between. */}
+            <div className="hl-tl-shared-cursor" aria-hidden="true" />
+          </div>
         ) : (
           <p className="hl-timeline-empty" aria-hidden="true">
             Speakers appear once transcription finishes.
@@ -644,13 +648,11 @@ function TimelineRow({
   stats,
   segments,
   color,
-  showCursor = false,
 }: {
   name: string;
   stats: string;
   segments: ReadonlyArray<{ left: number; width: number }>;
   color: string;
-  showCursor?: boolean;
 }) {
   return (
     <div className="hl-tl-row">
@@ -659,7 +661,6 @@ function TimelineRow({
         <span className="hl-tl-stats">{stats}</span>
       </div>
       <div className="hl-tl-bar">
-        <span className="hl-tl-bar-start" aria-hidden="true" />
         {segments.map((s, i) => (
           <div
             key={i}
@@ -667,7 +668,6 @@ function TimelineRow({
             style={{ left: `${s.left}%`, width: `${s.width}%`, background: color }}
           />
         ))}
-        {showCursor && <div className="hl-tl-bar-cursor" />}
       </div>
     </div>
   );
