@@ -987,20 +987,18 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
 
 /* Per-row playhead cursor — one in every .hl-tl-bar, all driven by
  * the same keyframe so they march in lockstep but stay clipped to the
- * bar (no line through the speaker name above). mix-blend-mode:
- * difference keeps the cursor readable against white, purple, accent
- * green, and amber. isolation on the bar so the blend mode doesn't
- * leak through to the card / page below. */
-.hl-tl-bar {
-  isolation: isolate;
-}
+ * bar (no line through the speaker name above). White core + thin
+ * dark hairline: the white reads on every coloured segment (purple,
+ * accent green, amber) while the hairline keeps it visible against
+ * the white bar background. */
 .hl-tl-bar-cursor {
   position: absolute;
   top: -2px;
   bottom: -2px;
   width: 2px;
   background: #ffffff;
-  mix-blend-mode: difference;
+  box-shadow: 0 0 0 1px rgba(10, 10, 10, 0.45);
+  border-radius: 1px;
   z-index: 3;
   pointer-events: none;
   left: 18%;
