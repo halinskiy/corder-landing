@@ -68,8 +68,8 @@ button:focus:not(:focus-visible) {
   color: var(--color-bg) !important;
 }
 .cta-pill--primary:hover {
-  background-color: var(--color-accent-deep, #0e3d28) !important;
-  border-color: var(--color-accent-deep, #0e3d28) !important;
+  background-color: var(--color-accent-hover, #0a5e34) !important;
+  border-color: var(--color-accent-hover, #0a5e34) !important;
   transform: translateY(-1px);
 }
 .cta-pill--primary:active {
@@ -1055,7 +1055,9 @@ button:focus:not(:focus-visible) {
 .comparison-table-wrap {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-window);
-  background: var(--color-bg);
+  /* Surface (#F7F7F6) so the rounded Corder frame sits in a neutral
+   * grey field. Cells with transparent backgrounds show this through. */
+  background: var(--color-surface);
   position: relative;
   overflow: hidden;
   box-shadow:
@@ -1081,13 +1083,26 @@ button:focus:not(:focus-visible) {
   top: 0;
   bottom: 0;
   /* Same ratios as the table column widths so the frame tracks the
-   * Corder cells when the table stretches beyond min-width. */
+   * Corder cells when the table stretches beyond min-width — JS in
+   * Comparison.tsx overrides these inline once the real header cell is
+   * measured. */
   left: calc(220 / 976 * 100%);
   width: calc(84 / 976 * 100%);
   border: 1px solid var(--color-accent);
+  /* Accent fill inside the rounded outline. Sits below the table so
+   * cell content (chips, text) paints on top — the wrap's surface fill
+   * is what shows in the corners outside the rounded shape. */
+  background: rgba(33, 122, 80, 0.08);
   border-radius: 10px;
   pointer-events: none;
-  z-index: 3;
+  z-index: 0;
+}
+
+/* Lift the table above the frame so cell content sits on top of the
+ * accent fill but the rounded outline still reads as a single ring. */
+.comparison-table {
+  position: relative;
+  z-index: 1;
 }
 
 .comparison-table {
@@ -1177,25 +1192,27 @@ button:focus:not(:focus-visible) {
   border-bottom: 0;
 }
 
-/* Corder column — flat accent-tinted fill, no per-cell borders. The
- * surrounding accent frame is drawn once by .comparison-corder-frame. */
+/* Corder column — transparent so the accent fill in .comparison-corder-frame
+ * shows through the rounded shape, and the wrap's surface fill shows in
+ * the rounded corners. */
 .comparison-table__th--corder {
   color: var(--color-accent);
   font-weight: 700;
-  background: rgba(33, 122, 80, 0.14);
+  background: transparent;
   border-right: 0;
   border-bottom: 0;
 }
 
 .comparison-table__cell--corder {
-  background: rgba(33, 122, 80, 0.07);
+  background: transparent;
   border-right: 0;
   border-bottom: 0;
 }
 
-/* Hover state — keep the Corder column readable when the row tints. */
+/* Hover state — Corder cell stays transparent; the row tint paints
+ * over the surface field, the accent frame fill stays visible behind. */
 .comparison-table tbody tr:hover .comparison-table__cell--corder {
-  background: rgba(33, 122, 80, 0.12);
+  background: transparent;
 }
 
 /* ---- Cell glyphs ------------------------------------------------------ */
