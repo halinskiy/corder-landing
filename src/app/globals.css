@@ -1119,10 +1119,6 @@ button:focus:not(:focus-visible) {
   table-layout: fixed;
 }
 
-.comparison-table thead tr {
-  background: var(--color-surface);
-}
-
 .comparison-table__th {
   padding: 22px 12px;
   text-align: center;
@@ -1132,6 +1128,7 @@ button:focus:not(:focus-visible) {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text);
+  background: var(--color-surface);
   border-right: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
