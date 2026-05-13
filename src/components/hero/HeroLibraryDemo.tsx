@@ -20,7 +20,10 @@ export function HeroLibraryDemo() {
   const [playing, setPlaying] = useState(false);
   const [mode, setMode] = useState<DemoMode>("recording");
   const [elapsed, setElapsed] = useState(0);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Blob "speaking" state is simply derived from mode: red and morphing
+  // while recording, green and idle otherwise.
+  const isSpeaking = mode === "recording";
 
   // Live timer for the recording state — ticks once per second, frozen
   // when the user clicks Stop.
@@ -54,27 +57,17 @@ export function HeroLibraryDemo() {
     return () => window.clearTimeout(id);
   }, [mode, handleStopRecording]);
 
-  // Simulated speaking cycle for the recording-indicator blob: while the
-  // recording mode is active, alternate between "silent" (2-4s) and
-  // "speaking" (3-6s) with randomised intervals so the blob feels alive.
-  useEffect(() => {
-    if (mode !== "recording") {
-      setIsSpeaking(false);
-      return;
+  // Restart recording from the transcript view: reset elapsed, drop the
+  // transcript, kick the blob back into its red speaking state.
+  const handleRestartRecording = useCallback(() => {
+    if (transcribingTimerRef.current !== null) {
+      window.clearTimeout(transcribingTimerRef.current);
+      transcribingTimerRef.current = null;
     }
-    let speaking = false;
-    let timer = 0;
-    const cycle = () => {
-      speaking = !speaking;
-      setIsSpeaking(speaking);
-      const next = speaking
-        ? 3200 + Math.random() * 2800
-        : 2200 + Math.random() * 1800;
-      timer = window.setTimeout(cycle, next);
-    };
-    timer = window.setTimeout(cycle, 1600);
-    return () => window.clearTimeout(timer);
-  }, [mode]);
+    setElapsed(0);
+    setPlaying(false);
+    setMode("recording");
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -199,12 +192,15 @@ export function HeroLibraryDemo() {
         {/* Recording-indicator blob — bottom-right corner of the window
           * during recording. Morphs shape, breathes red glow, mirrors the
           * real macOS app's capture indicator. */}
-        {mode === "recording" && (
+        {/* Always-visible capture indicator. Red + morphing while
+          * recording (click stops). Green + idle while a take is being
+          * transcribed or already on screen (click starts a new take). */}
+        {mode !== "transcribing" && (
           <button
             type="button"
             className="hl-rec-blob"
-            aria-label="Stop recording"
-            onClick={handleStopRecording}
+            aria-label={mode === "recording" ? "Stop recording" : "Start a new recording"}
+            onClick={mode === "recording" ? handleStopRecording : handleRestartRecording}
             tabIndex={-1}
           >
             <RecBlobCanvas isSpeaking={isSpeaking} />
