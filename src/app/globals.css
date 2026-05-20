@@ -19,26 +19,6 @@ body {
   min-height: 100vh;
   font-size: var(--text-body);
   line-height: var(--lh-body);
-
-  /* Editorial dot-grid background. 1px graphite dots at 64px cells,
-   * 12% effective opacity on light page. Static at all times, no JS,
-   * no animation. Nav has its own opaque chrome so the grid does not
-   * bleed into it. */
-  background-color: var(--color-bg);
-  background-image: radial-gradient(
-    circle,
-    rgba(14, 14, 13, 0.12) 1px,
-    transparent 1.5px
-  );
-  background-size: 64px 64px;
-  background-position: 0 0;
-  background-attachment: scroll;
-}
-
-@media (max-width: 640px) {
-  body {
-    background-size: 48px 48px;
-  }
 }
 
 /* ----------------------------------------------------------------------
