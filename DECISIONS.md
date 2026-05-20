@@ -4,6 +4,108 @@
 
 ---
 
+## 2026-05-20 — Hero polish: theme toggle, Settings tab, taller window, transcript scroll
+
+### Решение 1: dark theme живёт ТОЛЬКО внутри demo, не на landing
+
+**Решение:** добавили `[data-theme="dark"]` override `--hl-*` токенов
+внутри scope `.hero-library-demo`. Landing tokens (`--color-bg`,
+`--color-text` итд) НЕ трогаем. Кнопка-луна переключает state локально
+в `HeroLibraryDemo`, никак не дёргает `<html>` или body.
+
+**Контекст:** CLAUDE.md фиксирует "default light, dark only on explicit
+request". User просил повторить theme toggle "как в оригинале" — но в
+оригинале это переключение Corder web-app внутри его собственного
+window. Landing остаётся в light theme. Demo-окно — это product mock,
+оно вправе иметь свою theme как часть live UI demo.
+
+**Альтернативы:**
+- a) Global `<html data-theme="dark">` swap. Отвергнуто: ломает доктрину
+  (single light theme), и user явно хотел "smooth animation в этом
+  интерфейсе hero", не на всём landing.
+- b) Прокинуть `--color-accent` в demo и поменять акцент в dark.
+  Отвергнуто: single accent rule per project. Forest green
+  `#217a50` (light) -> brighter `#1f9d59` (dark) — это вариант ТОГО ЖЕ
+  акцента под dark background (так и в оригинале), не второй цвет.
+  Документировано: `--hl-accent` в `[data-theme="dark"]` остаётся
+  derived from base accent, просто tuned for dark luminance.
+
+### Решение 2: Integrations таб не реализован, остановились на Recording/Settings
+
+**Решение:** Рендерим только два таба в правом столбце — `Recording`
+(default) и `Settings`. `Integrations` из реального app (Image #67 user
+screenshot) опущен.
+
+**Контекст:** brief разрешал "пропустить Integrations если усложняет
+layout — soldier judgement". В реальном app Integrations это not a
+tab внутри meeting view, а отдельная панель в Profile menu (см.
+inventory §10, §11). Добавлять третий таб только ради landing визуала
+было бы false signal — лишняя кнопка которая никуда не ведёт. Если
+user захочет, легко добавить позже: rightTab type + ещё одна
+`SettingsPane` ветка.
+
+### Решение 3: blob IDLE_FLOOR = 0.35 — морфит даже когда не recording
+
+**Решение:** Ввели `IDLE_FLOOR = 0.35` в `RecBlobCanvas`. Activity
+target = 1 (recording) или 0.35 (idle), а НЕ 0. Цветовой mix
+вычисляется отдельно (`colorActivityFor`) — нормализован от floor до
+1, так что green idle ↔ red recording flip всё равно чёткий.
+
+**Контекст:** User жаловался "сейчас он застыл". Old behaviour: при
+mode=`transcript` (idle) activity decays к 0, baseR=TPL_BLOB,
+wobbleAmplitude=0.2, jitter*0 — визуально это статичный blob.
+Сравнение с real macOS app: SwiftUI `RecordingHUDView` имеет idle
+"breath bulge" (см. inventory §2). Без floor наш JS port не повторяет
+этот idle breath.
+
+**Альтернатива:** keep activity at 0 idle, но добавить SEPARATE
+`breathPhase` source независимо от activity. Отвергнуто: ввело бы
+второй timing source и осложнило бы reduced-motion fallback. Floor =
+single source of truth и сразу управляет shape + wobble + jitter +
+size, что было намерением original Swift code тоже (activity > 0
+гарантировано когда HUD is mounted).
+
+### Решение 4: theme transition rule на `*` внутри demo, не на root
+
+**Решение:** Универсальный transition rule:
+```css
+.hero-library-demo,
+.hero-library-demo *,
+.hero-library-demo *::before,
+.hero-library-demo *::after {
+  transition: bg/color/border/fill/stroke/box-shadow/opacity 240 ms doctrine;
+}
+```
+
+**Контекст:** Theme swap on root flips `--hl-*` CSS variables. Every
+descendant repaints. Without transition, repaint is instant — user
+would see SNAP. Universal `*` selector inside demo scope guarantees
+EVERY surface (including pseudo-elements like `::before` for audio
+scrub track) crossfades in lockstep.
+
+**Specificity catch:** the existing `[data-reveal="visible"]`
+`transition` shorthand on the root was clobbering the universal rule
+(higher specificity, shorthand RESET). Fixed by converting that rule
+to longhand `transition-property` / `transition-duration` that
+explicitly includes bg/color/border/fill/stroke alongside the reveal-
+only transform/opacity. Root-level color crossfade is now safe.
+
+### Решение 5: token hygiene — все hardcoded grey hex заменены на `--hl-*`
+
+**Решение:** Заменили `#b8b8b4`, `#ececea`, `#dcdcd9`, `#e8e8e5`,
+`#e8e8e6`, `#dff1e5`, `#cfe7da`, `#d8d8d4` на CSS variables
+(`--hl-fg-dim`, `--hl-border`, `--hl-border-strong`, `--hl-bg-active`,
+`color-mix(in srgb, var(--hl-accent) 20%, transparent)`).
+
+**Контекст:** До этого hover/active states в demo paint'или
+светло-серым, который в dark theme смотрится как яркие пятна.
+Поскольку dark theme стал requirement, любой hardcoded light-theme
+grey становится bug. Цена замены — единственная новая зависимость:
+браузерная поддержка `color-mix()` (Chrome 111+, Safari 16.2+, Firefox
+113+). Все таргет-браузеры project'а это поддерживают.
+
+---
+
 ## 2026-05-20 — Hero `HeroLibraryDemo` обновлён до Corder v0.9.0
 
 ### Решение 1: один patch, никакого редизайна

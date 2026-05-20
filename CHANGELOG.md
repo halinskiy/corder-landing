@@ -12,6 +12,59 @@ Format:
 
 ---
 
+## 2026-05-20 — Hero `HeroLibraryDemo` polish pass (branch `feat/hero-v090`)
+
+Single follow-up commit on `feat/hero-v090` (parent `48e8902`) addressing six
+issues the user flagged on the v0.9.0 demo. All changes scoped to
+`src/components/hero/HeroLibraryDemo.{tsx,css}`; no new dependencies.
+
+- **Theme toggle.** Moon icon in the window header is now a real toggle.
+  Click flips a demo-local `theme: "light" | "dark"` state. Applied as
+  `data-theme` on `.hero-library-demo` root; every painted surface inside
+  the demo crossfades via a universal `*` rule (240 ms doctrine easing,
+  properties: bg-color / color / border-color / fill / stroke /
+  box-shadow / opacity). Sun icon swaps in for the moon via paired
+  opacity. Dark token palette mirrors the real macOS Corder
+  `.dark` block from `~/Corder/Web/src/styles.css`. Reduced motion /
+  `?motion=0` reduces all transitions to 0 ms — theme still flips,
+  just instantly.
+- **Settings tab.** Tabs in the right column are real buttons. Clicking
+  `Settings` swaps the right panel from the Recording content (audio
+  scrubber + Timeline) to a `SettingsPane`: six framed `SoloCard`s
+  matching the inventory dossier (System notifications OFF, Screen
+  video recording ON, Auto-transcribe OFF, Auto-title ON, Start/stop
+  recording hotkey pill `⇧⌘F`, Always offer to record). Toggles are
+  decorative — `tabIndex={-1}`, no state. Stacks vertically, scrolls if
+  the panel overflows.
+- **Breadcrumb font.** 13 px -> 15 px with line-height 1.3. Header
+  strip `min-height: 64px` unchanged so the lift comes purely from
+  font size + tighter leading.
+- **Taller window.** Aspect ratio 1180/620 -> 1180/720 so the full
+  Timeline section (label + three speaker rows) is visible without
+  scrolling the Recording pane. Tablet collapse 16/11 -> 4/3 to mirror.
+- **Scrollable transcript.** `.hl-transcript` flipped to
+  `overflow-y: auto` with a thin webkit/firefox scrollbar. Dialog
+  expanded from 4 turns to 8 (KH / VG / I alternating). Stagger reveal
+  delays extended through child 8.
+- **Restored blob animation.** Added `IDLE_FLOOR = 0.35` so the blob's
+  shape morph + breathing wobble play continuously even when not
+  speaking (previously activity decayed to 0 and the green idle blob
+  read as frozen). Colour mix split off (`colorMix`) so red only kicks
+  in while actually recording. Initial `activityRef` 0.38 so the very
+  first painted frame is already mid-breath, not a cold circle.
+- **Token hygiene.** Replaced 6 hardcoded hex values
+  (`#b8b8b4`, `#ececea`, `#dcdcd9`, `#e8e8e5`, `#e8e8e6`, `#dff1e5`,
+  `#cfe7da`, `#d8d8d4`) with `--hl-*` tokens so dark theme paints
+  correctly. Hover borders use `--hl-fg-dim`; active line uses
+  `color-mix(in srgb, var(--hl-accent), transparent)`. Audio scrub
+  track gets a dark-only override to `--hl-bg-active` for sufficient
+  contrast under dark.
+
+JS gzip (page chunk only): 11253 -> 12254 bytes (+1001 bytes). First
+Load JS gzip total: 112222 -> 113223 bytes (+1001). Framework + shared
+chunks unchanged at 100969 bytes — the page-local cost of the theme
+state + SettingsPane + extra dialogue is the +1 kB.
+
 ## 2026-05-20 — Hero `HeroLibraryDemo` updated to Corder v0.9.0 (branch `feat/hero-v090`)
 
 Same screen, just updated to match the live macOS app v0.9.0 shipped on
