@@ -558,6 +558,7 @@
     "baseline": "© 2026 Corder. Back to top"
   },
   "newsletter": {
+    "_note": "Powers CorderPresenceForm (the morphed orb-to-card at the bottom of the page) and CorderPresenceStaticSection (reduced-motion inline fallback). The standalone Newsletter section was removed 2026-05-20 in favour of the morph chain. Same field shape, same copy.",
     "heading": "Be the first to know",
     "subhead": "New Feature Drops, No spam. We promise",
     "placeholder": "Your email",

@@ -12,6 +12,44 @@ Format:
 
 ---
 
+## 2026-05-20 — CorderPresence: third state (form) + Newsletter section removed
+
+- **Third morph state** added to `CorderPresence.tsx`. The orb (state B) now
+  expands into a contact card (state C) when the user reaches a new
+  `CorderPresenceFormSentinel` placed where the Newsletter section used to
+  sit (between Faq and Footer). All three states share
+  `layoutId="corder-presence"`; framer-motion interpolates width, height,
+  border-radius, and position automatically.
+- Form: 380x440 desktop, `min(92vw, 360px)` mobile. Same neutral bg,
+  hairline border, 12px radius. Heading/subhead/email input/Subscribe
+  button, all sourced from `copy.json#newsletter`. Submits to a local
+  success state (no backend yet — matches old Newsletter behaviour).
+- **Newsletter section removed.** `src/components/sections/Newsletter.tsx`
+  deleted. `import` + render in `src/app/page.tsx` removed along with the
+  adjacent `<hr className="section-divider" />`. 14 `.newsletter*` rules
+  stripped from `src/app/globals.css` and replaced with a `.presence-static`
+  block of the same shape — used only by the reduced-motion fallback section.
+- **Reduced-motion path:** when `prefers-reduced-motion: reduce` OR
+  `?motion=0` is set, the orb/form chain is suppressed (a fixed-corner
+  morph without animation is intrusive and pointless). Instead,
+  `CorderPresenceStaticSection` mounts inline between Faq and Footer with
+  the same form content, so the subscribe affordance is preserved.
+- `copy.json#newsletter` block kept with a `_note` field documenting that
+  it now powers `CorderPresenceForm` + `CorderPresenceStaticSection`.
+- `npm run typecheck` exit 0. `npm run build` exit 0, page First Load JS
+  23.3 kB (was 31.2 kB before this iter, ceiling 80 kB). Section count
+  dropped by one, hence the size dip.
+- ASCII audit on all touched files: zero new violations of the typographic
+  dash/bullet/middle-dot character class.
+- Decision: in reduced-motion mode we render an inline section rather than
+  a corner-pinned static card. A non-animated fixed-position card with no
+  scroll relationship is pure visual noise. See `DECISIONS.md` for the full
+  rationale.
+- Next: judge reviews via CDP harness on `localhost:3050`. Single atomic
+  commit on `feat/background-decor`.
+
+---
+
 ## 2026-05-10 — How section: false-alarm CSS verification
 
 - Parent agent forwarded user report: «How sticky panel рендерит Corder UI без стилей, всё в одну колонку голым текстом, sticky не реагирует на скролл».

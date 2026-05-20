@@ -5,9 +5,12 @@ import { Footer } from "@/components/sections/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Nav } from "@/components/sections/Nav";
-import { Newsletter } from "@/components/sections/Newsletter";
 import { Pricing } from "@/components/sections/Pricing";
 import { WorksWith } from "@/components/sections/WorksWith";
+import {
+  CorderPresenceFormSentinel,
+  CorderPresenceStaticSection,
+} from "@/components/presence/CorderPresence";
 
 export default function HomePage() {
   return (
@@ -26,9 +29,15 @@ export default function HomePage() {
       <Pricing />
       <hr className="section-divider" />
       <Faq />
-      <hr className="section-divider" />
-      <Newsletter />
-      <hr className="section-divider" />
+      {/* Form-zone sentinel sits where the old Newsletter section used to.
+          The orb (CorderPresence state B) morphs into a contact card
+          (state C) as this sentinel scrolls into the upper 40% of the
+          viewport. Renders as a zero-height anchor; no visual footprint. */}
+      <CorderPresenceFormSentinel />
+      {/* Reduced-motion / ?motion=0 fallback: when the corner morph chain
+          is off, this inline section provides the same subscribe form in
+          the natural page flow. Renders null when motion is enabled. */}
+      <CorderPresenceStaticSection />
       <Footer />
     </main>
   );

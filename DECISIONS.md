@@ -4,6 +4,38 @@
 
 ---
 
+## 2026-05-20 — CorderPresence третье состояние (form) + удаление Newsletter секции
+
+### Решение 1: Newsletter секция уходит, форма становится state C морфа
+
+**Решение:** `src/components/sections/Newsletter.tsx` удалён, `<Newsletter />` + соседний `<hr>` сняты со страницы. Subscribe-форма теперь — третье состояние `CorderPresence`: orb (state B) разворачивается в карточку 380×440 с тем же `layoutId="corder-presence"`, framer-motion интерполирует bbox/радиус/положение между орбом и карточкой.
+
+**Контекст:** До этой сессии user'у была видна последовательность «orb появился в правом-нижнем после HowItWorks и просто плывёт там до футера». Финальная Newsletter секция жила в обычном flow страницы и никак не была связана с орбом. Чтобы оправдать наличие орба (а не просто абстрактного декора), его нужно было приземлить в конкретный affordance в конце страницы. Морф «orb → contact form» делает это: orb = ожидание, форма = действие.
+
+**Альтернативы:**
+- **(rejected) (a) Оставить Newsletter секцию + орб в углу как декорацию.** Самый дешёвый вариант, но создаёт visual conflict: орб тянет внимание к углу, а форма — к центру страницы. Две точки внимания на одной задаче — это шум.
+- **(rejected) (b) Заменить Newsletter inline-плашкой «эта секция теперь в орбе».** Лёгкий вариант, но требует от пользователя интерпретации «куда же мне ткнуть». Морф — самообъясняющий: ты видишь как orb растёт в карту.
+- **(taken) (c) Полный морф chain через `layoutId`.** Один framer-motion shared layout, ноль дополнительных компонентов, full reuse `copy.json#newsletter`. CSS `.newsletter*` (14 правил) уходит, на её место — единственный `.presence-static` блок для reduced-motion fallback.
+
+**Verified:** typecheck + build green (page First Load JS 23.3 kB, было 31.2 kB), zero `.newsletter` refs во всём проекте, оба sentinel рендерятся.
+
+### Решение 2: Reduced-motion path — inline section, не fixed-corner card
+
+**Решение:** Когда `prefers-reduced-motion: reduce` ИЛИ `?motion=0` — orb/form морф полностью отключается, на его место рендерится `CorderPresenceStaticSection` в обычном flow страницы между Faq и Footer. **НЕ** статичная карточка в углу.
+
+**Контекст:** Брифинг предложил «orb hidden, form hidden, inline section instead». Я согласился потому что:
+1. Fixed-position карточка в углу без анимации появления — это просто навязчивый baked-in UI element, который читается как stuck overlay. Анимация морфа = единственное визуальное оправдание для такого позиционирования. Без неё — лучше обычная секция.
+2. Reduced-motion users ожидают **меньше** visual interruption, не больше. Inline section — это привычный pattern subscribe-плашки внизу landing'а.
+
+**Альтернативы:**
+- **(rejected) (a) Скрыть всё, включая форму.** Лишает reduced-motion users возможности подписаться. Регрессия в функциональности.
+- **(rejected) (b) Статичный corner card.** Visual noise без анимационного обоснования. См. контекст выше.
+- **(taken) (c) Inline section в page flow.** Sub-100% UX parity с motion-on path (нет slick морфа, но subscribe-функция полностью сохранена). CSS написан с нуля под класс `.presence-static` — не reuse удалённого `.newsletter` namespace.
+
+**Verified:** SSR HTML не содержит `presence-static` в default motion-on режиме; рендерится только post-hydration при `?motion=0`. Будущий regression: если кто-то решит вернуть `presence-static` в SSR — он сломает hydration, потому что сервер не знает query string.
+
+---
+
 ## 2026-05-10 — fix-pass-2 — composition order, Inspector deprecation, single-accent CTA contract
 
 ### Решение 1: AudienceLine после Privacy (структурный rearrangement в page.tsx)
