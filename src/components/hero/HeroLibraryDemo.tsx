@@ -698,6 +698,7 @@ function RightPanel({
           data-tokens="hl-border,radius-card"
         >
           <div className="hl-video-frame">
+            <GoogleMeetMock />
             <button
               type="button"
               className="hl-video-play"
@@ -1320,6 +1321,59 @@ function CopyAllIcon() {
     >
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+// Google Meet style mock for the video-preview card inside the Recording
+// tab. Purely decorative SVG (no real image, so no external host or
+// copyright concern). 2x2 participant tile grid with name labels, an
+// active-speaker outline on the user's tile, and a thin Meet-style
+// control strip at the bottom.
+function GoogleMeetMock() {
+  return (
+    <svg
+      className="hl-video-mock"
+      viewBox="0 0 320 180"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+      data-component="HeroLibraryDemo.GoogleMeetMock"
+      data-source={DATA_SOURCE}
+      data-tokens="hl-meet-bg,hl-meet-tile"
+    >
+      <rect width="320" height="180" fill="#202124" />
+
+      {/* Top-left tile - Kostiantyn */}
+      <rect x="6" y="6" width="151" height="71" rx="6" fill="#3c4043" />
+      <circle cx="81" cy="34" r="14" fill="#1a73e8" />
+      <text x="81" y="38" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">K</text>
+      <text x="12" y="71" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">Kostiantyn H.</text>
+
+      {/* Top-right tile - Vadym */}
+      <rect x="163" y="6" width="151" height="71" rx="6" fill="#2d2e30" />
+      <circle cx="238" cy="34" r="14" fill="#34a853" />
+      <text x="238" y="38" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">V</text>
+      <text x="169" y="71" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">Vadym G.</text>
+
+      {/* Bottom-left tile - Paul */}
+      <rect x="6" y="83" width="151" height="71" rx="6" fill="#3c4043" />
+      <circle cx="81" cy="111" r="14" fill="#fbbc04" />
+      <text x="81" y="115" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#202124" textAnchor="middle">P</text>
+      <text x="12" y="148" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">Paul T.</text>
+
+      {/* Bottom-right tile - You, with speaker outline */}
+      <rect x="163" y="83" width="151" height="71" rx="6" fill="#2d2e30" stroke="#8ab4f8" strokeWidth="1.6" />
+      <circle cx="238" cy="111" r="14" fill="#a142f4" />
+      <text x="238" y="115" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">I</text>
+      <text x="169" y="148" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">You</text>
+
+      {/* Bottom control strip */}
+      <rect x="0" y="160" width="320" height="20" fill="#202124" />
+      <circle cx="129" cy="170" r="6" fill="#5f6368" />
+      <circle cx="147" cy="170" r="6" fill="#5f6368" />
+      <circle cx="165" cy="170" r="6" fill="#5f6368" />
+      <circle cx="183" cy="170" r="6" fill="#5f6368" />
+      <rect x="194" y="164" width="18" height="12" rx="6" fill="#ea4335" />
     </svg>
   );
 }
