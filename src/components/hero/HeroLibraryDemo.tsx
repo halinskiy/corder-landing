@@ -27,11 +27,82 @@ export function HeroLibraryDemo() {
   const [rightTab, setRightTab] = useState<RightTab>("recording");
   // Demo-scoped theme. Flips on moon-icon click; never touches the
   // landing's global theme. Applied as `data-theme` on the demo root;
-  // every painted surface inside transitions via the universal rule
-  // in HeroLibraryDemo.css.
+  // the theme transition is a circular radial reveal originating from
+  // the click point, via the View Transitions API + clip-path on
+  // `::view-transition-new(root)`. Browsers without VT API fall back
+  // to an instant swap (no half-state). Reduced-motion / ?motion=0
+  // also instant. See HeroLibraryDemo.css for the pseudo rules that
+  // disable the default crossfade so only the clip-path is visible.
   const [theme, setTheme] = useState<Theme>("light");
-  const toggleTheme = useCallback(() => {
-    setTheme((t) => (t === "light" ? "dark" : "light"));
+  const toggleTheme = useCallback((e?: React.MouseEvent<HTMLElement>) => {
+    const flip = () => setTheme((t) => (t === "light" ? "dark" : "light"));
+
+    if (typeof document === "undefined" || typeof window === "undefined") {
+      flip();
+      return;
+    }
+
+    const docAny = document as Document & {
+      startViewTransition?: (cb: () => void) => { ready: Promise<void> };
+    };
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const motionOff = document.documentElement.dataset.motion === "off";
+
+    if (!docAny.startViewTransition || reducedMotion || motionOff) {
+      flip();
+      return;
+    }
+
+    // Origin of the wave: the actual cursor click point. If invoked
+    // without an event (keyboard activation), origin at the button's
+    // bounding-rect centre so the reveal still looks anchored.
+    let originX = window.innerWidth / 2;
+    let originY = window.innerHeight / 2;
+    if (e && "clientX" in e) {
+      originX = e.clientX;
+      originY = e.clientY;
+      if (originX === 0 && originY === 0 && e.currentTarget) {
+        const r = e.currentTarget.getBoundingClientRect();
+        originX = r.left + r.width / 2;
+        originY = r.top + r.height / 2;
+      }
+    }
+
+    // Largest distance from click point to any viewport corner —
+    // ensures the wave reaches all four corners and finishes covering
+    // the entire viewport regardless of where the user clicks.
+    const endRadius = Math.hypot(
+      Math.max(originX, window.innerWidth - originX),
+      Math.max(originY, window.innerHeight - originY),
+    );
+
+    const transition = docAny.startViewTransition(() => {
+      // flushSync would be ideal but React 19 commits the state
+      // before the snapshot phase ends for this synchronous setter.
+      flip();
+    });
+
+    transition.ready
+      .then(() => {
+        document.documentElement.animate(
+          {
+            clipPath: [
+              `circle(0px at ${originX}px ${originY}px)`,
+              `circle(${endRadius}px at ${originX}px ${originY}px)`,
+            ],
+          },
+          {
+            duration: 620,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+            pseudoElement: "::view-transition-new(root)",
+          },
+        );
+      })
+      .catch(() => {
+        // Silent: if the transition is aborted (e.g. rapid double-click)
+        // the state still flipped via the callback above; the animation
+        // is just skipped.
+      });
   }, []);
 
   // Blob "speaking" state is simply derived from mode: red and morphing
@@ -336,7 +407,7 @@ function Main({
   rightTab: RightTab;
   onRightTabChange: (next: RightTab) => void;
   theme: Theme;
-  onToggleTheme: () => void;
+  onToggleTheme: (e?: React.MouseEvent<HTMLElement>) => void;
 }) {
   return (
     <div className="hl-main">
