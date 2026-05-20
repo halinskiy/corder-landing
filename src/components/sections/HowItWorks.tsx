@@ -11,6 +11,12 @@ import {
 } from "framer-motion";
 
 import { copy } from "@/content/copy";
+import {
+  CORDER_PRESENCE_LAYOUT_ID,
+  CORDER_PRESENCE_MORPH_TRANSITION,
+  CorderPresenceSentinel,
+  useCorderPresenceMode,
+} from "@/components/presence/CorderPresence";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/HowItWorks.tsx";
 
@@ -39,6 +45,12 @@ export function HowItWorks() {
   const { howItWorks } = copy;
   const sectionRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
+
+  // CorderPresence morph state. When the user scrolls past the section
+  // going down, the live window unmounts and the orb (mounted at the page
+  // root via CorderPresenceProvider) takes its place via framer's shared
+  // `layoutId`. When motion is disabled, the morph never engages.
+  const presence = useCorderPresenceMode();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -111,19 +123,32 @@ export function HowItWorks() {
         </div>
       ) : (
         <div ref={sectionRef} className="hiw-track page-container">
-          {/* Animated window — z above all row content. */}
-          <motion.div
-            className="hiw-window-wrap"
-            style={{ top: windowTop, left: windowLeft }}
-            aria-hidden="true"
-          >
+          {/* Animated window — z above all row content. Hidden once the
+              user has scrolled past the section so the bottom-right orb
+              (mounted at the page root) owns the shared `layoutId` and
+              framer can interpolate the bounding box smoothly between the
+              two states. When motion is disabled the window renders without
+              any layoutId so it never tries to morph. */}
+          {presence.mode !== "hidden" && (
             <motion.div
-              className="hiw-window-inner"
-              style={{ scale, filter: filterShadow }}
+              className="hiw-window-wrap"
+              style={{ top: windowTop, left: windowLeft }}
+              aria-hidden="true"
             >
-              <WindowFrame />
+              <motion.div
+                className="hiw-window-inner"
+                style={{ scale, filter: filterShadow }}
+                {...(presence.mode === "window"
+                  ? {
+                      layoutId: CORDER_PRESENCE_LAYOUT_ID,
+                      transition: { layout: CORDER_PRESENCE_MORPH_TRANSITION },
+                    }
+                  : {})}
+              >
+                <WindowFrame />
+              </motion.div>
             </motion.div>
-          </motion.div>
+          )}
 
           {howItWorks.steps.map((step, i) => (
             <article
@@ -139,6 +164,12 @@ export function HowItWorks() {
               <Ghost />
             </article>
           ))}
+
+          {/* Scroll sentinel — IntersectionObserver target at the bottom
+              edge of the HowItWorks track. When it leaves the viewport
+              going down, CorderPresence flips `pastHowItWorks` true and
+              the orb materialises from the window's last position. */}
+          <CorderPresenceSentinel />
         </div>
       )}
     </section>
