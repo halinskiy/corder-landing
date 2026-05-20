@@ -227,14 +227,14 @@ function Sidebar() {
         <div className="hl-sidebar-section-label">Today</div>
 
         <MeetingItem
-          title="Today, 17:09"
-          people={2}
+          title="Investor sync - Vadym + Paul"
+          people={3}
           duration="28s"
           preview="He says it is almost there, just a few days left."
           active
         />
         <MeetingItem
-          title="Today, 16:20"
+          title="Pricing strategy review"
           people={3}
           duration="12m 04s"
           preview="Right, so the next step is to validate it."
@@ -243,13 +243,13 @@ function Sidebar() {
         <div className="hl-sidebar-section-label">Yesterday</div>
 
         <MeetingItem
-          title="Yesterday, 18:51"
+          title="Customer call: Ana W."
           people={2}
           duration="23s"
           preview="You start recording, say something."
         />
         <MeetingItem
-          title="Yesterday, 17:00"
+          title="Yesterday, 15:28"
           people={1}
           duration="11s"
           preview="The only problem is that, well, like."
@@ -258,7 +258,7 @@ function Sidebar() {
         <div className="hl-sidebar-section-label">This week</div>
 
         <MeetingItem
-          title="May 1, 16:20"
+          title="Q3 roadmap, eng all-hands"
           people={3}
           duration="40m 00s"
           preview="Right, so the next step is to validate it."
@@ -318,38 +318,67 @@ function Main({
         <div className="hl-breadcrumb">
           <span>Recordings</span>
           <span aria-hidden>›</span>
-          <span className="hl-breadcrumb-current">Today, 17:09</span>
+          <span className="hl-breadcrumb-current">Investor sync - Vadym + Paul</span>
         </div>
-
-        <button
-          className="hl-boost-switch"
-          type="button"
-          aria-pressed="false"
-          aria-label="Boost off"
-          data-on="false"
-          tabIndex={-1}
-        >
-          <span className="hl-boost-track">
-            <span className="hl-boost-thumb" />
-          </span>
-          <span>Boost</span>
-        </button>
 
         <div className="hl-spacer" />
 
-        <div className="hl-toolbar" aria-hidden="true">
-          <button type="button" tabIndex={-1}>
+        <div
+          className="hl-header-actions"
+          aria-hidden="true"
+          data-component="HeroLibraryDemo.HeaderActions"
+          data-source={DATA_SOURCE}
+          data-tokens="hl-border-strong,hl-fg-muted,radius-pill"
+        >
+          <button
+            type="button"
+            className="hl-icon-pill"
+            aria-label="Switch to dark theme"
+            tabIndex={-1}
+            data-component="HeroLibraryDemo.ThemeToggle"
+            data-source={DATA_SOURCE}
+            data-tokens="hl-border-strong,hl-fg-muted"
+          >
+            <MoonIcon />
+          </button>
+          <button
+            type="button"
+            className="hl-icon-pill"
+            aria-label="Language"
+            tabIndex={-1}
+            data-component="HeroLibraryDemo.LangSwitch"
+            data-source={DATA_SOURCE}
+            data-tokens="hl-border-strong,hl-fg-muted"
+          >
             <GlobeIcon />
-            EN
           </button>
-          <button type="button" tabIndex={-1}>
-            <CopyIcon />
-            Copy
+          <button
+            type="button"
+            className="hl-icon-pill"
+            aria-label="Archive"
+            tabIndex={-1}
+            data-component="HeroLibraryDemo.ArchiveButton"
+            data-source={DATA_SOURCE}
+            data-tokens="hl-border-strong,hl-fg-muted"
+          >
+            <ArchiveIcon />
           </button>
-          <button type="button" tabIndex={-1}>
-            <TrashIcon />
-            Delete
-          </button>
+          <span
+            className="hl-header-divider"
+            aria-hidden="true"
+            data-component="HeroLibraryDemo.HeaderDivider"
+            data-source={DATA_SOURCE}
+            data-tokens="hl-border"
+          />
+          <span
+            className="hl-profile-avatar"
+            aria-label="Profile"
+            data-component="HeroLibraryDemo.ProfileAvatar"
+            data-source={DATA_SOURCE}
+            data-tokens="hl-border-strong,hl-fg"
+          >
+            K
+          </span>
         </div>
       </div>
 
@@ -360,6 +389,15 @@ function Main({
           </div>
           <div className="hl-detail-tab-col hl-detail-tab-col-right">
             <span className="hl-tab active">Recording</span>
+            <span
+              className="hl-tab"
+              data-component="HeroLibraryDemo.SettingsTab"
+              data-source={DATA_SOURCE}
+              data-tokens="hl-fg-muted"
+              aria-hidden="true"
+            >
+              Settings
+            </span>
           </div>
         </div>
 
@@ -401,8 +439,27 @@ function Transcript({
           <SearchIcon />
           <input type="search" placeholder="Search the transcript" readOnly tabIndex={-1} />
         </div>
-        <button className="hl-toolbar-icon-btn" type="button" aria-label="Speakers" tabIndex={-1}>
-          <SpeakersIcon />
+        <button
+          className="hl-toolbar-icon-btn"
+          type="button"
+          aria-label="Filter by speaker"
+          tabIndex={-1}
+          data-component="HeroLibraryDemo.PeopleFilterButton"
+          data-source={DATA_SOURCE}
+          data-tokens="hl-border-strong,hl-fg-muted"
+        >
+          <PersonFilterIcon />
+        </button>
+        <button
+          className="hl-toolbar-icon-btn"
+          type="button"
+          aria-label="Copy transcript"
+          tabIndex={-1}
+          data-component="HeroLibraryDemo.CopyAllButton"
+          data-source={DATA_SOURCE}
+          data-tokens="hl-border-strong,hl-fg-muted"
+        >
+          <CopyAllIcon />
         </button>
       </div>
 
@@ -468,6 +525,20 @@ function Transcript({
           </SegmentGroup>
 
           <SegmentGroup
+            initials="I"
+            color="var(--hl-speaker-self)"
+            name="I"
+            isSelf
+          >
+            <span className="hl-segment-line">
+              Agreed, let me share the pricing draft after the call.
+            </span>{" "}
+            <span className="hl-segment-line">
+              I will keep the plan tight on scope.
+            </span>
+          </SegmentGroup>
+
+          <SegmentGroup
             initials="KH"
             color="var(--hl-speaker-purple)"
             name="Kostiantyn Halynskyi"
@@ -488,16 +559,24 @@ function SegmentGroup({
   color,
   name,
   children,
+  isSelf = false,
 }: {
   initials: string;
   color: string;
   name: string;
   children: React.ReactNode;
+  isSelf?: boolean;
 }) {
   return (
     <div className="hl-segment-group">
       <div className="hl-segment-head">
-        <div className="hl-speaker-avatar" style={{ background: color }}>
+        <div
+          className={`hl-speaker-avatar${isSelf ? " is-self" : ""}`}
+          style={{ background: color }}
+          data-component="HeroLibraryDemo.SpeakerAvatar"
+          data-source={DATA_SOURCE}
+          data-tokens={isSelf ? "hl-speaker-self" : "hl-speaker-purple,hl-accent"}
+        >
           {initials}
         </div>
         <div className="hl-speaker-name">{name}</div>
@@ -520,6 +599,29 @@ function RightPanel({
 
   return (
     <div className="hl-right-panel">
+      {isActive && (
+        <div
+          className="hl-video-card"
+          aria-hidden="true"
+          data-component="HeroLibraryDemo.VideoPreview"
+          data-source={DATA_SOURCE}
+          data-tokens="hl-border,radius-card"
+        >
+          <div className="hl-video-frame">
+            <button
+              type="button"
+              className="hl-video-play"
+              aria-label="Play recording"
+              tabIndex={-1}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13c0 .6.7 1 1.2.6l10.4-6.5a.7.7 0 0 0 0-1.2L9.2 4.9C8.7 4.5 8 4.9 8 5.5z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="hl-audio-controls">
         <button
           className="hl-audio-btn-primary"
@@ -554,25 +656,31 @@ function RightPanel({
         <div className="hl-audio-scrub" data-disabled={isActive ? "false" : "true"}>
           <div className="hl-audio-scrub-fill" />
         </div>
-        {!isActive && (
-          <button
-            className="hl-audio-download"
-            type="button"
-            aria-label="Download recording"
-            tabIndex={-1}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-          </button>
-        )}
+        <button
+          className="hl-audio-download"
+          type="button"
+          aria-label="Download recording"
+          tabIndex={-1}
+          data-component="HeroLibraryDemo.DownloadButton"
+          data-source={DATA_SOURCE}
+          data-tokens="hl-border-strong,hl-fg-muted"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+        </button>
       </div>
 
       <div className="hl-timeline-card" data-disabled={isActive ? "false" : "true"}>
-        <div className="hl-timeline-tabs">
-          <span className="hl-timeline-tab active">Timeline</span>
+        <div
+          className="hl-timeline-section-label"
+          data-component="HeroLibraryDemo.TimelineLabel"
+          data-source={DATA_SOURCE}
+          data-tokens="hl-fg,hl-border"
+        >
+          Timeline
         </div>
 
         {isActive ? (
@@ -909,7 +1017,58 @@ function GlobeIcon() {
   );
 }
 
-function CopyIcon() {
+function MoonIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+function ArchiveIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="2" y="4" width="20" height="5" rx="1" />
+      <path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9" />
+      <line x1="10" y1="13" x2="14" y2="13" />
+    </svg>
+  );
+}
+
+function PersonFilterIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" />
+    </svg>
+  );
+}
+
+function CopyAllIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -922,45 +1081,6 @@ function CopyIcon() {
     >
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-    </svg>
-  );
-}
-
-function TrashIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-      <path d="M10 11v6" />
-      <path d="M14 11v6" />
-      <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-    </svg>
-  );
-}
-
-function SpeakersIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
   );
 }

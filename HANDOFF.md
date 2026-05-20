@@ -33,20 +33,36 @@ This file is for the developer rebuilding the landing in Webflow. Read it sectio
 
 **Webflow path:** Native. Use page-load IX2 trigger with stagger.
 
-### 1b. Live UI demo (`HeroLibraryDemo`)
+### 1b. Live UI demo (`HeroLibraryDemo`) — Corder v0.9.0
 
-This is the most distinctive piece on the landing. **It is not a screenshot.** It is a real DOM rendering of the macOS Library window with selectable text and three live behaviours.
+This is the most distinctive piece on the landing. **It is not a screenshot.** It is a real DOM rendering of the macOS Library window with selectable text and three live behaviours. **Updated 2026-05-20 to match Corder v0.9.0** (released 2026-05-17).
+
+**Anatomy (left to right):**
+1. **Sidebar.** Search field at top, 5 meeting cards in two date buckets (`Today`, `Yesterday`) + one in `This week`. Titles are Gemini-style auto-titles (e.g. `Investor sync - Vadym + Paul`); one fallback entry kept as a date stamp (`Yesterday, 15:28`) to show the unnamed-recording case.
+2. **Main column header.** Breadcrumb `Recordings › Investor sync - Vadym + Paul`. Right-aligned strip of 4 icon-only round buttons: theme (moon), language (globe), archive, then 1px vertical hairline divider, then circular profile avatar with letter `K`.
+3. **Detail tabs.** Left column: single `Transcript` tab. Right column: two tabs `Recording` (active) | `Settings` (inactive, decorative — clicking does nothing).
+4. **Transcript pane.** Toolbar = search field + two icon-only circular buttons (people-filter, copy-all). Body switches between three states based on demo mode (recording → transcribing → transcript).
+5. **Right panel (Recording tab, transcript mode).** Top-to-bottom: video preview card (16:9 dark rectangle with centred play overlay), audio scrubber row (play button + time + scrub bar + download icon), Timeline section label, three per-speaker bars (Kostiantyn Halynskyi purple, Vadym Grosko accent green, Paul Turner amber).
+6. **Recording blob.** Free-floating canvas in the bottom-right of the window, morphs shape and palette between green (idle) and red (recording). Click to stop / restart.
 
 **Webflow path:** **Custom embed required.** The entire `HeroLibraryDemo.tsx` + `HeroLibraryDemo.css` should be embedded as a single HTML/CSS/JS block:
-- Hand-port the JSX to HTML (it's all static markup except for the play button event handler).
+- Hand-port the JSX to HTML (it's all static markup except for the play button event handler and the blob canvas).
 - Hand-port the `.css` file (drop into a `<style>` block or Webflow-side stylesheet — beware that Webflow's class compiler does not respect scoped tokens, so prefix all internal classes with `hl-` as already done).
-- Implement two small JS pieces inline:
+- Implement four small JS pieces inline:
   1. **3D tilt** (~30 lines): rAF loop on pointermove inside the `.hero-library-demo` container. `MAX_X = 3°, MAX_Y = 4°, LIFT = 4px`.
   2. **Play toggle** (~5 lines): click `.hl-audio-btn-primary` → toggle `data-playing="true"` on `.hero-library-demo`.
+  3. **Mode state machine** (~40 lines): recording → click blob → transcribing (1.2s) → transcript. State drives which content appears in the transcript pane and whether the video preview + scrubber are armed.
+  4. **Recording blob canvas** (~180 lines): port from `RecBlobCanvas` in the React file. This is the only piece that genuinely needs canvas; everything else is plain DOM.
 
 **Note:** The reveal animation (`data-reveal="initial" → "visible"`) can be replaced by a Webflow IX2 page-load animation that toggles a class on the card with the same transform values. Don't reimplement it in custom code — let IX2 do it.
 
 **Reduced motion:** `@media (prefers-reduced-motion: reduce)` block in the CSS already disables all transitions.
+
+**Speaker-colour tokens (scoped to `.hero-library-demo`, NOT brand accents):**
+- `--hl-speaker-purple: #5a3aa6` — Kostiantyn Halynskyi (other speaker, two-letter avatar)
+- `--hl-accent: #1f7a4f` — Vadym Grosko (other speaker, two-letter avatar; same hex family as brand but scoped local)
+- `--hl-speaker-amber: #c7741b` — Paul Turner (other speaker, two-letter avatar)
+- `--hl-speaker-self: #a16207` — first-person `I` (self speaker, single-letter avatar). **Speaker colour only — never use for landing CTAs or section accents.**
 
 ### 1c. Dot-grid surface
 
