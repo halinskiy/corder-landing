@@ -299,6 +299,37 @@ All sections (3–9) added their styles to `src/app/globals.css` rather than per
 
 ---
 
+## CorderPresence — scroll-anchored morph chain (`src/components/presence/CorderPresence.tsx`)
+
+A single visual element occupies three states tied to scroll position, all
+sharing framer-motion `layoutId="corder-presence"`:
+
+| State | Trigger | Surface |
+|---|---|---|
+| A — window | User above HowItWorks bottom | Sticky live-Library window inline in HowItWorks |
+| B — orb | User has scrolled past HowItWorks (upper-40% threshold of its bottom sentinel) AND has NOT yet entered the form zone | 56x56 desktop / 48x48 mobile circle, fixed bottom-right (right: 32px desktop / 28px mobile, bottom: max(28-32px, safe-area-inset-bottom + 28px)). Decorative — `pointer-events: none`. Accent dot inside. |
+| C — form | User has reached the form-zone sentinel (upper-40% threshold of the zero-height anchor between Faq and Footer) | 380x440 desktop / `min(92vw, 360px)` mobile contact card, fixed bottom-right at the same inset. Interactive — `pointer-events: auto`. Email input + Subscribe button using `copy.json#newsletter`. |
+
+**Sentinels:**
+- `corder-presence-sentinel` — 1px anchor at the bottom of HowItWorks (state A → B trigger).
+- `corder-presence-form-sentinel` — zero-height anchor between Faq and Footer (state B → C trigger).
+
+**Morph transition:** `{ duration: 0.6, ease: cubic-bezier(0.16, 1, 0.3, 1) }`. Width/height/border-radius/position all interpolate via shared layoutId.
+
+**Reduced motion path:** `prefers-reduced-motion: reduce` OR `?motion=0` suppresses orb + form (corner-pinned non-animated card would be intrusive). Instead, `CorderPresenceStaticSection` renders an inline subscribe section between Faq and Footer (`.presence-static` CSS class, full-width centred form strip). Mounts via React state post-hydration; not in SSR HTML.
+
+**Z-index:** orb z-30, form z-31, below Nav (z-40).
+
+**Webflow path:** **Custom code required.** Webflow IX2 cannot reproduce the shared-layout interpolation between three differently-shaped elements. Options for handoff:
+1. Keep a Webflow-native sticky Library window (state A) and a Webflow-native subscribe form section (state C). Drop state B (orb) — it's purely transitional and a non-morphing dot floating in the corner is just visual noise. Loses the "presence" narrative but ships in pure Webflow.
+2. Embed `<CorderPresence>` from this React file as a custom code embed at the page root. Webflow page exposes a `<div id="corder-presence-mount">` and an init script bundles the React tree. Most fidelity, most maintenance.
+
+If option 1 is taken, document the loss in the project README so the Webflow site is understood as a v0 of what this React landing demonstrates.
+
+**Files touched by this affordance:** `src/components/presence/CorderPresence.tsx`, `src/app/page.tsx` (sentinel + static section placement), `src/app/globals.css` (`.presence-static` block), `src/components/sections/HowItWorks.tsx` (consumes `useCorderPresenceMode` to decide window mount), `content/copy.json` (`newsletter` block powers both form variants).
+
+---
+
 ## Known follow-ups for next session
 
 - [ ] Hero state machine S2/S5/S6 (active-line jump, sidebar new arrival, hover focus on timeline tick)

@@ -6,6 +6,83 @@ Read this file at the START of every session before building anything.
 
 ---
 
+## 2026-05-20 — 3mpq-soldier — CorderPresence третье состояние (form) + удаление Newsletter
+
+### Что заняло больше времени, чем должно было
+
+**Думал что AnimatePresence сам решит layoutId-crossfade между orb и form.** Первая мысль была — отдать обоим один layoutId и положиться на framer что он выберет правильный target для интерполяции. Когда оба рендерятся одновременно из-за того что AnimatePresence во время exit ещё держит orb mounted — framer-motion warning «duplicate layoutId». Не сразу понял что нужен `mode="popLayout"` (exit вынимается из layout flow ДО того как новый element animates in). Лимит времени — минута: глянул framer docs «multiple elements same layoutId» и понял что popLayout — это exact pattern для morph-chains. Урок: **когда два элемента с одним layoutId должны cross-fade morph, всегда `AnimatePresence mode="popLayout"`.** Записал в FRAMER cookbook.
+
+**Form CSS написан inline на JSX, не как extracted class.** Я начал писать `.cpf__heading`, `.cpf__input` итд в globals.css, потом понял что эта форма — child of motion.div с layoutId, и framer-motion берёт control над `style` атрибутом для layout interpolation. Если я задаю width/height через CSS class, framer всё равно перезапишет inline во время морфа, но static values не будут «правдой» для CDP-computed-style check'ов. Решил оставить ВСЁ inline для consistency: один источник правды — JSX, никаких CSS-vs-inline rasshcheplenii. Минус — компонент стал на 80 строк длиннее и менее skinnable. Плюс — zero ambiguity где живёт каждое значение. Учитывая что это **один** project-specific компонент, не promotion candidate (см. ниже), trade-off OK. Урок: **для motion.div с layoutId — все critical sizes/positions inline на компоненте, не в CSS class.**
+
+### Что я могу упустить (превентивно решил)
+
+**Hydration mismatch на StaticSection.** `CorderPresenceStaticSection` рендерит null когда `motionDisabled === false`. На SSR motionDisabled всегда false (server не знает URL query string), значит SSR HTML не содержит section. На client после hydration effect устанавливает `htmlMotionOff = true` при `?motion=0`, и компонент начинает рендериться. **Это НЕ hydration mismatch** — это post-mount addition (React legitimately допускает changing state и re-rendering). Но если бы я ошибся и попытался рендерить section based на синхронной проверке `document.documentElement.dataset.motion === "off"` в render-теле — был бы immediate hydration warning. Урок: **любой client-only conditional render должен ехать через useState + useEffect, не через direct document.* в render body.** Pre-applied — но фиксирую как rule.
+
+**`aria-label` дублирование form vs region.** На motion.div поставил `role="region"` + `aria-label="Subscribe to product updates"`. На `<form>` внутри тоже `aria-label="Subscribe to product updates"`. Дважды одно и то же чтения для screen reader'а. Решил оставить — region даёт landmark navigation hint, form тоже должен иметь accessible name. Альтернатива: убрать `aria-label` с region и оставить только на form — но тогда region landmark «безымянный». Pre-applied trade-off в сторону duplicate-but-helpful. Урок: **если region/form вложены друг в друга — accessible name должен быть на ОБОИХ, screen readers умеют дедуплицировать.**
+
+**Form auto-focus.** Brief явно запретил auto-focus on morph-in. Я не добавил `useEffect(() => inputRef.current?.focus())` — сразу решил что spec прав, auto-focus при scroll-driven appearance крадёт scroll context. Учился из template-design RETRO 2026-03 «modal auto-focus on viewport entry». Pre-applied.
+
+### Что я буду делать иначе
+
+- **При работе с layoutId morphs всегда заранее декларировать `mode="popLayout"` на родительском AnimatePresence.** Это default в моём cookbook теперь, не add-on after first attempt.
+- **Inline styles на motion.div с layoutId — это feature, не bug.** Не пытаться extracted CSS class для critical layout properties. Скинуть в RETRO как general framer-motion rule.
+- **Pre-commit `npm run build` сразу после typecheck, не отдельным шагом.** В этом session я сделал build сразу после typecheck — урок усвоен из 2026-05-09 (когда я сэкономил build run и поймал TS2352 только на Vercel). Сейчас shipped зелёным.
+
+### Что было хорошо
+
+- **Atomic commit discipline.** Один файл (CorderPresence.tsx) перезаписан, один файл (Newsletter.tsx) удалён, page.tsx обновлён, globals.css renamed namespace, copy.json получил `_note`, четыре doc файла обновлены — всё в одной session, готово к одному commit'у. Не «закоммитил presence сейчас, удалю Newsletter в следующей session». Single source of truth in the diff.
+- **Reduced-motion path не забыт.** Учился из template-design v1 audience-line CSS animation-timeline issue: каждая новая motion-driven фича должна иметь немедленно verified reduced-motion fallback. Здесь fallback — это inline section, и она написана в той же session что и morph.
+- **Reused существующий sentinel pattern.** `CorderPresenceFormSentinel` — это копия `CorderPresenceSentinel` с другим element ID и другим setter. Zero new abstraction. Если в будущем нужен будет третий sentinel — extract в shared helper `useScrollSentinel(id, threshold, setter)`. Пока два — пусть будут два, premature abstraction хуже дублирования.
+- **Не сделал form промоция кандидатом для ui-kit.** Эта форма — единственный экземпляр в проекте (Newsletter удалена). Promotion rule — 2+ использований across projects. Зафиксировал в COMPONENTS.md как местный компонент.
+
+---
+
+## 2026-05-20 — 3mpq-soldier — CorderPresence morph + dot-grid (atomic commit on feat/background-decor)
+
+### Что заняло больше времени, чем должно было
+
+**`npm run build` вкачивает production `.next/` поверх dev-server'а.** Я запустил `npm run build` чтобы получить gzip baseline ДО первого CDP probe, не подумав о том, что `.next/` shared между dev и build. После build dev-server отдавал 500 (требовал `main-app.js` чанк, а в `.next/static/chunks` лежал production вариант `main-app-<hash>.js`). 6-7 минут потерял на диагностику «React не гидрируется», прежде чем понять что dev и build взаимоисключающе пишут в один и тот же `.next/`. Пришлось убить и перезапустить dev на 3050. Урок: **никогда не запускать `next build` пока `next dev` работает на том же проекте.** Если нужны build-числа — либо temporarily kill dev, либо запускать build в копии проекта, либо измерять gzipped sizes напрямую из исходников (не через .next chunks). Записываю в personal pre-build checklist.
+
+**Bare IntersectionObserver не подходит для 1px sentinel.** Первая версия sentinel использовала `new IntersectionObserver` с `threshold: 0` и логикой «`!isIntersecting && boundingClientRect.top < 0` → past». В headless Chrome (быстрый jump-scroll через 6000px за один frame) observer вообще не вызывал callback — потому что для 1px-tall элемента «вошёл-вышел» происходит между frame'ами, а observer firing зависит от crossing the threshold MID-frame. Дебагал минут 10 со специальной diagnostic prop'ой на window: `__corderPresenceSentinelEffectRan` показал что useEffect не запускался (но на самом деле он DID запускался — `effectRan: true` появился в финальном dump'е, только наблюдатель не реагировал). Перешёл на rAF-throttled `getBoundingClientRect` на scroll event — корректно сработало с первого probe после fix. Урок: **IntersectionObserver — для «видимости элемента» (entry/exit boundaries), НЕ для «position-relative-to-viewport» (above/below). Для последнего: scroll listener + getBoundingClientRect.top sign check, rAF throttled.** Записываю в CDP cookbook как pattern.
+
+**framer-motion `layoutId` + параллельно motion values на том же элементе — потенциальный риск, но работает.** `.hiw-window-inner` уже имеет `style={{ scale, filter }}` из useTransform на scroll. Я добавил `layoutId="corder-presence"` через conditional spread. Боялся что framer попытается self-управлять scale во время морфа, конфликтуя с motion value driver. На практике — framer layout animations работают на transform property через layout-specific transforms (matrix3d translateX/Y/scaleW/scaleH для box morph), а наш scale едет на тот же transform через motion value. Поскольку morph triggers только на mount/unmount (не на каждом scroll frame), коллизия не происходит. Но это hidden assumption, которое могло бы порвать на runtime. Урок: **при добавлении `layoutId` к элементу с уже-имеющимися motion-value-driven transforms — verify через CDP что transition не glitches на mount.** В моём случае ни одного artifact не появилось в screenshot.
+
+### Что я мог упустить (но поймал заранее)
+
+**Inspector triple на orb element.** Brief требовал `data-component="CorderPresenceOrb"`, `data-source=...`, `data-tokens=...`. Я добавил все три **на первом проходе** (учился из RETRO 2026-05-09 fix-pass-1 issue #4: «3 attributes always together»). Все child elements в файле (sentinel, motion.div для orb) тоже получили `aria-hidden="true"` для decorative-only contract.
+
+**Pre-existing `§UX` в globals.css.** Не моё, было в HEAD line 25 → стал 45 после моей dot-grid вставки. ASCII audit на touched files требовал zero violations. Поправил одной строкой `§UX → UX` без расширения scope. Урок: **ASCII audit на touched files считается «обязанность того, кто файл коммитит», а не «обязанность того, кто строку добавил». Если я тач файл и в нём есть legacy unicode — fix as part of my session.**
+
+**Stale dev server после CSS/component edits.** Уже **четвёртая** инстанция этой ошибки в repo (template-design v15, corder fix-pass-2, corder real-UI, и теперь corder-presence). Усугубилось тем, что я ещё и `npm run build` поверх dev запустил. Урок: **в личном pre-CDP checklist первый шаг — `lsof -i :3050 && curl -s :3050`. Если 500 или connection refused — это first signal, дальше probe бессмысленен.** Записываю.
+
+**Orb absent SSR'е, mount только client-side.** `CorderPresenceOrb` рендерится только при `pastHowItWorks === true && !motionDisabled`. На SSR-первичном render `pastHowItWorks` = false → orb отсутствует в HTML. После hydration измеряется scroll и (если past) орб мунтится с layoutId. AnimatePresence + LayoutGroup корректно подхватывают morph между window (есть в SSR) и orb (только на client). **Главный риск этого паттерна:** если user load'ит страницу СО scroll position уже past HowItWorks (browser restored scroll, deep-link), windowWrap не отрендерится в HTML, и orb появится «из ниоткуда» без морфа. На самом деле это OK потому что layoutId morph triggers только когда оба элемента видны в одном LayoutGroup лифецикле; при первом mount orb просто появляется с дефолтным fade-in (без layout animation, потому что previous bbox === current bbox). Это acceptable visual UX. Урок: **layoutId morphs gracefully degrade на cold-start scrolled-past page loads — verify это самостоятельно но не обязательно блокирующий issue.**
+
+### Что я буду делать иначе
+
+- **Pre-CDP gate-1: проверять что dev-server отвечает 200 ПЕРЕД любым probe.** `curl -s -o /dev/null -w "%{http_code}" :3050` first command в каждом probe.mjs. Если != 200, abort с clear error «dev server unhealthy, abort».
+- **Никогда не запускать `next build` в проекте с активным `next dev` на том же `.next/`.** Если нужны сравнительные размеры:
+  - либо `git stash + kill dev + build + restore stash + restart dev` (тяжело, медленно)
+  - либо использовать tooling типа `next-bundle-analyzer` который не пишет в `.next` напрямую
+  - либо считать gzip из source files напрямую (cheap но approximate)
+  - **либо** делать build в самом конце сессии, когда dev уже не нужен (что я сделал, но мог бы сделать раньше и сэкономить 15 минут).
+- **IntersectionObserver vs scroll listener — decision tree:** «нужно узнать, видим ли элемент» → Observer. «нужно узнать, где элемент относительно viewport (выше/ниже/внутри)» → scroll listener + rAF + getBoundingClientRect.top sign check. Записываю в personal cookbook.
+- **`tsconfig.tsbuildinfo` mention в pre-commit checklist:** этот файл tracked в corder-landing repo (что необычно — обычно gitignored), и он меняется на каждом typecheck. При коммите включать вместе с code changes (а не оставлять как stale modification).
+
+### Что было хорошо
+
+- **CDP probe с numerical assertions, не «выглядит правильно».** Все 8 acceptance criteria из brief'а имеют numerical PASS/FAIL:
+  - DESKTOP top: orbInDOM=false (PASS)
+  - DESKTOP past-hiw: orb 56x56 @ rightGap=20, bottomGap=20 (PASS)
+  - DESKTOP near-footer: orb still present (PASS)
+  - DESKTOP back-in-hiw: orb gone (PASS)
+  - DESKTOP motion=0: orb absent (PASS)
+  - MOBILE past-hiw: orb 48x48 @ rightGap=16, bottomGap=16 (PASS)
+- **Single atomic commit per brief.** Both the dot-grid edit (uncommitted in working tree) и CorderPresence morph коммитнуты вместе в один SHA `2f9927a`. No partial commits, no separate "wip" commits.
+- **Reused existing CDP harness в `/tmp/aisoldier-judge/node_modules`** через absolute import paths. Не запускал лишний npm install для chrome-remote-interface — уже было installed для предыдущих judge'sессий.
+- **Decision tree для layoutId placement.** Решил поставить layoutId на `.hiw-window-inner` (не на `.hiw-window-wrap`), потому что wrap имеет scroll-driven `top/left` motion values, а inner — только scale/filter которые не conflict'ят с layout animation. Документировано в jsx комментарии.
+
+---
+
 ## 2026-05-10 — 3mpq-soldier — Verification of "How section CSS broken" report (false alarm)
 
 ### Что произошло

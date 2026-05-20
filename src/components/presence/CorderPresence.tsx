@@ -1,34 +1,41 @@
 "use client";
 
 /**
- * CorderPresence — scroll-anchored persistent affordance.
+ * CorderPresence — scroll-anchored persistent affordance with three states.
  *
- * As the user scrolls past the HowItWorks section (the sticky live-Library
- * window is the visual centre of that block), the window MORPHS into a small
- * circular "presence" orb pinned to the bottom-right corner of the viewport.
- * The orb stays there through every following section (Fit, WorksWith,
- * Features, Pricing, Faq, Newsletter, Footer). Scrolling back up into
- * HowItWorks morphs the orb back into the window.
+ * The presence flows through three render states tied to scroll position,
+ * all sharing the framer-motion `layoutId="corder-presence"`:
  *
- * Above HowItWorks (Hero region) the orb does NOT exist.
+ *   A. WINDOW — live Library window sticky inside the HowItWorks block.
+ *      Rendered in-place by `HowItWorks.tsx` while the user is reading that
+ *      section. (This file does NOT render state A; it only owns the
+ *      `useCorderPresenceMode` hook that HowItWorks consults.)
  *
- * The morph is implemented via framer-motion `layoutId="corder-presence"`:
- * the HowItWorks `.hiw-window-inner` and the orb both carry that id, and
- * framer interpolates the bounding box between them when one unmounts and
- * the other mounts. Wrapped in `<LayoutGroup id="corder-presence">` so the
- * shared id is scoped to this subtree.
+ *   B. ORB — 56x56 (48x48 mobile) circle pinned bottom-right. Mounts when
+ *      the user has scrolled past HowItWorks' upper-40% threshold and has
+ *      NOT yet entered the form zone above the footer. Decorative only.
  *
- * Visual reference: the real Corder app's RecordingHUDPanel floating green
- * orb (see research/corder-feature-inventory-2026-05.md section 19, item 1).
- * The orb is decorative-only in v1 — no click handler, no hover state, no
- * tooltip. A future iteration may turn this into the assistant entry point,
- * which is why the orb is `<CorderPresenceOrb />` rather than a static
- * `<div>`.
+ *   C. FORM — expanded contact card pinned bottom-right at the same inset
+ *      as the orb. Mounts when the user enters the form-zone sentinel
+ *      (placed where the old Newsletter section used to sit, between Faq
+ *      and Footer). Real interactive subscribe form, reusing
+ *      `copy.json#newsletter`.
  *
- * Motion killswitch: when `prefers-reduced-motion: reduce` is set OR when
- * the project's `?motion=0` flag sets `<html data-motion="off">`, the orb
- * is hidden entirely — no morph, no orb. The window scrolls out of view
- * normally as before.
+ * Because only ONE of {window, orb, form} is mounted at a time and all
+ * three carry the same `layoutId`, framer-motion interpolates the bounding
+ * box, border-radius and content as the user scrolls — the window glides
+ * to the corner as an orb, then the orb unfolds into a card.
+ *
+ * Motion killswitch: when `prefers-reduced-motion: reduce` is set OR the
+ * project's `?motion=0` flag sets `<html data-motion="off">`, the orb AND
+ * the form are both hidden — a corner-pinned, animation-justified
+ * affordance with no animation would be intrusive and pointless. Instead,
+ * the inline contact section (`CorderPresenceStaticSection`) renders in
+ * normal page flow between Faq and Footer, so the user still has a way to
+ * subscribe.
+ *
+ * Visual reference for the orb: the real Corder app's RecordingHUDPanel
+ * floating green dot (see research/corder-feature-inventory-2026-05.md).
  */
 
 import {
@@ -40,28 +47,39 @@ import {
   type ReactNode,
 } from "react";
 
-import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
+
+import { copy } from "@/content/copy";
 
 const DATA_SOURCE_PROVIDER =
   "projects/corder-landing/src/components/presence/CorderPresence.tsx";
 
-// Doctrine easing + duration for the layout morph.
+// Doctrine easing + duration for the layout morph. Shared across all three
+// states so the morph feels uniform regardless of which transition fires.
 const MORPH_TRANSITION = {
   duration: 0.6,
   ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
 } as const;
 
+const FORM_INNER_FADE = {
+  duration: 0.32,
+  ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+} as const;
+
 // ---------------------------------------------------------------------------
-// Context — single source of truth for "is the user past the HowItWorks
-// section, going down?"
+// Context — shared scroll-state flags. `pastHowItWorks` flips when the user
+// has read past the HowItWorks section; `pastFormZone` flips when they
+// reach the bottom (just above the footer) where the form should open.
 // ---------------------------------------------------------------------------
 
 type CorderPresenceContextValue = {
   pastHowItWorks: boolean;
   setPastHowItWorks: (value: boolean) => void;
+  pastFormZone: boolean;
+  setPastFormZone: (value: boolean) => void;
   /** True when motion is disabled (reduced motion OR ?motion=0). Consumers
    *  use this to render the standard non-morphing window directly instead
-   *  of the framer.motion variant. */
+   *  of the framer.motion variant, and the inline static contact section. */
   motionDisabled: boolean;
 };
 
@@ -77,6 +95,8 @@ export function useCorderPresence(): CorderPresenceContextValue {
     return {
       pastHowItWorks: false,
       setPastHowItWorks: () => {},
+      pastFormZone: false,
+      setPastFormZone: () => {},
       motionDisabled: true,
     };
   }
@@ -84,13 +104,15 @@ export function useCorderPresence(): CorderPresenceContextValue {
 }
 
 /**
- * Provider — wraps the page in a LayoutGroup so the window and the orb
- * share the same framer layout context for `layoutId` morphing. Renders the
- * orb at the page root so its `position: fixed` is anchored to the viewport,
- * not to a transformed ancestor.
+ * Provider — wraps the page in a LayoutGroup so the window, orb and form
+ * share the same framer layout context for `layoutId` morphing. Renders
+ * the orb AND the form at the page root so their `position: fixed` is
+ * anchored to the viewport, not to a transformed ancestor. Only one of
+ * {orb, form} is mounted at a time (driven by the `mode` selector below).
  */
 export function CorderPresenceProvider({ children }: { children: ReactNode }) {
   const [pastHowItWorks, setPastHowItWorks] = useState(false);
+  const [pastFormZone, setPastFormZone] = useState(false);
   const framerPrefersReduced = useReducedMotion() ?? false;
   const [htmlMotionOff, setHtmlMotionOff] = useState(false);
 
@@ -115,51 +137,54 @@ export function CorderPresenceProvider({ children }: { children: ReactNode }) {
     () => ({
       pastHowItWorks,
       setPastHowItWorks,
+      pastFormZone,
+      setPastFormZone,
       motionDisabled,
     }),
-    [pastHowItWorks, motionDisabled],
+    [pastHowItWorks, pastFormZone, motionDisabled],
   );
 
   return (
     <CorderPresenceContext.Provider value={value}>
       <LayoutGroup id="corder-presence">
         {children}
-        <CorderPresenceOrb />
+        <CorderPresenceCorner />
       </LayoutGroup>
     </CorderPresenceContext.Provider>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Orb — the bottom-right circular presence that the window morphs into.
+// Corner switch — mounts the orb (state B) OR the form (state C) at the
+// page root. AnimatePresence with `mode="popLayout"` lets framer interpolate
+// between them via the shared layoutId rather than cross-fading.
 // ---------------------------------------------------------------------------
 
-/**
- * The orb itself. Rendered only when:
- *  - motion is NOT disabled, AND
- *  - the user has scrolled past the HowItWorks section going down.
- *
- * Decorative-only in v1: no click handler, no hover state, no tooltip,
- * no children. The optional centre dot is a quiet visual nod to the real
- * Corder app's RecordingHUDPanel (a single accent dot inside the chrome,
- * decorations stay monochrome per doctrine — only the inner dot uses
- * --color-accent).
- *
- * Position: fixed bottom-right with safe-area-inset awareness so iOS
- * Safari's home-indicator strip doesn't clip the orb on landscape phones.
- * Z-index 30 — above section content, below Nav (z-40).
- *
- * Future-proof: the file exposes the orb separately so a future iteration
- * can wrap it in an interactive shell (`<CorderPresence>` with a `children`
- * slot for the assistant tray, etc.) without rewriting the morph.
- */
-function CorderPresenceOrb() {
-  const { pastHowItWorks, motionDisabled } = useCorderPresence();
+function CorderPresenceCorner() {
+  const { pastHowItWorks, pastFormZone, motionDisabled } = useCorderPresence();
 
-  // Motion killswitch: no orb at all when motion is disabled.
+  // Motion killswitch: no orb, no form. The inline static section
+  // (rendered separately by page.tsx) carries the subscribe affordance.
   if (motionDisabled) return null;
   if (!pastHowItWorks) return null;
 
+  return (
+    <AnimatePresence mode="popLayout" initial={false}>
+      {pastFormZone ? (
+        <CorderPresenceForm key="form" />
+      ) : (
+        <CorderPresenceOrb key="orb" />
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Orb (state B) — the bottom-right circular presence the window morphs
+// into. Decorative-only: no click handler, no hover state, no tooltip.
+// ---------------------------------------------------------------------------
+
+function CorderPresenceOrb() {
   return (
     <motion.div
       layoutId="corder-presence"
@@ -188,8 +213,12 @@ function CorderPresenceOrb() {
       transition={{ layout: MORPH_TRANSITION }}
     >
       {/* Subtle accent dot — echoes the macOS RecordingHUDPanel blob. */}
-      <span
+      <motion.span
         aria-hidden="true"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={FORM_INNER_FADE}
         style={{
           width: "8px",
           height: "8px",
@@ -213,17 +242,199 @@ function CorderPresenceOrb() {
 }
 
 // ---------------------------------------------------------------------------
-// Sentinel — scroll-tied target placed at the bottom of the HowItWorks
-// section. When the sentinel scrolls ABOVE the viewport top edge, user is
-// past the section going down and `pastHowItWorks` flips true. When it
-// re-enters at the top (user scrolled back up), the flag flips false.
-//
-// Implementation note: we DON'T use a bare IntersectionObserver here because
-// a threshold-0 observer can miss state for a 1px-tall element that crosses
-// the viewport in a single scroll frame, and there is no IntersectionObserver
-// option for "fire continuously while element is above the viewport". A
-// rAF-throttled scroll listener is one getBoundingClientRect per scroll batch
-// (cheap) and unconditionally correct.
+// Form (state C) — the orb expands into a contact card. Reuses the
+// content/copy.json#newsletter block. Real interactive form.
+// ---------------------------------------------------------------------------
+
+function CorderPresenceForm() {
+  const { newsletter } = copy;
+  const [status, setStatus] = useState<"idle" | "submitted">("idle");
+  const [email, setEmail] = useState("");
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!email.trim()) return;
+    setStatus("submitted");
+  }
+
+  // Inner content fades in once the layout morph has progressed enough to
+  // make room for it. We don't auto-focus the input — that would steal the
+  // user's scroll context the moment the form materialises.
+  const inner = (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ ...FORM_INNER_FADE, delay: 0.18 }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        padding: "20px 20px 18px",
+        width: "100%",
+        height: "100%",
+        boxSizing: "border-box",
+      }}
+    >
+      <h3
+        style={{
+          fontFamily: "var(--font-serif)",
+          fontWeight: 500,
+          fontSize: "24px",
+          lineHeight: 1.18,
+          letterSpacing: "-0.012em",
+          color: "var(--color-text)",
+          margin: 0,
+        }}
+      >
+        {newsletter.heading}
+      </h3>
+      <p
+        style={{
+          fontFamily: "var(--font-sans)",
+          fontSize: "14px",
+          lineHeight: 1.5,
+          color: "var(--color-text-muted)",
+          margin: 0,
+        }}
+      >
+        {newsletter.subhead}
+      </p>
+
+      {status === "idle" ? (
+        <form
+          onSubmit={handleSubmit}
+          aria-label="Subscribe to product updates"
+          noValidate
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            marginTop: "4px",
+          }}
+        >
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={newsletter.placeholder}
+            aria-label="Email address"
+            style={{
+              width: "100%",
+              minHeight: "44px",
+              padding: "0 16px",
+              border: "1px solid var(--color-border-strong)",
+              borderRadius: "var(--radius-button)",
+              background: "var(--color-bg)",
+              fontFamily: "var(--font-sans)",
+              fontSize: "15px",
+              color: "var(--color-text)",
+              appearance: "none",
+              WebkitAppearance: "none",
+              outline: "none",
+              boxSizing: "border-box",
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-accent)";
+              e.currentTarget.style.boxShadow = "0 0 0 4px rgba(33, 122, 80, 0.14)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-border-strong)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          />
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              minHeight: "44px",
+              padding: "0 20px",
+              borderRadius: "var(--radius-button)",
+              border: "1px solid var(--color-accent)",
+              background: "var(--color-accent)",
+              color: "#ffffff",
+              fontFamily: "var(--font-sans)",
+              fontWeight: 500,
+              fontSize: "15px",
+              cursor: "pointer",
+              transition:
+                "background-color 150ms cubic-bezier(0.16, 1, 0.3, 1), border-color 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "var(--color-accent-hover)";
+              e.currentTarget.style.borderColor = "var(--color-accent-hover)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "var(--color-accent)";
+              e.currentTarget.style.borderColor = "var(--color-accent)";
+            }}
+          >
+            {newsletter.cta}
+          </button>
+        </form>
+      ) : (
+        <p
+          role="status"
+          aria-live="polite"
+          style={{
+            margin: 0,
+            marginTop: "4px",
+            fontFamily: "var(--font-sans)",
+            fontSize: "14px",
+            lineHeight: 1.5,
+            color: "var(--color-text-muted)",
+          }}
+        >
+          {newsletter.successMessage}
+        </p>
+      )}
+    </motion.div>
+  );
+
+  return (
+    <motion.div
+      layoutId="corder-presence"
+      data-component="CorderPresenceForm"
+      data-source={DATA_SOURCE_PROVIDER}
+      data-tokens="color-bg,color-border,color-text,color-accent,radius-window,font-serif,font-sans"
+      role="region"
+      aria-label="Subscribe to product updates"
+      style={{
+        position: "fixed",
+        right: "32px",
+        bottom: "max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px))",
+        width: "380px",
+        height: "auto",
+        minHeight: "260px",
+        zIndex: 31,
+        background: "var(--color-bg)",
+        border: "1px solid var(--color-border)",
+        borderRadius: "var(--radius-window)",
+        pointerEvents: "auto",
+        overflow: "hidden",
+      }}
+      transition={{ layout: MORPH_TRANSITION }}
+    >
+      {inner}
+      <style>{`
+        @media (max-width: 640px) {
+          [data-component="CorderPresenceForm"] {
+            width: min(92vw, 360px) !important;
+            right: 28px !important;
+            bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
+          }
+        }
+      `}</style>
+    </motion.div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sentinels — scroll-tied targets that flip the two scroll flags. Both use
+// the same rAF-throttled `getBoundingClientRect` measure pattern; an
+// IntersectionObserver threshold-0 can miss state for a 1px-tall element
+// that crosses the viewport in a single scroll frame.
 // ---------------------------------------------------------------------------
 
 export function CorderPresenceSentinel() {
@@ -291,10 +502,145 @@ export function CorderPresenceSentinel() {
   );
 }
 
+/**
+ * Form-zone sentinel — placed where the Newsletter section used to sit
+ * (between Faq and Footer in page.tsx). When the sentinel scrolls into
+ * the upper 40% of the viewport (matches the existing trigger pattern),
+ * `pastFormZone` flips true and the orb morphs into the form card.
+ *
+ * Renders as a zero-height anchor so it occupies no visual space — the
+ * old Newsletter section is going away, not being replaced inline.
+ */
+export function CorderPresenceFormSentinel() {
+  const { setPastFormZone, motionDisabled } = useCorderPresence();
+
+  useEffect(() => {
+    if (motionDisabled) {
+      setPastFormZone(false);
+      return;
+    }
+    if (typeof window === "undefined") return;
+    const el = document.getElementById("corder-presence-form-sentinel");
+    if (!el) return;
+
+    let raf = 0;
+    let lastPast: boolean | null = null;
+
+    const measure = () => {
+      raf = 0;
+      const sentinel = document.getElementById("corder-presence-form-sentinel");
+      if (!sentinel) return;
+      const rect = sentinel.getBoundingClientRect();
+      const past = rect.top < window.innerHeight * 0.4;
+      if (past !== lastPast) {
+        lastPast = past;
+        setPastFormZone(past);
+      }
+    };
+
+    const schedule = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [setPastFormZone, motionDisabled]);
+
+  return (
+    <div
+      id="corder-presence-form-sentinel"
+      aria-hidden="true"
+      style={{
+        width: "100%",
+        height: 0,
+        margin: 0,
+        pointerEvents: "none",
+      }}
+    />
+  );
+}
+
 // ---------------------------------------------------------------------------
-// WindowAnchor — wraps the existing `.hiw-window-inner` so it can carry
-// `layoutId="corder-presence"`. Rendered only when motion is enabled AND
-// the user is NOT past HowItWorks.
+// Static fallback section — for `prefers-reduced-motion` / `?motion=0`. The
+// corner-pinned orb/form would be intrusive without animation justification,
+// so in reduced-motion mode the contact form appears inline in page flow
+// instead, slotted where the old Newsletter section used to live.
+// ---------------------------------------------------------------------------
+
+export function CorderPresenceStaticSection() {
+  const { motionDisabled } = useCorderPresence();
+  const { newsletter } = copy;
+  const [status, setStatus] = useState<"idle" | "submitted">("idle");
+  const [email, setEmail] = useState("");
+
+  if (!motionDisabled) return null;
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!email.trim()) return;
+    setStatus("submitted");
+  }
+
+  return (
+    <section
+      id="newsletter"
+      data-component="CorderPresenceStaticSection"
+      data-source={DATA_SOURCE_PROVIDER}
+      data-tokens="color-bg,color-border,color-text,color-text-muted,color-accent,radius-button,font-serif,font-sans"
+      className="presence-static"
+    >
+      <div className="page-container">
+        <div className="presence-static__inner">
+          <h2 className="presence-static__heading">{newsletter.heading}</h2>
+          <p className="presence-static__subhead">{newsletter.subhead}</p>
+
+          {status === "idle" ? (
+            <form
+              className="presence-static__form"
+              onSubmit={handleSubmit}
+              aria-label="Subscribe to product updates"
+              noValidate
+            >
+              <input
+                type="email"
+                required
+                placeholder={newsletter.placeholder}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="presence-static__input"
+                aria-label="Email address"
+              />
+              <button type="submit" className="presence-static__submit">
+                {newsletter.cta}
+              </button>
+            </form>
+          ) : (
+            <p
+              className="presence-static__status"
+              role="status"
+              aria-live="polite"
+            >
+              {newsletter.successMessage}
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// HowItWorks consumer hook — decides whether the in-section live window
+// should render with the framer layoutId. With three states now, the orb
+// OR form takes ownership of the layoutId once the user is past HowItWorks.
 // ---------------------------------------------------------------------------
 
 /**
@@ -308,7 +654,7 @@ export function CorderPresenceSentinel() {
  *  - { mode: "window" } — render the window WITH layoutId="corder-presence"
  *    so framer can morph it into the orb when the user scrolls past.
  *  - { mode: "hidden" } — user is past HowItWorks; window is unmounted so
- *    the orb (mounted at the layout level) owns the layoutId.
+ *    the orb (or form) mounted at the layout level owns the layoutId.
  */
 export function useCorderPresenceMode():
   | { mode: "static" }
