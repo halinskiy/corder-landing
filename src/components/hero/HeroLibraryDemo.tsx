@@ -13,6 +13,8 @@ const TILT_LIFT = 4;
 const TRANSCRIBING_DURATION_MS = 1200;
 
 type DemoMode = "recording" | "transcribing" | "transcript";
+type RightTab = "recording" | "settings";
+type Theme = "light" | "dark";
 
 export function HeroLibraryDemo() {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -20,6 +22,17 @@ export function HeroLibraryDemo() {
   const [playing, setPlaying] = useState(false);
   const [mode, setMode] = useState<DemoMode>("recording");
   const [elapsed, setElapsed] = useState(0);
+  // Right-panel tab — Recording (default) shows the audio scrubber +
+  // Timeline; Settings shows a stack of decorative setting cards.
+  const [rightTab, setRightTab] = useState<RightTab>("recording");
+  // Demo-scoped theme. Flips on moon-icon click; never touches the
+  // landing's global theme. Applied as `data-theme` on the demo root;
+  // every painted surface inside transitions via the universal rule
+  // in HeroLibraryDemo.css.
+  const [theme, setTheme] = useState<Theme>("light");
+  const toggleTheme = useCallback(() => {
+    setTheme((t) => (t === "light" ? "dark" : "light"));
+  }, []);
 
   // Blob "speaking" state is simply derived from mode: red and morphing
   // while recording, green and idle otherwise.
@@ -169,6 +182,7 @@ export function HeroLibraryDemo() {
         data-tokens="hl-bg,hl-border,hl-accent,hl-status-ready,radius-window"
         data-reveal={reveal}
         data-playing={playing ? "true" : "false"}
+        data-theme={theme}
         role="img"
         aria-label="Corder Library window with transcript and per-speaker timeline"
       >
@@ -186,6 +200,10 @@ export function HeroLibraryDemo() {
             mode={mode}
             elapsedSeconds={elapsed}
             onStopRecording={handleStopRecording}
+            rightTab={rightTab}
+            onRightTabChange={setRightTab}
+            theme={theme}
+            onToggleTheme={toggleTheme}
           />
         </div>
 
@@ -305,12 +323,20 @@ function Main({
   mode,
   elapsedSeconds,
   onStopRecording,
+  rightTab,
+  onRightTabChange,
+  theme,
+  onToggleTheme,
 }: {
   playing: boolean;
   onTogglePlay: () => void;
   mode: DemoMode;
   elapsedSeconds: number;
   onStopRecording: () => void;
+  rightTab: RightTab;
+  onRightTabChange: (next: RightTab) => void;
+  theme: Theme;
+  onToggleTheme: () => void;
 }) {
   return (
     <div className="hl-main">
@@ -325,7 +351,6 @@ function Main({
 
         <div
           className="hl-header-actions"
-          aria-hidden="true"
           data-component="HeroLibraryDemo.HeaderActions"
           data-source={DATA_SOURCE}
           data-tokens="hl-border-strong,hl-fg-muted,radius-pill"
@@ -333,13 +358,17 @@ function Main({
           <button
             type="button"
             className="hl-icon-pill"
-            aria-label="Switch to dark theme"
-            tabIndex={-1}
+            aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            aria-pressed={theme === "dark"}
+            onClick={onToggleTheme}
             data-component="HeroLibraryDemo.ThemeToggle"
             data-source={DATA_SOURCE}
             data-tokens="hl-border-strong,hl-fg-muted"
           >
-            <MoonIcon />
+            <span className="hl-theme-icon-wrap" aria-hidden="true">
+              <span className="hl-theme-moon"><MoonIcon /></span>
+              <span className="hl-theme-sun"><SunIcon /></span>
+            </span>
           </button>
           <button
             type="button"
@@ -388,16 +417,28 @@ function Main({
             <span className="hl-tab active">Transcript</span>
           </div>
           <div className="hl-detail-tab-col hl-detail-tab-col-right">
-            <span className="hl-tab active">Recording</span>
-            <span
-              className="hl-tab"
+            <button
+              type="button"
+              className={`hl-tab-btn${rightTab === "recording" ? " active" : ""}`}
+              onClick={() => onRightTabChange("recording")}
+              aria-pressed={rightTab === "recording"}
+              data-component="HeroLibraryDemo.RecordingTab"
+              data-source={DATA_SOURCE}
+              data-tokens="hl-fg,hl-fg-muted"
+            >
+              Recording
+            </button>
+            <button
+              type="button"
+              className={`hl-tab-btn${rightTab === "settings" ? " active" : ""}`}
+              onClick={() => onRightTabChange("settings")}
+              aria-pressed={rightTab === "settings"}
               data-component="HeroLibraryDemo.SettingsTab"
               data-source={DATA_SOURCE}
-              data-tokens="hl-fg-muted"
-              aria-hidden="true"
+              data-tokens="hl-fg,hl-fg-muted"
             >
               Settings
-            </span>
+            </button>
           </div>
         </div>
 
@@ -407,11 +448,15 @@ function Main({
             elapsedSeconds={elapsedSeconds}
             onStopRecording={onStopRecording}
           />
-          <RightPanel
-            playing={playing}
-            onTogglePlay={onTogglePlay}
-            mode={mode}
-          />
+          {rightTab === "recording" ? (
+            <RightPanel
+              playing={playing}
+              onTogglePlay={onTogglePlay}
+              mode={mode}
+            />
+          ) : (
+            <SettingsPane />
+          )}
         </div>
       </div>
     </div>
@@ -521,7 +566,9 @@ function Transcript({
               Hmm, let me think about that for a second.
             </span>{" "}
             <span className="hl-segment-line">Good point.</span>{" "}
-            <span className="hl-segment-line">I will write that up.</span>
+            <span className="hl-segment-line">
+              I will write that up before end of day.
+            </span>
           </SegmentGroup>
 
           <SegmentGroup
@@ -545,8 +592,51 @@ function Transcript({
           >
             <span className="hl-segment-line">What about the timeline?</span>{" "}
             <span className="hl-segment-line">
-              We can re-scope and follow up.
+              We can re-scope and follow up next week.
             </span>
+          </SegmentGroup>
+
+          <SegmentGroup initials="VG" color="var(--hl-accent)" name="Vadym Grosko">
+            <span className="hl-segment-line">
+              Let us also document the open questions in the brief.
+            </span>{" "}
+            <span className="hl-segment-line">
+              Otherwise we will keep re-litigating the same points.
+            </span>
+          </SegmentGroup>
+
+          <SegmentGroup
+            initials="I"
+            color="var(--hl-speaker-self)"
+            name="I"
+            isSelf
+          >
+            <span className="hl-segment-line">
+              Fair. I will put the doc in the shared folder tonight.
+            </span>{" "}
+            <span className="hl-segment-line">
+              Should we loop in design before Thursday?
+            </span>
+          </SegmentGroup>
+
+          <SegmentGroup
+            initials="KH"
+            color="var(--hl-speaker-purple)"
+            name="Kostiantyn Halynskyi"
+          >
+            <span className="hl-segment-line">
+              Yes, send them a heads-up tomorrow morning.
+            </span>{" "}
+            <span className="hl-segment-line">
+              A 30 minute walkthrough should be enough.
+            </span>
+          </SegmentGroup>
+
+          <SegmentGroup initials="VG" color="var(--hl-accent)" name="Vadym Grosko">
+            <span className="hl-segment-line">
+              Sounds good. Anything else before we wrap?
+            </span>{" "}
+            <span className="hl-segment-line">All right, talk Thursday.</span>
           </SegmentGroup>
         </div>
       )}
@@ -742,6 +832,110 @@ function RightPanel({
   );
 }
 
+/* ── Settings pane — right-panel content when the Settings tab is
+ * active. Mirrors the real macOS app's SettingsPane (Notifications,
+ * Screen video, Auto-transcribe, Auto-title, hotkey, Always offer to
+ * record). All toggles are decorative: tabIndex={-1}, no real handler,
+ * the visible on/off state is hard-coded per the inventory dossier. */
+function SettingsPane() {
+  return (
+    <div
+      className="hl-settings-pane"
+      data-component="HeroLibraryDemo.SettingsPane"
+      data-source={DATA_SOURCE}
+      data-tokens="hl-bg,hl-border,hl-accent,hl-fg,hl-fg-muted"
+    >
+      <SettingsCard>
+        <SettingsToggle
+          label="System notifications"
+          desc="Notify on recording start, transcript ready, and network loss."
+          on={false}
+        />
+      </SettingsCard>
+      <SettingsCard>
+        <SettingsToggle
+          label="Screen video recording"
+          desc="Save a video of what was on screen during the meeting."
+          on={true}
+        />
+      </SettingsCard>
+      <SettingsCard>
+        <SettingsToggle
+          label="Auto-transcribe"
+          desc="Transcribe the recording automatically after you stop."
+          on={false}
+        />
+      </SettingsCard>
+      <SettingsCard>
+        <SettingsToggle
+          label="Auto-title"
+          desc="Generate a short meeting title from the transcript."
+          on={true}
+        />
+      </SettingsCard>
+
+      <div className="hl-settings-divider" aria-hidden="true" />
+
+      <SettingsCard>
+        <div className="hl-settings-hotkey">
+          <div className="hl-settings-row-label">Start/stop recording</div>
+          <div className="hl-settings-row-desc">
+            A global shortcut to quickly start Corder.
+          </div>
+          <span
+            className="hl-settings-hotkey-pill"
+            aria-label="Shortcut: Shift Command F"
+          >
+            {"⇧⌘F"}
+          </span>
+        </div>
+      </SettingsCard>
+
+      <SettingsCard>
+        <div className="hl-settings-applist">
+          <div className="hl-settings-row-label">Always offer to record</div>
+          <div className="hl-settings-row-desc">
+            Apps Corder always offers to record when they take the microphone.
+          </div>
+          <span className="hl-settings-applist-add">Add</span>
+        </div>
+      </SettingsCard>
+    </div>
+  );
+}
+
+function SettingsCard({ children }: { children: React.ReactNode }) {
+  return <div className="hl-settings-card">{children}</div>;
+}
+
+function SettingsToggle({
+  label,
+  desc,
+  on,
+}: {
+  label: string;
+  desc: string;
+  on: boolean;
+}) {
+  return (
+    <div
+      className="hl-settings-row"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      tabIndex={-1}
+    >
+      <div className="hl-settings-row-text">
+        <div className="hl-settings-row-label">{label}</div>
+        <div className="hl-settings-row-desc">{desc}</div>
+      </div>
+      <span className={`hl-set-switch${on ? " on" : ""}`} aria-hidden="true">
+        <span className="hl-set-switch-thumb" />
+      </span>
+    </div>
+  );
+}
+
 function TimelineRow({
   name,
   stats,
@@ -807,7 +1001,10 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 function RecBlobCanvas({ isSpeaking }: { isSpeaking: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const activityRef = useRef(0);
+  // Start at the idle floor so the very first frame after mount is
+  // already a breathing green blob, not a static circle that "wakes
+  // up" over the first few hundred ms.
+  const activityRef = useRef(0.38);
   const speakingRef = useRef(isSpeaking);
   speakingRef.current = isSpeaking;
 
@@ -834,14 +1031,29 @@ function RecBlobCanvas({ isSpeaking }: { isSpeaking: boolean }) {
     let raf = 0;
     const start = performance.now();
 
+    // Activity drives both shape-morphing strength and the green ->
+    // red colour mix. The "activity" axis is independent of the
+    // "vitality" axis: even at activity 0 (idle green) the blob still
+    // breathes and slowly morphs through templates. Without this floor
+    // the idle blob reads as frozen (the user reported "застыл").
+    const IDLE_FLOOR = 0.35;
+    // Colour mix is what flips green<->red. Keep it sharp so red only
+    // shows up while recording.
+    const colorActivityFor = (a: number) => {
+      // Subtract the floor and renormalise so colour stays in [0,1]
+      // mapped to "not speaking" -> "speaking".
+      return Math.max(0, Math.min(1, (a - IDLE_FLOOR) / (1 - IDLE_FLOOR)));
+    };
+
     const draw = () => {
       const t = (performance.now() - start) / 1000;
 
-      // Smoothly ramp activity toward target (0 or 1) so silent ↔
-      // speaking transitions are gradual.
-      const target = speakingRef.current ? 1 : 0;
+      // Smoothly ramp activity toward target. Target lands at the idle
+      // floor when not speaking so morph and breathing never freeze.
+      const target = speakingRef.current ? 1 : IDLE_FLOOR;
       activityRef.current += (target - activityRef.current) * 0.045;
       const activity = Math.max(0, Math.min(1, activityRef.current));
+      const colorMix = colorActivityFor(activity);
 
       // Simulated audio level: a slow sine + a higher-frequency
       // micro-burst, gated by activity. Mirrors real meter readings.
@@ -903,12 +1115,15 @@ function RecBlobCanvas({ isSpeaking }: { isSpeaking: boolean }) {
         ctx.closePath();
       };
 
-      // Activity-mixed palette (green ↔ red).
-      const r = Math.round(lerp(31, 185, activity));   // 0x1f -> 0xb9
-      const g = Math.round(lerp(122, 73, activity));   // 0x7a -> 0x49
-      const b = Math.round(lerp(80, 65, activity));    // 0x50 -> 0x41
-      const haloAlphaOuter = 0.32 + 0.18 * activity;
-      const haloAlphaMid   = 0.18 + 0.12 * activity;
+      // Palette mixes green -> red using colorMix (gated by "really
+      // speaking", not the baseline idle activity). This keeps the
+      // green idle state from drifting toward red just because the
+      // shape is morphing in place.
+      const r = Math.round(lerp(31, 185, colorMix));   // 0x1f -> 0xb9
+      const g = Math.round(lerp(122, 73, colorMix));   // 0x7a -> 0x49
+      const b = Math.round(lerp(80, 65, colorMix));    // 0x50 -> 0x41
+      const haloAlphaOuter = 0.32 + 0.18 * colorMix;
+      const haloAlphaMid   = 0.18 + 0.12 * colorMix;
 
       ctx.clearRect(0, 0, cssSize, cssSize);
 
@@ -932,14 +1147,14 @@ function RecBlobCanvas({ isSpeaking }: { isSpeaking: boolean }) {
       // Main fill — radial gradient with a slight off-centre highlight.
       buildPath();
       const grad = ctx.createRadialGradient(cx - 4, cy - 6, 4, cx, cy, baseRadius * 1.4);
-      const brightR = Math.round(lerp(40, 211, activity));
-      const brightG = Math.round(lerp(165, 90, activity));
-      const brightB = Math.round(lerp(96, 82, activity));
+      const brightR = Math.round(lerp(40, 211, colorMix));
+      const brightG = Math.round(lerp(165, 90, colorMix));
+      const brightB = Math.round(lerp(96, 82, colorMix));
       grad.addColorStop(0, `rgb(${brightR},${brightG},${brightB})`);
       grad.addColorStop(0.65, `rgb(${r},${g},${b})`);
-      const darkR = Math.round(lerp(8, 168, activity));
-      const darkG = Math.round(lerp(77, 54, activity));
-      const darkB = Math.round(lerp(41, 60, activity));
+      const darkR = Math.round(lerp(8, 168, colorMix));
+      const darkG = Math.round(lerp(77, 54, colorMix));
+      const darkB = Math.round(lerp(41, 60, colorMix));
       grad.addColorStop(1, `rgb(${darkR},${darkG},${darkB})`);
       ctx.fillStyle = grad;
       ctx.fill();
@@ -1029,6 +1244,30 @@ function MoonIcon() {
       aria-hidden="true"
     >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2" />
+      <path d="M12 20v2" />
+      <path d="m4.93 4.93 1.41 1.41" />
+      <path d="m17.66 17.66 1.41 1.41" />
+      <path d="M2 12h2" />
+      <path d="M20 12h2" />
+      <path d="m4.93 19.07 1.41-1.41" />
+      <path d="m17.66 6.34 1.41-1.41" />
     </svg>
   );
 }
