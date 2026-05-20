@@ -35,28 +35,31 @@ This file is for the developer rebuilding the landing in Webflow. Read it sectio
 
 ### 1b. Live UI demo (`HeroLibraryDemo`) — Corder v0.9.0
 
-This is the most distinctive piece on the landing. **It is not a screenshot.** It is a real DOM rendering of the macOS Library window with selectable text and three live behaviours. **Updated 2026-05-20 to match Corder v0.9.0** (released 2026-05-17).
+This is the most distinctive piece on the landing. **It is not a screenshot.** It is a real DOM rendering of the macOS Library window with selectable text and three live behaviours. **Updated 2026-05-20 to match Corder v0.9.0** (released 2026-05-17), polish-pass 2026-05-20: theme toggle, Settings tab content, taller window, scrollable transcript, idle-blob morph restored.
 
 **Anatomy (left to right):**
 1. **Sidebar.** Search field at top, 5 meeting cards in two date buckets (`Today`, `Yesterday`) + one in `This week`. Titles are Gemini-style auto-titles (e.g. `Investor sync - Vadym + Paul`); one fallback entry kept as a date stamp (`Yesterday, 15:28`) to show the unnamed-recording case.
-2. **Main column header.** Breadcrumb `Recordings › Investor sync - Vadym + Paul`. Right-aligned strip of 4 icon-only round buttons: theme (moon), language (globe), archive, then 1px vertical hairline divider, then circular profile avatar with letter `K`.
-3. **Detail tabs.** Left column: single `Transcript` tab. Right column: two tabs `Recording` (active) | `Settings` (inactive, decorative — clicking does nothing).
-4. **Transcript pane.** Toolbar = search field + two icon-only circular buttons (people-filter, copy-all). Body switches between three states based on demo mode (recording → transcribing → transcript).
-5. **Right panel (Recording tab, transcript mode).** Top-to-bottom: video preview card (16:9 dark rectangle with centred play overlay), audio scrubber row (play button + time + scrub bar + download icon), Timeline section label, three per-speaker bars (Kostiantyn Halynskyi purple, Vadym Grosko accent green, Paul Turner amber).
-6. **Recording blob.** Free-floating canvas in the bottom-right of the window, morphs shape and palette between green (idle) and red (recording). Click to stop / restart.
+2. **Main column header.** Breadcrumb `Recordings › Investor sync - Vadym + Paul` at 15 px. Right-aligned strip of 4 icon-only round buttons: theme toggle (moon -> sun crossfade), language (globe, decorative), archive (decorative), then 1px vertical hairline divider, then circular profile avatar with letter `K`. Header strip locked at `min-height: 64px` — breadcrumb font bumped to 15 px but the strip height does not change.
+3. **Detail tabs.** Left column: single `Transcript` tab. Right column: two real tab buttons `Recording` | `Settings`. Click swaps the right-panel content; both states are wired.
+4. **Transcript pane.** Toolbar = search field + two icon-only circular buttons (people-filter, copy-all). Body switches between three demo modes (recording → transcribing → transcript). The transcript pane scrolls vertically (custom thin webkit / firefox scrollbar). Default dialog runs 8 speaker turns.
+5. **Right panel (Recording tab, transcript mode).** Top-to-bottom: video preview card (16:9 dark rectangle with centred play overlay), audio scrubber row (play button + time + scrub bar + download icon), Timeline section label, three per-speaker bars (Kostiantyn Halynskyi purple, Vadym Grosko accent green, Paul Turner amber). Window aspect-ratio 1180/720 guarantees all three speaker rows are visible without scroll.
+6. **Right panel (Settings tab).** Stack of six framed cards: System notifications OFF, Screen video recording ON, Auto-transcribe OFF, Auto-title ON, hairline divider, Start/stop recording hotkey card with a pill showing `⇧⌘F`, Always offer to record with an Add button. Toggles are decorative (no real state, `tabIndex={-1}`). Each card is `border-radius: 10px`, hairline border `--hl-border`. The pill switch is `--hl-accent` when ON, `--hl-border-strong` when OFF.
+7. **Recording blob.** Free-floating canvas in the bottom-right of the window, morphs shape and palette between green (idle) and red (recording). Click to stop / restart. Idle state still breathes and morphs through the four shape templates — `IDLE_FLOOR = 0.35` keeps the shape alive when not speaking.
+8. **Theme.** Demo-local `data-theme="light" | "dark"`. Moon-icon click flips. Dark token palette mirrors the real macOS Corder `.dark` block: `--hl-bg #161615`, `--hl-fg #f2f2f0`, `--hl-accent #1f9d59`, plus speaker colours rebalanced for dark luminance. The landing's own theme is NOT affected.
 
 **Webflow path:** **Custom embed required.** The entire `HeroLibraryDemo.tsx` + `HeroLibraryDemo.css` should be embedded as a single HTML/CSS/JS block:
-- Hand-port the JSX to HTML (it's all static markup except for the play button event handler and the blob canvas).
+- Hand-port the JSX to HTML (it's all static markup except for the play button event handler, the blob canvas, and the four buttons that drive theme / right-tab state).
 - Hand-port the `.css` file (drop into a `<style>` block or Webflow-side stylesheet — beware that Webflow's class compiler does not respect scoped tokens, so prefix all internal classes with `hl-` as already done).
-- Implement four small JS pieces inline:
+- Implement five small JS pieces inline:
   1. **3D tilt** (~30 lines): rAF loop on pointermove inside the `.hero-library-demo` container. `MAX_X = 3°, MAX_Y = 4°, LIFT = 4px`.
   2. **Play toggle** (~5 lines): click `.hl-audio-btn-primary` → toggle `data-playing="true"` on `.hero-library-demo`.
   3. **Mode state machine** (~40 lines): recording → click blob → transcribing (1.2s) → transcript. State drives which content appears in the transcript pane and whether the video preview + scrubber are armed.
-  4. **Recording blob canvas** (~180 lines): port from `RecBlobCanvas` in the React file. This is the only piece that genuinely needs canvas; everything else is plain DOM.
+  4. **Recording blob canvas** (~200 lines): port from `RecBlobCanvas` in the React file. Note `IDLE_FLOOR = 0.35` and the `colorActivityFor` split. This is the only piece that genuinely needs canvas; everything else is plain DOM.
+  5. **Theme toggle + tab swap** (~15 lines): click moon -> flip `data-theme` on the demo root; click `.hl-tab-btn[data-tab="settings"]` -> swap visible right-panel block. Universal 240 ms CSS transition already handles the crossfade.
 
 **Note:** The reveal animation (`data-reveal="initial" → "visible"`) can be replaced by a Webflow IX2 page-load animation that toggles a class on the card with the same transform values. Don't reimplement it in custom code — let IX2 do it.
 
-**Reduced motion:** `@media (prefers-reduced-motion: reduce)` block in the CSS already disables all transitions.
+**Reduced motion:** Both `@media (prefers-reduced-motion: reduce)` and `html[data-motion="off"]` blocks in the CSS zero every transition duration to 0 ms. Theme toggle still works under reduced motion — it just flips instantly with no crossfade.
 
 **Speaker-colour tokens (scoped to `.hero-library-demo`, NOT brand accents):**
 - `--hl-speaker-purple: #5a3aa6` — Kostiantyn Halynskyi (other speaker, two-letter avatar)
