@@ -12,6 +12,104 @@ Format:
 
 ---
 
+## 2026-05-20 — Hero `HeroLibraryDemo` updated to Corder v0.9.0 (branch `feat/hero-v090`)
+
+Same screen, just updated to match the live macOS app v0.9.0 shipped on
+2026-05-17. Sourced exclusively from §0.5 of
+`research/corder-feature-inventory-2026-05.md` (the canonical diff table
+of v0.9.0 vs the landing). No layout redesign — every change is an
+addition or in-place replacement inside the existing window chrome.
+
+**Header chrome.** Removed the `hl-boost-switch` block (Boost was retired
+in 0.9.0 — `text_boost` / `btn_boost` i18n keys are dead) and the three
+text-labelled `EN` / `Copy` / `Delete` buttons. Replaced with a strip of
+four icon-only round buttons:
+1. Theme toggle (moon glyph — the current light theme means the icon is
+   the "switch to dark" affordance).
+2. Language picker (globe glyph).
+3. Archive (file-box glyph).
+4. 1px vertical hairline divider.
+5. Profile avatar — circular 28px, neutral fill, single-letter `K`.
+
+All four are `aria-hidden="true"` + `tabIndex={-1}` — this is a static
+demo, not real controls.
+
+**Breadcrumb + sidebar.** Static date-stamp `Today, 17:09` replaced with
+the Gemini-style auto-title `Investor sync - Vadym + Paul`. Sidebar
+meeting titles auto-titled (`Investor sync - Vadym + Paul`, `Pricing
+strategy review`, `Customer call: Ana W.`, `Q3 roadmap, eng all-hands`)
+with **one date-stamp fallback** kept (`Yesterday, 15:28`) to demonstrate
+the unnamed-recording case.
+
+**Transcript toolbar.** Replaced the single text-labelled `Speakers`
+button with two icon-only circular buttons: people-filter (single-person
+glyph) + copy-all (overlapping-squares glyph). Both 32x32 hairline-bordered,
+sit to the right of the search field.
+
+**Right-panel tabs.** Added a `Settings` tab next to the existing
+`Recording` tab. Active state still on `Recording`; `Settings` is rendered
+but inactive (clicking it does nothing — decoration only). Matches the
+0.9.0 two-tab strip in the real app.
+
+**Recording tab content additions.**
+- **Timeline demoted from a top-level tab to a section label** inside the
+  Recording tab, sitting between the audio scrubber and the per-speaker
+  bars. CSS class `.hl-timeline-section-label` replaces the old
+  `.hl-timeline-tabs` / `.hl-timeline-tab.active` pair.
+- **Video preview card** added ABOVE the audio scrubber when the demo is
+  in `transcript` mode. 16:9 dark rectangle with a centred white play
+  overlay button (~44px round). Pure static — no actual video element,
+  no source loading, no decode hit.
+- **Download icon-button** now visible in all states (was previously only
+  shown when `!isActive`). Sits to the right of the scrubber, aligned
+  with the play button. Still `tabIndex={-1}`, decorative.
+- **Per-speaker bars** kept the striped temporal-activity visual (not the
+  solid-bar variant — the inventory notes both exist, the striped one
+  reads richer in a hero demo).
+
+**Self-speaker entry.** Added one transcript group labelled `I` with a
+single-letter amber avatar (`--hl-speaker-self: #a16207`), demonstrating
+the first-person-self speaker recognition from 0.9.0. The other speakers
+(Kostiantyn Halynskyi, Vadym Grosko) keep their two-letter avatars in
+the existing speaker-colour palette. Amber `#a16207` is documented in
+`DECISIONS.md` as a **speaker-colour token, NOT a brand accent** — same
+pattern as the existing purple `--hl-speaker-purple` used inside the
+demo without leaking into landing tokens.
+
+**What's preserved unchanged:**
+- 3D pointer-driven tilt on the window.
+- Recording blob (free-floating canvas, bottom-right of the window).
+- All three demo modes (recording / transcribing / transcript) and the
+  transitions between them.
+- Elapsed-time counter, auto-stop at 2min, restart-from-transcript flow.
+- Reduced-motion handling.
+- Traffic lights, base window styling, dimensions.
+- `data-component` / `data-source` / `data-tokens` triple on every
+  existing element. New elements all carry the triple.
+
+**Constraints honoured:**
+- ASCII only — separator is `-`, not em-dash.
+- Single brand accent `#217a50`.
+- No microphone icons.
+- No new dependencies.
+
+**Build:**
+- `npm run typecheck` exit 0.
+- `npm run build` exit 0. Route `/` 23.7 kB (parsed), First Load JS
+  178 kB gzip total (vs ~175 kB prior — +3 kB for the new icons + video
+  card markup + CSS, well under the 80 kB-per-page-chunk ceiling and a
+  rounding-error change at total-bundle level).
+- Visual acceptance verified on `/?motion=0`, 1440px desktop, 375px
+  mobile. Zero console errors. Video preview card only renders when
+  `mode === "transcript"`, hidden during recording / transcribing as
+  intended.
+
+**Next:** judge review. After PASSED, branch merges into
+`feat/background-decor` (or wherever the merge gate is). Commit only on
+this branch; no push, no deploy.
+
+---
+
 ## 2026-05-20 — CorderPresence: third state (form) + Newsletter section removed
 
 - **Third morph state** added to `CorderPresence.tsx`. The orb (state B) now

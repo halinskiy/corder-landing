@@ -4,6 +4,51 @@
 
 ---
 
+## 2026-05-20 — Hero `HeroLibraryDemo` обновлён до Corder v0.9.0
+
+### Решение 1: один patch, никакого редизайна
+
+**Решение:** не перерисовываем HeroLibraryDemo, а добавляем/заменяем элементы по §0.5 inventory (canonical diff). Все существующие поведения (3D tilt, три режима recording/transcribing/transcript, recording blob, elapsed-time counter, restart-recording) сохраняются 1:1.
+
+**Контекст:** user явно сказал «тоже самый экран что у нас есть в hero сейчас просто обновленный, все добавляем». Brief требовал «extend the existing demo so it reflects what 0.9.0 actually ships». Нулевая правда — диффом, не редизайном.
+
+**Альтернативы:**
+- **(rejected) (a) Полный rewrite секции** с новыми компонентами `Header`, `Sidebar`, `Main`, `RightPanel` извлечёнными в `ui-kit/`. Соблазнительно, но user НЕ просил рефакторинг, а большой rewrite рискует поломать tilt/recording/transcript transitions, которые отлажены в RETRO за 15 сессий.
+- **(taken) (b) Surgical patch.** Каждый row §0.5 — один Edit на TSX + один на CSS. Триплет `data-component`/`data-source`/`data-tokens` на каждом новом element.
+
+### Решение 2: amber `#a16207` для self-speaker — это speaker-colour token, НЕ второй accent
+
+**Решение:** добавили `--hl-speaker-self: #a16207` в `.hero-library-demo` scope. Используется ТОЛЬКО для одной первой-личной "I" аватарки внутри транскрипта.
+
+**Контекст:** brief требует амбер для "I" чтобы отличить self от других speakers. Project CLAUDE.md фиксирует один accent `#217a50`. Внутри HeroLibraryDemo уже живут два других speaker-colour токена (`--hl-speaker-purple #5a3aa6`, `--hl-speaker-amber #c7741b`) — они не утекают в landing tokens. Self-speaker amber следует тому же паттерну.
+
+**Доказательство что это не violation:** `--color-accent` в `tokens.css` остаётся `#217a50`. Никакой `accent` token не дёрнут. `--hl-speaker-self` — это локальная palette demo-окна, как `--hl-speaker-purple` уже был.
+
+### Решение 3: Boost кнопка удалена, не deprecated
+
+**Решение:** `hl-boost-switch` (TSX блок + полные CSS правила + mobile media query overrides) удалены целиком. Не остались как `display: none` для будущего возврата.
+
+**Контекст:** inventory §18 чётко: `text_boost` и `btn_boost` i18n keys ушли из 0.9.0. Toast keys `toast_boost_*` тоже. Это не deprecation — это removal в реальном продукте. Landing должна следовать за продуктом, не за legacy.
+
+**Альтернатива:** **(rejected)** оставить Boost в TSX с `display: none`. Зачем? Если 0.10 вернёт boost, его вернёт инвентарь, и тогда вернётся и в hero. Mёртвый код — это шум для Webflow developer, который читает HANDOFF.
+
+### Решение 4: видео preview card mount только при `mode === "transcript"`
+
+**Решение:** `<div className="hl-video-card">` рендерится только если `isActive` (т.е. mode = transcript). В recording/transcribing скрыт.
+
+**Контекст:** inventory §6: video card renders «only when has_video». Real app скрывает card если файл 404 или video write нo arm'нут. В hero демо нет реального video файла, но семантика «recording идёт → есть видеоинформация → можно показать» воспроизводится через mode.
+
+**Альтернатива:** **(rejected)** показывать всегда (даже recording/transcribing). Это бы выглядело inconsistent: во время recording «play preview» это нелогично — recording ещё пишется.
+
+### Verified
+
+- `npm run typecheck` exit 0.
+- `npm run build` exit 0, route `/` 23.7 kB parsed.
+- Visual 1440/375/?motion=0 — все 7 acceptance bullets PASS.
+- Zero console errors во всех трёх контекстах (после bouncing dev cache — `npm run build` стерла CSS asset из dev-mode, требовался `rm -rf .next` + restart; см. RETRO 2026-05-20).
+
+---
+
 ## 2026-05-20 — CorderPresence третье состояние (form) + удаление Newsletter секции
 
 ### Решение 1: Newsletter секция уходит, форма становится state C морфа
