@@ -111,6 +111,20 @@
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* View Transitions API — radial reveal from the click point.
+ * Disable the default crossfade between old and new snapshots so the
+ * theme swap is driven purely by the clip-path animation in
+ * HeroLibraryDemo.tsx#toggleTheme. The old snapshot stays fully visible
+ * underneath; the new snapshot is clipped by a circle that grows from
+ * the cursor outward, painting the new theme as a wave. */
+::view-transition-old(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-library-demo,
   .hero-library-demo *,
