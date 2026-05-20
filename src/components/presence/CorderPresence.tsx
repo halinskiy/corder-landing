@@ -172,15 +172,14 @@ function CorderPresenceOrb() {
       // content. Decorative-only contract.
       style={{
         position: "fixed",
-        right: "20px",
-        bottom: "max(20px, calc(env(safe-area-inset-bottom, 0px) + 16px))",
+        right: "32px",
+        bottom: "max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px))",
         width: "56px",
         height: "56px",
         zIndex: 30,
         background: "var(--color-bg)",
         border: "1px solid var(--color-border)",
         borderRadius: "9999px",
-        boxShadow: "0 4px 14px rgba(10, 10, 10, 0.06)",
         pointerEvents: "none",
         display: "flex",
         alignItems: "center",
@@ -204,8 +203,8 @@ function CorderPresenceOrb() {
           [data-component="CorderPresenceOrb"] {
             width: 48px !important;
             height: 48px !important;
-            right: 16px !important;
-            bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 16px)) !important;
+            right: 28px !important;
+            bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
           }
         }
       `}</style>
@@ -249,8 +248,11 @@ export function CorderPresenceSentinel() {
       const sentinel = document.getElementById("corder-presence-sentinel");
       if (!sentinel) return;
       const rect = sentinel.getBoundingClientRect();
-      // `past` = sentinel has scrolled above the viewport top edge.
-      const past = rect.top < 0;
+      // `past` fires earlier than top-of-viewport: when the sentinel has
+      // scrolled into the upper 40% of the viewport. Matches user reading
+      // the last HowItWorks pillar and starting to move away — orb morphs
+      // in as they leave the section, not after they're two sections gone.
+      const past = rect.top < window.innerHeight * 0.4;
       if (past !== lastPast) {
         lastPast = past;
         setPastHowItWorks(past);
