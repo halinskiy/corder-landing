@@ -131,13 +131,15 @@ export function HeroLibraryDemo() {
     }, TRANSCRIBING_DURATION_MS);
   }, []);
 
-  // Auto-stop the recording after 2 minutes if the user hasn't pressed Stop —
-  // keeps the demo from sitting in a forever-recording state for tab-leavers.
+  // Auto-stop the recording after 5 seconds so visitors see the full
+  // record -> transcribe -> transcript cycle without having to wait or
+  // click anything. (Was 120s previously, which meant most users left
+  // before the transcript ever appeared.)
   useEffect(() => {
     if (mode !== "recording") return;
     const id = window.setTimeout(() => {
       handleStopRecording();
-    }, 120_000);
+    }, 5_000);
     return () => window.clearTimeout(id);
   }, [mode, handleStopRecording]);
 
@@ -437,8 +439,7 @@ function Main({
             data-tokens="hl-border-strong,hl-fg-muted"
           >
             <span className="hl-theme-icon-wrap" aria-hidden="true">
-              <span className="hl-theme-moon"><MoonIcon /></span>
-              <span className="hl-theme-sun"><SunIcon /></span>
+              <MoonIcon />
             </span>
           </button>
           <button
@@ -1316,30 +1317,6 @@ function MoonIcon() {
       aria-hidden="true"
     >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  );
-}
-
-function SunIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="m4.93 4.93 1.41 1.41" />
-      <path d="m17.66 17.66 1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="m4.93 19.07 1.41-1.41" />
-      <path d="m17.66 6.34 1.41-1.41" />
     </svg>
   );
 }

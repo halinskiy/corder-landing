@@ -1336,15 +1336,8 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   width: 14px;
   height: 14px;
 }
-.hl-theme-icon-wrap .hl-theme-sun {
-  opacity: 0;
-}
-.hero-library-demo[data-theme="dark"] .hl-theme-icon-wrap .hl-theme-moon {
-  opacity: 0;
-}
-.hero-library-demo[data-theme="dark"] .hl-theme-icon-wrap .hl-theme-sun {
-  opacity: 1;
-}
+/* Moon icon stays visible in both themes — it's the affordance for
+ * "open theme settings", not a preview of the next state. */
 
 /* Mobile collapse — sidebar hides, main pane stretches.
  * Breakpoint at 879px (one below 880, an 8px-grid value) so 880-and-up keeps
