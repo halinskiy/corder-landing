@@ -1,4 +1,3 @@
-import { Comparison } from "@/components/sections/Comparison";
 import { Fit } from "@/components/sections/Fit";
 import { Faq } from "@/components/sections/Faq";
 import { Features } from "@/components/sections/Features";
@@ -23,8 +22,6 @@ export default function HomePage() {
       <WorksWith />
       <hr className="section-divider" />
       <Features />
-      <hr className="section-divider" />
-      <Comparison />
       <hr className="section-divider" />
       <Pricing />
       <hr className="section-divider" />
