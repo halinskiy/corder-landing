@@ -25,6 +25,10 @@
   --hl-status-ready: #1f7a4f;
   --hl-speaker-purple: #5a3aa6;
   --hl-speaker-amber: #c7741b;
+  /* Self-speaker avatar token. NOT a brand accent; warm muted amber/yellow
+   * matching the macOS app's first-person highlight. Documented in
+   * DECISIONS.md (2026-05-20). */
+  --hl-speaker-self: #a16207;
 
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "IBM Plex Sans",
     system-ui, sans-serif;
@@ -318,102 +322,63 @@
 .hl-spacer {
   flex: 1;
 }
-.hl-toolbar {
+/* Header right strip — 4 icon-only buttons (theme / language / archive /
+ * profile) replacing the old Boost + EN/Copy/Delete cluster. v0.9.0
+ * pattern: monochrome, circular, hairline border, with a 1px vertical
+ * divider before the profile avatar. */
+.hl-header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
-.hl-toolbar button {
+.hl-icon-pill {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   background: transparent;
   border: 1px solid var(--hl-border-strong);
-  color: var(--hl-fg);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1;
-  padding: 8px 12px;
-  height: 36px;
-  border-radius: 999px;
+  color: var(--hl-fg-muted);
   cursor: pointer;
-  transition: background-color 80ms ease, border-color 80ms ease;
+  flex-shrink: 0;
+  transition: background-color 80ms ease, border-color 80ms ease, color 80ms ease;
 }
-.hl-toolbar button:hover {
+.hl-icon-pill:hover {
   background: var(--hl-bg-hover);
   border-color: #b8b8b4;
+  color: var(--hl-fg);
 }
-.hl-toolbar button:active {
+.hl-icon-pill:active {
   background: var(--hl-bg-active);
 }
-.hl-toolbar button svg {
+.hl-icon-pill svg {
   display: block;
   width: 14px;
   height: 14px;
-  flex-shrink: 0;
 }
-
-/* Boost switch */
-.hl-boost-switch {
-  background: transparent;
+.hl-header-divider {
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background: var(--hl-border-strong);
+  margin: 0 2px;
+}
+.hl-profile-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--hl-bg-active);
   border: 1px solid var(--hl-border-strong);
-  border-radius: 999px;
-  padding: 0 18px 0 16px;
-  height: 36px;
-  margin-left: 8px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 13px;
-  line-height: 1;
-  color: var(--hl-fg-muted);
-  font-weight: 500;
-  transition: background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hl-boost-switch:hover {
-  background: var(--hl-bg-hover);
-  border-color: #b8b8b4;
-}
-
-.hl-boost-switch[data-on="true"]:hover {
-  background: var(--hl-accent-pressed);
-  border-color: var(--hl-accent-pressed);
-}
-.hl-boost-track {
-  width: 26px;
-  height: 14px;
-  background: var(--hl-border-strong);
-  border-radius: 999px;
-  position: relative;
-  transition: background-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.hl-boost-thumb {
-  width: 10px;
-  height: 10px;
-  background: #fff;
-  border-radius: 999px;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.hl-boost-switch[data-on="true"] {
-  color: #fff;
-  border-color: var(--hl-accent);
-  background: var(--hl-accent);
-}
-.hl-boost-switch[data-on="true"] .hl-boost-track {
-  background: rgba(255, 255, 255, 0.55);
-}
-.hl-boost-switch[data-on="true"] .hl-boost-thumb {
-  transform: translateX(12px);
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hl-fg);
+  flex-shrink: 0;
 }
 
 /* Detail */
@@ -552,6 +517,11 @@
   font-weight: 600;
   color: #fff;
   flex-shrink: 0;
+}
+/* Self-speaker avatar — single letter "I", amber tint. Distinct from
+ * the brand accent (forest green) and the other speaker colours. */
+.hl-speaker-avatar.is-self {
+  font-size: 12px;
 }
 .hl-speaker-name {
   font-weight: 600;
@@ -774,6 +744,44 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   background: var(--hl-bg);
   min-height: 0;
 }
+/* Video preview card — sits ABOVE the audio scrubber in the Recording
+ * tab when a recording has a video file. v0.9.0: 16:9 thumbnail with a
+ * centred play overlay; pure decorative for the landing. */
+.hl-video-card {
+  margin: 16px 20px 0;
+}
+.hl-video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background:
+    radial-gradient(120% 80% at 50% 30%, #2a2a28 0%, #0e0e0d 78%);
+  border: 1px solid var(--hl-border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hl-video-play {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  color: #0e0e0d;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+.hl-video-play svg {
+  width: 18px;
+  height: 18px;
+  margin-left: 2px;
+}
+
 .hl-audio-controls {
   padding: 16px 20px 10px;
   display: flex;
@@ -909,24 +917,16 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   flex-direction: column;
   gap: 16px;
 }
-.hl-timeline-tabs {
-  display: flex;
-  gap: 18px;
-  border-bottom: 1px solid var(--hl-border);
-  padding-bottom: 8px;
-  margin-bottom: -4px;
-}
-.hl-timeline-tab {
+/* Timeline section label inside the Recording tab. v0.9.0: Timeline
+ * is no longer a top-level tab; it's a section header inside Recording,
+ * sitting between the audio scrubber and the per-speaker bars. */
+.hl-timeline-section-label {
   font-size: 13px;
-  color: var(--hl-fg-muted);
-  padding-bottom: 8px;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -9px;
-}
-.hl-timeline-tab.active {
-  color: var(--hl-fg);
-  border-bottom-color: var(--hl-fg);
   font-weight: 500;
+  color: var(--hl-fg);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--hl-border);
+  margin-bottom: -4px;
 }
 .hl-timeline-empty {
   margin: 0;
@@ -1051,8 +1051,10 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   .hl-transcript-wrap {
     background: none;
   }
-  .hl-toolbar button:nth-child(2),
-  .hl-toolbar button:nth-child(3) {
+  /* On the tablet tier, drop the archive button so the header still
+   * fits without crowding the breadcrumb. Profile + theme + language
+   * remain. */
+  .hl-icon-pill:nth-of-type(3) {
     display: none;
   }
 }
@@ -1101,28 +1103,9 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
     display: none;
   }
 
-  .hl-boost-switch {
-    margin-left: 0;
-    padding: 0 10px 0 8px;
-    height: 28px;
-    font-size: 12px;
-    gap: 6px;
-  }
-  .hl-boost-track {
-    width: 22px;
-    height: 12px;
-  }
-  .hl-boost-thumb {
-    width: 8px;
-    height: 8px;
-    top: 2px;
-    left: 2px;
-  }
-  .hl-boost-switch[data-on="true"] .hl-boost-thumb {
-    transform: translateX(10px);
-  }
-
-  .hl-toolbar {
+  /* On phones, hide the entire header actions strip — the breadcrumb
+   * already conveys the meeting context and these icons would crowd it. */
+  .hl-header-actions {
     display: none;
   }
 
