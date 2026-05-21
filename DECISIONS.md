@@ -4,6 +4,69 @@
 
 ---
 
+## 2026-05-22 -- Drop Lenis. Native `scroll-behavior: smooth` only.
+
+**Decision.** Remove the `LenisProvider` wrapper. Use native CSS `scroll-behavior: smooth` on the html element with `scroll-padding-top: 88px` for the sticky nav offset.
+
+**Why.** User reported scroll lag: "плавный скролл убрать, чтобы не выглядело как будто подлагивает". On a DOM this heavy (hero with 17 SVG mocks, three HowItWorks chapter mocks, six Features SVGs, the morphing presence chain), Lenis at `lerp: 0.08` + `duration: 1.0` made every wheel event take ~1s to settle on top of macOS hardware momentum. The two scrolls fought each other and the result felt sluggish rather than smooth.
+
+**Alternatives rejected.**
+- *Tune Lenis parameters.* Tried `lerp: 0.12` in earlier sessions; still felt laggy because the rAF tick + the trackpad momentum overlap. The fundamental issue is mixing JS smoothing with native momentum, not the constants.
+- *Replace with Locomotive / GSAP ScrollSmoother.* Same architecture, same problem. Locomotive is heavier and ScrollSmoother is paid + jQuery-flavoured. No.
+- *Keep Lenis only for `lenis.scrollTo` on anchor clicks.* The smooth scroll on anchor jumps is the only thing JS smoothing actually buys you over CSS, and `scroll-behavior: smooth` does it natively now. Not worth 7 KB gzip and one rAF loop for nav anchors.
+
+**Implementation.**
+- Deleted `src/components/providers/LenisProvider.tsx`.
+- Removed import + `<LenisProvider>` wrapper from `src/app/layout.tsx`.
+- Added `scroll-behavior: smooth` + `scroll-padding-top: 88px` on `html` in `src/app/globals.css` (with `@media (prefers-reduced-motion)` override).
+- Removed `lenis` from `package.json`.
+
+**Replacement for the doctrine line in `CLAUDE.md`.** Earlier the project doctrine read "Lenis 1.x in the root layout". Updated to "No JS smooth-scroll library. Use native scroll-behavior. If a future requirement asks for finer scroll control, discuss before re-adding any rAF-driven smoothing -- it adds latency to a DOM this heavy."
+
+**Side-effects watched.**
+- `useScroll` + `useTransform` + `useSpring` in `HowItWorks.tsx` now reads native scroll position via getBoundingClientRect on rAF ticks. Verified the morph window still positions correctly (Playwright: scroll into HiW, window present at expected coordinates).
+- Three scroll listeners in `CorderPresence.tsx` (lines 311, 538, 604) -- all passive, all rAF-throttled -- now fire on native scroll events only. No code change required.
+- Anchor scroll test: clicking the Nav `#features` link lands the section top at `y = 88px`, matching `scroll-padding-top`. No JS interception needed.
+
+**Re-add criteria.** Only if a future product brief requires scroll-linked timeline scrubbing past what `useScroll` already gives, and the visual benefit demonstrably outweighs the input-lag cost. Default answer: no.
+
+---
+
+## 2026-05-22 -- Drop dead `WorksWithDock` + `react-icons` dep.
+
+**Decision.** Delete `src/components/sections/WorksWithDock.tsx`, drop the `~160 lines of `.dock-*` rules in `globals.css`, remove `react-icons` from `package.json`.
+
+**Why.** `WorksWithDock` was an alternative compatibility surface (macOS Dock style) we explored alongside `WorksWith` (marquee rows). `page.tsx` renders `WorksWith`, never the dock. The dock file was the sole consumer of `react-icons/si`. Keeping a dead 225-line component that pulls a 83 MB icon library risks accidental future bundling.
+
+**Alternatives rejected.** Keep both for "optionality". No -- if we want the dock back we can recover it from git history. Dead code is liability, not optionality.
+
+---
+
+## 2026-05-22 -- PopoverWidget SVG: port from SwiftUI rather than approximate.
+
+**Decision.** Rewrite the `PopoverWidget` SVG in `Features.tsx` (cell "Catches the meeting first") line-by-line against `/Users/3mpq/Corder/Sources/Corder/UI/PopoverContentView.swift`. Use the exact Color tokens: `Color.primary` in dark mode = `#ffffff` (Start button fill), `NSColor.windowBackgroundColor` in dark mode = `#1d1d1f` (Start button text + popover bg), `Color.secondary` ~ white@0.55.
+
+**Why.** Two consecutive iterations were eyeballed approximations (`#ededee` for the Start button, `#0b0b0c` for its text, viewBox 260px tall). User: "Зачем ты соврал что сделал также как у оригинального кордера?". The complaint was about colour fidelity, not just proportions. Going back to the Swift source and porting it 1:1 is the only honest move.
+
+**Layout maths.**
+- `VStack(spacing:18) .padding(20) .frame(width: 320)` → viewBox `0 0 320 298` (28 top padding inside the popover + 72 IdleStatus + 14 + 44 Start + 18 + 5 separator + 18 + 44 Open lib + 10 + 20 Quit + 25 bottom padding ≈ 298).
+- IdleStatus height 72 = `padding(.vertical, 14)` * 2 + label 17 + spacing 1 + time 26.
+- Time text uses `font-variant-numeric: tabular-nums` to match `.monospacedDigit()`. The earlier ui-monospace font made the colon a wide cell ("0 0 : 0 0").
+
+**Size cap.** The taller viewBox would have rendered the popover 50% taller than its sibling Features cells if width:100% applied. Capped with `.feature-cell__visual > .ftr-svg--popover { width: 76%; max-width: 240px; margin-inline: auto }` (specificity 0,2,1 beats the existing 0,1,1 `.feature-cell__visual > svg` rule). Renders 240x224, sits visually between the no-bot grid (200h) and timeline (240h) cells.
+
+---
+
+## 2026-05-22 -- CorderPresenceForm: kill minHeight, symmetric padding.
+
+**Decision.** Remove `minHeight: 260px` from the floating form motion.div. Set padding to `40px 22px` (symmetric top/bottom).
+
+**Why.** User screenshot showed ~100px of dead space below the Subscribe pill. Content fit in ~210px, but minHeight forced 260px. Earlier minHeight was a leftover from making the morph from orb to card have a chunky target -- the side effect was the dead space.
+
+The orb→card morph still works without minHeight: framer-motion interpolates from the orb's `width:64px, height:64px` straight to whatever the card resolves to, and the lerp is smooth. The minHeight was unnecessary defensiveness.
+
+---
+
 ## 2026-05-21 -- HowItWorks chapter mockups: layout + tracking decisions
 
 ### Decision 1: Three-mockup swap inside the existing sticky window, not new windows per row

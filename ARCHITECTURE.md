@@ -4,8 +4,8 @@
 
 - **Next.js 15.x** (App Router, React 19, TypeScript strict).
 - **Tailwind CSS v4** via `@tailwindcss/postcss`. Tokens declared in `@theme` blocks.
-- **Framer Motion 12** for entry animations only.
-- **Lenis 1.x** in the root layout for smooth scroll.
+- **Framer Motion 12** for entry animations + the HowItWorks scroll-linked window morph + the CorderPresence orb/form morph chain.
+- **No JS smooth-scroll library.** Native `scroll-behavior: smooth` on `<html>` with `scroll-padding-top: 88px` for the sticky nav. Lenis removed 2026-05-22, see DECISIONS.md.
 - **IBM Plex Sans / Serif / Mono** from Google Fonts via `next/font/google`.
 - **`@aisoldier/ui-kit`** linked from the repo root via `file:../../ui-kit` and resolved with `transpilePackages` + `experimental.externalDir` per the booquarium pattern.
 
@@ -28,7 +28,7 @@ projects/corder-landing/
 ├── screenshots/               session screenshots (dev artefacts, gitignored)
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx         Root layout: fonts + Lenis + Motion + Inspector
+│   │   ├── layout.tsx         Root layout: fonts + Motion + CorderPresence provider + Clarity
 │   │   ├── page.tsx           Renders Nav, Hero, AudienceLine
 │   │   └── globals.css        Imports kit tokens + project tokens; defines blur-reveal contract; defines audience-line scroll-fill keyframes; defines `.dot-grid-surface` and `.page-container` helpers
 │   ├── components/
@@ -36,7 +36,6 @@ projects/corder-landing/
 │   │   │   ├── HeroLibraryDemo.tsx    Live macOS Library window — port of hero-app.css to React
 │   │   │   └── HeroLibraryDemo.css    Scoped under .hero-library-demo
 │   │   ├── providers/
-│   │   │   ├── LenisProvider.tsx      Wraps app in <ReactLenis root>; anchor-scroll handler
 │   │   │   └── MotionProvider.tsx     Reads ?motion=0 + prefers-reduced-motion; runs IntersectionObserver for [data-motion="blur-reveal"]
 │   │   └── sections/
 │   │       ├── AudienceLine.tsx       Native CSS scroll-driven word fill

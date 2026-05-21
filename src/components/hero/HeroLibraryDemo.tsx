@@ -644,9 +644,9 @@ function Transcript({
           </SegmentGroup>
 
           <SegmentGroup
-            initials="I"
+            initials="PT"
             color="var(--hl-speaker-self)"
-            name="I"
+            name="Paul Turner"
             isSelf
           >
             <span className="hl-segment-line">
@@ -678,9 +678,9 @@ function Transcript({
           </SegmentGroup>
 
           <SegmentGroup
-            initials="I"
+            initials="PT"
             color="var(--hl-speaker-self)"
-            name="I"
+            name="Paul Turner"
             isSelf
           >
             <span className="hl-segment-line">
@@ -1391,28 +1391,28 @@ function GoogleMeetMock() {
     >
       <rect width="320" height="180" fill="#202124" />
 
-      {/* Top-left tile - Kostiantyn */}
+      {/* Top-left tile - David */}
       <rect x="6" y="6" width="151" height="71" rx="6" fill="#3c4043" />
       <circle cx="81" cy="34" r="14" fill="#1a73e8" />
-      <text x="81" y="38" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">K</text>
-      <text x="12" y="71" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">Kostiantyn H.</text>
+      <text x="81" y="38" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">D</text>
+      <text x="12" y="71" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">David R.</text>
 
-      {/* Top-right tile - Vadym */}
+      {/* Top-right tile - Mike */}
       <rect x="163" y="6" width="151" height="71" rx="6" fill="#2d2e30" />
       <circle cx="238" cy="34" r="14" fill="#34a853" />
-      <text x="238" y="38" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">V</text>
-      <text x="169" y="71" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">Vadym G.</text>
+      <text x="238" y="38" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">M</text>
+      <text x="169" y="71" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">Mike L.</text>
 
-      {/* Bottom-left tile - Paul */}
+      {/* Bottom-left tile - Sarah */}
       <rect x="6" y="83" width="151" height="71" rx="6" fill="#3c4043" />
       <circle cx="81" cy="111" r="14" fill="#fbbc04" />
-      <text x="81" y="115" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#202124" textAnchor="middle">P</text>
-      <text x="12" y="148" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">Paul T.</text>
+      <text x="81" y="115" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#202124" textAnchor="middle">S</text>
+      <text x="12" y="148" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">Sarah J.</text>
 
-      {/* Bottom-right tile - You, with speaker outline */}
+      {/* Bottom-right tile - You (Paul), with speaker outline */}
       <rect x="163" y="83" width="151" height="71" rx="6" fill="#2d2e30" stroke="#8ab4f8" strokeWidth="1.6" />
       <circle cx="238" cy="111" r="14" fill="#a142f4" />
-      <text x="238" y="115" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">I</text>
+      <text x="238" y="115" fontFamily="-apple-system, system-ui, sans-serif" fontSize="11" fontWeight="600" fill="#ffffff" textAnchor="middle">P</text>
       <text x="169" y="148" fontFamily="-apple-system, system-ui, sans-serif" fontSize="7" fill="#ffffff" opacity="0.92">You</text>
 
       {/* Bottom control strip */}

@@ -343,118 +343,119 @@ function ScreenVideoFrame() {
  * with it the meaning of AUTO-DETECT is reinforced visually.
  */
 function PopoverWidget() {
+  // Port of Sources/Corder/UI/PopoverContentView.swift idleSection
+  // with the colours taken straight from FlatButtonStyle:336-341 in
+  // dark mode (Color.primary = #ffffff, NSColor.windowBackgroundColor
+  // ~= #1d1d1f, Color.secondary ~= white @ 0.55).
+  //
+  // Layout maths (matches SwiftUI VStack(spacing:18) .padding(20)):
+  //   y=8 popover top (caret above)
+  //   y=28 IdleStatus rect start (top padding 20)
+  //   y=100 IdleStatus end (h:72 = padding 14 + label 17 + spacing 1
+  //                                    + time 26 + padding 14)
+  //   y=114 Start button start (idleSection internal spacing 14)
+  //   y=158 Start button end (h:44)
+  //   y=178 Separator line (outer spacing 18, padding-v 2)
+  //   y=198 Open library start (outer spacing 18 + line + padding-v 2)
+  //   y=242 Open library end (h:44)
+  //   y=262 Quit baseline (VStack(spacing:10) + padding-v 4)
+  //   y=290 popover end (bottom padding 20)
   return (
     <svg
       className="ftr-svg ftr-svg--popover"
-      viewBox="0 0 320 260"
+      viewBox="0 0 320 298"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label="Corder menu bar popover, idle state, with Start recording and Open library buttons"
+      aria-label="Corder menu bar popover, idle state"
     >
-      {/* 1:1 port of PopoverContentView.swift.idleSection — widths +
-       *  paddings + font sizes match the SwiftUI VStack(spacing:18)
-       *  .padding(20) .frame(width:320). Caret matches the popover bg. */}
-
-      {/* Caret pointing up to the menu-bar status icon */}
+      {/* Caret -- same fill as popover, no accent */}
       <path d="M160 0 L168 8 L152 8 Z" fill="#1d1d1f" />
 
-      {/* Popover card: full 320 wide, rounded 14, no extra stroke */}
-      <rect x="0" y="8" width="320" height="244" rx="14" fill="#1d1d1f" />
+      {/* Popover card */}
+      <rect x="0" y="8" width="320" height="282" rx="14" fill="#1d1d1f" />
 
-      {/* Idle status row — width 280 (320 minus 20 each side), height 60,
-       *  rounded 8, stroke .10 white */}
+      {/* IdleStatus group: 280x72, padding 16h/14v, hairline 10% white */}
       <rect
-        x="20" y="28"
-        width="280" height="60"
-        rx="8"
-        fill="none"
-        stroke="rgba(255,255,255,0.10)"
-        strokeWidth="1"
+        x="20" y="28" width="280" height="72" rx="8"
+        fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1"
       />
-      {/* 10px grey dot 16px in from left edge, vertical centre */}
-      <circle cx="36" cy="58" r="5" fill="rgba(255,255,255,0.45)" />
-      {/* Label and time stacked tight (SwiftUI spacing:1) */}
+      {/* 10x10 dot, secondary @ 0.45, vertically centred (28 + 36 = 64) */}
+      <circle cx="36" cy="64" r="5" fill="rgba(255,255,255,0.45)" />
+      {/* VStack(alignment:.leading, spacing:1) - label then 00:00.
+       *  Container 72 tall, padding-v 14, content 44 tall:
+       *    label baseline at y = 28 + 14 + 13 = 55
+       *    time  baseline at y = 28 + 14 + 17 + 1 + 19 = 79
+       *  Both use Color.secondary opacity ~ 0.55. */}
       <text
-        x="56" y="54"
+        x="56" y="55"
         fontFamily="-apple-system, system-ui, sans-serif"
-        fontSize="13"
-        fontWeight="400"
-        fill="rgba(255,255,255,0.62)"
+        fontSize="13" fontWeight="400"
+        fill="rgba(255,255,255,0.55)"
       >
         Not recording
       </text>
-      {/* '00:00' uses SwiftUI's .monospacedDigit() which is system
-       *  sans with tabular numeral widths, NOT a mono font. Using
-       *  ui-monospace stretched the colon into a separate wide cell
-       *  ("0 0 : 0 0"). tabular-nums on -apple-system reads tight. */}
       <text
-        x="56" y="78"
+        x="56" y="83"
         fontFamily="-apple-system, system-ui, sans-serif"
-        fontSize="22"
-        fontWeight="300"
-        fill="rgba(255,255,255,0.62)"
+        fontSize="22" fontWeight="300"
+        fill="rgba(255,255,255,0.55)"
         style={{ fontVariantNumeric: "tabular-nums" }}
       >
         00:00
       </text>
 
-      {/* Primary Start recording button — 280x44, near-white fill,
-       *  red dot + label centred horizontally as a group */}
+      {/* Start recording: 280x44, fill #ffffff (Color.primary in dark),
+       *  text #1d1d1f (NSColor.windowBackgroundColor in dark).
+       *  Red dot + label centred as a single visual group. */}
       <rect
-        x="20" y="106"
-        width="280" height="44"
-        rx="8"
-        fill="#ededee"
+        x="20" y="114" width="280" height="44" rx="8"
+        fill="#ffffff"
       />
-      <circle cx="120" cy="128" r="4" fill="#d33d4a" />
+      <circle cx="118" cy="136" r="4" fill="#d33d4a" />
       <text
-        x="132" y="133"
+        x="130" y="141"
         fontFamily="-apple-system, system-ui, sans-serif"
-        fontSize="14"
-        fontWeight="500"
-        fill="#0b0b0c"
+        fontSize="14" fontWeight="500"
+        fill="#1d1d1f"
       >
         Start recording
       </text>
 
-      {/* Hairline separator */}
+      {/* Hairline separator: padding-v 2 on each side, line at centre y */}
       <line
-        x1="20" y1="168" x2="300" y2="168"
+        x1="20" y1="178" x2="300" y2="178"
         stroke="rgba(255,255,255,0.08)" strokeWidth="1"
       />
 
-      {/* Secondary Open library button — 280x44 stroked, transparent fill */}
+      {/* Open library: 280x44, transparent fill, stroke 16% white */}
       <rect
-        x="20" y="186"
-        width="280" height="44"
-        rx="8"
-        fill="none"
-        stroke="rgba(255,255,255,0.16)"
-        strokeWidth="1"
+        x="20" y="198" width="280" height="44" rx="8"
+        fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="1"
       />
-      {/* SF Symbols `rectangle.stack` — two rounded rects, the back one
-       *  nudged up-right behind the front. Stroke 1.4 reads cleanly. */}
-      <g transform="translate(116, 198)" stroke="rgba(255,255,255,0.92)" strokeWidth="1.4" fill="none" strokeLinejoin="round">
+      {/* SF Symbols rectangle.stack at HStack(spacing:10) before label */}
+      <g
+        transform="translate(116, 211)"
+        stroke="rgba(255,255,255,0.95)" strokeWidth="1.4"
+        fill="none" strokeLinejoin="round"
+      >
         <rect x="3" y="0" width="14" height="10" rx="2.5" />
         <rect x="0" y="4" width="14" height="10" rx="2.5" />
       </g>
       <text
-        x="138" y="213"
+        x="138" y="225"
         fontFamily="-apple-system, system-ui, sans-serif"
-        fontSize="14"
-        fontWeight="500"
-        fill="rgba(255,255,255,0.92)"
+        fontSize="14" fontWeight="500"
+        fill="rgba(255,255,255,0.95)"
       >
         Open library
       </text>
 
-      {/* Quit link — 12pt, .secondary, centred, vertical padding 4 */}
+      {/* Quit: 12pt secondary, centred, vertical padding 4 each side */}
       <text
-        x="160" y="248"
+        x="160" y="270"
         textAnchor="middle"
         fontFamily="-apple-system, system-ui, sans-serif"
-        fontSize="12"
-        fontWeight="400"
+        fontSize="12" fontWeight="400"
         fill="rgba(255,255,255,0.5)"
       >
         Quit

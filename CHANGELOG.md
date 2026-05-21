@@ -12,6 +12,87 @@ Format:
 
 ---
 
+## 2026-05-22 -- Popover SVG 1:1 port, presence-form bottom padding fix, Lenis removal (branch `feat/hero-v090`)
+
+Two consecutive iterations on Features.PopoverWidget plus a perf-driven cleanup pass triggered by user-reported scroll lag.
+
+### PopoverWidget — port from `Sources/Corder/UI/PopoverContentView.swift`
+
+Repeated complaint: the menu-bar popover illustration in the "Catches the meeting first" feature cell did not match the real app. Rewrote it from scratch against the SwiftUI source.
+
+- viewBox `0 0 320 298` (was 260) so the SVG reflects the SwiftUI `VStack(spacing:18) .padding(20) .frame(width:320)` layout maths instead of being shorter than the real popover.
+- IdleStatus rect height 72 (was 60), matching `padding(.vertical, 14) + 17 (label) + 1 (spacing) + 26 (time)`.
+- Time text `00:00` rendered with `font-family: -apple-system, system-ui, sans-serif` + `font-variant-numeric: tabular-nums`, matching SwiftUI `.monospacedDigit()`. Earlier `ui-monospace` made the colon a wide cell ("0 0 : 0 0").
+- Start recording button fill `#ffffff` (= `Color.primary` in dark mode), text `#1d1d1f` (= `NSColor.windowBackgroundColor` in dark mode). Earlier `#ededee` / `#0b0b0c` was an approximation, not the source colours.
+- IdleStatus and Open library Color.secondary opacities raised to 0.55 / 0.95 to match the perceived contrast in the app.
+- Quit text 12pt at white@0.50, centred. Caret on top edge, popover bg `#1d1d1f`.
+
+### PopoverWidget — sized down so it does not tower over neighbours
+
+The new tall viewBox combined with `.feature-cell__visual > svg { width: 100% }` made the popover render at 320x298 -- 50% taller than every sibling cell. Added a higher-specificity rule:
+
+```css
+.feature-cell__visual > .ftr-svg--popover {
+  width: 76%;
+  max-width: 240px;
+  margin-inline: auto;
+}
+```
+
+Specificity (0,2,1) beats the existing (0,1,1) `.feature-cell__visual > svg`. Popover now renders 240x224, sitting between the no-bot grid (200h) and the timeline mock (240h). Reads as a real menu-bar popover floating in the cell, not a stretched panel.
+
+### CorderPresenceForm — kill 100px of dead bottom padding
+
+Floating subscribe card had `minHeight: 260px` and `padding: "20px 20px 18px"`. Content fit in ~210px, so 50px of the card was empty space under the Subscribe pill. User pointed at it on mobile: "сделай такой же отступ снизу, сколько там, 40px".
+
+- Removed `minHeight: 260px` -- card now hugs its content.
+- Padding raised to `40px 22px` (symmetric top/bottom). Card collapses to 380x255 on desktop with 40px above headline and 40px below Subscribe.
+
+### Lenis removal -- ditch the smooth-scroll lag
+
+User: "может даже плавный скролл убрать, чтобы не выглядело как будто подлагивает". Lenis was wrapping the entire app with `lerp: 0.08, duration: 1.0`. On a DOM this heavy (17 hero SVGs + 3 HowItWorks mock-eras + 6 Features SVGs + the morphing presence chain) every wheel event took ~1s to settle, on top of macOS hardware momentum. Felt laggy.
+
+- Deleted `src/components/providers/LenisProvider.tsx`. Removed import + wrapper from `src/app/layout.tsx`.
+- Replaced with native `scroll-behavior: smooth` + `scroll-padding-top: 88px` on `<html>`. Honoured by browsers automatically when the user prefers reduced motion.
+- Verified `useScroll` + `useTransform` + `useSpring` in HowItWorks still drives the window morph (now reading native scroll position, which is actually crisper).
+- Anchor click test: `#features` lands at `top=88px`, no JS interception needed.
+- Dropped `lenis` from `package.json` (~7KB gzip removed from the bundle, one constant rAF loop gone).
+
+Project CLAUDE.md previously mandated "Lenis 1.x in the root layout". Updating that file in the same commit so the doctrine matches reality. Lenis removal is the user-authorised deviation.
+
+### Dead-code prune -- WorksWithDock + react-icons
+
+`src/components/sections/WorksWithDock.tsx` was the alternative macOS-Dock-style compatibility section. `page.tsx` renders `WorksWith` (marquee rows), never `WorksWithDock`. The dock file was the sole consumer of `react-icons/si`.
+
+- Deleted `WorksWithDock.tsx` and its 160 lines of `.dock-*` CSS in `globals.css`.
+- Removed `react-icons` from `package.json` (83M on disk, untracked bundle-leak risk).
+
+### Files touched (this entry)
+
+- `src/components/sections/Features.tsx` -- PopoverWidget rewrite (lines 345-462).
+- `src/app/globals.css` -- popover width cap + scroll-behavior block + dock CSS block removed (~160 lines).
+- `src/components/presence/CorderPresence.tsx` -- form padding + minHeight.
+- `src/app/layout.tsx` -- LenisProvider removed.
+- `src/components/providers/LenisProvider.tsx` -- DELETED.
+- `src/components/sections/WorksWithDock.tsx` -- DELETED.
+- `package.json` -- removed `lenis`, `react-icons`.
+- `CLAUDE.md` -- Lenis line removed from doctrine.
+
+### Verified
+
+- Native anchor scroll: `#features` lands at `top=88px` (matches `scroll-padding-top`).
+- HowItWorks morph: window still positioned by useScroll/useTransform on native scroll, no jank, no console errors.
+- Popover SVG: viewBox 320x298, Start button fill #ffffff, time "00:00" tight glyphs.
+- Popover render: 240x224 (vs neighbours 160-240h).
+- Presence form: 380x255, 40px top/bottom padding.
+
+### Next
+
+- Vercel deploy via `vercel --prod`.
+- Watch INP / LCP in Clarity after deploy -- expect both improved.
+
+---
+
 ## 2026-05-21 -- HowItWorks chapters swap full Corder UI mockups (branch `feat/hero-v090`)
 
 Single atomic commit. The desktop sticky window inside HowItWorks no longer renders empty chrome; it now hosts three distinct full-fidelity Corder UI mockups that crossfade as the user scrolls through the chapter rows.
