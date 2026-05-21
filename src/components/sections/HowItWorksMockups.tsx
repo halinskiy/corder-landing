@@ -460,7 +460,7 @@ export function LibraryMeetingMock() {
   return (
     <MockShell
       variant="library"
-      ariaLabel="Corder Library showing the Quarterly review transcript with Anna and Marc, a video preview, audio scrubber, and per-speaker timeline."
+      ariaLabel="Corder Library showing the Quarterly review transcript with Sarah and Mark, a video preview, audio scrubber, and per-speaker timeline."
     >
       {/* Sidebar */}
       <aside className="hl-sidebar hl-lib-sidebar" aria-hidden="true">
@@ -479,7 +479,7 @@ export function LibraryMeetingMock() {
         <div className="hl-sidebar-list">
           <div className="hl-sidebar-section-label">Today</div>
           <MeetingItem
-            title="Quarterly review with Anna and Marc"
+            title="Quarterly review with Sarah and Mark"
             duration="14m 45s"
             people={3}
             preview="Right, let us walk through the numbers from this quarter."
@@ -517,7 +517,7 @@ export function LibraryMeetingMock() {
             <span>Dashboard</span>
             <span aria-hidden>{"›"}</span>
             <span className="hl-breadcrumb-current">
-              Quarterly review with Anna and Marc
+              Quarterly review with Sarah and Mark
             </span>
           </div>
           <div className="hl-spacer" />
@@ -572,7 +572,7 @@ export function LibraryMeetingMock() {
                 <SegmentGroup
                   initials="AH"
                   color="var(--hl-speaker-purple)"
-                  name="Anna H."
+                  name="Sarah J."
                 >
                   Right, let us walk through the numbers from this quarter. We
                   closed twenty-eight new accounts, mostly mid-market.
@@ -580,7 +580,7 @@ export function LibraryMeetingMock() {
                 <SegmentGroup
                   initials="MS"
                   color="var(--hl-speaker-amber)"
-                  name="Marc S."
+                  name="Mark S."
                 >
                   That tracks with the pipeline we built in March. Are we still
                   on the forty-nine dollar tier for the smaller teams?
@@ -598,7 +598,7 @@ export function LibraryMeetingMock() {
                 <SegmentGroup
                   initials="AH"
                   color="var(--hl-speaker-purple)"
-                  name="Anna H."
+                  name="Sarah J."
                 >
                   Sounds good. Let us also pin down the next steps for the
                   enterprise pilot before we wrap.
@@ -643,7 +643,7 @@ export function LibraryMeetingMock() {
                 <div className="hl-timeline-section-label">Timeline</div>
                 <div className="hl-tl-bars">
                   <TimelineRow
-                    name="Anna H."
+                    name="Sarah J."
                     stats="46%, 6m 47s"
                     color="var(--hl-speaker-purple)"
                     segments={[
@@ -658,7 +658,7 @@ export function LibraryMeetingMock() {
                     ]}
                   />
                   <TimelineRow
-                    name="Marc S."
+                    name="Mark S."
                     stats="38%, 5m 36s"
                     color="var(--hl-speaker-amber)"
                     segments={[

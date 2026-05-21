@@ -265,3 +265,96 @@ The tile reads: `Anything that plays through your Mac`. No trailing period: tile
 | enterprise-grade | No |
 
 Em dashes: none. En dashes: none. Typographic bullets: none. Middle dots: none. All strings ASCII-safe.
+
+---
+
+## 2026-05-21 — Features grid rewrite (6 cells, v0.9.0 basis)
+
+**Agent:** 3mpq-copywriter
+**Scope:** Full replacement of `features.cells` array in `content/copy.json`. Driven by `research/features-value-brief-2026-05.md`.
+
+### Cells dropped from previous version
+
+| Previous eyebrow | Reason for removal |
+|---|---|
+| SEARCH | Dropped per brief recommendation. Full-text search is implied by the hero demo, FAQ, and pricing tier features list. Its energy is absorbed into the DRAG cell body. |
+| LIBRARY | Dropped. Redundant with Privacy section card 2 and FAQ "Where does my audio live?" The local-storage narrative is already made three times before the visitor reaches Features. |
+
+### Cells added in this version
+
+| New eyebrow | Source in brief |
+|---|---|
+| SCREEN | Candidate 3, position 02. Screen recording since 0.8.0, underexposed in prior copy. |
+| DRAG | Candidate 6, position 04. Absorbs the "integrations" intent without vapor. |
+
+### Cells retained and reframed
+
+| Eyebrow | Previous heading | New heading | Change |
+|---|---|---|---|
+| TIMELINE | Per-speaker timeline | Skip the scrub. Jump to the speaker. | Leading with the click-to-seek benefit, not the bar description. |
+| AUTO-DETECT | Catches the meeting before you do | Zoom opens. The menu bar asks if you want to record. | Replaced mild fluff with a concrete two-clause statement. Added whitelist/blacklist disclosure in body. |
+| AUDIO | System audio without a driver | No BlackHole. No Loopback. No virtual cable. | Competitor product names moved to heading for immediate recognition. |
+| RE-RUN | Re-transcribe at zero margin | A better Gemini model ships. Re-run last quarter for free. | Removed BYOK-era "you pay Google the per-minute API price" (invalidated by 0.9.0 which removed the in-app key field). Reframed around the local cache mechanic, which is true at every pricing model state. |
+
+### Open questions resolved
+
+- **BYOK contradiction (brief 5.1):** RE-RUN body no longer references Google API pricing. The cell now says "the first transcription draws from your plan; every re-run replays from the cache at no extra cost." This framing is accurate whether the product is subscription-gated or BYOK.
+- **RE-RUN Google API framing (brief 5.6):** Same resolution as above. "Pays Google" language removed entirely.
+- **SCREEN visualHint (brief 5.2):** No `video-frame-fragment` or `split-cell-illustration` case exists in `Features.tsx` switch. Both fall through to `default: return null`, which renders no visual. Assigned `monospace-path` with `monoPath: "HEVC - 15 fps - local"` as the closest existing hint that renders something concrete and technically accurate. **Soldier follow-up required:** add a `split-cell-illustration` or `video-frame-fragment` case to the `FeatureVisual` switch to show a video thumbnail with a timestamp. Until then the SCREEN cell renders the mono path string.
+- **AUTO-DETECT whitelist disclosure (brief 5.3):** Included in cell body. Sentence reads: "Whitelist the apps you always record, blacklist the ones you never want offered." Pre-empts the privacy-paranoid reader.
+- **DRAG / DownloadMenu (brief 5.4):** Led with drag in heading and first sentence. Download menu mentioned in second sentence with specific formats (TXT, MD, JSON, ZIP).
+- **Heading style uniformity (brief 5.5):** Variation kept by design. Three two-clause headings (TIMELINE, AUTO-DETECT, RE-RUN), three single-sentence headings (SCREEN, DRAG, AUDIO). Uniform headings on a 6-cell grid read as a template.
+
+### ASCII audit result
+
+Grep `[\x{2010}-\x{2015}\x{2018}-\x{201F}\x{2022}\x{00B7}\x{00A7}]` on `content/copy.json` features block: zero hits. The only hits in the file are two pre-existing `—` characters in comparison table values (lines 391, 393), which are not part of the features section and are outside this audit's scope.
+
+Note: `versionSequence` uses `→` (U+2192, rightward arrow) to match `Features.tsx` split logic (`.split("→")`). U+2192 is not in the banned dash/quote/bullet range and is a functional delimiter, not a typographic clause connector.
+
+### Final cell list
+
+| # | Eyebrow | Heading | visualHint |
+|---|---|---|---|
+| 01 | TIMELINE | Skip the scrub. Jump to the speaker. | mini-timeline-fragment |
+| 02 | SCREEN | Record what was on screen, not just what was said | monospace-path (HEVC - 15 fps - local) |
+| 03 | AUTO-DETECT | Zoom opens. The menu bar asks if you want to record. | pro-pill |
+| 04 | DRAG | Drag the transcript into Notion. No export modal. | typographic-mark |
+| 05 | AUDIO | No BlackHole. No Loopback. No virtual cable. | monospace-path (CoreAudio process tap) |
+| 06 | RE-RUN | A better Gemini model ships. Re-run last quarter for free. | version-sequence |
+
+### Soldier follow-up
+
+1. **SCREEN cell visual:** Add a `split-cell-illustration` or `video-frame-fragment` case to the `FeatureVisual` switch in `Features.tsx`. The cell should show a 16:10 video thumbnail with a centred play overlay and a `0:14 / 4:32` timestamp in Plex Mono underneath. Until this is built, the cell renders `"HEVC - 15 fps - local"` in monospace, which is technically accurate but not visually differentiated from the AUDIO cell.
+2. **DRAG cell body mention of "phrase":** The `typographic-mark` visualHint in `FeatureBody` looks for the word "phrase" in the body text to apply the highlight mark. The DRAG cell body does not contain the word "phrase". The mark will not render and the cell will show plain body text. Either (a) soldier updates `FeatureBody` to handle `typographic-mark` differently for the DRAG cell, or (b) the visualHint is changed to `split-cell-illustration` once that case is added. For this pass, plain body text is acceptable. No soldier code change is strictly required; the cell renders correctly, just without the mark gesture.
+
+---
+
+## 2026-05-21 — Aggressive trim of Features cells per user feedback
+
+**Agent:** 3mpq-copywriter
+**Scope:** `features.cells` bodies and headings cut to bare minimum. User directive: shorter is better, SVG mocks will carry the visual load, copy should not redescribe the illustration.
+
+### Before vs after: word counts per cell
+
+| # | Eyebrow | Heading before (words) | Heading after (words) | Body before (words) | Body after (words) | Body dropped? |
+|---|---|---|---|---|---|---|
+| 01 | TIMELINE | Skip the scrub. Jump to the speaker. (7) | Jump to any speaker (4) | 48 | 0 | Yes |
+| 02 | SCREEN | Record what was on screen, not just what was said (10) | Records the screen too (4) | 46 | 6 | Reduced |
+| 03 | AUTO-DETECT | Zoom opens. The menu bar asks if you want to record. (11) | Catches the meeting first (4) | 57 | 9 | Reduced |
+| 04 | DRAG | Drag the transcript into Notion. No export modal. (9) | Drag out, no export dialog (5) | 46 | 0 | Yes |
+| 05 | AUDIO | No BlackHole. No Loopback. No virtual cable. (9) | No driver install required (4) | 37 | 7 | Reduced |
+| 06 | RE-RUN | A better Gemini model ships. Re-run last quarter for free. (11) | New model out. Re-run for free. (7) | 60 | 7 | Reduced |
+
+### Summary
+
+- Total body words before: 294 (headings) + 294 (bodies) combined
+- Total body words before (bodies only): 294
+- Total body words after (bodies only): 29
+- Reduction: 265 words removed from body copy, a 90% cut
+- Cells with empty body: 2 (TIMELINE, DRAG) — visual mock carries the idea
+- Cells with short fragment body (5-9 words): 4 (SCREEN, AUTO-DETECT, AUDIO, RE-RUN)
+- Combined body word budget: 29 words against 80-word target — 51 words under budget
+
+### ASCII audit
+
+All strings checked for: em dash (U+2014), en dash (U+2013), curly quotes (U+2018, U+2019, U+201C, U+201D), bullet (U+2022), middle dot (U+00B7). Zero hits in rewritten cells. `versionSequence` retains U+2192 (rightward arrow), which is a functional delimiter matching the existing `Features.tsx` split logic and is not a banned typographic character.
