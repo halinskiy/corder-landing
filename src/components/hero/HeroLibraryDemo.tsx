@@ -415,7 +415,7 @@ function Main({
     <div className="hl-main">
       <div className="hl-main-header">
         <div className="hl-breadcrumb">
-          <span>Recordings</span>
+          <span>Dashboard</span>
           <span aria-hidden>›</span>
           <span className="hl-breadcrumb-current">Investor sync - Mike + Paul</span>
         </div>
