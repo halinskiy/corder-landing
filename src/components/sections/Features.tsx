@@ -212,10 +212,10 @@ function MiniTimelineFragment() {
   // purple variant + neutral). Playhead sits on Vadym's row and is the
   // single accent-green spotlight.
   const rows = [
-    { name: "Vadym",      y: 24,  color: "#5a3aa6", track: [[6,14],[28,22],[58,10],[78,30],[116,16],[142,20],[172,12],[192,22]] },
-    { name: "Kostiantyn", y: 76,  color: "#a16207", track: [[4,18],[30,12],[50,24],[82,14],[104,20],[132,10],[150,26],[184,16]] },
+    { name: "Mike",      y: 24,  color: "#5a3aa6", track: [[6,14],[28,22],[58,10],[78,30],[116,16],[142,20],[172,12],[192,22]] },
+    { name: "David", y: 76,  color: "#a16207", track: [[4,18],[30,12],[50,24],[82,14],[104,20],[132,10],[150,26],[184,16]] },
     { name: "Paul",       y: 128, color: "#7e57c2", track: [[10,16],[34,10],[52,22],[80,12],[100,28],[136,14],[158,18],[182,24]] },
-    { name: "Anna",       y: 180, color: "#8a8a86", track: [[2,12],[22,20],[50,14],[72,26],[104,10],[122,18],[146,14],[170,30]] },
+    { name: "Sarah",       y: 180, color: "#8a8a86", track: [[2,12],[22,20],[50,14],[72,26],[104,10],[122,18],[146,14],[170,30]] },
   ];
   return (
     <svg
@@ -256,11 +256,6 @@ function MiniTimelineFragment() {
           ))}
         </g>
       ))}
-
-      {/* Playhead  ----  accent spotlight, anchored to Vadym row */}
-      <line x1="178" y1="14" x2="178" y2="36" stroke="var(--color-accent)" strokeWidth="1.5" />
-      <circle cx="178" cy="26" r="5" fill="var(--color-accent)" />
-      <circle cx="178" cy="26" r="2" fill="#ffffff" />
 
       {/* Time scale */}
       <text x="78"  y="222" fontFamily="var(--font-mono), ui-monospace, monospace" fontSize="9" fill="var(--color-text-muted)">00:00</text>
@@ -629,9 +624,9 @@ function NoBotGrid() {
       <g>
         <rect x="6" y="22" width="152" height="80" rx="6" fill="#1f2123" />
         <circle cx="82" cy="56" r="16" fill="#5a3aa6" />
-        <text x="82" y="61" textAnchor="middle" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="12" fontWeight="600" fill="#ffffff">V</text>
+        <text x="82" y="61" textAnchor="middle" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="12" fontWeight="600" fill="#ffffff">M</text>
         <rect x="12" y="86" width="44" height="12" rx="2" fill="rgba(0,0,0,0.55)" />
-        <text x="17" y="95" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="8" fontWeight="500" fill="#ffffff">Vadym</text>
+        <text x="17" y="95" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="8" fontWeight="500" fill="#ffffff">Mike</text>
       </g>
 
       {/* Tile 2  ----  Marc (amber) */}
@@ -640,7 +635,7 @@ function NoBotGrid() {
         <circle cx="238" cy="56" r="16" fill="#a16207" />
         <text x="238" y="61" textAnchor="middle" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="12" fontWeight="600" fill="#ffffff">M</text>
         <rect x="168" y="86" width="36" height="12" rx="2" fill="rgba(0,0,0,0.55)" />
-        <text x="173" y="95" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="8" fontWeight="500" fill="#ffffff">Marc</text>
+        <text x="173" y="95" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="8" fontWeight="500" fill="#ffffff">Mark</text>
       </g>
 
       {/* Tile 3  ----  You (cool blue) */}

@@ -362,16 +362,16 @@ function ClarifyPanel() {
 
               <div className="hl-transcript hl-transcript--clarify-context" data-revealing="true">
                 <SegmentGroup
-                  initials="KH"
+                  initials="DR"
                   color="var(--hl-speaker-purple)"
-                  name="Kostiantyn Halynskyi"
+                  name="David Reed"
                 >
                   Right, so the next step is to validate it. Let us circle back on Thursday.
                 </SegmentGroup>
                 <SegmentGroup
-                  initials="VG"
+                  initials="ML"
                   color="var(--hl-accent)"
-                  name="Vadym Grosko"
+                  name="Mike Lawson"
                 >
                   Hmm, let me think about that for a second. Good point.
                 </SegmentGroup>
@@ -536,15 +536,15 @@ function TranscriptShort() {
       </div>
       <div className="hl-transcript" data-revealing="true">
         <SegmentGroup
-          initials="KH"
+          initials="DR"
           color="var(--hl-speaker-purple)"
-          name="Kostiantyn Halynskyi"
+          name="David Reed"
         >
           Right, so the next step is to validate it.{" "}
           <span className="hl-segment-line active">Let us circle back on Thursday.</span>{" "}
           Sounds reasonable.
         </SegmentGroup>
-        <SegmentGroup initials="VG" color="var(--hl-accent)" name="Vadym Grosko">
+        <SegmentGroup initials="ML" color="var(--hl-accent)" name="Mike Lawson">
           Hmm, let me think about that for a second. Good point.
         </SegmentGroup>
       </div>
@@ -619,7 +619,7 @@ function RightPanelStatic({
         </div>
 
         <TimelineRow
-          name="Kostiantyn Halynskyi"
+          name="David Reed"
           stats="43%, 1m 58s"
           ticks={[3, 5, 7, 9, 11, 13, 15, 18, 30, 32, 34, 36, 38, 40, 42, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82]}
           color="var(--hl-speaker-purple)"
@@ -628,7 +628,7 @@ function RightPanelStatic({
         />
 
         <TimelineRow
-          name="Vadym Grosko"
+          name="Mike Lawson"
           stats="7%, 17s"
           ticks={[23, 25, 27, 50, 52, 54, 88, 90, 92]}
           color="var(--hl-accent)"

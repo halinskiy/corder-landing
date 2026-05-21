@@ -318,7 +318,7 @@ function Sidebar() {
         <div className="hl-sidebar-section-label">Today</div>
 
         <MeetingItem
-          title="Investor sync - Vadym + Paul"
+          title="Investor sync - Mike + Paul"
           people={3}
           duration="28s"
           preview="He says it is almost there, just a few days left."
@@ -417,7 +417,7 @@ function Main({
         <div className="hl-breadcrumb">
           <span>Recordings</span>
           <span aria-hidden>›</span>
-          <span className="hl-breadcrumb-current">Investor sync - Vadym + Paul</span>
+          <span className="hl-breadcrumb-current">Investor sync - Mike + Paul</span>
         </div>
 
         <div className="hl-spacer" />
@@ -620,9 +620,9 @@ function Transcript({
       {mode === "transcript" && (
         <div className="hl-transcript" data-revealing="true">
           <SegmentGroup
-            initials="KH"
+            initials="DR"
             color="var(--hl-speaker-purple)"
-            name="Kostiantyn Halynskyi"
+            name="David Reed"
           >
             <span className="hl-segment-line">
               Right, so the next step is to validate it.
@@ -633,7 +633,7 @@ function Transcript({
             <span className="hl-segment-line">Sounds reasonable.</span>
           </SegmentGroup>
 
-          <SegmentGroup initials="VG" color="var(--hl-accent)" name="Vadym Grosko">
+          <SegmentGroup initials="ML" color="var(--hl-accent)" name="Mike Lawson">
             <span className="hl-segment-line">
               Hmm, let me think about that for a second.
             </span>{" "}
@@ -658,9 +658,9 @@ function Transcript({
           </SegmentGroup>
 
           <SegmentGroup
-            initials="KH"
+            initials="DR"
             color="var(--hl-speaker-purple)"
-            name="Kostiantyn Halynskyi"
+            name="David Reed"
           >
             <span className="hl-segment-line">What about the timeline?</span>{" "}
             <span className="hl-segment-line">
@@ -668,7 +668,7 @@ function Transcript({
             </span>
           </SegmentGroup>
 
-          <SegmentGroup initials="VG" color="var(--hl-accent)" name="Vadym Grosko">
+          <SegmentGroup initials="ML" color="var(--hl-accent)" name="Mike Lawson">
             <span className="hl-segment-line">
               Let us also document the open questions in the brief.
             </span>{" "}
@@ -692,9 +692,9 @@ function Transcript({
           </SegmentGroup>
 
           <SegmentGroup
-            initials="KH"
+            initials="DR"
             color="var(--hl-speaker-purple)"
-            name="Kostiantyn Halynskyi"
+            name="David Reed"
           >
             <span className="hl-segment-line">
               Yes, send them a heads-up tomorrow morning.
@@ -704,7 +704,7 @@ function Transcript({
             </span>
           </SegmentGroup>
 
-          <SegmentGroup initials="VG" color="var(--hl-accent)" name="Vadym Grosko">
+          <SegmentGroup initials="ML" color="var(--hl-accent)" name="Mike Lawson">
             <span className="hl-segment-line">
               Sounds good. Anything else before we wrap?
             </span>{" "}
@@ -849,7 +849,7 @@ function RightPanel({
         {isActive ? (
           <div className="hl-tl-bars">
             <TimelineRow
-              name="Kostiantyn Halynskyi"
+              name="David Reed"
               stats="43%, 1m 58s"
               segments={[
                 { left: 5, width: 6 },
@@ -867,7 +867,7 @@ function RightPanel({
             />
 
             <TimelineRow
-              name="Vadym Grosko"
+              name="Mike Lawson"
               stats="30%, 1m 22s"
               segments={[
                 { left: 5, width: 4 },
