@@ -210,10 +210,10 @@
         "visualHint": "no-bot-grid"
       },
       {
-        "eyebrow": "TRANSCRIPT",
-        "heading": "Transcript next to audio",
-        "body": "Scrub the audio. The line follows.",
-        "visualHint": "transcript-fragment"
+        "eyebrow": "LANGUAGES",
+        "heading": "Speaks your language",
+        "body": "Interface in yours. Transcription in forty plus.",
+        "visualHint": "language-mock"
       }
     ]
   },
@@ -570,8 +570,8 @@
       {
         "number": "01",
         "side": "right",
-        "heading": "Start from the menu bar",
-        "body": "Open Corder from the macOS menu bar and hit Record. The app starts capturing system audio and your microphone at the OS level. No bot joins the call, the other side sees no third participant"
+        "heading": "Record from anywhere",
+        "body": "One Dashboard. Hit Start from the menu bar, the global hotkey, or let Corder catch the meeting on its own. Sixty-six recordings, three hours, one keystroke away"
       },
       {
         "number": "02",
@@ -582,8 +582,8 @@
       {
         "number": "03",
         "side": "right",
-        "heading": "Stop, read, drag",
-        "body": "Hit Stop. The transcript fills in with speaker labels. The audio file sits next to it on your Mac. Drag either one into Notion, Apple Notes, anywhere you keep your work"
+        "heading": "Tune it to your workflow",
+        "body": "Toggle screen video, auto-transcribe, auto-title, the global hotkey. Switch theme or language with a click. Defaults you can change anytime, not preferences buried five menus deep"
       }
     ]
   }

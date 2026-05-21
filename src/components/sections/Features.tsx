@@ -177,6 +177,18 @@ function FeatureVisual({ cell }: { cell: FeatureCellData }) {
         </div>
       );
 
+    case "language-mock":
+      return (
+        <div
+          className="feature-cell__visual"
+          data-component="FeatureVisual.LanguageMock"
+          data-source={DATA_SOURCE}
+          data-tokens="color-surface,color-border,color-text,color-accent,font-sans"
+        >
+          <LanguageMock />
+        </div>
+      );
+
     default:
       return null;
   }
@@ -344,15 +356,8 @@ function PopoverWidget() {
       role="img"
       aria-label="Corder menu bar popover, idle state, with Start recording and Open library buttons"
     >
-      {/* Accent caret  ----  the menu-bar anchor (the accent spotlight) */}
-      <path
-        d="M160 0 L168 10 L152 10 Z"
-        fill="var(--color-accent)"
-      />
-      {/* Tiny accent dot above the caret hints at the status-bar icon */}
-      <circle cx="160" cy="-2" r="0" fill="var(--color-accent)" />
-
-      {/* Popover card */}
+      {/* Popover card  ----  no menu-bar caret (the original does not
+       *  paint one inside the panel; it sits below the status icon). */}
       <rect
         x="20" y="14"
         width="280" height="240"
@@ -590,104 +595,92 @@ function DragOutGesture() {
  * used in the Hero demo  ----  never used as standalone chrome).
  */
 function NoBotGrid() {
+  // Google Meet style call canvas with 3 real participants and a
+  // visible struck-out 4th tile labelled "Otter Notetaker" - the kind
+  // of bot row most meeting tools add to a call. The strike-through +
+  // EXCLUDED tag is the accent spotlight. The point lands without copy.
   return (
     <svg
       className="ftr-svg ftr-svg--nobot"
       viewBox="0 0 320 200"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label="Two-participant call grid with no third bot, annotation showing Corder lives in the menu bar"
+      aria-label="Meet style call grid with three participants and a struck-out bot tile labelled Otter Notetaker excluded"
     >
-      {/* Menu bar strip at the very top  ----  dark, with a tiny status icon */}
-      <rect x="0" y="0" width="320" height="14" fill="#1c1c1e" />
-      <circle cx="296" cy="7" r="3" fill="rgba(255,255,255,0.65)" />
-      <rect x="246" y="4" width="36" height="6" rx="1" fill="rgba(255,255,255,0.35)" />
+      {/* Meet top chrome strip */}
+      <rect x="0" y="0" width="320" height="14" fill="#202124" />
+      <text
+        x="10" y="10"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="8"
+        fontWeight="500"
+        fill="rgba(255,255,255,0.78)"
+      >
+        Quarterly sync
+      </text>
+      <circle cx="304" cy="7" r="3" fill="rgba(255,255,255,0.55)" />
+      <circle cx="294" cy="7" r="3" fill="rgba(255,255,255,0.55)" />
+      <circle cx="284" cy="7" r="3" fill="rgba(255,255,255,0.55)" />
 
       {/* Call canvas */}
-      <rect x="0" y="20" width="320" height="180" rx="8" fill="#101112" />
+      <rect x="0" y="14" width="320" height="186" fill="#0f1011" />
 
-      {/* Tile 1  ----  Vadym (purple chip) */}
-      <rect x="14" y="34" width="142" height="120" rx="8" fill="#1f2123" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-      <circle cx="85" cy="78" r="22" fill="#5a3aa6" />
-      <text
-        x="85" y="84"
-        textAnchor="middle"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="16"
-        fontWeight="600"
-        fill="#ffffff"
-      >
-        V
-      </text>
-      <rect x="22" y="138" width="58" height="12" rx="3" fill="rgba(0,0,0,0.6)" />
-      <text
-        x="28" y="147"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="9"
-        fontWeight="500"
-        fill="#ffffff"
-      >
-        Vadym
-      </text>
+      {/* Tile 1  ----  Vadym (purple) */}
+      <g>
+        <rect x="6" y="22" width="152" height="80" rx="6" fill="#1f2123" />
+        <circle cx="82" cy="56" r="16" fill="#5a3aa6" />
+        <text x="82" y="61" textAnchor="middle" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="12" fontWeight="600" fill="#ffffff">V</text>
+        <rect x="12" y="86" width="44" height="12" rx="2" fill="rgba(0,0,0,0.55)" />
+        <text x="17" y="95" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="8" fontWeight="500" fill="#ffffff">Vadym</text>
+      </g>
 
-      {/* Tile 2  ----  You (amber chip) */}
-      <rect x="164" y="34" width="142" height="120" rx="8" fill="#1f2123" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-      <circle cx="235" cy="78" r="22" fill="#a16207" />
-      <text
-        x="235" y="84"
-        textAnchor="middle"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="16"
-        fontWeight="600"
-        fill="#ffffff"
-      >
-        Y
-      </text>
-      <rect x="172" y="138" width="44" height="12" rx="3" fill="rgba(0,0,0,0.6)" />
-      <text
-        x="178" y="147"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="9"
-        fontWeight="500"
-        fill="#ffffff"
-      >
-        You
-      </text>
+      {/* Tile 2  ----  Marc (amber) */}
+      <g>
+        <rect x="162" y="22" width="152" height="80" rx="6" fill="#1f2123" />
+        <circle cx="238" cy="56" r="16" fill="#a16207" />
+        <text x="238" y="61" textAnchor="middle" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="12" fontWeight="600" fill="#ffffff">M</text>
+        <rect x="168" y="86" width="36" height="12" rx="2" fill="rgba(0,0,0,0.55)" />
+        <text x="173" y="95" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="8" fontWeight="500" fill="#ffffff">Marc</text>
+      </g>
 
-      {/* Participants caption  ----  "2 in this call" */}
-      <text
-        x="160" y="174"
-        textAnchor="middle"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="10"
-        fontWeight="500"
-        fill="rgba(255,255,255,0.45)"
-      >
-        2 in this call
-      </text>
+      {/* Tile 3  ----  You (cool blue) */}
+      <g>
+        <rect x="6" y="106" width="152" height="80" rx="6" fill="#1f2123" />
+        <circle cx="82" cy="140" r="16" fill="#1a73e8" />
+        <text x="82" y="145" textAnchor="middle" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="12" fontWeight="600" fill="#ffffff">Y</text>
+        <rect x="12" y="170" width="32" height="12" rx="2" fill="rgba(0,0,0,0.55)" />
+        <text x="17" y="179" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="8" fontWeight="500" fill="#ffffff">You</text>
+      </g>
 
-      {/* Annotation  ----  the accent spotlight */}
-      {/* Hairline goes from the menu-bar status icon down-right to a label */}
-      <path
-        d="M296 14 L296 26 L266 26"
-        fill="none"
-        stroke="var(--color-accent)"
-        strokeWidth="1"
-      />
-      {/* Small accent dot at the elbow */}
-      <circle cx="296" cy="14" r="2" fill="var(--color-accent)" />
-      {/* Label sits over the dark canvas, near the elbow */}
-      <text
-        x="260" y="29"
-        textAnchor="end"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="10"
-        fontWeight="600"
-        letterSpacing="0.4"
-        fill="var(--color-accent)"
-      >
-        CORDER LIVES HERE
-      </text>
+      {/* Tile 4  ----  "Otter Notetaker" bot, struck out (accent spotlight) */}
+      <g>
+        <rect x="162" y="106" width="152" height="80" rx="6"
+          fill="#1f2123"
+          stroke="var(--color-accent)"
+          strokeWidth="1.4"
+          strokeDasharray="4 3" />
+        {/* Faded bot avatar */}
+        <circle cx="238" cy="140" r="16" fill="#2a2c30" />
+        <rect x="232" y="134" width="12" height="12" rx="2" fill="rgba(255,255,255,0.32)" />
+        {/* Label */}
+        <rect x="168" y="170" width="86" height="12" rx="2" fill="rgba(0,0,0,0.55)" />
+        <text x="173" y="179" fontFamily="var(--font-sans), system-ui, sans-serif" fontSize="8" fontWeight="500" fill="rgba(255,255,255,0.55)">Otter Notetaker</text>
+        {/* Strike-through line across the whole tile */}
+        <line x1="166" y1="186" x2="310" y2="106"
+          stroke="var(--color-accent)"
+          strokeWidth="1.5"
+          strokeLinecap="round" />
+        {/* "EXCLUDED" accent tag at top of the tile */}
+        <rect x="234" y="112" width="74" height="14" rx="3" fill="var(--color-accent)" />
+        <text x="271" y="122" textAnchor="middle"
+          fontFamily="var(--font-sans), system-ui, sans-serif"
+          fontSize="8"
+          fontWeight="700"
+          letterSpacing="0.6"
+          fill="#ffffff">
+          EXCLUDED
+        </text>
+      </g>
     </svg>
   );
 }
@@ -790,6 +783,103 @@ function TranscriptFragment() {
       {/* Faint second line for body */}
       <rect x="62" y="120" width="180" height="3" rx="1" fill="var(--color-border)" />
       <rect x="62" y="130" width="148" height="3" rx="1" fill="var(--color-border)" />
+    </svg>
+  );
+}
+
+/**
+ * 06 -- Language mock. Vertical stack of language rows in their native
+ * scripts. The "English" row carries the accent green check + tint as
+ * the active UI language; the other rows are present but muted to
+ * read as "available". The accent check is the spotlight.
+ *
+ * Native scripts are NOT punctuation, so they pass the ASCII audit
+ * (which only catches em-dash family + curly quotes + bullet etc.).
+ */
+function LanguageMock() {
+  const rows: Array<{ label: string; native: string; active?: boolean }> = [
+    { label: "English", native: "English", active: true },
+    { label: "Ukrainian", native: "Українська" },
+    { label: "German", native: "Deutsch" },
+    { label: "Japanese", native: "日本語" },
+    { label: "Spanish", native: "Español" },
+    { label: "Chinese", native: "中文" },
+  ];
+  return (
+    <svg
+      className="ftr-svg ftr-svg--languages"
+      viewBox="0 0 320 220"
+      preserveAspectRatio="xMidYMid meet"
+      role="img"
+      aria-label="Language picker showing English active and several other languages available"
+    >
+      {/* Card background */}
+      <rect x="0" y="0" width="320" height="220" rx="10" fill="var(--color-bg)" stroke="var(--color-border)" strokeWidth="1" />
+
+      {/* Header */}
+      <text
+        x="16" y="22"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="10"
+        fontWeight="600"
+        letterSpacing="0.6"
+        fill="var(--color-text-subtle)"
+      >
+        INTERFACE
+      </text>
+
+      {/* Rows */}
+      {rows.map((row, i) => {
+        const y = 38 + i * 28;
+        const isActive = row.active === true;
+        return (
+          <g key={row.label}>
+            {/* Row background - subtle accent tint for active */}
+            {isActive && (
+              <rect x="8" y={y} width="304" height="22" rx="6"
+                fill="rgba(33, 122, 80, 0.10)" />
+            )}
+            {/* Status dot / check */}
+            {isActive ? (
+              <g>
+                <circle cx="22" cy={y + 11} r="6" fill="var(--color-accent)" />
+                <path d={`M ${22 - 2.5} ${y + 11} l 2 2 l 4 -4`}
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round" />
+              </g>
+            ) : (
+              <circle cx="22" cy={y + 11} r="3"
+                fill="none"
+                stroke="var(--color-border-strong)"
+                strokeWidth="1" />
+            )}
+            {/* Native label */}
+            <text
+              x="36" y={y + 15}
+              fontFamily="var(--font-sans), system-ui, sans-serif"
+              fontSize="12"
+              fontWeight={isActive ? 600 : 500}
+              fill={isActive ? "var(--color-text)" : "var(--color-text-muted)"}
+            >
+              {row.native}
+            </text>
+            {/* English name to the right, smaller */}
+            <text
+              x="304" y={y + 15}
+              textAnchor="end"
+              fontFamily="var(--font-sans), system-ui, sans-serif"
+              fontSize="10"
+              fontWeight="400"
+              fill="var(--color-text-subtle)"
+            >
+              {row.label}
+            </text>
+          </g>
+        );
+      })}
     </svg>
   );
 }
