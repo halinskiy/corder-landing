@@ -2254,8 +2254,17 @@ button:focus:not(:focus-visible) {
  * snapshot can overlap the enter snapshot during the 240 ms fade. */
 .hiw-window-content {
   position: absolute;
-  inset: 28px 0 0 0;
+  inset: 0;
   overflow: hidden;
+}
+
+/* Hide the macOS traffic-lights titlebar inside the HowItWorks window.
+ * User wanted the cleaner original-Dashboard look (no window chrome).
+ * The window frame still carries its border-radius + hairline border via
+ * .how-window--app, so the chrome reads as "an app" without the
+ * decorative traffic dots. */
+.hiw-window-inner .hl-titlebar {
+  display: none;
 }
 
 /* Shared shell for every chapter mock. Three-column variants:
@@ -2265,10 +2274,12 @@ button:focus:not(:focus-visible) {
  * The .hl-app default (240/1fr) from HeroLibraryDemo.css is overridden
  * so the smaller in-window box doesn't crowd the sidebar. */
 /* Higher specificity than the .hl-app default (240px sidebar) so the
- * tighter mock-shell sidebar wins inside HowItWorks chapter mockups. */
+ * tighter mock-shell sidebar wins inside HowItWorks chapter mockups.
+ * Half the previous width per user feedback - meeting titles ellipsize
+ * cleanly in this narrower rail. */
 .hl-app.hl-mock-shell {
   display: grid;
-  grid-template-columns: 168px 1fr;
+  grid-template-columns: 104px 1fr;
   height: 100%;
   min-height: 0;
   background: var(--hl-bg);
@@ -3130,6 +3141,10 @@ button:focus:not(:focus-visible) {
   border-top: 1px solid var(--color-border);
   padding-block: 64px 32px;
   background: var(--color-bg);
+  /* Create a stacking context so the footer blob (z-index: -1) paints
+   * above the footer's white background instead of slipping behind it
+   * into the document root. */
+  isolation: isolate;
 }
 
 @media (min-width: 768px) {
@@ -3484,6 +3499,30 @@ button:focus:not(:focus-visible) {
   animation:
     blob-enter 420ms 880ms cubic-bezier(0.16, 1, 0.3, 1) both,
     section-blob-jelly-a 34s ease-in-out infinite reverse;
+}
+
+/* Footer blob — peeks out from behind/below the subscribe-form card at
+ * the bottom-right of the page. Anchored low enough to spill past the
+ * form's bottom edge, and offset left enough that the visible portion
+ * sits to the LEFT of the form (the form's opaque white card would
+ * cover anything directly behind it). */
+.section-blob--footer {
+  bottom: -60px;
+  right: 220px;
+  width: 460px;
+  height: 400px;
+  animation:
+    blob-enter 420ms 940ms cubic-bezier(0.16, 1, 0.3, 1) both,
+    section-blob-jelly-b 29s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .section-blob--footer {
+    bottom: -60px;
+    right: 60px;
+    width: 320px;
+    height: 280px;
+  }
 }
 
 @media (max-width: 768px) {

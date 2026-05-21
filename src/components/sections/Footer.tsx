@@ -24,8 +24,9 @@ export function Footer() {
       data-component="Footer"
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-text,color-text-muted,color-border,font-serif,font-sans"
-      className="site-footer"
+      className="site-footer relative overflow-hidden"
     >
+      <div aria-hidden className="section-blob section-blob--footer" />
       <div className="page-container">
         <div className="site-footer__grid">
           <div className="site-footer__brand-col">
