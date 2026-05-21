@@ -1385,11 +1385,14 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
  * element scales proportionally smaller so the demo reads as a self-
  * contained miniature app, not a clipped desktop crop. */
 @media (max-width: 640px) {
-  /* Mobile: hide the entire Library window demo. Hero stays text-only
-   * (headline + subhead + Download CTA). User feedback: the in-window
-   * mock crowds the phone viewport. */
+  /* Mobile: hide the entire Library window demo + its wrapper + the
+   * dot-grid surface that backs it. Hero stays text-only (headline +
+   * subhead + Download CTA) and ends right after the CTA - no dead
+   * area underneath. */
   .hero-art,
-  .hero-library-demo {
+  .hero-library-demo,
+  .hero-demo-wrap,
+  .dot-grid-surface {
     display: none !important;
   }
 
