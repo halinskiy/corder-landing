@@ -32,7 +32,7 @@ export function Pricing() {
       className="relative w-full overflow-hidden"
     >
       <div aria-hidden className="section-blob section-blob--pricing" />
-      <div className="page-container py-14 md:py-[88px]">
+      <div className="page-container py-8 md:py-[52px]">
         {/* Header */}
         <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
           <div className="lg:col-span-8">
