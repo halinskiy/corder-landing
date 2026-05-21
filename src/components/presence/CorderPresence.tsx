@@ -270,12 +270,52 @@ function CorderPresenceForm() {
   const { newsletter } = copy;
   const [status, setStatus] = useState<"idle" | "submitted">("idle");
   const [email, setEmail] = useState("");
+  // `bottom` is recomputed on scroll so the form pins 32px above the
+  // footer baseline once the baseline approaches the viewport bottom.
+  // Default = 32px viewport-bottom inset.
+  const [bottomPx, setBottomPx] = useState(32);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!email.trim()) return;
     setStatus("submitted");
   }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const baseline = document.querySelector(".site-footer__baseline");
+      const viewportH = window.innerHeight;
+      if (!baseline) {
+        setBottomPx(32);
+        return;
+      }
+      const r = (baseline as HTMLElement).getBoundingClientRect();
+      // If the baseline is below the viewport, default behaviour: pin
+      // the form 32px from the viewport bottom. Once the baseline is
+      // inside (or above) the viewport, the form's bottom-anchor moves
+      // upward so it sits 32px above the baseline top edge.
+      if (r.top >= viewportH - 32) {
+        setBottomPx(32);
+      } else {
+        setBottomPx(Math.round(viewportH - r.top + 32));
+      }
+    };
+    const onScrollOrResize = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(measure);
+    };
+    measure();
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+    return () => {
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
+    };
+  }, []);
 
   // Content lives directly inside the morphing motion.div — no inner
   // motion.div wrapper. With AnimatePresence removed in the corner switch
@@ -292,7 +332,7 @@ function CorderPresenceForm() {
       style={{
         position: "fixed",
         right: "32px",
-        bottom: "max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px))",
+        bottom: `max(${bottomPx}px, calc(env(safe-area-inset-bottom, 0px) + 28px))`,
         width: "380px",
         height: "auto",
         minHeight: "260px",

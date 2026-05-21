@@ -29,8 +29,9 @@ export function Pricing() {
       data-component="Pricing"
       data-source={DATA_SOURCE}
       data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,radius-pill,font-serif"
-      className="relative w-full"
+      className="relative w-full overflow-hidden"
     >
+      <div aria-hidden className="section-blob section-blob--pricing" />
       <div className="page-container py-14 md:py-[88px]">
         {/* Header */}
         <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">

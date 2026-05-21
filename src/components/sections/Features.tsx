@@ -49,8 +49,9 @@ export function Features() {
       data-component="Features"
       data-source={DATA_SOURCE}
       data-tokens="color-text,color-text-muted,color-border,color-accent,font-serif,font-mono"
-      className="relative w-full"
+      className="relative w-full overflow-hidden"
     >
+      <div aria-hidden className="section-blob section-blob--features" />
       <div className="page-container py-14 md:py-[88px]">
         <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
           <div className="lg:col-span-8">
