@@ -2584,7 +2584,10 @@ button:focus:not(:focus-visible) {
 }
 .hl-mock-shell .hl-detail-tabs,
 .hl-mock-shell .hl-detail-body {
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  /* Wider right column so Timeline / Settings cards have room to read
+   * (matches the original Dashboard screen video and Settings panel
+   * proportions). */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
 }
 .hl-mock-shell .hl-detail-tab-col {
   padding: 8px 14px 0;
