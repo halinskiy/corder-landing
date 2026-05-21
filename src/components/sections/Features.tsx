@@ -383,13 +383,17 @@ function PopoverWidget() {
       >
         Not recording
       </text>
+      {/* '00:00' uses SwiftUI's .monospacedDigit() which is system
+       *  sans with tabular numeral widths, NOT a mono font. Using
+       *  ui-monospace stretched the colon into a separate wide cell
+       *  ("0 0 : 0 0"). tabular-nums on -apple-system reads tight. */}
       <text
         x="56" y="78"
-        fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
-        fontSize="20"
+        fontFamily="-apple-system, system-ui, sans-serif"
+        fontSize="22"
         fontWeight="300"
-        letterSpacing="-0.5"
         fill="rgba(255,255,255,0.62)"
+        style={{ fontVariantNumeric: "tabular-nums" }}
       >
         00:00
       </text>
