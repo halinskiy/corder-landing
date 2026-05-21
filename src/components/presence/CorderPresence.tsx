@@ -334,8 +334,12 @@ function CorderPresenceForm() {
         right: "32px",
         bottom: `max(${bottomPx}px, calc(env(safe-area-inset-bottom, 0px) + 28px))`,
         width: "380px",
+        // Card hugs its content (heading + subhead + form OR success
+        // message). Earlier we held a minHeight of 260px so the morph
+        // from orb to card had a chunky target -- the side effect was
+        // dead space below the Subscribe button on mobile. Remove the
+        // min and let padding handle the rhythm.
         height: "auto",
-        minHeight: "260px",
         zIndex: 31,
         background: "var(--color-bg)",
         border: "1px solid var(--color-border)",
@@ -345,7 +349,10 @@ function CorderPresenceForm() {
         display: "flex",
         flexDirection: "column",
         gap: "14px",
-        padding: "20px 20px 18px",
+        // 40px top + 40px bottom: matches the visual breathing room the
+        // user requested. Side insets stay at 22px so the email pill +
+        // Subscribe button still reach close to the card edges.
+        padding: "40px 22px",
         boxSizing: "border-box",
       }}
       transition={{ layout: MORPH_TRANSITION }}

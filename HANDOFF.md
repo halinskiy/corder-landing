@@ -120,10 +120,10 @@ In dev mode, Cmd+click any element to see these in a floating panel. Webflow reb
 | Hero card aspect-ratio reserved (CLS=0) | ✓ |
 | No JavaScript blocking first paint | ✓ — hero copy and demo render server-side |
 | Fonts: `display: swap`, `next/font/google` self-hosts | ✓ |
-| Lenis is the only scroll dependency | ✓ |
-| Total kit + Lenis + Motion 12 gzipped | within ≤ 80KB budget |
+| No JS smooth-scroll library | ✓ — native `scroll-behavior: smooth` + `scroll-padding-top: 88px` on `<html>` |
+| Total framer-motion + project code gzipped | within ≤ 80KB budget |
 
-In Webflow rebuild, prefer self-hosted Plex woff2 files over Google Fonts CDN to keep LCP under 1.5s on cold paid traffic.
+In Webflow rebuild, prefer self-hosted Plex woff2 files over Google Fonts CDN to keep LCP under 1.5s on cold paid traffic. For anchor scrolling, set `scroll-behavior: smooth` on the html element in Webflow's custom CSS panel; do NOT install a smooth-scroll plugin (Lenis/Locomotive). The site was tested without one and the macOS hardware momentum reads better than any JS smoothing.
 
 ---
 
@@ -354,8 +354,8 @@ All sections (3–9) added their styles to `src/app/globals.css` rather than per
 | Hero card aspect-ratio reserved (CLS=0) | ✓ |
 | No JavaScript blocking first paint | ✓ — sections render server-side, hydrate client-side |
 | Fonts: `display: swap`, `next/font/google` self-hosts | ✓ |
-| Lenis is the only scroll dependency | ✓ |
-| Total kit + Lenis + Motion 12 + project code | 13.1 kB first-load + 102 kB shared = 202 kB **un-gzipped**. Gzip estimate ≤ 80 kB ✓ |
+| No JS smooth-scroll library | ✓ — native `scroll-behavior` only (Lenis removed 2026-05-22, see DECISIONS.md / CHANGELOG.md) |
+| Total framer-motion + project code | ~7 KB gzip saved by dropping Lenis + react-icons; rerun `next build` after the next push to recompute first-load. |
 | typecheck (`tsc --noEmit`) | exit 0 ✓ |
 | build (`next build`) | exit 0 ✓ |
 | Em-dashes / en-dashes / forbidden words in DOM | 0 / 0 / 0 ✓ |
