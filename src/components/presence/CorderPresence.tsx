@@ -181,7 +181,7 @@ function CorderPresenceCorner() {
 function CorderPresenceOrb() {
   const handleClick = () => {
     if (typeof document === "undefined") return;
-    const target = document.getElementById("faq");
+    const target = document.getElementById("pricing");
     if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -194,7 +194,7 @@ function CorderPresenceOrb() {
       data-component="CorderPresenceOrb"
       data-source={DATA_SOURCE_PROVIDER}
       data-tokens="color-accent,color-accent-contrast,radius-window"
-      aria-label="Jump to FAQ and subscribe"
+      aria-label="Jump to Pricing and download"
       onClick={handleClick}
       style={{
         position: "fixed",
@@ -218,7 +218,7 @@ function CorderPresenceOrb() {
       whileTap={{ scale: 0.96 }}
       transition={{ layout: MORPH_TRANSITION }}
     >
-      <HelpCircleIcon />
+      <CloudDownloadIcon />
       <style>{`
         @media (max-width: 640px) {
           [data-component="CorderPresenceOrb"] {
@@ -240,8 +240,8 @@ function CorderPresenceOrb() {
   );
 }
 
-// Lucide HelpCircle icon, inlined (no lucide-react dependency).
-function HelpCircleIcon() {
+// Lucide CloudDownload icon, inlined (no lucide-react dependency).
+function CloudDownloadIcon() {
   return (
     <svg
       width="24"
@@ -254,9 +254,9 @@ function HelpCircleIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-      <path d="M12 17h.01" />
+      <path d="M12 13v8l-4-4" />
+      <path d="m12 21 4-4" />
+      <path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284" />
     </svg>
   );
 }
