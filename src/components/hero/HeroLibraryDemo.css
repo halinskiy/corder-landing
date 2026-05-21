@@ -1385,6 +1385,14 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
  * element scales proportionally smaller so the demo reads as a self-
  * contained miniature app, not a clipped desktop crop. */
 @media (max-width: 640px) {
+  /* Mobile: hide the entire Library window demo. Hero stays text-only
+   * (headline + subhead + Download CTA). User feedback: the in-window
+   * mock crowds the phone viewport. */
+  .hero-art,
+  .hero-library-demo {
+    display: none !important;
+  }
+
   .hero-library-demo {
     aspect-ratio: auto;
     min-height: 460px;
