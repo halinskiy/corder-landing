@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -62,59 +63,27 @@ export function HowItWorks() {
   // `layoutId`. When motion is disabled, the morph never engages.
   const presence = useCorderPresenceMode();
 
-  // Active chapter -- driven by IntersectionObserver on the three rows.
-  // 1 = Record from anywhere, 2 = Have your meeting, 3 = Tune it.
+  // Active chapter -- 1 = Record from anywhere, 2 = Have your meeting,
+  // 3 = Tune it. The chapter is driven by scrollYProgress on the same
+  // section the window position uses, so the chapter change is locked
+  // to the window snap rather than an IntersectionObserver that could
+  // fall out of sync (previously the chapter activated AFTER the window
+  // had already landed in its next slot, especially for chapter 3).
   const [activeChapter, setActiveChapter] = useState<Chapter>(1);
   const rowRefs = useRef<Array<HTMLElement | null>>([]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const targets = rowRefs.current.filter(
-      (n): n is HTMLElement => n !== null,
-    );
-    if (targets.length === 0) return;
-
-    // Track the most-visible row. `rootMargin` shrinks the viewport by
-    // 40% top + 40% bottom so a row is "active" only while its centre
-    // sits in the middle 20% band -- this matches the row-centre slots
-    // the sticky window snaps to and avoids the "two rows half-visible
-    // at once" race.
-    const ratios = new Map<HTMLElement, number>();
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          ratios.set(entry.target as HTMLElement, entry.intersectionRatio);
-        }
-        let best: HTMLElement | null = null;
-        let bestRatio = 0;
-        for (const [el, ratio] of ratios) {
-          if (ratio > bestRatio) {
-            best = el;
-            bestRatio = ratio;
-          }
-        }
-        if (best) {
-          const idx = targets.indexOf(best);
-          if (idx >= 0) {
-            const next = (idx + 1) as Chapter;
-            setActiveChapter((current) => (current === next ? current : next));
-          }
-        }
-      },
-      {
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-        rootMargin: "-40% 0px -40% 0px",
-      },
-    );
-
-    targets.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
+  });
+
+  // Chapter activates RIGHT AS the window starts moving toward the next
+  // slot. Window snap zones are 0.34-0.36 and 0.64-0.66; switch chapter
+  // at 0.30 and 0.60 so the new mockup is already in place when the
+  // window finishes settling.
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    const next: Chapter = p < 0.3 ? 1 : p < 0.6 ? 2 : 3;
+    setActiveChapter((current) => (current === next ? current : next));
   });
 
   // Stepped numeric targets in vh and %. Row centres at 35, 105, 175vh
@@ -391,7 +360,11 @@ function WindowFrame({
             <ChapterMockup chapter={chapter} />
           </div>
         ) : (
-          <AnimatePresence mode="wait" initial={false}>
+          // Sync mode + absolute positioning lets the outgoing and
+          // incoming mockups overlap during the fade so there is no
+          // empty window flash between chapters. The result reads as a
+          // gentle cross-blend rather than a snap.
+          <AnimatePresence initial={false}>
             <motion.div
               key={chapter}
               className="hiw-window-content"
@@ -399,7 +372,7 @@ function WindowFrame({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{
-                duration: 0.24,
+                duration: 0.32,
                 ease: [0.16, 1, 0.3, 1],
               }}
             >

@@ -2264,9 +2264,11 @@ button:focus:not(:focus-visible) {
  *   settings    sidebar 200px | main flex (transcript + settings inside)
  * The .hl-app default (240/1fr) from HeroLibraryDemo.css is overridden
  * so the smaller in-window box doesn't crowd the sidebar. */
-.hl-mock-shell {
+/* Higher specificity than the .hl-app default (240px sidebar) so the
+ * tighter mock-shell sidebar wins inside HowItWorks chapter mockups. */
+.hl-app.hl-mock-shell {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 168px 1fr;
   height: 100%;
   min-height: 0;
   background: var(--hl-bg);
@@ -2391,7 +2393,7 @@ button:focus:not(:focus-visible) {
 
 .hl-dash-body {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.95fr);
   flex: 1;
   min-height: 0;
   overflow: hidden;
