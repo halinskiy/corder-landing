@@ -28,7 +28,7 @@ export function Hero() {
       data-component="Hero"
       data-source={DATA_SOURCE}
       data-tokens="display-lg,font-serif,color-text,ease-out"
-      className="relative w-full overflow-hidden pt-20 pb-10 md:pt-24 md:pb-12"
+      className="relative w-full overflow-hidden pt-20 pb-0 md:pt-24 md:pb-12"
     >
       {/* Atmospheric dot grid behind the demo, faded edges. */}
       <div
@@ -108,7 +108,7 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <div className="mt-14 md:mt-20">
+        <div className="hero-demo-wrap mt-14 md:mt-20">
           <HeroLibraryDemo />
         </div>
       </div>
