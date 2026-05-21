@@ -2698,11 +2698,15 @@ button:focus:not(:focus-visible) {
  * grid (replacing the right panel). Stacked SoloCards, same shape as
  * the hero's SettingsPane but tightened for the smaller box. */
 .hl-set-rail {
-  padding: 10px 12px 12px;
+  padding: 10px 10px 12px;
   gap: 6px;
 }
 .hl-set-rail .hl-settings-card { border-radius: 6px; }
-.hl-set-rail .hl-settings-row { padding: 8px 10px; gap: 10px; }
+/* Tighter card paddings + smaller gap-to-toggle so the description
+ * paragraph ("Notify on recording start, transcript ready, and network
+ * loss.") gets noticeably more horizontal room and reads in fewer
+ * lines. */
+.hl-set-rail .hl-settings-row { padding: 8px 8px 8px 10px; gap: 6px; }
 .hl-set-rail .hl-settings-row-label { font-size: 11.5px; }
 .hl-set-rail .hl-settings-row-desc {
   font-size: 10px;
@@ -3592,3 +3596,13 @@ button:focus:not(:focus-visible) {
   .section-blob { animation: none !important; }
 }
 :root[data-motion="off"] .section-blob { animation: none !important; }
+
+/* Mobile: hide all decorative blobs (hero pair + 3 section blobs +
+ * footer blob). The phone viewport is too tight for ambient atmosphere
+ * to land - it just adds visual noise. */
+@media (max-width: 640px) {
+  .hero-blob,
+  .section-blob {
+    display: none !important;
+  }
+}
