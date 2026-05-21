@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
+  AnimatePresence,
   motion,
   useReducedMotion,
   useScroll,
@@ -17,16 +18,19 @@ import {
   CorderPresenceSentinel,
   useCorderPresenceMode,
 } from "@/components/presence/CorderPresence";
+import { ChapterMockup } from "@/components/sections/HowItWorksMockups";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/HowItWorks.tsx";
 
 // Spring physics for the snap motion. Tuned for a noticeable ease-in-out
-// settle without overshoot — the window should feel like it lifts off the
+// settle without overshoot -- the window should feel like it lifts off the
 // page, glides to the next slot, and lands.
 const SPRING = { stiffness: 105, damping: 24, mass: 0.7 } as const;
 
+type Chapter = 1 | 2 | 3;
+
 /**
- * HowItWorks — three real rows with a single shared window block that
+ * HowItWorks -- three real rows with a single shared window block that
  * snaps between slots as the user scrolls past each threshold.
  *
  * Snap behaviour: target top/left are step functions of scrollYProgress
@@ -37,8 +41,14 @@ const SPRING = { stiffness: 105, damping: 24, mass: 0.7 } as const;
  * scale + drop-shadow on the window inner wrap, so it feels like the
  * block is lifted, dragged, and placed.
  *
+ * The INSIDE of the window swaps between three full-fidelity Corder UI
+ * mockups (Dashboard / Library + Transcript / Settings) as the user
+ * crosses each chapter midline. Window CHROME (the macOS titlebar)
+ * stays constant; only the inner content crossfades through an
+ * `AnimatePresence` block keyed on the active chapter.
+ *
  * Each row carries a faint dashed ghost in the slot where the window
- * will eventually land — visual scaffolding so the user reads the
+ * will eventually land -- visual scaffolding so the user reads the
  * destination before the snap.
  */
 export function HowItWorks() {
@@ -51,6 +61,56 @@ export function HowItWorks() {
   // root via CorderPresenceProvider) takes its place via framer's shared
   // `layoutId`. When motion is disabled, the morph never engages.
   const presence = useCorderPresenceMode();
+
+  // Active chapter -- driven by IntersectionObserver on the three rows.
+  // 1 = Record from anywhere, 2 = Have your meeting, 3 = Tune it.
+  const [activeChapter, setActiveChapter] = useState<Chapter>(1);
+  const rowRefs = useRef<Array<HTMLElement | null>>([]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const targets = rowRefs.current.filter(
+      (n): n is HTMLElement => n !== null,
+    );
+    if (targets.length === 0) return;
+
+    // Track the most-visible row. `rootMargin` shrinks the viewport by
+    // 40% top + 40% bottom so a row is "active" only while its centre
+    // sits in the middle 20% band -- this matches the row-centre slots
+    // the sticky window snaps to and avoids the "two rows half-visible
+    // at once" race.
+    const ratios = new Map<HTMLElement, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          ratios.set(entry.target as HTMLElement, entry.intersectionRatio);
+        }
+        let best: HTMLElement | null = null;
+        let bestRatio = 0;
+        for (const [el, ratio] of ratios) {
+          if (ratio > bestRatio) {
+            best = el;
+            bestRatio = ratio;
+          }
+        }
+        if (best) {
+          const idx = targets.indexOf(best);
+          if (idx >= 0) {
+            const next = (idx + 1) as Chapter;
+            setActiveChapter((current) => (current === next ? current : next));
+          }
+        }
+      },
+      {
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+        rootMargin: "-40% 0px -40% 0px",
+      },
+    );
+
+    targets.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -77,7 +137,7 @@ export function HowItWorks() {
   const windowTop = useTransform(topNum, (v) => `${v}vh`);
   const windowLeft = useTransform(leftNum, (v) => `${v}%`);
 
-  // Lift pulse — small bumps centred on each threshold. Drives scale +
+  // Lift pulse -- small bumps centred on each threshold. Drives scale +
   // drop-shadow so the window appears to lift, travel, and settle.
   const liftPulse = useTransform(
     scrollYProgress,
@@ -112,19 +172,22 @@ export function HowItWorks() {
 
       {reduced ? (
         <div className="page-container hiw-static mt-16">
-          {howItWorks.steps.map((step) => (
-            <article key={step.number} className="hiw-static__row">
-              <div className="hiw-text">
-                <h3 className="hiw-text__heading">{step.heading}</h3>
-                <p className="hiw-text__body">{step.body}</p>
-              </div>
-              <WindowFrame />
-            </article>
-          ))}
+          {howItWorks.steps.map((step, i) => {
+            const chapter = (i + 1) as Chapter;
+            return (
+              <article key={step.number} className="hiw-static__row">
+                <div className="hiw-text">
+                  <h3 className="hiw-text__heading">{step.heading}</h3>
+                  <p className="hiw-text__body">{step.body}</p>
+                </div>
+                <WindowFrame chapter={chapter} reduced />
+              </article>
+            );
+          })}
         </div>
       ) : (
         <div ref={sectionRef} className="hiw-track page-container">
-          {/* Animated window — z above all row content. Hidden once the
+          {/* Animated window -- z above all row content. Hidden once the
               user has scrolled past the section so the bottom-right orb
               (mounted at the page root) owns the shared `layoutId` and
               framer can interpolate the bounding box smoothly between the
@@ -146,7 +209,7 @@ export function HowItWorks() {
                     }
                   : {})}
               >
-                <WindowFrame />
+                <WindowFrame chapter={activeChapter} />
               </motion.div>
             </motion.div>
           )}
@@ -154,6 +217,10 @@ export function HowItWorks() {
           {howItWorks.steps.map((step, i) => (
             <article
               key={step.number}
+              ref={(node) => {
+                rowRefs.current[i] = node;
+              }}
+              data-hiw-chapter={i + 1}
               className={`hiw-row${
                 i === 1 ? " hiw-row--text-left" : " hiw-row--text-right"
               }`}
@@ -166,7 +233,7 @@ export function HowItWorks() {
             </article>
           ))}
 
-          {/* Scroll sentinel — IntersectionObserver target at the bottom
+          {/* Scroll sentinel -- IntersectionObserver target at the bottom
               edge of the HowItWorks track. When it leaves the viewport
               going down, CorderPresence flips `pastHowItWorks` true and
               the orb materialises from the window's last position. */}
@@ -227,7 +294,13 @@ const TILT_MAX_X = 3;
 const TILT_MAX_Y = 4;
 const TILT_LIFT = 4;
 
-function WindowFrame() {
+function WindowFrame({
+  chapter,
+  reduced = false,
+}: {
+  chapter: Chapter;
+  reduced?: boolean;
+}) {
   const tiltRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -298,15 +371,42 @@ function WindowFrame() {
       className="hiw-window-tilt"
       data-component="HowItWorksWindow"
       data-source={DATA_SOURCE}
+      data-tokens="hl-bg,hl-border,hl-accent,radius-window"
       role="img"
-      aria-label="Corder app placeholder"
+      aria-label={`Corder app -- chapter ${chapter}`}
     >
-      <div className="how-window hero-library-demo how-window--app">
+      <div
+        className="how-window hero-library-demo how-window--app"
+        data-active-chapter={chapter}
+      >
         <div className="hl-titlebar" aria-hidden="true">
           <span className="hl-traffic close" />
           <span className="hl-traffic minimize" />
           <span className="hl-traffic maximize" />
         </div>
+        {reduced ? (
+          /* Reduced-motion: no AnimatePresence, no key, no enter/exit
+             -- render the single mockup statically. */
+          <div className="hiw-window-content hiw-window-content--static">
+            <ChapterMockup chapter={chapter} />
+          </div>
+        ) : (
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={chapter}
+              className="hiw-window-content"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 0.24,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+            >
+              <ChapterMockup chapter={chapter} />
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
     </div>
   );

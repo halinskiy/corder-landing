@@ -143,7 +143,52 @@ Two-card trust block. Asymmetric anchor: heading + subhead in the left 8 of 12 c
 
 ---
 
-## Section 4 — How it works (`src/components/sections/How.tsx`)
+## Section 4 — How it works (`src/components/sections/HowItWorks.tsx` + `HowItWorksMockups.tsx`)
+
+**Updated 2026-05-21 (`feat/hero-v090`):** the section now uses a single shared window that snaps diagonally between three chapter slots (35vh / 105vh / 175vh) as the user scrolls; the INSIDE of the window swaps between three full-fidelity Corder UI mockups — Dashboard, Library + Transcript, Settings — keyed on the active chapter. The previous 4-step `data-active-step` cross-fade has been superseded.
+
+**Layout (desktop, >= 768px):**
+- `.hiw-track` is the section's positioning context. Three `.hiw-row` slabs at 70vh each (210vh total) carry the chapter text on alternating sides (right / left / right).
+- `.hiw-window-wrap` is `position: absolute` inside the track. Framer-motion springs animate its `top` and `left` from 35vh/0% -> 105vh/52% -> 175vh/0% via `useScroll` step functions + `useSpring` (stiffness 105, damping 24, mass 0.7).
+- Inside the window: a constant macOS titlebar (3 traffic-light dots) PLUS a swap layer `.hiw-window-content` filling `inset: 28px 0 0 0`. The swap layer hosts `<ChapterMockup chapter={1|2|3} />`.
+
+**Active chapter tracking:**
+- IntersectionObserver on the three `.hiw-row` elements, `rootMargin: -40% 0px -40% 0px`, threshold `[0, 0.25, 0.5, 0.75, 1]`. Picks the most-visible row, lifts its index (1/2/3) to React state.
+- `<AnimatePresence mode="wait">` with `key={chapter}` and a 240 ms opacity-only crossfade on doctrine easing handles the swap. Window CHROME stays mounted; only inside swaps.
+
+**Three mockups (`HowItWorksMockups.tsx`):**
+
+| Chapter | Component | Inside the window |
+|---|---|---|
+| 01 Record from anywhere | `<DashboardMock />` | Sidebar (search + 8 meeting cards across Today / This week) + Stats tab + "Ready when you are." start card + accent-green Start recording pill + "or press ⇧⌘F" hint + RECORDINGS / TOTAL RECORDED / THIS WEEK stats card + Recent rail (7 cards) + static green corner orb. |
+| 02 Have your meeting | `<LibraryMeetingMock />` | Sidebar (4 cards, 2 in failed state) + breadcrumb "Dashboard > Quarterly review with Anna and Marc" + Transcript / Summary tabs + Recording / Settings tabs (Recording active) + 4 transcript turns between Anna H. (purple), Marc S. (amber), I (accent) + ZoomCallMock video preview + audio scrubber 0:00 / 14:45 + Timeline with three speaker bars. |
+| 03 Tune it to your workflow | `<SettingsMock />` | Sidebar (6 cards, "Screen video and call recording" active) + breadcrumb "Dashboard > Screen video and call recording" + Transcript / Summary tabs + Recording / Settings tabs (Settings ACTIVE) + 4 transcript turns S1/S2 + 6 settings cards: System notifications OFF, Screen video ON, Auto-transcribe OFF, Auto-title ON, ⇧⌘F hotkey pill, Always offer to record (clipped). |
+
+**Speaker palette inside the mockups:** purple `#5a3aa6` + amber `#a16207` + accent `#217a50` for self. These are scoped to product-UI demos and are NOT a second brand accent. The single brand accent stays `#217a50`.
+
+**Recording HUD inside each mockup:** `.hl-mock-blob` — a 22×22 CSS radial-gradient circle with an accent-toned box-shadow halo. Static (no canvas, no animation). The animated `RecBlobCanvas` blob is reserved for the hero demo so it remains a hero signature.
+
+**Reduced motion (`prefers-reduced-motion: reduce`):**
+- `.hiw-track` collapses to `.hiw-static`. Each step renders inline above its `<WindowFrame chapter={N} reduced />` — the AnimatePresence wrap is skipped; the mockup paints into a fixed 16/10 box per step.
+- The mockups themselves are static product UI by design (no canvas blob, no scrubber animation, no playhead cursor), so reduced-motion users see the same content, just stacked.
+
+**Mobile (<= 767px):**
+- `.hiw-window-wrap` is already `display: none`. Numbered step cards (01/02/03 via CSS counter) carry the section on phones, no mockups rendered.
+- Reduced-motion fallback also hides the static window-tilt block on phones (`.hiw-static__row .hiw-window-tilt { display: none }`).
+
+**CorderPresence morph chain:** untouched. The shared `layoutId={CORDER_PRESENCE_LAYOUT_ID}` lives on `.hiw-window-inner` (one level above `WindowFrame`), so framer-motion still animates from the last sticky window box to the bottom-right orb when the user crosses the section bottom.
+
+**Webflow path:** **Custom embed required.** Three pieces of custom code:
+
+1. The diagonal-snap + lift-pulse machinery from `HowItWorks.tsx` (Framer Motion `useScroll`/`useSpring`/`useTransform`). Webflow IX2 cannot drive a step-function with a spring-smoothed settle; embed the JSX (transpiled to JS) + the `.hiw-*` CSS.
+2. The IntersectionObserver chapter tracker (~30 lines of JS) that lifts `data-active-chapter` onto `.how-window`. Same shape as the previous How section's tracker, just three rows instead of four.
+3. The three mockup component trees (`DashboardMock`, `LibraryMeetingMock`, `SettingsMock`) are static JSX with hand-rolled SVGs — they transpile cleanly to plain HTML + CSS. The crossfade between them is a single `AnimatePresence`; Webflow can replicate it with a class-toggle + 240 ms opacity transition.
+
+**Inspector triple:** every new component carries `data-component` / `data-source` / `data-tokens`. The mockups are tagged `HowItWorksMockup.dashboard / library / settings`.
+
+---
+
+## Section 4 (legacy) — How it works (`src/components/sections/How.tsx`) — superseded
 
 Scroll-pinned narrative. **The most technically distinctive section after the hero.** Implementation: 2-col grid at lg+, sticky live-UI panel on the left, scrolling chapter list on the right. IntersectionObserver tracks the centred chapter and switches a `data-active-step` attribute on the sticky panel; CSS selectors cross-fade between four step panes.
 
