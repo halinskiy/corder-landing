@@ -12,6 +12,76 @@ Format:
 
 ---
 
+## 2026-05-21 — Features cells get inline-SVG illustrations (branch `feat/hero-v090`)
+
+Single follow-up commit on `feat/hero-v090`. Six cells in the Features section
+now render proper SVG mocks instead of typographic gestures. Style follows the
+hero's `GoogleMeetMock` (commit `6d358fd`): inline `<svg>` per case, viewBox
+driven, ASCII text only, project tokens via CSS variables so the mocks track
+theme without hard-coded greys.
+
+Files in the diff:
+- `src/components/sections/Features.tsx` (full rewrite of `FeatureVisual`)
+- `src/app/globals.css` (`.ftr-svg` wrapper rules, 8 lines added)
+- `content/copy.json` (visualHint values for cells 02 -- 05 updated)
+
+Six visualHint cases:
+- `mini-timeline-fragment` (polished): two horizontal speaker rows; Vadym
+  with purple `#5a3aa6` ticks, Kostiantyn with neutral grey ticks; a single
+  accent-green playhead dot on the Vadym row. Time scale `00:00 -- 12:40`.
+- `screen-video-frame` (new): 16:9 dark `#202124` frame with mock window
+  chrome (traffic-light dots, code-line stripes); centred accent-green play
+  button overlay. No microphone glyph anywhere.
+- `menu-bar-capsule` (new): macOS top strip + a notification card reading
+  `CORDER / Zoom is open. Record?`. Outlined neutral `Skip` pill + solid
+  accent-green `Record` pill with a small white indicator dot.
+- `drag-out-gesture` (new): transcript card titled `Investor call` with 4
+  truncated lines, rotated -4 degrees as if mid-drag, connected by an
+  accent-green dashed curve to a dashed `Notion / Drop here` target.
+- `audio-sound-row` (new): macOS-Sound-preferences row list. Two inactive
+  rows (`MacBook microphone` with a `BUILT-IN` tag, `External display`);
+  the selected `Corder` row carries an accent-green left border, accent-tint
+  background wash, filled accent radio dot, and a `CoreAudio process tap`
+  caption beneath.
+- `version-sequence` (polished): `Flash 2.5 -> Flash 3 -> Pro 4`. The middle
+  chip ("current model") carries the accent outline + accent-subtle fill.
+  Chip widths now computed from label length so the row stays balanced.
+
+Single accent role per cell (the spotlight, mapped per the brief):
+- Timeline -- the playhead dot
+- Screen frame -- the centre play button
+- Menu bar -- the `Record` pill
+- Drag gesture -- the dashed curve + arrowhead
+- Audio list -- the selected `Corder` row's left border + radio dot
+- Version sequence -- the middle chip's outline + fill
+
+ASCII clean: zero hits across the diff for
+`[\x{2010}-\x{2015}\x{2018}-\x{201F}\x{2022}\x{00B7}\x{00A7}]`. ASCII `->`
+used inside the version row, never the typographic arrow.
+
+Verification:
+- `npm run typecheck` exit 0.
+- Headless Chrome 1440x900 dpr=2 screenshot at
+  `screenshots/features-svg-illustrations.png` (viewport) +
+  `screenshots/features-svg-full.png` (full Features section). DOM
+  introspection: 6 `.feature-cell` nodes, 6 distinct `FeatureVisual.*`
+  data-components present.
+
+Decisions:
+- `monoPath` field on cells 02 and 05 is now unused. Left it in `copy.json`
+  as-is on the cell shape (we removed cell-level usage by switching their
+  visualHint), but the only cells that still carry it are gone -- a future
+  cleanup pass can drop the field from the cell type. Kept this session
+  surgically scoped.
+- `feature-mark` / `feature-pro-pill` / `feature-mono` / `feature-version-row`
+  CSS classes are now unused by the rewritten `FeatureVisual`. Left in
+  `globals.css` for one session in case judge wants a side-by-side compare;
+  delete in the next housekeeping pass.
+
+Next: judge review on `feat/hero-v090`.
+
+---
+
 ## 2026-05-20 — Hero `HeroLibraryDemo` polish pass (branch `feat/hero-v090`)
 
 Single follow-up commit on `feat/hero-v090` (parent `48e8902`) addressing six

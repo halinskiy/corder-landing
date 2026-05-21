@@ -193,22 +193,26 @@ Scroll-pinned narrative. **The most technically distinctive section after the he
 
 ## Section 5 — Features (`src/components/sections/Features.tsx`)
 
-6-cell hairline-bordered grid. 3×2 at lg, 2×3 at sm, 1×6 at base. **Zero icons.** Each cell has a unique typographic gesture per `visualHint` in copy.json:
+6-cell hairline-bordered grid. 3×2 at lg, 2×3 at sm, 1×6 at base. **Zero pictograms in cell chrome.** Each cell renders an inline-SVG mock per `visualHint` in copy.json. **Updated 2026-05-21** on `feat/hero-v090` — the old typographic gestures (typographic-mark, split-cell, kbd-cap, monospace-path, pro-pill) have been retired in favour of consistent inline-SVG mocks in the `GoogleMeetMock` (Hero) style.
 
-| Eyebrow | visualHint | Gesture |
+| Eyebrow | visualHint | Inline-SVG mock |
 |---|---|---|
-| TIMELINE | `mini-timeline-fragment` | Two coloured rows (KH purple, VG green) with vertical ticks at fixed positions; rendered in a small bordered card. |
-| SEARCH | `typographic-mark` | The word `phrase` inside the body gets `<span class="feature-mark">` — accent-soft 18% bg + 3px radius. Reads as a search-match highlight without an icon. |
-| OUTPUT | `split-cell-illustration` | Split horizontal panel: CORDER pane | `→` arrow | NOTION pane. The Notion side is `--color-surface` tinted to feel like the destination. |
-| MAC NATIVE | `kbd-cap-glyph` | `<span class="kbd-cap">⌘W</span>` rendered like a macOS keyboard cap (1px border, 2px bottom border for cap depth, 6px radius, 14px Plex Sans). |
-| ARCHIVE | `monospace-path` | `~/Dropbox/Corder/2026-05-09 17:09.txt` in a Plex Mono 14px chip with surface fill + hairline. |
-| UPDATES | `version-sequence` | Three monospace chips `v1.4.2 → v1.4.3 → v1.5.0`; the last (latest) chip is accent-soft tinted. |
+| TIMELINE | `mini-timeline-fragment` | 320×120 card. Two horizontal rows. Row 1 `Vadym` (purple `#5a3aa6` ticks). Row 2 `Kostiantyn` (neutral `--color-text-subtle` ticks). Accent-green playhead dot on row 1 with vertical line. ASCII time scale `00:00` -- `12:40`. |
+| SCREEN | `screen-video-frame` | 320×180 dark `#202124` frame. Inner mock window: traffic lights + 9 code-line stripes. Centred accent-green play button (22px radius circle + white triangle). |
+| AUTO-DETECT | `menu-bar-capsule` | 320×160. Dark macOS menu bar (apple glyph + 3 menu items + clock + 2 status dots). Notification card below with caret. Card: `CORDER` eyebrow + `Zoom is open. Record?` headline + `Skip` (outline pill) + `Record` (accent solid pill with white dot). |
+| DRAG | `drag-out-gesture` | 320×160. Transcript card (`TRANSCRIPT` eyebrow + `Investor call` title + 4 truncated lines) rotated -4 degrees as if mid-drag. Accent-green dashed quadratic curve + arrowhead pointing at a dashed `Notion / Drop here` target. |
+| AUDIO | `audio-sound-row` | 320×160. macOS-Sound-preferences row list with `OUTPUT DEVICE` header. 3 rows: `MacBook microphone` (`BUILT-IN` tag), `External display`, `Corder` (selected). Selected row has accent left-border (3px), accent-subtle bg wash, filled accent radio dot, `CoreAudio process tap` caption beneath. |
+| RE-RUN | `version-sequence` | Three mono chips with ASCII `->` between: `Flash 2.5` -> `Flash 3` -> `Pro 4`. Middle chip ("current model") carries accent outline + accent-subtle fill + accent text colour. Chip widths computed from label length to keep the row balanced. |
 
 **Grid borders:** External 12px radius via `border-radius: 12px; overflow: hidden;` on the grid wrapper. Internal hairlines via `:nth-child` selectors so `gap: 0` plus borders give a Pentagram-style grid without doubled lines.
 
-**Hover:** cell `bg → --color-surface-2` over 200ms doctrine easing. No translate, no shadow.
+**Hover:** cell `bg -> --color-surface-2` over 200ms doctrine easing. No translate, no shadow.
 
-**Webflow path:** Native CSS Grid. Each cell is a Div Block with internal layout. The keyboard-cap, monospace-path, split-cell, mini-timeline are all static Webflow elements (no JS needed). The `<mark>` over `phrase` is a single `<span>` with custom class — easy in Webflow.
+**SVG sizing:** every mock declares `viewBox="0 0 320 ${h}"` and stretches to 100% cell width via `.ftr-svg { width: 100%; height: auto; }`. Heights vary: timeline 120, video frame 180, menu bar / drag / audio 160, version row 56. All SVG fills/strokes use `var(--color-*)` so theme/accent flips are zero-cost.
+
+**Webflow path:** All six mocks are pure inline SVG. In Webflow each cell's visual is an Embed element holding the SVG string verbatim (no JS needed). Replace `var(--color-accent)` etc. with literal hex values inside the Embed, since Webflow's Embed doesn't see CSS custom properties from the surrounding page chrome. Recommended: store the literal hex strings in the Webflow project's "Style guide" page as native colour swatches, then paste them into each Embed. Single accent per cell, one role per mock -- if a colleague edits the SVG, ASCII text only, no microphone glyphs.
+
+**ASCII note:** the version row uses literal `->` (hyphen-greater) instead of the typographic arrow. Don't substitute -- the page-wide doctrine bans typographic dashes/arrows.
 
 ---
 
