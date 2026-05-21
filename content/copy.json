@@ -194,8 +194,8 @@
       {
         "eyebrow": "AUTO-DETECT",
         "heading": "Catches the meeting first",
-        "body": "Menu bar asks when Zoom opens. One tap to start.",
-        "visualHint": "menu-bar-capsule"
+        "body": "Menu bar widget, always one click away.",
+        "visualHint": "popover-widget"
       },
       {
         "eyebrow": "DRAG",
@@ -204,17 +204,16 @@
         "visualHint": "drag-out-gesture"
       },
       {
-        "eyebrow": "AUDIO",
-        "heading": "No driver install required",
-        "body": "CoreAudio process tap. Works on a fresh Mac.",
-        "visualHint": "audio-sound-row"
+        "eyebrow": "NO-BOT",
+        "heading": "No bot joins the call",
+        "body": "",
+        "visualHint": "no-bot-grid"
       },
       {
-        "eyebrow": "RE-RUN",
-        "heading": "New model out. Re-run for free.",
-        "body": "Cache means no re-upload, no extra cost.",
-        "visualHint": "version-sequence",
-        "versionSequence": "Flash 2.5 → Flash 3 → Pro 4"
+        "eyebrow": "TRANSCRIPT",
+        "heading": "Transcript next to audio",
+        "body": "Scrub the audio. The line follows.",
+        "visualHint": "transcript-fragment"
       }
     ]
   },

@@ -1354,17 +1354,14 @@ button:focus:not(:focus-visible) {
   overflow: hidden;
 }
 
-/* The screen-video frame already paints its own dark fill -- clip rounded
- * corners cleanly. Other mocks already include their card chrome inside
- * the viewBox so they need no outer border. */
+/* The screen-video frame, popover widget and no-bot grid all paint their
+ * own dark fill -- clip rounded corners cleanly. Other mocks already
+ * include their card chrome inside the viewBox so they need no outer
+ * border. */
 .ftr-svg--screen,
-.ftr-svg--menubar {
+.ftr-svg--popover,
+.ftr-svg--nobot {
   background: transparent;
-}
-
-/* Versions row sits flush, no card chrome. */
-.ftr-svg--versions {
-  max-width: 100%;
 }
 
 /* Feature: drag split */
