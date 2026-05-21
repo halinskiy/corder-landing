@@ -6,6 +6,134 @@ Read this file at the START of every session before building anything.
 
 ---
 
+## 2026-05-21 -- 3mpq-soldier -- Features cells second pass (AUTO-DETECT redrawn, AUDIO+RE-RUN replaced by NO-BOT+TRANSCRIPT)
+
+### Что заняло больше времени, чем должно было
+
+**Я чуть не решил оставить AUTO-DETECT body как было ("Menu bar asks
+when Zoom opens").** Это была ловушка: brief менял visualHint с
+`menu-bar-capsule` (notification popup, "Zoom opens, record?") на
+`popover-widget` (idle state of the always-available menu-bar widget).
+Это **разные** UI: первый -- push-style notification, второй -- pull-style
+widget user открывает по клику. Body должна описывать ЧТО НА КАРТИНКЕ,
+не оригинальный narrative. Заметил это уже после первого draft: body
+говорит про auto-trigger, а картинка показывает idle widget без
+никакого "Zoom is open" prompt. Pивернул body на "Menu bar widget,
+always one click away." -- 7 слов, описывает то что в SVG. Урок: **при
+смене visualHint всегда перечитать body через призму новой картинки.**
+Body живёт в paired-доминированных отношениях с visual, не сам по себе.
+
+**Подумал что type-narrowing в copy.ts заблокирует новые visualHint
+строки.** Открыл `copy.ts` ожидая увидеть union type для visualHint
+типа `"mini-timeline-fragment" | "screen-video-frame" | ...`. Если бы
+так -- пришлось бы апдейтить union перед добавлением `popover-widget`
+итд. На самом деле `visualHint` это просто `string` (через
+`typeof raw`), TS infer'ит литералы из JSON но в narrow form, и `switch`
+просто читает строку. Никакого блокирующего union не оказалось. Урок:
+**проверять inferred TS type ДО того как переписывать type definition.**
+Сэкономил бы 3 минуты если бы сразу запустил typecheck после copy.json
+edit.
+
+### Что я (вероятно) упустил, что judge поймает
+
+1. **"CORDER LIVES HERE" caption капс лок vs brand voice.** Везде в
+   landing'е "Corder" пишется TitleCase, ни разу не ALL CAPS (кроме
+   eyebrow labels в Features, но это design pattern). В моей `NoBotGrid`
+   аннотации я капитализировал слово целиком в стиле тревожной NOTICE.
+   Альтернативы:
+   - "Corder lives here" (mixed case, более sentence-style)
+   - "Corder is here up" (с arrow glyph -- но он typographic, нельзя)
+   - "Corder. In the menu bar." (две короткие фразы)
+   Решил оставить ALL CAPS потому что 10px font-size -- capitals
+   читаемее, и это не brand voice а аnnotation label (как eyebrow).
+   Если judge скажет "это нарушает brand voice / звучит как warning"
+   -- fix one-line: `CORDER LIVES HERE` -> `Corder lives here`.
+
+2. **Popover widget viewBox 320x260 -- но card занимает только
+   280x240, остаток 40x20 ушёл на caret + breathing.** Это значит
+   на узких mobile cell'ах (когда cell ширина < 320px) SVG scale'ится
+   `preserveAspectRatio="xMidYMid meet"` -- содержимое будет
+   пропорционально уменьшено и потеряет читаемость текста "Start
+   recording" / "Open library" если cell станет уже ~ 280px. На
+   фактических mobile breakpoints cell не уже 280px (page-container
+   = 100vw - 32px padding, на iPhone 14 это 358px), так что
+   практически safe. Но если judge тестирует 320px viewport
+   (Galaxy Fold sized) -- текст в popover будет совсем мелкий. Это
+   ограничение SVG как visual -- не fix без увеличения font-size в
+   <text> (которое потом наоборот переполнит на desktop). Trade-off
+   accepted: SVG sizes optimised for desktop / tablet, mobile
+   слегка compressed.
+
+3. **`no-bot-grid` annotation hairline path coordinates `M296 14 L296
+   26 L266 26`** -- hard-coded. Если viewBox изменится, путь не
+   percentage-driven и hairline отъедет от menu-bar dot. Поставлено
+   на 296,14 потому что menu-bar dot нарисован cx=296 cy=7 r=3,
+   bottom edge = y=10, +4 для дыхания -> y=14. Тщательно совпадает
+   сейчас, но эта magic number coupling -- техдолг. Если
+   когда-нибудь будет рефакторинг geometry координат в этом SVG,
+   нужно будет обновлять оба места. Не fix сейчас (single-purpose
+   illustration).
+
+4. **`PopoverWidget` использует rgba() literals для white opacity
+   ladder вместо token'ов.** В project'е нет dark-theme tokens для
+   `--color-text-on-dark-50` итд (light-theme only project). Я
+   написал `rgba(255,255,255,0.45)` etc. inline в SVG. Это
+   стилистически правильно для product-UI mock (это рендер dark
+   macOS widget, не landing chrome), но если когда-нибудь добавят
+   `--color-on-dark-*` token family -- нужно будет refactor. Документировал
+   решение в комментариях функции (`// Card background: #1c1c1e (a
+   faithful stand-in for NSColor.windowBackgroundColor)`).
+
+### Что я буду делать иначе следующий раз
+
+- **Перед редактированием body cell, прочитать visualHint и
+  убедиться что body соответствует что РИСУЕТСЯ, а не что было
+  раньше.** Body живёт парой с visual. Не cargo-cult'ить body
+  из старой версии при смене visualHint. Записал в personal
+  checklist: "если visualHint changed -> body MUST be re-read с
+  призмы новой картинки".
+- **Проверять TS type-narrowing inferred state ДО того как
+  предполагать что нужны union updates.** Прогнать `npm run
+  typecheck` after JSON edits как первый шаг, не последний.
+  Если passes -- narrowing widening'нулся, никаких type edits не
+  надо. Если fails -- точно знаешь что фиксить.
+- **При написании "teaching annotations" в SVG -- выписать 3-4
+  альтернативных wordings перед выбором.** В `NoBotGrid` я
+  выбрал "CORDER LIVES HERE" сразу, без вариаций. Стоило перебрать
+  hand-list: `Corder lives here` / `Corder is here` / `Corder.
+  Menu bar.` / `Recording. Not in call.` Каждый имеет свой voice;
+  выбор изначально arbitrary, лучше сделать с perspective.
+
+### Что было хорошо
+
+- **Read `Sources/Corder/UI/PopoverContentView.swift` BEFORE
+  начал писать SVG.** Это сэкономило угадывание. Я просто перенёс
+  Swift geometry values (`.padding(20)`, `.frame(width: 320)`,
+  spacing 18, radius 8 на rows и 14 на card, font sizes 14pt/22pt/
+  12pt) прямо в SVG coordinates. Mock получился faithful с первой
+  итерации, не нужны были visual-tweaking rounds.
+- **Inventory section 10 reality-check для INTEGRATIONS.** Brief
+  предлагал три кандидата для двух slots; я открыл
+  `corder-feature-inventory-2026-05.md` сразу как brief велел и
+  увидел line 319: *"Integrations now live exclusively in the
+  profile menu"* + line 569: *"integrations card now says Soon"*.
+  Это сразу killed INTEGRATIONS cell candidate -- не нужно было
+  ходить в product code или думать как fairly framing. Inventory
+  файл уже сделал работу. Урок: research dossiers -- это not
+  optional reading, они economize иногда часы.
+- **Atomic commit discipline -- снова один логический diff.**
+  Один файл `Features.tsx` rewritten, один файл `copy.json`
+  modified (три cell entries), один файл `globals.css` (4 lines),
+  четыре doc файла обновлены. Всё ждёт single commit на
+  `feat/hero-v090`. Никаких "fixed это, остальное завтра".
+- **Re-used existing CDP harness from `/tmp/corder-cdp/`.**
+  Скопировал `features-shot.mjs` -> `features-shot-v2.mjs`,
+  поменял output path + port, добавил `cellHeadings` to verify
+  copy.json wiring. Один прогон -> один JSON dump + два PNG.
+  Tool reuse > tool rewrite.
+
+---
+
 ## 2026-05-21 — 3mpq-soldier — Features cells get inline-SVG illustrations
 
 ### Что заняло больше времени, чем должно было

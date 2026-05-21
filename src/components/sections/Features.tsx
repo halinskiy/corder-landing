@@ -5,12 +5,12 @@ import { copy } from "@/content/copy";
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Features.tsx";
 
 /**
- * Section 5  --  Features.
+ * Section 5  ----  Features.
  *
  * 6-cell hairline-bordered grid, 3 cols at lg, 2 at sm, 1 at base. No icons.
  * Each cell renders a unique inline-SVG mock per `visualHint` from copy.json.
  * Style follows the `GoogleMeetMock` reference in
- * `src/components/hero/HeroLibraryDemo.tsx`  --  clean shapes, no external
+ * `src/components/hero/HeroLibraryDemo.tsx`  ----  clean shapes, no external
  * assets, viewBox-driven, minimal ASCII text labels.
  *
  * visualHint cases:
@@ -18,27 +18,37 @@ const DATA_SOURCE = "projects/corder-landing/src/components/sections/Features.ts
  *                              one playhead dot (the accent spotlight).
  *   - screen-video-frame     : 16:9 dark frame with centred play button
  *                              (the accent spotlight).
- *   - menu-bar-capsule       : macOS menu bar with a notification card,
- *                              solid accent "Record" pill (the accent
- *                              spotlight) + outlined "Skip".
+ *   - popover-widget         : faithful idle-state mock of the real Corder
+ *                              menu-bar popover (Sources/Corder/UI/
+ *                              PopoverContentView.swift). Dark 280x240 card
+ *                              with a hairline status row, a light Start
+ *                              recording button (red dot, product-faithful),
+ *                              a separator, an outlined Open library
+ *                              secondary button, and a small Quit link. The
+ *                              accent spotlight is the dropdown caret anchor
+ *                              at the top  ----  the visual signal that this
+ *                              widget lives in the menu bar. Decision logged
+ *                              in DECISIONS.md 2026-05-21.
  *   - drag-out-gesture       : small transcript card + dashed curve to a
  *                              Notion drop target. The curve itself is the
  *                              accent spotlight.
- *   - audio-sound-row        : macOS-Sound-preferences-style row list.
- *                              The selected "Corder" row carries the accent
- *                              left-border + filled radio dot (the
- *                              accent spotlight).
- *   - version-sequence       : Flash 2.5 -> Flash 3 -> Pro 4 chips, middle
- *                              chip outlined in accent (the accent
- *                              spotlight).
+ *   - no-bot-grid            : Zoom-style 2-tile call grid ("Vadym" + "You")
+ *                              with no third "Corder" participant. An off-grid
+ *                              annotation labelled "Corder" with a hairline
+ *                              pointing up to the menu bar area. The
+ *                              annotation hairline + label is the accent
+ *                              spotlight  ----  it teaches the absence.
+ *   - transcript-fragment    : audio scrubber on top + one transcript line
+ *                              underneath with a coloured speaker badge
+ *                              ("KH"). The scrubber's accent progress fill is
+ *                              the accent spotlight.
  *
  * Doctrine compliant: zero pictograms in the cell chrome, hairlines as the
  * only structural separator, no shadows, doctrine easing on all hover
  * transitions, ASCII only inside <text> elements, no microphone icons.
  *
  * Each illustration uses accent green (#217a50 via var(--color-accent)) in
- * exactly ONE element role per cell  --  see CHANGELOG entry for the per-cell
- * mapping.
+ * exactly ONE element role per cell.
  */
 export function Features() {
   const { features } = copy;
@@ -119,15 +129,15 @@ function FeatureVisual({ cell }: { cell: FeatureCellData }) {
         </div>
       );
 
-    case "menu-bar-capsule":
+    case "popover-widget":
       return (
         <div
           className="feature-cell__visual"
-          data-component="FeatureVisual.MenuBarCapsule"
+          data-component="FeatureVisual.PopoverWidget"
           data-source={DATA_SOURCE}
-          data-tokens="color-surface,color-border,color-text,color-accent,font-sans"
+          data-tokens="color-surface,color-border,color-text,color-accent,font-sans,font-mono"
         >
-          <MenuBarCapsule />
+          <PopoverWidget />
         </div>
       );
 
@@ -143,27 +153,27 @@ function FeatureVisual({ cell }: { cell: FeatureCellData }) {
         </div>
       );
 
-    case "audio-sound-row":
+    case "no-bot-grid":
       return (
         <div
           className="feature-cell__visual"
-          data-component="FeatureVisual.AudioSoundRow"
+          data-component="FeatureVisual.NoBotGrid"
           data-source={DATA_SOURCE}
           data-tokens="color-surface,color-border,color-text,color-accent,font-sans"
         >
-          <AudioSoundRow />
+          <NoBotGrid />
         </div>
       );
 
-    case "version-sequence":
+    case "transcript-fragment":
       return (
         <div
           className="feature-cell__visual"
-          data-component="FeatureVisual.VersionSequence"
+          data-component="FeatureVisual.TranscriptFragment"
           data-source={DATA_SOURCE}
-          data-tokens="color-accent,color-surface,color-border,font-mono"
+          data-tokens="color-surface,color-border,color-text,color-accent,font-sans"
         >
-          <VersionSequence sequence={cell.versionSequence ?? "Flash 2.5 -> Flash 3 -> Pro 4"} />
+          <TranscriptFragment />
         </div>
       );
 
@@ -175,10 +185,10 @@ function FeatureVisual({ cell }: { cell: FeatureCellData }) {
 /* ---------- Inline SVG mocks ---------------------------------------- */
 
 /**
- * 01  --  Two horizontal speaker rows. Vadym row uses purple `#5a3aa6` (the
+ * 01  ----  Two horizontal speaker rows. Vadym row uses purple `#5a3aa6` (the
  * landing's secondary speaker colour, scoped to product-UI demos). Kostiantyn
  * row uses neutral grey ticks. A single accent-green playhead dot sits on the
- * Vadym row  --  that is the accent spotlight for this cell.
+ * Vadym row  ----  that is the accent spotlight for this cell.
  *
  * Why purple is not a "second accent": it lives only inside speaker-coded
  * product UI (Hero demo + this fragment), never in chrome.
@@ -195,7 +205,7 @@ function MiniTimelineFragment() {
       {/* Background card */}
       <rect x="0" y="0" width="320" height="120" rx="8" fill="var(--color-surface-2)" stroke="var(--color-border)" />
 
-      {/* Row 1  --  Vadym (purple ticks) */}
+      {/* Row 1  ----  Vadym (purple ticks) */}
       <text
         x="14" y="34"
         fontFamily="var(--font-sans), system-ui, sans-serif"
@@ -206,7 +216,7 @@ function MiniTimelineFragment() {
         Vadym
       </text>
       <rect x="78" y="26" width="226" height="8" rx="4" fill="var(--color-border)" />
-      {/* Vadym ticks  --  varying widths */}
+      {/* Vadym ticks  ----  varying widths */}
       <rect x="86"  y="26" width="14" height="8" rx="2" fill="#5a3aa6" />
       <rect x="108" y="26" width="22" height="8" rx="2" fill="#5a3aa6" />
       <rect x="138" y="26" width="10" height="8" rx="2" fill="#5a3aa6" />
@@ -215,12 +225,12 @@ function MiniTimelineFragment() {
       <rect x="222" y="26" width="20" height="8" rx="2" fill="#5a3aa6" />
       <rect x="252" y="26" width="12" height="8" rx="2" fill="#5a3aa6" />
       <rect x="272" y="26" width="22" height="8" rx="2" fill="#5a3aa6" />
-      {/* Playhead  --  accent spotlight */}
+      {/* Playhead  ----  accent spotlight */}
       <line x1="172" y1="18" x2="172" y2="42" stroke="var(--color-accent)" strokeWidth="1.5" />
       <circle cx="172" cy="30" r="5" fill="var(--color-accent)" />
       <circle cx="172" cy="30" r="2" fill="#ffffff" />
 
-      {/* Row 2  --  Kostiantyn (neutral ticks) */}
+      {/* Row 2  ----  Kostiantyn (neutral ticks) */}
       <text
         x="14" y="80"
         fontFamily="var(--font-sans), system-ui, sans-serif"
@@ -248,7 +258,7 @@ function MiniTimelineFragment() {
 }
 
 /**
- * 02  --  16:9 dark frame mocking a screen-recording preview. A single accent
+ * 02  ----  16:9 dark frame mocking a screen-recording preview. A single accent
  * play button sits centred; that is the accent spotlight. Inner geometry
  * (window chrome strip + faint code-line stripes) signals "screen content"
  * without being a participant grid or a microphone icon.
@@ -273,7 +283,7 @@ function ScreenVideoFrame() {
       <circle cx="50" cy="25" r="3.2" fill="#34a853" />
       <rect x="120" y="20" width="80" height="10" rx="3" fill="#202124" />
 
-      {/* Faint "code" lines inside the window  --  pure decoration */}
+      {/* Faint "code" lines inside the window  ----  pure decoration */}
       <rect x="26" y="50"  width="60"  height="4" rx="1" fill="#3c4043" />
       <rect x="92" y="50"  width="120" height="4" rx="1" fill="#3c4043" />
       <rect x="26" y="62"  width="40"  height="4" rx="1" fill="#3c4043" />
@@ -284,7 +294,7 @@ function ScreenVideoFrame() {
       <rect x="26" y="130" width="140" height="4" rx="1" fill="#3c4043" />
       <rect x="26" y="142" width="50"  height="4" rx="1" fill="#3c4043" />
 
-      {/* Centre play button  --  accent spotlight */}
+      {/* Centre play button  ----  accent spotlight */}
       <circle cx="160" cy="90" r="22" fill="var(--color-accent)" />
       <path d="M154 80 L154 100 L172 90 Z" fill="#ffffff" />
     </svg>
@@ -292,96 +302,179 @@ function ScreenVideoFrame() {
 }
 
 /**
- * 03  --  macOS menu bar fragment with a notification capsule.
- * Top strip: dark menu bar with three faint chrome glyphs.
- * Capsule: light card on neutral background. Solid accent "Record" button is
- * the spotlight. "Skip" is an outlined neutral pill.
+ * 03  ----  Faithful inline-SVG mock of the IDLE state of the real Corder
+ * menu-bar popover. Source: `/Users/3mpq/Corder/Sources/Corder/UI/
+ * PopoverContentView.swift` (idleSection, IdleStatus, FlatButtonView).
+ *
+ * Geometry follows the Swift values:
+ *   - Outer card: 280x240, padding 20 (matches `.padding(20)` + `.frame(width: 320)`
+ *     minus the surrounding sidebar/menubar margin shown here implicitly).
+ *   - VStack spacing 18 between sections (idle row, separator, library row).
+ *   - IdleStatus inner padding: horizontal 16, vertical 14, corner radius 8.
+ *   - Buttons: vertical padding 13, horizontal 16, corner radius 8.
+ *   - Quit link: 12pt grey, centered, 4pt vertical padding.
+ *
+ * Colour choices:
+ *   - Card background: `#1c1c1e` (a faithful stand-in for
+ *     `NSColor.windowBackgroundColor` in macOS Dark appearance, which is the
+ *     popover's natural rendering on a system menu bar).
+ *   - Idle status dot: 45% white (matches `Color.secondary.opacity(0.45)`).
+ *   - Start recording button: light fill (`#f5f5f7`), near-black text
+ *     (`#111`), red 8x8 dot (`#dc2626` reads as the same crimson family as
+ *     the real `Color.red`). Keeping the dot RED preserves product semantics
+ *     (red = recording state); switching it to accent green would mislead
+ *     users who later open the app and see a red dot. Decision in
+ *     DECISIONS.md 2026-05-21.
+ *   - Open library secondary button: transparent fill, white-10% border,
+ *     white 85% text. Mirrors `.secondary` FlatButtonStyle.
+ *   - Quit link: white 45%, 12pt, centered.
+ *   - Separator: white 8% hairline, matches `Color.primary.opacity(0.08)`.
+ *
+ * Accent spotlight: the dropdown caret/anchor at the top-center. It is the
+ * only accent-coloured element in the illustration and signals "this widget
+ * lives in the menu bar". Without it the popover would float context-free;
+ * with it the meaning of AUTO-DETECT is reinforced visually.
  */
-function MenuBarCapsule() {
+function PopoverWidget() {
   return (
     <svg
-      className="ftr-svg ftr-svg--menubar"
-      viewBox="0 0 320 160"
+      className="ftr-svg ftr-svg--popover"
+      viewBox="0 0 320 260"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label="macOS menu bar notification asking to record"
+      aria-label="Corder menu bar popover, idle state, with Start recording and Open library buttons"
     >
-      {/* Page backdrop */}
-      <rect x="0" y="0" width="320" height="160" rx="8" fill="var(--color-surface-2)" />
+      {/* Accent caret  ----  the menu-bar anchor (the accent spotlight) */}
+      <path
+        d="M160 0 L168 10 L152 10 Z"
+        fill="var(--color-accent)"
+      />
+      {/* Tiny accent dot above the caret hints at the status-bar icon */}
+      <circle cx="160" cy="-2" r="0" fill="var(--color-accent)" />
 
-      {/* Top dark menu bar strip */}
-      <rect x="0" y="0" width="320" height="20" fill="#1c1c1e" />
-      <circle cx="11" cy="10" r="3" fill="#ffffff" opacity="0.85" />
-      <rect x="20" y="7" width="22" height="6" rx="1" fill="#ffffff" opacity="0.7" />
-      <rect x="48" y="7" width="14" height="6" rx="1" fill="#ffffff" opacity="0.55" />
-      <rect x="68" y="7" width="16" height="6" rx="1" fill="#ffffff" opacity="0.55" />
-      {/* Right cluster  --  clock + status dots */}
-      <rect x="266" y="7" width="22" height="6" rx="1" fill="#ffffff" opacity="0.7" />
-      <circle cx="298" cy="10" r="2.4" fill="#ffffff" opacity="0.6" />
-      <circle cx="308" cy="10" r="2.4" fill="#ffffff" opacity="0.6" />
+      {/* Popover card */}
+      <rect
+        x="20" y="14"
+        width="280" height="240"
+        rx="14"
+        fill="#1c1c1e"
+        stroke="rgba(255,255,255,0.06)"
+        strokeWidth="1"
+      />
 
-      {/* Notification anchor caret pointing up to the menu bar */}
-      <path d="M252 26 L258 32 L246 32 Z" fill="var(--color-bg)" stroke="var(--color-border)" strokeWidth="1" />
-      <rect x="245" y="31.5" width="14" height="2" fill="var(--color-bg)" />
-
-      {/* Notification card */}
-      <rect x="60" y="34" width="248" height="84" rx="10" fill="var(--color-bg)" stroke="var(--color-border)" strokeWidth="1" />
-
-      {/* App tag / source */}
+      {/* ---- Idle status row ---- */}
+      {/* Outer hairline frame: 240x60, corner radius 8 */}
+      <rect
+        x="40" y="34"
+        width="240" height="60"
+        rx="8"
+        fill="none"
+        stroke="rgba(255,255,255,0.10)"
+        strokeWidth="1"
+      />
+      {/* Status dot 10px, 45% white */}
+      <circle cx="60" cy="64" r="5" fill="rgba(255,255,255,0.45)" />
+      {/* "Not recording" label, 14pt regular, secondary */}
       <text
-        x="74" y="54"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="9.5"
-        fontWeight="600"
-        letterSpacing="0.5"
-        fill="var(--color-text-muted)"
-      >
-        CORDER
-      </text>
-
-      {/* Headline */}
-      <text
-        x="74" y="78"
+        x="78" y="60"
         fontFamily="var(--font-sans), system-ui, sans-serif"
         fontSize="13"
-        fontWeight="600"
-        fill="var(--color-text)"
+        fontWeight="400"
+        fill="rgba(255,255,255,0.55)"
       >
-        Zoom is open. Record?
+        Not recording
+      </text>
+      {/* "00:00" monospaced, 22pt light, secondary */}
+      <text
+        x="78" y="84"
+        fontFamily="var(--font-mono), ui-monospace, monospace"
+        fontSize="20"
+        fontWeight="300"
+        fill="rgba(255,255,255,0.55)"
+      >
+        00:00
       </text>
 
-      {/* Skip pill  --  neutral outline */}
-      <rect x="74" y="92" width="60" height="20" rx="10" fill="var(--color-bg)" stroke="var(--color-border-strong)" strokeWidth="1" />
+      {/* ---- Primary "Start recording" button ---- */}
+      {/* Light card, 240x44, radius 8 */}
+      <rect
+        x="40" y="112"
+        width="240" height="44"
+        rx="8"
+        fill="#f5f5f7"
+      />
+      {/* Red 8x8 recording dot */}
+      <circle cx="100" cy="134" r="4" fill="#dc2626" />
+      {/* Label  ----  14pt regular, near-black */}
       <text
-        x="104" y="106"
-        textAnchor="middle"
+        x="114" y="139"
         fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="11"
+        fontSize="14"
         fontWeight="500"
-        fill="var(--color-text)"
+        fill="#111111"
       >
-        Skip
+        Start recording
       </text>
 
-      {/* Record pill  --  accent spotlight */}
-      <rect x="142" y="92" width="74" height="20" rx="10" fill="var(--color-accent)" />
-      <circle cx="154" cy="102" r="3.5" fill="#ffffff" />
+      {/* ---- Hairline separator ---- */}
+      <line
+        x1="40" y1="178" x2="280" y2="178"
+        stroke="rgba(255,255,255,0.08)" strokeWidth="1"
+      />
+
+      {/* ---- Secondary "Open library" button ---- */}
+      <rect
+        x="40" y="190"
+        width="240" height="40"
+        rx="8"
+        fill="none"
+        stroke="rgba(255,255,255,0.16)"
+        strokeWidth="1"
+      />
+      {/* rectangle.stack icon  ----  two overlapping squircles */}
+      <rect
+        x="116" y="204"
+        width="14" height="10"
+        rx="2"
+        fill="none"
+        stroke="rgba(255,255,255,0.85)"
+        strokeWidth="1"
+      />
+      <rect
+        x="120" y="208"
+        width="14" height="10"
+        rx="2"
+        fill="none"
+        stroke="rgba(255,255,255,0.85)"
+        strokeWidth="1"
+      />
       <text
-        x="186" y="106"
+        x="142" y="216"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="14"
+        fontWeight="500"
+        fill="rgba(255,255,255,0.85)"
+      >
+        Open library
+      </text>
+
+      {/* ---- Quit link  ----  small grey, centered ---- */}
+      <text
+        x="160" y="246"
         textAnchor="middle"
         fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="11"
-        fontWeight="600"
-        fill="#ffffff"
+        fontSize="12"
+        fontWeight="400"
+        fill="rgba(255,255,255,0.45)"
       >
-        Record
+        Quit
       </text>
     </svg>
   );
 }
 
 /**
- * 04  --  A small transcript file-card (title + truncated lines) drifts toward a
+ * 04  ----  A small transcript file-card (title + truncated lines) drifts toward a
  * dashed Notion drop-target. The accent-green dashed curve is the spotlight.
  *
  * ASCII inside text labels only.
@@ -398,7 +491,7 @@ function DragOutGesture() {
       {/* Background */}
       <rect x="0" y="0" width="320" height="160" rx="8" fill="var(--color-surface-2)" />
 
-      {/* Notion drop target  --  dashed outline */}
+      {/* Notion drop target  ----  dashed outline */}
       <rect
         x="200" y="36" width="108" height="88" rx="8"
         fill="var(--color-bg)"
@@ -425,12 +518,12 @@ function DragOutGesture() {
       >
         Drop here
       </text>
-      {/* Small page glyph inside the target  --  two stacked lines */}
+      {/* Small page glyph inside the target  ----  two stacked lines */}
       <rect x="232" y="94" width="44" height="2" rx="1" fill="var(--color-border-strong)" />
       <rect x="232" y="100" width="32" height="2" rx="1" fill="var(--color-border-strong)" />
       <rect x="232" y="106" width="38" height="2" rx="1" fill="var(--color-border-strong)" />
 
-      {/* Transcript card  --  mid-drag, slightly rotated */}
+      {/* Transcript card  ----  mid-drag, slightly rotated */}
       <g transform="translate(12 30) rotate(-4 60 50)">
         <rect
           x="0" y="0" width="140" height="98" rx="8"
@@ -466,7 +559,7 @@ function DragOutGesture() {
         <rect x="14" y="84" width="70"  height="3" rx="1" fill="var(--color-border)" />
       </g>
 
-      {/* Dashed accent curve  --  drag trace, the accent spotlight */}
+      {/* Dashed accent curve  ----  drag trace, the accent spotlight */}
       <path
         d="M158 70 Q 184 24, 220 60"
         fill="none"
@@ -485,199 +578,218 @@ function DragOutGesture() {
 }
 
 /**
- * 05  --  macOS Sound preferences-style row list. Three rows; the third
- * ("Corder") is selected: accent left-border + filled radio dot. That is the
- * accent spotlight. Other rows are inert neutral rings.
+ * 05  ----  Zoom-style 2-tile call grid. Two participants ("Vadym" + "You"),
+ * no third "Corder" tile in the call. An off-grid annotation labelled
+ * "Corder" with a thin accent hairline points up to the menu-bar area above
+ * the grid. The annotation hairline + label is the accent spotlight  ----
+ * the picture teaches the absence: Corder lives in the menu bar, not in the
+ * participant list.
+ *
+ * No microphone icons. Participant labels are ASCII initials in coloured
+ * speaker chips (purple #5a3aa6 + amber #a16207, the same product-UI palette
+ * used in the Hero demo  ----  never used as standalone chrome).
  */
-function AudioSoundRow() {
+function NoBotGrid() {
   return (
     <svg
-      className="ftr-svg ftr-svg--audio"
-      viewBox="0 0 320 160"
+      className="ftr-svg ftr-svg--nobot"
+      viewBox="0 0 320 200"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label="Audio device list with Corder selected"
+      aria-label="Two-participant call grid with no third bot, annotation showing Corder lives in the menu bar"
     >
-      {/* Card */}
-      <rect x="0" y="0" width="320" height="160" rx="8" fill="var(--color-bg)" stroke="var(--color-border)" strokeWidth="1" />
+      {/* Menu bar strip at the very top  ----  dark, with a tiny status icon */}
+      <rect x="0" y="0" width="320" height="14" fill="#1c1c1e" />
+      <circle cx="296" cy="7" r="3" fill="rgba(255,255,255,0.65)" />
+      <rect x="246" y="4" width="36" height="6" rx="1" fill="rgba(255,255,255,0.35)" />
 
-      {/* Column header */}
+      {/* Call canvas */}
+      <rect x="0" y="20" width="320" height="180" rx="8" fill="#101112" />
+
+      {/* Tile 1  ----  Vadym (purple chip) */}
+      <rect x="14" y="34" width="142" height="120" rx="8" fill="#1f2123" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+      <circle cx="85" cy="78" r="22" fill="#5a3aa6" />
       <text
-        x="20" y="22"
+        x="85" y="84"
+        textAnchor="middle"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="16"
+        fontWeight="600"
+        fill="#ffffff"
+      >
+        V
+      </text>
+      <rect x="22" y="138" width="58" height="12" rx="3" fill="rgba(0,0,0,0.6)" />
+      <text
+        x="28" y="147"
         fontFamily="var(--font-sans), system-ui, sans-serif"
         fontSize="9"
-        fontWeight="600"
-        letterSpacing="0.6"
-        fill="var(--color-text-muted)"
+        fontWeight="500"
+        fill="#ffffff"
       >
-        OUTPUT DEVICE
+        Vadym
       </text>
 
-      {/* Header divider */}
-      <line x1="0" y1="34" x2="320" y2="34" stroke="var(--color-border)" strokeWidth="1" />
+      {/* Tile 2  ----  You (amber chip) */}
+      <rect x="164" y="34" width="142" height="120" rx="8" fill="#1f2123" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+      <circle cx="235" cy="78" r="22" fill="#a16207" />
+      <text
+        x="235" y="84"
+        textAnchor="middle"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="16"
+        fontWeight="600"
+        fill="#ffffff"
+      >
+        Y
+      </text>
+      <rect x="172" y="138" width="44" height="12" rx="3" fill="rgba(0,0,0,0.6)" />
+      <text
+        x="178" y="147"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="9"
+        fontWeight="500"
+        fill="#ffffff"
+      >
+        You
+      </text>
 
-      {/* Row 1  --  MacBook microphone (inactive) */}
-      <g>
-        <circle cx="32" cy="58" r="5" fill="none" stroke="var(--color-border-strong)" strokeWidth="1" />
-        <text
-          x="48" y="62"
-          fontFamily="var(--font-sans), system-ui, sans-serif"
-          fontSize="12"
-          fontWeight="500"
-          fill="var(--color-text)"
-        >
-          MacBook microphone
-        </text>
-        <rect x="218" y="50" width="56" height="16" rx="3" fill="var(--color-surface)" stroke="var(--color-border)" strokeWidth="1" />
-        <text
-          x="246" y="61"
-          textAnchor="middle"
-          fontFamily="var(--font-sans), system-ui, sans-serif"
-          fontSize="9"
-          fontWeight="600"
-          letterSpacing="0.4"
-          fill="var(--color-text-muted)"
-        >
-          BUILT-IN
-        </text>
-      </g>
-      <line x1="20" y1="78" x2="300" y2="78" stroke="var(--color-border)" strokeWidth="1" />
+      {/* Participants caption  ----  "2 in this call" */}
+      <text
+        x="160" y="174"
+        textAnchor="middle"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="10"
+        fontWeight="500"
+        fill="rgba(255,255,255,0.45)"
+      >
+        2 in this call
+      </text>
 
-      {/* Row 2  --  External display (inactive) */}
-      <g>
-        <circle cx="32" cy="98" r="5" fill="none" stroke="var(--color-border-strong)" strokeWidth="1" />
-        <text
-          x="48" y="102"
-          fontFamily="var(--font-sans), system-ui, sans-serif"
-          fontSize="12"
-          fontWeight="500"
-          fill="var(--color-text)"
-        >
-          External display
-        </text>
-      </g>
-      <line x1="20" y1="118" x2="300" y2="118" stroke="var(--color-border)" strokeWidth="1" />
-
-      {/* Row 3  --  Corder (selected, accent spotlight) */}
-      <g>
-        {/* Accent left border */}
-        <rect x="0" y="118" width="3" height="42" fill="var(--color-accent)" />
-        {/* Subtle accent tint across the row */}
-        <rect x="3" y="118" width="317" height="42" fill="var(--color-accent-subtle)" />
-        {/* Filled radio dot */}
-        <circle cx="32" cy="139" r="5" fill="var(--color-accent)" />
-        <circle cx="32" cy="139" r="2" fill="#ffffff" />
-        <text
-          x="48" y="143"
-          fontFamily="var(--font-sans), system-ui, sans-serif"
-          fontSize="12"
-          fontWeight="600"
-          fill="var(--color-text)"
-        >
-          Corder
-        </text>
-        <text
-          x="48" y="156"
-          fontFamily="var(--font-sans), system-ui, sans-serif"
-          fontSize="10"
-          fill="var(--color-text-muted)"
-        >
-          CoreAudio process tap
-        </text>
-      </g>
+      {/* Annotation  ----  the accent spotlight */}
+      {/* Hairline goes from the menu-bar status icon down-right to a label */}
+      <path
+        d="M296 14 L296 26 L266 26"
+        fill="none"
+        stroke="var(--color-accent)"
+        strokeWidth="1"
+      />
+      {/* Small accent dot at the elbow */}
+      <circle cx="296" cy="14" r="2" fill="var(--color-accent)" />
+      {/* Label sits over the dark canvas, near the elbow */}
+      <text
+        x="260" y="29"
+        textAnchor="end"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="10"
+        fontWeight="600"
+        letterSpacing="0.4"
+        fill="var(--color-accent)"
+      >
+        CORDER LIVES HERE
+      </text>
     </svg>
   );
 }
 
 /**
- * 06  --  Three monospace chips connected by ASCII `->`. Middle chip ("Flash 3")
- * carries the accent outline  --  that is the accent spotlight.
+ * 06  ----  Audio scrubber + one transcript line beneath. The scrubber's
+ * accent progress fill (filled portion + playhead handle) is the accent
+ * spotlight. The speaker badge "KH" sits in the secondary product-UI palette
+ * (purple, scoped to demos), the transcript line is neutral grey.
  *
- * Parses the sequence string, swaps any typographic arrow for `->`, and
- * trims whitespace.
+ * Approximate IBM Plex Sans metrics drive the line geometry; no real text
+ * length math, just placeholder rects to keep CLS at zero.
  */
-function VersionSequence({ sequence }: { sequence: string }) {
-  // Normalise: accept "Flash 2.5 -> Flash 3 -> Pro 4" or legacy "→" variants.
-  // ASCII only inside the rendered text.
-  const ascii = sequence.replace(/→/g, "->");
-  const parts = ascii.split("->").map((p) => p.trim()).filter(Boolean);
-  // Active chip = the middle one ("current model"). If only 2 chips, the
-  // newer (right) one is current; if 1, that one is current.
-  const activeIndex = parts.length >= 3 ? 1 : parts.length - 1;
-
-  // Chip widths follow the longest label so the row stays balanced.
-  const CHIP_H = 30;
-  const CHIP_PAD_X = 12;
-  const ARROW_W = 22;
-  // Approximate glyph width for IBM Plex Mono 13px is ~7.6px. We size each
-  // chip to fit its own label so SVG layout matches CSS reality.
-  const chipW = (label: string) => Math.max(56, label.length * 7.6 + CHIP_PAD_X * 2);
-
-  // Compute cumulative x positions.
-  const positions: { x: number; w: number; label: string; active: boolean }[] = [];
-  let cursor = 0;
-  parts.forEach((label, i) => {
-    const w = chipW(label);
-    positions.push({ x: cursor, w, label, active: i === activeIndex });
-    cursor += w + ARROW_W;
-  });
-  // Total used width minus the trailing arrow allowance.
-  const totalW = cursor - ARROW_W;
-  const VB_W = Math.max(280, totalW + 8);
-  const VB_H = 56;
-  // Centre the row in viewBox.
-  const offsetX = (VB_W - totalW) / 2;
-
+function TranscriptFragment() {
   return (
     <svg
-      className="ftr-svg ftr-svg--versions"
-      viewBox={`0 0 ${VB_W} ${VB_H}`}
+      className="ftr-svg ftr-svg--transcript"
+      viewBox="0 0 320 160"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label="Version sequence with the current model highlighted"
+      aria-label="Audio scrubber and one transcript line with a speaker initials badge"
     >
-      {positions.map((p, i) => {
-        const cx = offsetX + p.x;
-        const cy = (VB_H - CHIP_H) / 2;
-        return (
-          <g key={`${p.label}-${i}`}>
-            <rect
-              x={cx}
-              y={cy}
-              width={p.w}
-              height={CHIP_H}
-              rx="6"
-              fill={p.active ? "var(--color-accent-subtle)" : "var(--color-surface)"}
-              stroke={p.active ? "var(--color-accent)" : "var(--color-border)"}
-              strokeWidth={p.active ? 1.5 : 1}
-            />
-            <text
-              x={cx + p.w / 2}
-              y={cy + CHIP_H / 2 + 4}
-              textAnchor="middle"
-              fontFamily="var(--font-mono), ui-monospace, monospace"
-              fontSize="13"
-              fontWeight={p.active ? 600 : 500}
-              fill={p.active ? "var(--color-accent)" : "var(--color-text)"}
-            >
-              {p.label}
-            </text>
-            {i < positions.length - 1 && (
-              <text
-                x={cx + p.w + ARROW_W / 2}
-                y={cy + CHIP_H / 2 + 4}
-                textAnchor="middle"
-                fontFamily="var(--font-mono), ui-monospace, monospace"
-                fontSize="13"
-                fontWeight="500"
-                fill="var(--color-text-subtle)"
-              >
-                {"->"}
-              </text>
-            )}
-          </g>
-        );
-      })}
+      {/* Card background */}
+      <rect x="0" y="0" width="320" height="160" rx="8" fill="var(--color-bg)" stroke="var(--color-border)" strokeWidth="1" />
+
+      {/* ---- Audio scrubber row ---- */}
+      {/* Time label left */}
+      <text
+        x="18" y="42"
+        fontFamily="var(--font-mono), ui-monospace, monospace"
+        fontSize="10"
+        fill="var(--color-text-muted)"
+      >
+        02:14
+      </text>
+      {/* Scrubber track  ----  208px wide, full neutral */}
+      <rect x="58" y="34" width="208" height="6" rx="3" fill="var(--color-border)" />
+      {/* Accent progress fill  ----  ~58% of 208 = 120px (the spotlight) */}
+      <rect x="58" y="34" width="120" height="6" rx="3" fill="var(--color-accent)" />
+      {/* Playhead handle */}
+      <circle cx="178" cy="37" r="6" fill="var(--color-accent)" />
+      <circle cx="178" cy="37" r="2.5" fill="#ffffff" />
+      {/* Time label right */}
+      <text
+        x="272" y="42"
+        fontFamily="var(--font-mono), ui-monospace, monospace"
+        fontSize="10"
+        fill="var(--color-text-muted)"
+      >
+        06:48
+      </text>
+
+      {/* Hairline divider between scrubber and transcript */}
+      <line x1="18" y1="62" x2="302" y2="62" stroke="var(--color-border)" strokeWidth="1" />
+
+      {/* ---- Transcript line ---- */}
+      {/* Speaker badge "KH"  ----  purple chip from product UI palette */}
+      <rect x="18" y="82" width="32" height="32" rx="6" fill="#5a3aa6" />
+      <text
+        x="34" y="103"
+        textAnchor="middle"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="12"
+        fontWeight="600"
+        fill="#ffffff"
+      >
+        KH
+      </text>
+
+      {/* Speaker name + timestamp */}
+      <text
+        x="62" y="92"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="11"
+        fontWeight="600"
+        fill="var(--color-text)"
+      >
+        Kostiantyn
+      </text>
+      <text
+        x="138" y="92"
+        fontFamily="var(--font-mono), ui-monospace, monospace"
+        fontSize="9"
+        fill="var(--color-text-muted)"
+      >
+        02:14
+      </text>
+
+      {/* Snippet text  ----  one short line */}
+      <text
+        x="62" y="110"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontSize="12"
+        fontWeight="400"
+        fill="var(--color-text)"
+      >
+        We can ship the cache by Friday.
+      </text>
+
+      {/* Faint second line for body */}
+      <rect x="62" y="120" width="180" height="3" rx="1" fill="var(--color-border)" />
+      <rect x="62" y="130" width="148" height="3" rx="1" fill="var(--color-border)" />
     </svg>
   );
 }
