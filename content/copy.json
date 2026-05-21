@@ -182,7 +182,7 @@
       {
         "eyebrow": "TIMELINE",
         "heading": "Jump to any speaker",
-        "body": "",
+        "body": "Click any tick. The audio jumps there.",
         "visualHint": "mini-timeline-fragment"
       },
       {
@@ -200,13 +200,13 @@
       {
         "eyebrow": "DRAG",
         "heading": "Drag out, no export dialog",
-        "body": "",
+        "body": "Drop into Notion, Apple Notes, anywhere.",
         "visualHint": "drag-out-gesture"
       },
       {
         "eyebrow": "NO-BOT",
         "heading": "No bot joins the call",
-        "body": "",
+        "body": "The other side sees one less tile.",
         "visualHint": "no-bot-grid"
       },
       {
