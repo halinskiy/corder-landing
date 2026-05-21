@@ -3612,11 +3612,15 @@ button:focus:not(:focus-visible) {
 :root[data-motion="off"] .section-blob { animation: none !important; }
 
 /* Mobile: hide all decorative blobs (hero pair + 3 section blobs +
- * footer blob). The phone viewport is too tight for ambient atmosphere
- * to land - it just adds visual noise. */
+ * footer blob) AND the floating presence orb / morph form. On a
+ * narrow viewport the fixed-corner card overlaps footer content;
+ * CorderPresenceStaticSection renders inline above the footer
+ * instead. */
 @media (max-width: 640px) {
   .hero-blob,
-  .section-blob {
+  .section-blob,
+  [data-component="CorderPresenceOrb"],
+  [data-component="CorderPresenceForm"] {
     display: none !important;
   }
 }
