@@ -2148,31 +2148,73 @@ button:focus:not(:focus-visible) {
 }
 
 /* Mobile: drop the diagonal-scroll choreography. Each step becomes a
-   normal 1-column row with the window stacked above the text. */
+   clean numbered card stacked vertically. The desktop window/ghost
+   surfaces hide; the eyebrow (01/02/03) is promoted to a large accent
+   anchor so the section reads as a deliberate step sequence rather
+   than three loose paragraphs. */
 @media (max-width: 767px) {
+  .hiw-track {
+    gap: 0;
+  }
   .hiw-row {
     height: auto;
-    padding-block: 56px;
+    padding: 28px 0;
     flex-direction: column;
     align-items: stretch;
-    gap: 24px;
+    gap: 14px;
+    border-top: 1px solid var(--color-border);
+  }
+  .hiw-row:first-of-type {
+    border-top: 0;
+    padding-top: 8px;
   }
   .hiw-row--text-right .hiw-text,
   .hiw-row--text-left .hiw-text {
     width: 100%;
     margin: 0;
+    gap: 8px;
   }
+  /* Hide all decorative surfaces on mobile - the numbered step cards
+     carry the section by themselves. */
   .hiw-window-wrap {
     position: relative;
     top: auto !important;
     left: auto !important;
     width: 100%;
   }
-  /* Only one window block needs to render on mobile; hide the
-     animated one (it has aria-hidden), the static fallback covers
-     desktop reduced-motion users. */
   .hiw-track > .hiw-window-wrap { display: none; }
   .hiw-ghost { display: none; }
+
+  /* Big accent step numbers as the visual anchor. The component does
+   * not render a `.hiw-text__eyebrow` element, so we synthesize 01/02/03
+   * via CSS counter + ::before on the .hiw-text container. */
+  .hiw-track {
+    counter-reset: hiw-step;
+  }
+  .hiw-row .hiw-text {
+    counter-increment: hiw-step;
+  }
+  .hiw-row .hiw-text::before {
+    content: "0" counter(hiw-step);
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    color: var(--color-accent);
+    margin-bottom: 8px;
+  }
+  .hiw-text__heading {
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+  .hiw-text__body {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+  }
 }
 
 /* Reduced-motion fallback layout */
