@@ -106,7 +106,7 @@ export function Nav() {
             backgroundColor: "var(--color-accent)",
           }}
         >
-          Free Download for macOS
+          Download for Mac
         </a>
       </div>
     </header>

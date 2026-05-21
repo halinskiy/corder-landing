@@ -427,8 +427,12 @@ function CorderPresenceForm() {
       )}
       <style>{`
         @media (max-width: 640px) {
+          /* Mobile: equal insets on left + right + bottom so the form is
+           * symmetrically pinned, not cornered. Width is auto-derived
+           * from the left/right anchors. */
           [data-component="CorderPresenceForm"] {
-            width: min(92vw, 360px) !important;
+            width: auto !important;
+            left: 28px !important;
             right: 28px !important;
             bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
           }
