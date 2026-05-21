@@ -4,6 +4,44 @@
 
 ---
 
+## 2026-05-21 -- HowItWorks chapter mockups: layout + tracking decisions
+
+### Decision 1: Three-mockup swap inside the existing sticky window, not new windows per row
+
+**Решение:** оставить ровно один `WindowFrame` (тот, что уже использует `hiw-window-wrap`, sticky-snap, tilt и CorderPresence `layoutId`), и менять только ВНУТРЕННОСТИ через `AnimatePresence`. Каждая chapter row не получает свой собственный window.
+
+**Контекст:** brief предлагал три "swap" мockup'a, но не уточнял где они физически живут. Альтернатива была -- по window на row, прячем все кроме активного.
+
+**Альтернативы:**
+- a) **Three full windows, one visible per row.** Отвергнуто: ломает CorderPresence morph-chain (orb expects ровно один `layoutId={CORDER_PRESENCE_LAYOUT_ID}` source). Также теряется уже отлаженная sticky/snap/tilt механика.
+- b) **Single window, swap inner content** (выбрано). Window CHROME (titlebar, layoutId) -- константа. Inner content -- меняется. Это сохраняет orb morph chain, sticky-snap, и tilt; добавляет только дополнительный layer для crossfade.
+
+**Последствия:** `WindowFrame` теперь параметризован `chapter: 1 | 2 | 3` и `reduced` флагом. `.hiw-window-content` -- новый слой между чисто-chrome window и mockup'ом, который AnimatePresence использует как exit/enter snapshot.
+
+### Decision 2: IntersectionObserver на rows, не scrollYProgress-based step function
+
+**Решение:** active chapter tracking через `IntersectionObserver` с `rootMargin: -40% 0px -40% 0px`, не через дополнительный `useTransform` на scrollYProgress.
+
+**Контекст:** в HowItWorks уже есть `useScroll` + step-function для window position. Логичный шаг -- разделить тот же scroll progress на три равных bucket и взять index.
+
+**Альтернативы:**
+- a) **Reuse scrollYProgress + useTransform [0, 0.333, 0.666, 1] -> [1, 2, 3].** Отвергнуто: window position thresholds (0.34/0.36, 0.64/0.66) уже smoothed через `useSpring`. Если активный chapter дергается от spring overshoot, crossfade тоже дергается. Декаплинг через IntersectionObserver делает chapter switch event-driven по реальной viewport intersection -- стабильнее.
+- b) **IntersectionObserver** (выбрано). rootMargin `-40% 0px -40% 0px` означает chapter активируется только когда его центр пересек middle 20% band вьюпорта. Это совпадает с slot snap positions window'a (centres at 35/105/175vh). Single source of truth: "что видит пользователь в центре" = "что показывает window".
+
+### Decision 3: Static green orb внутри mockup'a, не canvas blob
+
+**Решение:** в каждом mockup'e нижний-правый recording-indicator -- статичный SVG-free CSS gradient circle (`.hl-mock-blob`), не canvas.
+
+**Контекст:** real hero demo использует `RecBlobCanvas` -- 110px canvas с rAF loop, breathing blob, активной/idle гонкой. В трех mockup'ах подряд это три canvas'a с тремя рекурсивными rAF -- 30 fps × 3 = 90 fps работы пока секция в view.
+
+**Альтернативы:**
+- a) **Three canvas blobs.** Отвергнуто: performance budget tight (≤80KB JS, INP <100ms). И canvas blob -- это hero-сигнатура; повторять три раза = размывает уникальность hero.
+- b) **Static CSS-only orb** (выбрано). Radial-gradient + box-shadow halo, 22×22px, zero JS, zero canvas. Сигнализирует "блоб тут есть" не отбирая внимания от main content mockup'a.
+
+**Последствия:** mockup'ы это product UI стопкадры, а не вторые live demo. Recording HUD читается как "iconic affordance", а не как "wow look another animated blob".
+
+---
+
 ## 2026-05-21 -- Features section: three decisions baked into the cell swap
 
 ### Decision 1: AUTO-DETECT popover keeps the RED Start-recording dot

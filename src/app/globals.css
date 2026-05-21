@@ -2242,6 +2242,481 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
+ *  HowItWorks chapter mockups — three full-fidelity Corder UI scenes
+ *  that swap inside the sticky window as chapters scroll past. Layer
+ *  on top of `.how-window--app` (16:10 box) + `.hero-library-demo`
+ *  token base. Inner content sits below the 28px titlebar; an
+ *  AnimatePresence crossfade swaps the active scene.
+ * ---------------------------------------------------------------------- */
+
+/* The crossfade layer sits inside `.how-window--app`, below the
+ * absolute titlebar. Positioned absolute so the framer-motion exit
+ * snapshot can overlap the enter snapshot during the 240 ms fade. */
+.hiw-window-content {
+  position: absolute;
+  inset: 28px 0 0 0;
+  overflow: hidden;
+}
+
+/* Shared shell for every chapter mock. Three-column variants:
+ *   dashboard   sidebar 200px | main flex | recent 220px
+ *   library     sidebar 200px | main flex (transcript + right inside)
+ *   settings    sidebar 200px | main flex (transcript + settings inside)
+ * The .hl-app default (240/1fr) from HeroLibraryDemo.css is overridden
+ * so the smaller in-window box doesn't crowd the sidebar. */
+.hl-mock-shell {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  height: 100%;
+  min-height: 0;
+  background: var(--hl-bg);
+}
+
+/* Tighter chrome inside the in-window mock (matches the .how-app
+ * proportions used elsewhere in this file). */
+.hl-mock-shell .hl-sidebar { background: var(--hl-bg-elev); border-right: 1px solid var(--hl-border); overflow: hidden; }
+.hl-mock-shell .hl-sidebar-titlebar-pad { display: none; }
+.hl-mock-shell .hl-sidebar-search { padding: 10px 10px 8px; }
+.hl-mock-shell .hl-sidebar-search .hl-search-field input {
+  height: 28px;
+  font-size: 11px;
+  padding: 0 10px 0 28px;
+}
+.hl-mock-shell .hl-sidebar-search .hl-search-field svg {
+  left: 10px;
+  width: 11px;
+  height: 11px;
+}
+.hl-mock-shell .hl-sidebar-list {
+  padding: 4px 8px 0;
+  margin-bottom: 0;
+  /* The shorter window box clips overflow without a scrollbar — the
+   * extra rows still exist in the DOM, they just sit below the visible
+   * frame. Matches how the real app trails meeting cards out of view
+   * until you scroll. */
+  overflow: hidden;
+}
+.hl-mock-shell .hl-sidebar-section-label {
+  font-size: 10px;
+  padding: 8px 6px 4px;
+}
+.hl-mock-shell .hl-meeting-item { padding: 7px 8px; gap: 2px; }
+.hl-mock-shell .hl-meeting-title { font-size: 11.5px; }
+.hl-mock-shell .hl-meeting-meta { font-size: 10.5px; gap: 5px; }
+.hl-mock-shell .hl-meeting-preview { font-size: 10.5px; -webkit-line-clamp: 1; }
+.hl-mock-shell .hl-meeting-people { font-size: 10.5px; }
+.hl-mock-shell .hl-meeting-people svg { width: 10px; height: 10px; }
+
+/* Header bar (breadcrumb + icon pills) — same tightening as .how-app. */
+.hl-mock-shell .hl-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--hl-bg); position: relative; }
+.hl-mock-shell .hl-main-header { padding: 10px 14px; min-height: 0; gap: 10px; }
+.hl-mock-shell .hl-breadcrumb { font-size: 11.5px; gap: 6px; min-width: 0; overflow: hidden; }
+.hl-mock-shell .hl-breadcrumb > span:not(.hl-breadcrumb-current) { color: var(--hl-fg-muted); flex-shrink: 0; }
+.hl-mock-shell .hl-breadcrumb-current {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.hl-mock-shell .hl-header-actions { gap: 6px; flex-shrink: 0; }
+.hl-mock-shell .hl-icon-pill { width: 24px; height: 24px; border: 1px solid var(--hl-border-strong); }
+.hl-mock-shell .hl-icon-pill svg { width: 11px; height: 11px; }
+.hl-mock-shell .hl-profile-avatar { width: 22px; height: 22px; font-size: 10px; }
+.hl-mock-shell .hl-header-divider { height: 14px; }
+
+/* Failed meeting state — red datestamp + red status dot.
+ * Mirrors the failed-state row in the real sidebar. */
+.hl-status-dot--failed { background: #c4423a; }
+.hl-meeting-item--failed .hl-meeting-title { color: #c4423a; }
+.hl-meeting-failed-label { color: var(--hl-fg-muted); }
+
+/* Static green recording orb in the bottom-right corner of the mocks.
+ * No animation, no canvas — just a soft glowy circle so the mockup
+ * acknowledges the inline-blob slot without burning CPU on three
+ * canvases at once. */
+.hl-mock-blob {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 36% 34%,
+    #2ea366 0%,
+    var(--hl-accent) 60%,
+    #0a5e34 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(33, 122, 80, 0.18),
+    0 0 18px rgba(33, 122, 80, 0.45);
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* ── Dashboard mock ─────────────────────────────────────────────────
+ * Inside .hl-main, render a Dashboard tab strip (Stats | Recent) and
+ * a body split into a 1.25fr / 1fr layout: the start card + stats sit
+ * on the left, the Recent rail on the right. */
+.hl-dash-detail {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.hl-dash-tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  border-bottom: 1px solid var(--hl-border);
+}
+.hl-dash-tab-col {
+  padding: 8px 14px 0;
+  display: flex;
+  gap: 16px;
+}
+.hl-dash-tab-col-left {
+  background: linear-gradient(
+    to right,
+    var(--hl-bg) 0,
+    var(--hl-bg) calc(100% - 4px),
+    var(--hl-border) calc(100% - 4px),
+    var(--hl-border) calc(100% - 3px),
+    var(--hl-bg) calc(100% - 3px),
+    var(--hl-bg) 100%
+  );
+}
+.hl-dash-tab-col .hl-tab { font-size: 12px; padding: 2px 0 8px; }
+
+.hl-dash-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.hl-dash-left {
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+  background: linear-gradient(
+    to right,
+    var(--hl-bg) 0,
+    var(--hl-bg) calc(100% - 4px),
+    var(--hl-border) calc(100% - 4px),
+    var(--hl-border) calc(100% - 3px),
+    var(--hl-bg) calc(100% - 3px),
+    var(--hl-bg) 100%
+  );
+}
+.hl-dash-start-card {
+  border: 1px solid var(--hl-border);
+  border-radius: 8px;
+  padding: 12px 14px 11px;
+  background: var(--hl-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex-shrink: 0;
+}
+.hl-dash-start-text { display: flex; flex-direction: column; gap: 3px; }
+.hl-dash-start-title {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hl-fg);
+}
+.hl-dash-start-sub {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--hl-fg-muted);
+}
+.hl-dash-start-btn {
+  align-self: stretch;
+  background: var(--hl-accent);
+  color: #ffffff;
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: default;
+  text-align: center;
+}
+.hl-dash-start-hint {
+  font-size: 10.5px;
+  color: var(--hl-fg-muted);
+  text-align: center;
+}
+.hl-dash-kbd {
+  display: inline-block;
+  margin-left: 2px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--hl-bg-elev);
+  border: 1px solid var(--hl-border);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--hl-fg);
+}
+.hl-dash-stats-card {
+  border: 1px solid var(--hl-border);
+  border-radius: 8px;
+  background: var(--hl-bg);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.hl-dash-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  gap: 12px;
+}
+.hl-dash-stat-row + .hl-dash-stat-row {
+  border-top: 1px solid var(--hl-border);
+}
+.hl-dash-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hl-fg-muted);
+}
+.hl-dash-stat-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--hl-fg);
+}
+
+.hl-dash-recent {
+  padding: 12px 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+.hl-dash-recent-card {
+  border: 1px solid var(--hl-border);
+  border-radius: 6px;
+  padding: 7px 10px 8px;
+  background: var(--hl-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.hl-dash-recent-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.hl-dash-recent-title {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--hl-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.hl-dash-recent-meta {
+  font-size: 10.5px;
+  color: var(--hl-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Library / Transcript mock & Settings mock ──────────────────────
+ * Both reuse the .hl-detail / .hl-detail-tabs / .hl-detail-body grid
+ * from HeroLibraryDemo.css, then tighten paddings to fit the smaller
+ * in-window box (same scale as .how-app's overrides further up). */
+.hl-mock-shell .hl-detail {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.hl-mock-shell .hl-detail-tabs,
+.hl-mock-shell .hl-detail-body {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+}
+.hl-mock-shell .hl-detail-tab-col {
+  padding: 8px 14px 0;
+  gap: 14px;
+}
+.hl-mock-shell .hl-tab {
+  font-size: 12px;
+  padding: 2px 0 8px;
+}
+.hl-mock-shell .hl-transcript-toolbar {
+  padding: 10px 14px 6px;
+  gap: 6px;
+}
+.hl-mock-shell .hl-transcript-toolbar .hl-search-field input {
+  height: 26px;
+  font-size: 10.5px;
+  padding: 0 10px 0 26px;
+}
+.hl-mock-shell .hl-transcript-toolbar .hl-search-field svg {
+  left: 10px;
+  width: 10px;
+  height: 10px;
+}
+.hl-mock-shell .hl-toolbar-icon-btn {
+  width: 26px;
+  height: 26px;
+}
+.hl-mock-shell .hl-toolbar-icon-btn svg { width: 11px; height: 11px; }
+.hl-mock-shell .hl-transcript {
+  padding: 6px 14px 12px;
+  gap: 10px;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+.hl-mock-shell .hl-segment-head { gap: 7px; }
+.hl-mock-shell .hl-speaker-avatar {
+  width: 20px;
+  height: 20px;
+  font-size: 9.5px;
+}
+.hl-mock-shell .hl-speaker-name { font-size: 11.5px; }
+.hl-mock-shell .hl-segment-paragraph {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.hl-mock-shell .hl-right-panel {
+  padding: 0 0 12px;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+.hl-mock-shell .hl-video-card { margin: 10px 14px 0; }
+.hl-mock-shell .hl-video-frame {
+  aspect-ratio: 16 / 9;
+}
+.hl-mock-shell .hl-video-play {
+  width: 32px;
+  height: 32px;
+}
+.hl-mock-shell .hl-video-play svg { width: 13px; height: 13px; }
+.hl-mock-shell .hl-audio-controls {
+  padding: 8px 14px 6px;
+  gap: 6px;
+}
+.hl-mock-shell .hl-audio-btn-primary {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+.hl-mock-shell .hl-audio-btn-primary svg { width: 10px; height: 10px; }
+.hl-mock-shell .hl-audio-time {
+  font-size: 10px;
+  margin: 0 4px;
+}
+.hl-mock-shell .hl-audio-scrub { height: 14px; }
+.hl-mock-shell .hl-audio-scrub::before { height: 4px; }
+.hl-mock-shell .hl-audio-download {
+  width: 26px;
+  height: 26px;
+  margin-left: 4px;
+}
+.hl-mock-shell .hl-audio-download svg { width: 11px; height: 11px; }
+/* Static scrub fill — paused, no animation. Used for the library
+ * mockup which is a still product shot rather than a live demo. */
+.hl-audio-scrub-fill--static {
+  animation: none !important;
+  width: 0%;
+}
+.hl-mock-shell .hl-timeline-card {
+  margin: 0 14px;
+  padding: 10px 12px 12px;
+  gap: 10px;
+}
+.hl-mock-shell .hl-timeline-section-label {
+  font-size: 11px;
+  padding-bottom: 6px;
+}
+.hl-mock-shell .hl-tl-row-head {
+  font-size: 10.5px;
+  gap: 6px;
+}
+.hl-mock-shell .hl-tl-name { font-size: 10.5px; }
+.hl-mock-shell .hl-tl-stats { font-size: 9.5px; }
+.hl-mock-shell .hl-tl-bar { height: 12px; }
+
+/* Settings rail — sits in the right column of the .hl-detail-body
+ * grid (replacing the right panel). Stacked SoloCards, same shape as
+ * the hero's SettingsPane but tightened for the smaller box. */
+.hl-set-rail {
+  padding: 10px 12px 12px;
+  gap: 6px;
+}
+.hl-set-rail .hl-settings-card { border-radius: 6px; }
+.hl-set-rail .hl-settings-row { padding: 8px 10px; gap: 10px; }
+.hl-set-rail .hl-settings-row-label { font-size: 11.5px; }
+.hl-set-rail .hl-settings-row-desc {
+  font-size: 10px;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.hl-set-rail .hl-set-switch { width: 26px; height: 14px; }
+.hl-set-rail .hl-set-switch-thumb { width: 10px; height: 10px; }
+.hl-set-rail .hl-set-switch.on .hl-set-switch-thumb { transform: translateX(12px); }
+.hl-set-rail .hl-settings-hotkey { padding: 8px 10px; gap: 3px; }
+.hl-set-rail .hl-settings-hotkey-pill {
+  margin-top: 6px;
+  padding: 5px 9px;
+  font-size: 11px;
+  border-radius: 6px;
+}
+.hl-set-rail .hl-settings-applist { padding: 8px 10px; gap: 3px; }
+/* Last card peeks out the bottom — only the header + a hint of body
+ * is visible, mirroring the partially-scrolled v0.9.0 settings rail
+ * in the user reference screenshot. */
+.hl-set-card--clipped {
+  max-height: 36px;
+  overflow: hidden;
+}
+
+/* Static mockup inside reduced-motion fallback. No absolute positioning
+ * — the parent .how-window--app already provides the box; this just
+ * pins the mock to it without the AnimatePresence wrap. */
+.hiw-window-content--static {
+  position: absolute;
+  inset: 28px 0 0 0;
+  overflow: hidden;
+}
+
+/* The reduced-motion static fallback renders each WindowFrame inside a
+ * grid cell with no sticky positioning — restore a square-ish box so
+ * the mockups have a sensible aspect to paint into. */
+.hiw-static__row .hiw-window-tilt,
+.hiw-static__row .how-window--app {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+}
+
+/* Hide the in-window mocks on phones — the .hiw-window-wrap parent is
+ * already display:none at <=767px so this only matters for the reduced-
+ * motion fallback below 767px where the static rows still try to paint
+ * the mock. Per the brief the mocks only need to read correctly on
+ * >=768px, so we collapse them on phones. */
+@media (max-width: 767px) {
+  .hiw-static__row .hiw-window-tilt { display: none; }
+}
+
+/* ----------------------------------------------------------------------
  *  WorksWith — three labelled rows of brand pills, each row marquee'd.
  *  No window chrome, no titlebar. Logos render in their brand colour
  *  via inline style on .works-with-tile__logo. Rows pause on hover.

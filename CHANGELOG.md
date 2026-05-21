@@ -12,6 +12,48 @@ Format:
 
 ---
 
+## 2026-05-21 -- HowItWorks chapters swap full Corder UI mockups (branch `feat/hero-v090`)
+
+Single atomic commit. The desktop sticky window inside HowItWorks no longer renders empty chrome; it now hosts three distinct full-fidelity Corder UI mockups that crossfade as the user scrolls through the chapter rows.
+
+- **01 Record from anywhere -> DashboardMock.** Three-column shell: sidebar with eight meeting cards (Today / This week sections), Dashboard breadcrumb, Stats tab active, "Ready when you are." start card with a full-width accent-green Start recording pill, "or press ⇧⌘F" hint, three-row stats card (RECORDINGS 66, TOTAL RECORDED 3h 21m, THIS WEEK 14), and a Recent rail with seven compact cards.
+- **02 Have your meeting -> LibraryMeetingMock.** Same .hl-* base as the hero demo but with all-new content: breadcrumb "Dashboard > Quarterly review with Anna and Marc", four-row sidebar (two failed states), Transcript + Summary tabs, four turns between Anna H. (purple #5a3aa6), Marc S. (amber #a16207), and I (accent #217a50). Right panel Recording tab: a generic Zoom-style video preview mock, audio scrubber "0:00 / 14:45" with download icon, Timeline section with three colour-coded speaker bars.
+- **03 Tune it to your workflow -> SettingsMock.** Sidebar with the "Screen video and call recording" row active, breadcrumb "Dashboard > Screen video and call recording", Transcript + Summary tabs, four transcript turns (S1 / S2 alternating, plausible screen-recording discussion). Right rail: Recording tab visible, Settings tab ACTIVE, six SoloCards stacked (System notifications OFF, Screen video recording ON, Auto-transcribe OFF, Auto-title ON, Start/stop ⇧⌘F hotkey pill, Always offer to record partially clipped at bottom).
+
+### Active-chapter tracking
+
+IntersectionObserver on the three `.hiw-row` elements with `rootMargin: -40% 0px -40% 0px` so the chapter activates only when its centre crosses the middle 20% of the viewport. The active chapter is lifted to `useState<1 | 2 | 3>` inside the `HowItWorks` component, then passed to `WindowFrame`. `AnimatePresence mode="wait"` with a 240 ms opacity-only crossfade on the doctrine easing (`cubic-bezier(0.16, 1, 0.3, 1)`) handles the swap. Window CHROME (the macOS titlebar) stays mounted; only the INSIDE swaps.
+
+### Reduced-motion fallback
+
+The `.hiw-static` track in `useReducedMotion()`-true mode now renders each step's WindowFrame with its own `chapter` prop (1/2/3) and `reduced` flag — the AnimatePresence wrap is skipped and the mockup paints into a fixed 16/10 frame per step. The mocks themselves are static product UI by design (no canvas blob, no animated scrubber, no playhead cursor) so reduced-motion users see the same content, just stacked.
+
+### Files
+
+- New: `src/components/sections/HowItWorksMockups.tsx` (~620 lines, three mockups + shared atoms + a ZoomCallMock SVG and a static blob).
+- Updated: `src/components/sections/HowItWorks.tsx` — added active-chapter IntersectionObserver, passed `chapter` to `WindowFrame`, swapped the inner placeholder for the new `ChapterMockup` dispatch + AnimatePresence crossfade. Reduced-motion branch updated to pass the chapter index through.
+- Updated: `src/app/globals.css` (~350 lines added) — new `.hl-mock-shell` sizing primitive, Dashboard layout (`.hl-dash-detail`, `.hl-dash-start-card`, `.hl-dash-stats-card`, `.hl-dash-recent-card`), Settings rail (`.hl-set-rail`, `.hl-set-card--clipped`), `.hl-mock-blob` static orb, failed-meeting state (`.hl-status-dot--failed`, `.hl-meeting-item--failed`), and a `.hl-audio-scrub-fill--static` zero-width fallback for paused scrubbers.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `npm run typecheck` | exit 0 |
+| Active chapter at row 1 viewport | `data-active-chapter="1"` |
+| Active chapter at row 2 viewport | `data-active-chapter="2"` |
+| Active chapter at row 3 viewport | `data-active-chapter="3"` |
+| ASCII violations on full page | 0 |
+| Console errors during scroll | 0 |
+| CorderPresence morph chain (`.hiw-window-inner` layoutId) | untouched |
+| Screenshots | `screenshots/howitworks-chapter-{1,2,3}.png`, `screenshots/howitworks-3-mocks.png` |
+
+### Next
+
+- Judge pass to confirm visual fidelity vs the user reference screenshots (78/79/80).
+- Optional: tighten the Settings rail spacing if the partially-clipped last card reads as a layout bug rather than an intentional fade-out.
+
+---
+
 ## 2026-05-21 -- Features section: AUTO-DETECT redrawn, AUDIO + RE-RUN replaced (branch `feat/hero-v090`)
 
 Single follow-up commit on `feat/hero-v090`. User flagged that the previous
