@@ -28,12 +28,12 @@ export default function HomePage() {
       <hr className="section-divider" />
       <Pricing />
       <hr className="section-divider" />
-      <Faq />
-      {/* Form-zone sentinel sits where the old Newsletter section used to.
-          The orb (CorderPresence state B) morphs into a contact card
-          (state C) as this sentinel scrolls into the upper 40% of the
-          viewport. Renders as a zero-height anchor; no visual footprint. */}
+      {/* Form-zone sentinel sits BEFORE Faq so the orb (CorderPresence state B)
+          morphs into the contact card (state C) while the user is still
+          reading FAQ, not at the very last footer-scroll moment. Renders as
+          a zero-height anchor; no visual footprint. */}
       <CorderPresenceFormSentinel />
+      <Faq />
       {/* Reduced-motion / ?motion=0 fallback: when the corner morph chain
           is off, this inline section provides the same subscribe form in
           the natural page flow. Renders null when motion is enabled. */}
