@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 
-import { LenisProvider } from "@/components/providers/LenisProvider";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import { CorderPresenceProvider } from "@/components/presence/CorderPresence";
 
@@ -71,11 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <LenisProvider>
-          <MotionProvider>
-            <CorderPresenceProvider>{children}</CorderPresenceProvider>
-          </MotionProvider>
-        </LenisProvider>
+        <MotionProvider>
+          <CorderPresenceProvider>{children}</CorderPresenceProvider>
+        </MotionProvider>
       </body>
     </html>
   );

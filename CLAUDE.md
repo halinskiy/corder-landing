@@ -36,7 +36,7 @@ Inherits from `~/Aisoldier/CLAUDE.md`. Project-specific overrides only.
 - **Next.js 15** (App Router, React 19, TypeScript strict). The brief proposed Next.js 16 with Cache Components; we deliberately stay on 15 for stack stability — booquarium and template-design are both 15 and the symlinked `@aisoldier/ui-kit` integration pattern is debugged there. Move to 16 in a separate, scoped session, not as part of section work.
 - **Tailwind CSS v4** with `@theme` blocks for tokens. `@source` directive points back to the kit.
 - **Framer Motion 12** for entry animations only (hero copy reveal). Scroll-linked work is **native CSS** `animation-timeline: view()`.
-- **Lenis 1.x** in the root layout. **Do NOT** dispatch synthetic `scroll` events from a `useLenis` callback — Lenis 1.3+ listens to native scroll events itself, and the bridge causes a recursive RangeError. See `DECISIONS.md` for context.
+- **No JS smooth-scroll library.** Lenis was removed 2026-05-22 on user-reported lag. Use native `scroll-behavior: smooth` + `scroll-padding-top: 88px` on `<html>` for anchor jumps. Honours `prefers-reduced-motion` automatically. If a future requirement asks for finer scroll control (e.g. scroll-linked timeline scrubbing past what `useScroll` already gives you), discuss before re-adding any rAF-driven smoothing -- it adds latency to a DOM this heavy.
 - **IBM Plex Sans + IBM Plex Serif + IBM Plex Mono** from Google Fonts, all `display: swap`, `--font-plex-*` CSS variables wired into `@theme`.
 
 ## Performance budget (hard, driven by paid traffic)

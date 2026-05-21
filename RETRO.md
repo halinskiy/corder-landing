@@ -6,6 +6,38 @@ Read this file at the START of every session before building anything.
 
 ---
 
+## 2026-05-22 -- 3mpq-soldier -- Popover SVG fidelity, form padding, Lenis removal
+
+### What took longer than it should have?
+
+Two full PopoverWidget rewrites before going to the source. The first two passes were eyeballed approximations:
+- v1: `#ededee` for the Start button (guessed off-white instead of pure white from `Color.primary` in dark mode)
+- v1: `#0b0b0c` for the button text (guessed near-black instead of `#1d1d1f` from `NSColor.windowBackgroundColor` in dark mode)
+- v1: viewBox 260 (eyeballed instead of computing the SwiftUI layout maths: padding 20 + idle 72 + spacing 14 + start 44 + spacing 18 + separator 5 + spacing 18 + open 44 + spacing 10 + quit 20 + padding 20 = ~285, viewBox 298 with caret)
+- v1: `ui-monospace` for "00:00" which gave a wide-cell colon ("0 0 : 0 0")
+
+Each iteration triggered user pushback ("Зачем ты соврал что сделал также как у оригинального кордера?"). The correct move would have been to read `PopoverContentView.swift` ON THE FIRST PASS and port it 1:1.
+
+### What did I miss that the user caught?
+
+1. **Source-of-truth colours.** When the brief says "match the real app", "approximately match" is the wrong move. The Swift source is in the repo at `/Users/3mpq/Corder/Sources/Corder/UI/`. Read it. Don't guess.
+2. **Layout maths.** SwiftUI VStack spacings are exact integers. `VStack(spacing:18) .padding(20)` is not "a reasonable amount" -- it's 56px of stack-induced inset before content. Compute, don't estimate.
+3. **Dead `WorksWithDock`.** Sat in the repo for ~3 weeks pulling a 83 MB react-icons dep. The dispatcher never flagged it because no one asked "what is each file actually doing?" until perf became a topic.
+4. **`minHeight: 260px` on the floating form.** Left over from an earlier morph experiment. The dead space below the Subscribe button was visible in every desktop screenshot for weeks. Never noticed it -- only saw it when the user pointed at it on mobile.
+
+### What will I do differently next time?
+
+1. **When the brief references a real product surface, port from source. Always.** Step 1: locate the source file (`grep -rn '<ComponentName>' ~/<product-repo>` or check `~/Corder/Sources/`). Step 2: read it. Step 3: compute viewBox by stacking the documented spacings. Step 4: copy colour tokens by name (`Color.primary`, `Color.secondary`, `NSColor.windowBackgroundColor`) and resolve them to hex from the mode (dark = `#ffffff` / white@0.55 / `#1d1d1f`).
+2. **SwiftUI `.monospacedDigit()` is NOT a monospace font.** It is the system sans with tabular numeral widths. In SVG that means `font-family: -apple-system` + `font-variant-numeric: tabular-nums`. Save this in memory.
+3. **Before any perf complaint, run a dead-code grep.** `grep -rn '<ComponentName>' src/` for every top-level component to confirm it is actually rendered by `page.tsx` or by something `page.tsx` renders. Anything orphaned should be deleted, not preserved "in case we need it later".
+4. **`minHeight` on motion.div containers is suspect.** If the card has fixed-size content it should hug; if it morphs from a smaller state, framer-motion interpolates regardless of the destination minHeight. Most minHeights are leftover guard-rails that grow dead space over time. Remove on sight unless the morph demonstrably breaks without them (it won't, in most cases).
+
+### Bonus learning: Lenis on a heavy DOM is net negative.
+
+User-reported scroll lag was real. Lenis at lerp 0.08 + duration 1.0 fights macOS hardware trackpad momentum. For sites this DOM-heavy (this landing has 17 hero SVGs + 3 HowItWorks mock-eras + 6 Features SVGs + the morph chain), JS-driven smooth scroll smoothing is slower than native. Default for heavy 2026 landings: NO Lenis. Use `scroll-behavior: smooth` + `scroll-padding-top` for anchors only.
+
+---
+
 ## 2026-05-21 -- 3mpq-soldier -- HowItWorks three full Corder UI mockups inside the sticky window
 
 ### Что заняло больше времени, чем должно было
