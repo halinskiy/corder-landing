@@ -36,20 +36,22 @@ export function Footer() {
             <p className="site-footer__slogan">{footer.slogan}</p>
           </div>
 
-          {footer.columns.map((column) => (
-            <div key={column.heading}>
-              <p className="site-footer__col-heading">{column.heading}</p>
-              <ul className="site-footer__list">
-                {column.links.map((link) => (
-                  <li key={link.label}>
-                    <a className="site-footer__link" href={link.href}>
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {footer.columns
+            .filter((column) => column.heading !== "Resources")
+            .map((column) => (
+              <div key={column.heading}>
+                <p className="site-footer__col-heading">{column.heading}</p>
+                <ul className="site-footer__list">
+                  {column.links.map((link) => (
+                    <li key={link.label}>
+                      <a className="site-footer__link" href={link.href}>
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
         </div>
 
         <div className="site-footer__baseline">
@@ -65,9 +67,6 @@ export function Footer() {
             </a>
             .
           </span>
-          <a className="site-footer__top" href="#top">
-            Back to top
-          </a>
         </div>
       </div>
     </footer>
