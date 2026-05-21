@@ -1075,6 +1075,20 @@ button:focus:not(:focus-visible) {
   .feature-cell { padding: 40px 36px 44px; min-height: 340px; }
 }
 
+/* Mobile: cells stack single-column, no need for uniform min-height
+ * (that was a desktop-grid alignment requirement). Tighten padding
+ * and let each cell size to its content. */
+@media (max-width: 639px) {
+  .feature-cell {
+    padding: 20px 22px 22px;
+    min-height: 0;
+  }
+  .feature-cell__visual {
+    min-height: 0 !important;
+    padding-top: 14px;
+  }
+}
+
 .feature-cell + .feature-cell {
   border-top: 1px solid var(--color-border);
 }
