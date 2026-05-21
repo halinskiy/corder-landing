@@ -181,40 +181,38 @@
     "cells": [
       {
         "eyebrow": "TIMELINE",
-        "heading": "Per-speaker timeline",
-        "body": "A colour-coded bar per voice in the right pane. Click any tick to jump to that moment in the audio",
+        "heading": "Jump to any speaker",
+        "body": "",
         "visualHint": "mini-timeline-fragment"
       },
       {
-        "eyebrow": "SEARCH",
-        "heading": "Search the whole library",
-        "body": "Full-text search across every transcript you have ever made. Find any phrase, across any recording, from last month or this morning",
-        "visualHint": "typographic-mark"
+        "eyebrow": "SCREEN",
+        "heading": "Records the screen too",
+        "body": "Video sits next to the transcript.",
+        "visualHint": "screen-video-frame"
       },
       {
         "eyebrow": "AUTO-DETECT",
-        "heading": "Catches the meeting before you do",
-        "body": "When Zoom, Meet, Teams, FaceTime or Discord opens a call, Corder offers to record from the menu bar. One click and the take is rolling",
-        "visualHint": "pro-pill"
+        "heading": "Catches the meeting first",
+        "body": "Menu bar asks when Zoom opens. One tap to start.",
+        "visualHint": "menu-bar-capsule"
+      },
+      {
+        "eyebrow": "DRAG",
+        "heading": "Drag out, no export dialog",
+        "body": "",
+        "visualHint": "drag-out-gesture"
       },
       {
         "eyebrow": "AUDIO",
-        "heading": "System audio without a driver",
-        "body": "Captures whatever plays through your Mac natively. No BlackHole, no Loopback, no virtual loopback hops. The recording is what the meeting actually sounded like",
-        "visualHint": "monospace-path",
-        "monoPath": "CoreAudio · Corder"
-      },
-      {
-        "eyebrow": "LIBRARY",
-        "heading": "Your library lives on your Mac",
-        "body": "Every transcript and audio file lands in ~/Library/Application Support/Corder/. Open it in Finder, back it up with the rest of your Mac, move it to another machine with rsync",
-        "visualHint": "monospace-path",
-        "monoPath": "~/Library/Application Support/Corder/"
+        "heading": "No driver install required",
+        "body": "CoreAudio process tap. Works on a fresh Mac.",
+        "visualHint": "audio-sound-row"
       },
       {
         "eyebrow": "RE-RUN",
-        "heading": "Re-transcribe at zero margin",
-        "body": "Better Gemini model out? Run the same audio again. You pay Google the per-minute API price, nothing extra to us. Old transcript stays alongside the new one",
+        "heading": "New model out. Re-run for free.",
+        "body": "Cache means no re-upload, no extra cost.",
         "visualHint": "version-sequence",
         "versionSequence": "Flash 2.5 → Flash 3 → Pro 4"
       }

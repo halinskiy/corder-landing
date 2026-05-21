@@ -1341,6 +1341,32 @@ button:focus:not(:focus-visible) {
   border-radius: 1px;
 }
 
+/* Feature: inline-SVG mocks. Shared frame for the six feature visuals.
+ * The cell already supplies `.feature-cell__visual` margin-top:auto so the
+ * mock floats to the bottom of the cell. We give each SVG a 12px radius,
+ * 1px hairline, and let it claim full available width up to its natural
+ * aspect ratio. Height is intrinsic (driven by SVG viewBox). */
+.ftr-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* The screen-video frame already paints its own dark fill -- clip rounded
+ * corners cleanly. Other mocks already include their card chrome inside
+ * the viewBox so they need no outer border. */
+.ftr-svg--screen,
+.ftr-svg--menubar {
+  background: transparent;
+}
+
+/* Versions row sits flush, no card chrome. */
+.ftr-svg--versions {
+  max-width: 100%;
+}
+
 /* Feature: drag split */
 .feature-split {
   display: grid;

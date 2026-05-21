@@ -4,6 +4,77 @@
 
 ---
 
+## 2026-05-21 — Features cells: inline-SVG mocks instead of typographic gestures
+
+### Решение: каждая cell получает свой inline-`<svg>` mock в стиле `GoogleMeetMock`
+
+**Решение:** все шесть feature cells теперь рендерят inline-SVG картинку
+после `body`. Никаких external assets, никаких `<img src="...">`, никаких
+icon-fonts. Каждая иллюстрация полностью описана через `<rect>` / `<text>` /
+`<path>` с project tokens (`var(--color-accent)`, `var(--color-surface)` итд)
+и заливается ASCII-only текстом.
+
+Стиль ровно тот же, что и у `GoogleMeetMock` в
+`src/components/hero/HeroLibraryDemo.tsx` (commit `6d358fd`): minimal labels,
+viewBox-driven, no external dependencies.
+
+**Контекст:** копирайтер сжал body cells до 29 слов суммарно (cells 01 и 04
+вообще без body). Когда копия перестаёт нести нагрузку, иллюстрация
+становится главным несущим элементом. До этой сессии cells использовали
+typographic gestures: `<mark>` на слове `phrase`, `feature-pro-pill` с
+sparkles, `feature-version-row` chips, `feature-mono` path-плашка, `feature-timeline`
+с тиками. Они **работали как примитивы**, но в сумме читались разрозненно
+(один stylized chip, один highlight, один pill) и не давали зрителю
+конкретного UI-намёка на то, что делает каждая фича.
+
+Inline-SVG mocks — это шаг к "show, don't tell": видишь play button над
+тёмным frame → понимаешь "записывает экран". Видишь dashed curve → понимаешь
+"drag-out". Видишь selected row в списке устройств → понимаешь "no driver
+install, system-level". Это парадигма GoogleMeetMock примененная к **каждой**
+cell в Features.
+
+**Альтернативы:**
+- a) **Lottie / Rive анимации.** Отвергнуто: project CLAUDE.md явно
+  запрещает Rive в production. И статичные illustrations здесь читаются
+  лучше — cell viewer not interacting, only scrolling past.
+- b) **PNG / JPEG mockups.** Отвергнуто: каждая cell ушла бы в +30-50KB
+  payload, нарушение performance budget (≤80KB total JS gz + image budget).
+  И theme/accent overrides невозможны без перерендера в build-time.
+- c) **Один универсальный `<FeatureMock variant="...">`** компонент.
+  Отвергнуто: шесть mocks имеют шесть совершенно разных layout shapes
+  (timeline, frame, capsule, drag, list, chip-row). Унификация дала бы
+  больше абстракций чем сэкономила бы строк. Каждый mock — это shape, не
+  config.
+- d) **Lucide-style stroke icons.** Отвергнуто: project rule "no
+  pictograms in features cells" + это бы дублировало icons из nav-bar и
+  чужих SaaS landings — потеряли бы редакционный voice.
+
+**Single accent role per illustration:**
+- `mini-timeline-fragment` — playhead dot
+- `screen-video-frame` — centre play button
+- `menu-bar-capsule` — `Record` pill
+- `drag-out-gesture` — dashed drag curve + arrowhead
+- `audio-sound-row` — selected `Corder` row's left border + radio dot
+- `version-sequence` — middle chip outline + accent-subtle fill
+
+Vадym row в `mini-timeline-fragment` использует purple `#5a3aa6`. Это
+**не** second accent: purple живёт исключительно внутри speaker-coded
+product UI (Hero `HeroLibraryDemo` + теперь этот timeline mock), никогда
+в chrome или CTA. Это пере-использование "real Corder" color из
+session 2026-05-20 (см. `RETRO.md` запись про "real-UI policy").
+
+**Trade-offs:**
+- Features.tsx вырос с ~220 строк до ~770. Trade принят: каждая SVG —
+  это decorative unit, плюс ~60-100 строк на mock. Альтернатива (отдельные
+  файлы под каждый mock) дала бы 6 extra files for one section — over-eng.
+  Если другой проект захочет похожий mock — promote в kit как singleton
+  при втором использовании.
+- `feature-mark` / `feature-pro-pill` / `feature-mono` / `feature-version-row`
+  CSS правила в `globals.css` теперь unused. Оставил на одну сессию
+  (judge может попросить show-side-by-side), удалить в housekeeping pass.
+
+---
+
 ## 2026-05-20 — Hero polish: theme toggle, Settings tab, taller window, transcript scroll
 
 ### Решение 1: dark theme живёт ТОЛЬКО внутри demo, не на landing
