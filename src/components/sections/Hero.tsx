@@ -28,7 +28,7 @@ export function Hero() {
       data-component="Hero"
       data-source={DATA_SOURCE}
       data-tokens="display-lg,font-serif,color-text,ease-out"
-      className="relative w-full overflow-hidden pt-20 pb-0 md:pt-24 md:pb-12"
+      className="relative w-full overflow-hidden pt-20 pb-8 md:pt-24 md:pb-12"
     >
       {/* Atmospheric dot grid behind the demo, faded edges. */}
       <div
@@ -101,7 +101,7 @@ export function Hero() {
           >
             <a
               href="#pricing"
-              className="cta-pill cta-pill--primary inline-flex h-14 min-w-[260px] items-center justify-center gap-2 rounded-[var(--radius-pill)] px-9 text-[17px] font-medium"
+              className="cta-pill cta-pill--primary inline-flex h-14 min-w-[200px] items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[17px] font-medium md:min-w-[260px] md:px-9"
             >
               {hero.ctaPrimary}
             </a>
