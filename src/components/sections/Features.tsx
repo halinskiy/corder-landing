@@ -351,121 +351,107 @@ function PopoverWidget() {
       role="img"
       aria-label="Corder menu bar popover, idle state, with Start recording and Open library buttons"
     >
-      {/* Popover card  ----  no menu-bar caret (the original does not
-       *  paint one inside the panel; it sits below the status icon). */}
-      <rect
-        x="20" y="14"
-        width="280" height="240"
-        rx="14"
-        fill="#1c1c1e"
-        stroke="rgba(255,255,255,0.06)"
-        strokeWidth="1"
-      />
+      {/* 1:1 port of PopoverContentView.swift.idleSection — widths +
+       *  paddings + font sizes match the SwiftUI VStack(spacing:18)
+       *  .padding(20) .frame(width:320). Caret matches the popover bg. */}
 
-      {/* ---- Idle status row ---- */}
-      {/* Outer hairline frame: 240x60, corner radius 8 */}
+      {/* Caret pointing up to the menu-bar status icon */}
+      <path d="M160 0 L168 8 L152 8 Z" fill="#1d1d1f" />
+
+      {/* Popover card: full 320 wide, rounded 14, no extra stroke */}
+      <rect x="0" y="8" width="320" height="244" rx="14" fill="#1d1d1f" />
+
+      {/* Idle status row — width 280 (320 minus 20 each side), height 60,
+       *  rounded 8, stroke .10 white */}
       <rect
-        x="40" y="34"
-        width="240" height="60"
+        x="20" y="28"
+        width="280" height="60"
         rx="8"
         fill="none"
         stroke="rgba(255,255,255,0.10)"
         strokeWidth="1"
       />
-      {/* Status dot 10px, 45% white */}
-      <circle cx="60" cy="64" r="5" fill="rgba(255,255,255,0.45)" />
-      {/* "Not recording" label, 14pt regular, secondary */}
+      {/* 10px grey dot 16px in from left edge, vertical centre */}
+      <circle cx="36" cy="58" r="5" fill="rgba(255,255,255,0.45)" />
+      {/* Label and time stacked tight (SwiftUI spacing:1) */}
       <text
-        x="78" y="60"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
+        x="56" y="54"
+        fontFamily="-apple-system, system-ui, sans-serif"
         fontSize="13"
         fontWeight="400"
-        fill="rgba(255,255,255,0.55)"
+        fill="rgba(255,255,255,0.62)"
       >
         Not recording
       </text>
-      {/* "00:00" monospaced, 22pt light, secondary */}
       <text
-        x="78" y="84"
-        fontFamily="var(--font-mono), ui-monospace, monospace"
+        x="56" y="78"
+        fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
         fontSize="20"
         fontWeight="300"
-        fill="rgba(255,255,255,0.55)"
+        letterSpacing="-0.5"
+        fill="rgba(255,255,255,0.62)"
       >
         00:00
       </text>
 
-      {/* ---- Primary "Start recording" button ---- */}
-      {/* Light card, 240x44, radius 8 */}
+      {/* Primary Start recording button — 280x44, near-white fill,
+       *  red dot + label centred horizontally as a group */}
       <rect
-        x="40" y="112"
-        width="240" height="44"
+        x="20" y="106"
+        width="280" height="44"
         rx="8"
-        fill="#f5f5f7"
+        fill="#ededee"
       />
-      {/* Red 8x8 recording dot */}
-      <circle cx="100" cy="134" r="4" fill="#dc2626" />
-      {/* Label  ----  14pt regular, near-black */}
+      <circle cx="120" cy="128" r="4" fill="#d33d4a" />
       <text
-        x="114" y="139"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
+        x="132" y="133"
+        fontFamily="-apple-system, system-ui, sans-serif"
         fontSize="14"
         fontWeight="500"
-        fill="#111111"
+        fill="#0b0b0c"
       >
         Start recording
       </text>
 
-      {/* ---- Hairline separator ---- */}
+      {/* Hairline separator */}
       <line
-        x1="40" y1="178" x2="280" y2="178"
+        x1="20" y1="168" x2="300" y2="168"
         stroke="rgba(255,255,255,0.08)" strokeWidth="1"
       />
 
-      {/* ---- Secondary "Open library" button ---- */}
+      {/* Secondary Open library button — 280x44 stroked, transparent fill */}
       <rect
-        x="40" y="190"
-        width="240" height="40"
+        x="20" y="186"
+        width="280" height="44"
         rx="8"
         fill="none"
         stroke="rgba(255,255,255,0.16)"
         strokeWidth="1"
       />
-      {/* rectangle.stack icon  ----  two overlapping squircles */}
-      <rect
-        x="116" y="204"
-        width="14" height="10"
-        rx="2"
-        fill="none"
-        stroke="rgba(255,255,255,0.85)"
-        strokeWidth="1"
-      />
-      <rect
-        x="120" y="208"
-        width="14" height="10"
-        rx="2"
-        fill="none"
-        stroke="rgba(255,255,255,0.85)"
-        strokeWidth="1"
-      />
+      {/* SF Symbols `rectangle.stack` — two rounded rects, the back one
+       *  nudged up-right behind the front. Stroke 1.4 reads cleanly. */}
+      <g transform="translate(116, 198)" stroke="rgba(255,255,255,0.92)" strokeWidth="1.4" fill="none" strokeLinejoin="round">
+        <rect x="3" y="0" width="14" height="10" rx="2.5" />
+        <rect x="0" y="4" width="14" height="10" rx="2.5" />
+      </g>
       <text
-        x="142" y="216"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
+        x="138" y="213"
+        fontFamily="-apple-system, system-ui, sans-serif"
         fontSize="14"
         fontWeight="500"
-        fill="rgba(255,255,255,0.85)"
+        fill="rgba(255,255,255,0.92)"
       >
         Open library
       </text>
 
-      {/* ---- Quit link  ----  small grey, centered ---- */}
+      {/* Quit link — 12pt, .secondary, centred, vertical padding 4 */}
       <text
-        x="160" y="246"
+        x="160" y="248"
         textAnchor="middle"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
+        fontFamily="-apple-system, system-ui, sans-serif"
         fontSize="12"
         fontWeight="400"
-        fill="rgba(255,255,255,0.45)"
+        fill="rgba(255,255,255,0.5)"
       >
         Quit
       </text>
