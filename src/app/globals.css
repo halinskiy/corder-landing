@@ -1130,7 +1130,7 @@ button:focus:not(:focus-visible) {
 }
 
 .feature-cell__body {
-  margin-top: 12px;
+  margin-top: 4px;
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.6;
@@ -1140,6 +1140,21 @@ button:focus:not(:focus-visible) {
 .feature-cell__visual {
   margin-top: auto;
   padding-top: 24px;
+  /* Uniform reserved height for the illustration row so every cell ends
+   * up the same height regardless of which SVG it carries. Tuned to the
+   * tallest mock (PopoverWidget at ~240). */
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-cell__visual > svg,
+.feature-cell__visual > div,
+.feature-cell__visual > div > svg {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
 }
 
 /* Feature: typographic "phrase" mark */

@@ -194,65 +194,65 @@ function FeatureVisual({ cell }: { cell: FeatureCellData }) {
  * product UI (Hero demo + this fragment), never in chrome.
  */
 function MiniTimelineFragment() {
+  // Four speaker rows so the illustration fills the same vertical space
+  // as the popover and screen-video mocks. Each row has its own colour
+  // pulled from the project's speaker palette (purple + amber + light
+  // purple variant + neutral). Playhead sits on Vadym's row and is the
+  // single accent-green spotlight.
+  const rows = [
+    { name: "Vadym",      y: 24,  color: "#5a3aa6", track: [[6,14],[28,22],[58,10],[78,30],[116,16],[142,20],[172,12],[192,22]] },
+    { name: "Kostiantyn", y: 76,  color: "#a16207", track: [[4,18],[30,12],[50,24],[82,14],[104,20],[132,10],[150,26],[184,16]] },
+    { name: "Paul",       y: 128, color: "#7e57c2", track: [[10,16],[34,10],[52,22],[80,12],[100,28],[136,14],[158,18],[182,24]] },
+    { name: "Anna",       y: 180, color: "#8a8a86", track: [[2,12],[22,20],[50,14],[72,26],[104,10],[122,18],[146,14],[170,30]] },
+  ];
   return (
     <svg
       className="ftr-svg ftr-svg--timeline"
-      viewBox="0 0 320 120"
+      viewBox="0 0 320 240"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label="Timeline with two speaker rows and a playhead"
+      aria-label="Timeline with four speaker rows and a playhead"
     >
       {/* Background card */}
-      <rect x="0" y="0" width="320" height="120" rx="8" fill="var(--color-surface-2)" stroke="var(--color-border)" />
+      <rect x="0" y="0" width="320" height="240" rx="8" fill="var(--color-surface-2)" stroke="var(--color-border)" />
 
-      {/* Row 1  ----  Vadym (purple ticks) */}
-      <text
-        x="14" y="34"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="11"
-        fontWeight="600"
-        fill="var(--color-text)"
-      >
-        Vadym
-      </text>
-      <rect x="78" y="26" width="226" height="8" rx="4" fill="var(--color-border)" />
-      {/* Vadym ticks  ----  varying widths */}
-      <rect x="86"  y="26" width="14" height="8" rx="2" fill="#5a3aa6" />
-      <rect x="108" y="26" width="22" height="8" rx="2" fill="#5a3aa6" />
-      <rect x="138" y="26" width="10" height="8" rx="2" fill="#5a3aa6" />
-      <rect x="158" y="26" width="30" height="8" rx="2" fill="#5a3aa6" />
-      <rect x="196" y="26" width="16" height="8" rx="2" fill="#5a3aa6" />
-      <rect x="222" y="26" width="20" height="8" rx="2" fill="#5a3aa6" />
-      <rect x="252" y="26" width="12" height="8" rx="2" fill="#5a3aa6" />
-      <rect x="272" y="26" width="22" height="8" rx="2" fill="#5a3aa6" />
-      {/* Playhead  ----  accent spotlight */}
-      <line x1="172" y1="18" x2="172" y2="42" stroke="var(--color-accent)" strokeWidth="1.5" />
-      <circle cx="172" cy="30" r="5" fill="var(--color-accent)" />
-      <circle cx="172" cy="30" r="2" fill="#ffffff" />
+      {rows.map((row) => (
+        <g key={row.name}>
+          <text
+            x="14"
+            y={row.y + 10}
+            fontFamily="var(--font-sans), system-ui, sans-serif"
+            fontSize="11"
+            fontWeight="600"
+            fill="var(--color-text)"
+          >
+            {row.name}
+          </text>
+          {/* Track */}
+          <rect x="78" y={row.y + 2} width="226" height="8" rx="4" fill="var(--color-border)" />
+          {/* Ticks */}
+          {row.track.map(([x, w], i) => (
+            <rect
+              key={i}
+              x={86 + x}
+              y={row.y + 2}
+              width={w}
+              height="8"
+              rx="2"
+              fill={row.color}
+            />
+          ))}
+        </g>
+      ))}
 
-      {/* Row 2  ----  Kostiantyn (neutral ticks) */}
-      <text
-        x="14" y="80"
-        fontFamily="var(--font-sans), system-ui, sans-serif"
-        fontSize="11"
-        fontWeight="600"
-        fill="var(--color-text)"
-      >
-        Kostiantyn
-      </text>
-      <rect x="78" y="72" width="226" height="8" rx="4" fill="var(--color-border)" />
-      <rect x="84"  y="72" width="18" height="8" rx="2" fill="var(--color-text-subtle)" />
-      <rect x="110" y="72" width="12" height="8" rx="2" fill="var(--color-text-subtle)" />
-      <rect x="130" y="72" width="24" height="8" rx="2" fill="var(--color-text-subtle)" />
-      <rect x="162" y="72" width="14" height="8" rx="2" fill="var(--color-text-subtle)" />
-      <rect x="184" y="72" width="20" height="8" rx="2" fill="var(--color-text-subtle)" />
-      <rect x="212" y="72" width="10" height="8" rx="2" fill="var(--color-text-subtle)" />
-      <rect x="230" y="72" width="26" height="8" rx="2" fill="var(--color-text-subtle)" />
-      <rect x="264" y="72" width="16" height="8" rx="2" fill="var(--color-text-subtle)" />
+      {/* Playhead  ----  accent spotlight, anchored to Vadym row */}
+      <line x1="178" y1="14" x2="178" y2="36" stroke="var(--color-accent)" strokeWidth="1.5" />
+      <circle cx="178" cy="26" r="5" fill="var(--color-accent)" />
+      <circle cx="178" cy="26" r="2" fill="#ffffff" />
 
       {/* Time scale */}
-      <text x="78"  y="104" fontFamily="var(--font-mono), ui-monospace, monospace" fontSize="9" fill="var(--color-text-muted)">00:00</text>
-      <text x="280" y="104" fontFamily="var(--font-mono), ui-monospace, monospace" fontSize="9" fill="var(--color-text-muted)">12:40</text>
+      <text x="78"  y="222" fontFamily="var(--font-mono), ui-monospace, monospace" fontSize="9" fill="var(--color-text-muted)">00:00</text>
+      <text x="280" y="222" fontFamily="var(--font-mono), ui-monospace, monospace" fontSize="9" fill="var(--color-text-muted)">12:40</text>
     </svg>
   );
 }
