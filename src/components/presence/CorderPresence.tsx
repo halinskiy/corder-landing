@@ -630,8 +630,21 @@ export function CorderPresenceStaticSection() {
   const { newsletter } = copy;
   const [status, setStatus] = useState<"idle" | "submitted">("idle");
   const [email, setEmail] = useState("");
+  // Mobile: a fixed-corner card stomps on footer content, so the
+  // subscribe form moves inline at the bottom of the page even when
+  // motion is on. Desktop keeps the floating morphing form unless
+  // motion is disabled.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 640px)");
+    const sync = () => setIsMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
-  if (!motionDisabled) return null;
+  if (!motionDisabled && !isMobile) return null;
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
