@@ -99,8 +99,9 @@ export function HowItWorks() {
       data-component="HowItWorks"
       data-source={DATA_SOURCE}
       data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,font-serif"
-      className="relative w-full"
+      className="relative w-full overflow-hidden"
     >
+      <div aria-hidden className="section-blob section-blob--howitworks" />
       <div className="page-container pt-14 md:pt-[88px]">
         <Header
           eyebrow={howItWorks.eyebrow}
