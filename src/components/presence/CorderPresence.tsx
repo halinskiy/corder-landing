@@ -47,7 +47,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
+import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
 
 import { copy } from "@/content/copy";
 
@@ -57,12 +57,7 @@ const DATA_SOURCE_PROVIDER =
 // Doctrine easing + duration for the layout morph. Shared across all three
 // states so the morph feels uniform regardless of which transition fires.
 const MORPH_TRANSITION = {
-  duration: 0.6,
-  ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
-} as const;
-
-const FORM_INNER_FADE = {
-  duration: 0.32,
+  duration: 0.4,
   ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
 } as const;
 
@@ -156,8 +151,11 @@ export function CorderPresenceProvider({ children }: { children: ReactNode }) {
 
 // ---------------------------------------------------------------------------
 // Corner switch — mounts the orb (state B) OR the form (state C) at the
-// page root. AnimatePresence with `mode="popLayout"` lets framer interpolate
-// between them via the shared layoutId rather than cross-fading.
+// page root. NO AnimatePresence wrapper: with both elements sharing the
+// same `layoutId` inside a LayoutGroup, framer interpolates bounds + radius
+// in a single render cycle when one unmounts and the other mounts. This
+// avoids the dual-element artifact (huge rounded outline visible around
+// the form during transition) that AnimatePresence's `popLayout` produced.
 // ---------------------------------------------------------------------------
 
 function CorderPresenceCorner() {
@@ -168,33 +166,36 @@ function CorderPresenceCorner() {
   if (motionDisabled) return null;
   if (!pastHowItWorks) return null;
 
-  return (
-    <AnimatePresence mode="popLayout" initial={false}>
-      {pastFormZone ? (
-        <CorderPresenceForm key="form" />
-      ) : (
-        <CorderPresenceOrb key="orb" />
-      )}
-    </AnimatePresence>
-  );
+  return pastFormZone ? <CorderPresenceForm /> : <CorderPresenceOrb />;
 }
 
 // ---------------------------------------------------------------------------
-// Orb (state B) — the bottom-right circular presence the window morphs
-// into. Decorative-only: no click handler, no hover state, no tooltip.
+// Orb (state B) — the bottom-right green CTA the window morphs into.
+// Interactive: clicking smooth-scrolls to the FAQ section so the user
+// crosses the form-zone sentinel and the orb morphs into the contact
+// card (state C). Visual: accent-filled circle with a white lucide
+// HelpCircle icon. Same `layoutId` as the form so framer interpolates
+// the bounds + radius when the corner switches state.
 // ---------------------------------------------------------------------------
 
 function CorderPresenceOrb() {
+  const handleClick = () => {
+    if (typeof document === "undefined") return;
+    const target = document.getElementById("faq");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
-    <motion.div
+    <motion.button
+      type="button"
       layoutId="corder-presence"
       data-component="CorderPresenceOrb"
       data-source={DATA_SOURCE_PROVIDER}
-      data-tokens="color-bg,color-border,color-accent,radius-window"
-      aria-hidden="true"
-      // Decorative; not focusable, not in the tab order.
-      // `pointer-events: none` so the orb never blocks clicks on underlying
-      // content. Decorative-only contract.
+      data-tokens="color-accent,color-accent-contrast,radius-window"
+      aria-label="Jump to FAQ and subscribe"
+      onClick={handleClick}
       style={{
         position: "fixed",
         right: "32px",
@@ -202,31 +203,22 @@ function CorderPresenceOrb() {
         width: "56px",
         height: "56px",
         zIndex: 30,
-        background: "var(--color-bg)",
-        border: "1px solid var(--color-border)",
+        background: "var(--color-accent)",
+        border: 0,
         borderRadius: "9999px",
-        pointerEvents: "none",
+        pointerEvents: "auto",
+        cursor: "pointer",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        padding: 0,
+        color: "#ffffff",
       }}
+      whileHover={{ scale: 1.06 }}
+      whileTap={{ scale: 0.96 }}
       transition={{ layout: MORPH_TRANSITION }}
     >
-      {/* Subtle accent dot — echoes the macOS RecordingHUDPanel blob. */}
-      <motion.span
-        aria-hidden="true"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={FORM_INNER_FADE}
-        style={{
-          width: "8px",
-          height: "8px",
-          borderRadius: "9999px",
-          background: "var(--color-accent)",
-          display: "block",
-        }}
-      />
+      <HelpCircleIcon />
       <style>{`
         @media (max-width: 640px) {
           [data-component="CorderPresenceOrb"] {
@@ -236,8 +228,36 @@ function CorderPresenceOrb() {
             bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
           }
         }
+        [data-component="CorderPresenceOrb"]:hover {
+          background: var(--color-accent-hover, var(--color-accent));
+        }
+        [data-component="CorderPresenceOrb"]:focus-visible {
+          outline: 2px solid var(--color-accent);
+          outline-offset: 3px;
+        }
       `}</style>
-    </motion.div>
+    </motion.button>
+  );
+}
+
+// Lucide HelpCircle icon, inlined (no lucide-react dependency).
+function HelpCircleIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <path d="M12 17h.01" />
+    </svg>
   );
 }
 
@@ -257,141 +277,10 @@ function CorderPresenceForm() {
     setStatus("submitted");
   }
 
-  // Inner content fades in once the layout morph has progressed enough to
-  // make room for it. We don't auto-focus the input — that would steal the
-  // user's scroll context the moment the form materialises.
-  const inner = (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ ...FORM_INNER_FADE, delay: 0.18 }}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "12px",
-        padding: "20px 20px 18px",
-        width: "100%",
-        height: "100%",
-        boxSizing: "border-box",
-      }}
-    >
-      <h3
-        style={{
-          fontFamily: "var(--font-serif)",
-          fontWeight: 500,
-          fontSize: "24px",
-          lineHeight: 1.18,
-          letterSpacing: "-0.012em",
-          color: "var(--color-text)",
-          margin: 0,
-        }}
-      >
-        {newsletter.heading}
-      </h3>
-      <p
-        style={{
-          fontFamily: "var(--font-sans)",
-          fontSize: "14px",
-          lineHeight: 1.5,
-          color: "var(--color-text-muted)",
-          margin: 0,
-        }}
-      >
-        {newsletter.subhead}
-      </p>
-
-      {status === "idle" ? (
-        <form
-          onSubmit={handleSubmit}
-          aria-label="Subscribe to product updates"
-          noValidate
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            marginTop: "4px",
-          }}
-        >
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={newsletter.placeholder}
-            aria-label="Email address"
-            style={{
-              width: "100%",
-              minHeight: "44px",
-              padding: "0 16px",
-              border: "1px solid var(--color-border-strong)",
-              borderRadius: "var(--radius-button)",
-              background: "var(--color-bg)",
-              fontFamily: "var(--font-sans)",
-              fontSize: "15px",
-              color: "var(--color-text)",
-              appearance: "none",
-              WebkitAppearance: "none",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = "var(--color-accent)";
-              e.currentTarget.style.boxShadow = "0 0 0 4px rgba(33, 122, 80, 0.14)";
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = "var(--color-border-strong)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          />
-          <button
-            type="submit"
-            style={{
-              width: "100%",
-              minHeight: "44px",
-              padding: "0 20px",
-              borderRadius: "var(--radius-button)",
-              border: "1px solid var(--color-accent)",
-              background: "var(--color-accent)",
-              color: "#ffffff",
-              fontFamily: "var(--font-sans)",
-              fontWeight: 500,
-              fontSize: "15px",
-              cursor: "pointer",
-              transition:
-                "background-color 150ms cubic-bezier(0.16, 1, 0.3, 1), border-color 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "var(--color-accent-hover)";
-              e.currentTarget.style.borderColor = "var(--color-accent-hover)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "var(--color-accent)";
-              e.currentTarget.style.borderColor = "var(--color-accent)";
-            }}
-          >
-            {newsletter.cta}
-          </button>
-        </form>
-      ) : (
-        <p
-          role="status"
-          aria-live="polite"
-          style={{
-            margin: 0,
-            marginTop: "4px",
-            fontFamily: "var(--font-sans)",
-            fontSize: "14px",
-            lineHeight: 1.5,
-            color: "var(--color-text-muted)",
-          }}
-        >
-          {newsletter.successMessage}
-        </p>
-      )}
-    </motion.div>
-  );
-
+  // Content lives directly inside the morphing motion.div — no inner
+  // motion.div wrapper. With AnimatePresence removed in the corner switch
+  // there's only ONE element on screen at a time, so the bounds + radius
+  // interpolation reads as a clean unfold from the orb to the card.
   return (
     <motion.div
       layoutId="corder-presence"
@@ -413,10 +302,89 @@ function CorderPresenceForm() {
         borderRadius: "var(--radius-window)",
         pointerEvents: "auto",
         overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        gap: "14px",
+        padding: "20px 20px 18px",
+        boxSizing: "border-box",
       }}
       transition={{ layout: MORPH_TRANSITION }}
     >
-      {inner}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
+        <h3
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontWeight: 500,
+            fontSize: "24px",
+            lineHeight: 1.18,
+            letterSpacing: "-0.012em",
+            color: "var(--color-text)",
+            margin: 0,
+          }}
+        >
+          {newsletter.heading}
+        </h3>
+        <p
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: "14px",
+            lineHeight: 1.5,
+            color: "var(--color-text-muted)",
+            margin: 0,
+          }}
+        >
+          {newsletter.subhead}
+        </p>
+      </div>
+
+      {status === "idle" ? (
+        <form
+          onSubmit={handleSubmit}
+          aria-label="Subscribe to product updates"
+          noValidate
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={newsletter.placeholder}
+            aria-label="Email address"
+            className="presence-form-input"
+          />
+          <button
+            type="submit"
+            className="presence-form-submit"
+          >
+            {newsletter.cta}
+          </button>
+        </form>
+      ) : (
+        <p
+          role="status"
+          aria-live="polite"
+          style={{
+            margin: 0,
+            fontFamily: "var(--font-sans)",
+            fontSize: "14px",
+            lineHeight: 1.5,
+            color: "var(--color-text-muted)",
+          }}
+        >
+          {newsletter.successMessage}
+        </p>
+      )}
       <style>{`
         @media (max-width: 640px) {
           [data-component="CorderPresenceForm"] {
@@ -424,6 +392,54 @@ function CorderPresenceForm() {
             right: 28px !important;
             bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
           }
+        }
+        .presence-form-input {
+          width: 100%;
+          min-height: 44px;
+          padding: 0 16px;
+          border: 1px solid var(--color-border-strong);
+          border-radius: var(--radius-button);
+          background: var(--color-bg);
+          font-family: var(--font-sans);
+          font-size: 15px;
+          color: var(--color-text);
+          appearance: none;
+          -webkit-appearance: none;
+          outline: none;
+          box-sizing: border-box;
+          transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .presence-form-input:focus-visible {
+          border-color: var(--color-accent);
+          box-shadow: 0 0 0 4px rgba(33, 122, 80, 0.14);
+        }
+        .presence-form-submit {
+          width: 100%;
+          min-height: 44px;
+          padding: 0 20px;
+          border-radius: var(--radius-button);
+          border: 1px solid var(--color-accent);
+          background: var(--color-accent);
+          color: var(--color-accent-contrast, #ffffff);
+          font-family: var(--font-sans);
+          font-weight: 600;
+          font-size: 15px;
+          cursor: pointer;
+          transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+            border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+            transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .presence-form-submit:hover {
+          background: var(--color-accent-hover, var(--color-accent));
+          border-color: var(--color-accent-hover, var(--color-accent));
+        }
+        .presence-form-submit:active {
+          transform: translateY(1px);
+        }
+        .presence-form-submit:focus-visible {
+          outline: 2px solid var(--color-accent);
+          outline-offset: 2px;
         }
       `}</style>
     </motion.div>
