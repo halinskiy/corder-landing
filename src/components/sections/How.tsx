@@ -87,7 +87,7 @@ export function How() {
       data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,font-serif"
       className="relative w-full"
     >
-      <div className="page-container py-14 md:py-[88px]">
+      <div className="page-container py-8 md:py-[52px]">
         <div className="how-grid">
           {/* LEFT: sticky live-UI */}
           <div className="how-sticky">
