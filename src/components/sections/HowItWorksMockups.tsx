@@ -340,13 +340,20 @@ export function DashboardMock() {
         </div>
 
         <div className="hl-dash-detail">
-          {/* Tab strip -- Stats active (left), Recent active (right) */}
+          {/* Tab strip -- Stats active (left), Longest active (right)
+             with a small dropdown selector for the sort mode. */}
           <div className="hl-dash-tabs">
             <div className="hl-dash-tab-col hl-dash-tab-col-left">
               <span className="hl-tab active">Stats</span>
             </div>
             <div className="hl-dash-tab-col hl-dash-tab-col-right">
-              <span className="hl-tab active">Recent</span>
+              <span className="hl-tab active">Longest</span>
+              <span className="hl-dash-tab-picker" aria-hidden="true">
+                <span>All time</span>
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 4.5l3 3 3-3" />
+                </svg>
+              </span>
             </div>
           </div>
 
