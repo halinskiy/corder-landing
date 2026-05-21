@@ -365,7 +365,7 @@ function CorderPresenceForm() {
           />
           <button
             type="submit"
-            className="presence-form-submit"
+            className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
           >
             {newsletter.cta}
           </button>
@@ -393,12 +393,16 @@ function CorderPresenceForm() {
             bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
           }
         }
+        /* Input mirrors the project's existing pill-shaped search field
+         * (Search the transcript inside the Hero demo): 999px radius,
+         * hairline border, accent focus ring. Pairs with the cta-pill
+         * Subscribe button below. */
         .presence-form-input {
           width: 100%;
-          min-height: 44px;
-          padding: 0 16px;
+          height: 48px;
+          padding: 0 20px;
           border: 1px solid var(--color-border-strong);
-          border-radius: var(--radius-button);
+          border-radius: 999px;
           background: var(--color-bg);
           font-family: var(--font-sans);
           font-size: 15px;
@@ -410,37 +414,16 @@ function CorderPresenceForm() {
           transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
             box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .presence-form-input:hover {
+          border-color: var(--color-text);
+        }
         .presence-form-input:focus-visible {
           border-color: var(--color-accent);
           box-shadow: 0 0 0 4px rgba(33, 122, 80, 0.14);
         }
-        .presence-form-submit {
-          width: 100%;
-          min-height: 44px;
-          padding: 0 20px;
-          border-radius: var(--radius-button);
-          border: 1px solid var(--color-accent);
-          background: var(--color-accent);
-          color: var(--color-accent-contrast, #ffffff);
-          font-family: var(--font-sans);
-          font-weight: 600;
-          font-size: 15px;
-          cursor: pointer;
-          transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-            border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-            transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .presence-form-submit:hover {
-          background: var(--color-accent-hover, var(--color-accent));
-          border-color: var(--color-accent-hover, var(--color-accent));
-        }
-        .presence-form-submit:active {
-          transform: translateY(1px);
-        }
-        .presence-form-submit:focus-visible {
-          outline: 2px solid var(--color-accent);
-          outline-offset: 2px;
-        }
+        /* Subscribe button uses the project's .cta-pill .cta-pill--primary
+         * classes (same pattern as Hero's Download for Mac CTA). No bespoke
+         * submit styles here - single source of truth. */
       `}</style>
     </motion.div>
   );
