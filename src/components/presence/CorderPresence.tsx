@@ -417,9 +417,16 @@ function CorderPresenceForm() {
         .presence-form-input:hover {
           border-color: var(--color-text);
         }
+        /* Pill input + pill focus ring. The global :focus-visible rule
+         * paints a rectangular outline AND forces border-radius: inherit
+         * (which collapses to 0 because the parent form has no radius).
+         * Override both so the pill shape and the halo both stay round. */
+        .presence-form-input:focus,
         .presence-form-input:focus-visible {
+          outline: none !important;
+          border-radius: 999px !important;
           border-color: var(--color-accent);
-          box-shadow: 0 0 0 4px rgba(33, 122, 80, 0.14);
+          box-shadow: 0 0 0 3px rgba(33, 122, 80, 0.20);
         }
         /* Subscribe button uses the project's .cta-pill .cta-pill--primary
          * classes (same pattern as Hero's Download for Mac CTA). No bespoke
