@@ -28,7 +28,7 @@ export function Hero() {
       data-component="Hero"
       data-source={DATA_SOURCE}
       data-tokens="display-lg,font-serif,color-text,ease-out"
-      className="relative w-full overflow-x-clip pt-32 pb-8 md:pt-24 md:pb-12"
+      className="relative w-full overflow-x-clip pt-40 pb-8 md:pt-32 md:pb-12"
     >
       {/* Atmospheric dot grid behind the demo, faded edges. */}
       <div
