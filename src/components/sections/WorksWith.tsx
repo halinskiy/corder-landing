@@ -43,7 +43,7 @@ export function WorksWith() {
       data-tokens="color-text,color-text-muted,color-border,color-accent,font-serif"
       className="relative w-full"
     >
-      <div className="page-container py-14 md:py-[88px]">
+      <div className="page-container py-8 md:py-[52px]">
         <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
           <div className="lg:col-span-9">
             {worksWith.eyebrow && (

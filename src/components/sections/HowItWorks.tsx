@@ -131,7 +131,7 @@ export function HowItWorks() {
       className="relative w-full overflow-hidden"
     >
       <div aria-hidden className="section-blob section-blob--howitworks" />
-      <div className="page-container pt-14 md:pt-[88px]">
+      <div className="page-container pt-8 md:pt-[52px]">
         <Header
           eyebrow={howItWorks.eyebrow}
           heading={howItWorks.heading}
