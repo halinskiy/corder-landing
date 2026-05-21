@@ -3340,7 +3340,7 @@ button:focus:not(:focus-visible) {
 }
 
 .section-subhead {
-  margin-top: 20px;
+  margin-top: 10px;
   max-width: 56ch;
   font-family: var(--font-sans);
   font-size: var(--text-body-lg);
