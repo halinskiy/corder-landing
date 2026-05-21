@@ -12,6 +12,107 @@ Format:
 
 ---
 
+## 2026-05-21 -- Features section: AUTO-DETECT redrawn, AUDIO + RE-RUN replaced (branch `feat/hero-v090`)
+
+Single follow-up commit on `feat/hero-v090`. User flagged that the previous
+AUDIO ("No driver install required") and RE-RUN ("Re-run for free") cells
+didn't matter to the target audience, and that the AUTO-DETECT illustration
+looked invented. Three cell swaps in one atomic commit:
+
+- **Cell 03 AUTO-DETECT (visual redrawn).** Heading kept ("Catches the
+  meeting first"). `visualHint` changed from `menu-bar-capsule` to
+  `popover-widget`. Body changed from "Menu bar asks when Zoom opens. One
+  tap to start." to "Menu bar widget, always one click away." -- now
+  describes what the picture actually shows (the real popover, not a
+  hypothetical notification). New `PopoverWidget` SVG is a faithful mock
+  of the IDLE state of `Sources/Corder/UI/PopoverContentView.swift`:
+  dark 280x240 card, IdleStatus row (10px grey dot + "Not recording" +
+  monospaced "00:00"), light "Start recording" primary button with a
+  red 8x8 dot, hairline separator, outlined "Open library" secondary
+  with a `rectangle.stack`-style two-squircle icon, and a small grey
+  "Quit" link at the bottom. Geometry follows the Swift source
+  (`.padding(20)`, `.frame(width: 320)`, spacing 18, radius 8 on inner
+  rows, radius 14 on the card).
+- **Cell 05 was AUDIO, now NO-BOT.** Heading: "No bot joins the call".
+  Body empty (the heading carries the whole message). `visualHint`:
+  `no-bot-grid`. New `NoBotGrid` SVG: 320x200 dark canvas with a
+  14px menu-bar strip on top, two participant tiles ("V" purple, "Y"
+  amber), "2 in this call" caption, and an off-grid accent annotation
+  with a hairline elbow pointing from the menu-bar status area to a
+  label reading "CORDER LIVES HERE". The annotation teaches the absence
+  -- Corder is not in the call, it lives in the menu bar.
+- **Cell 06 was RE-RUN, now TRANSCRIPT.** Heading: "Transcript next
+  to audio". Body: "Scrub the audio. The line follows." `visualHint`:
+  `transcript-fragment`. New `TranscriptFragment` SVG: 320x160 light
+  card. Audio scrubber on top (208px track, accent fill at ~58%, accent
+  playhead handle, monospaced `02:14` and `06:48` time labels). One
+  transcript line beneath with a purple "KH" speaker badge, speaker
+  name + monospaced timestamp, and snippet "We can ship the cache by
+  Friday." with two faint placeholder lines.
+
+Single accent role per cell (the spotlight):
+- Timeline -- the playhead dot
+- Screen frame -- the centre play button
+- AUTO-DETECT popover -- the dropdown caret anchor at the top (signals
+  "this widget lives in the menu bar"). Decision logged in DECISIONS.md
+  2026-05-21: the Start-recording dot stays RED (product fidelity, red
+  = recording state in the real app); accent green would mislead.
+- Drag gesture -- the dashed curve + arrowhead
+- NO-BOT -- the annotation hairline + "CORDER LIVES HERE" label
+- TRANSCRIPT -- the scrubber's accent progress fill + playhead handle
+
+INTEGRATIONS was considered for the second open slot but skipped: per
+`research/corder-feature-inventory-2026-05.md` section 10, the in-app
+Integrations card currently says "Soon" and points users at the profile
+menu. Promising integrations as a feature would risk vapour, and the
+DRAG cell at position 4 already carries the integrations story for
+v0.9.0 (drag transcripts out to Notion / Obsidian / Apple Notes).
+Documented in DECISIONS.md.
+
+Three new `visualHint` keys: `popover-widget`, `no-bot-grid`,
+`transcript-fragment`. Three old keys retired: `menu-bar-capsule`,
+`audio-sound-row`, `version-sequence`. Three old SVG components removed
+from `Features.tsx`: `MenuBarCapsule`, `AudioSoundRow`, `VersionSequence`.
+Three new SVG components added: `PopoverWidget`, `NoBotGrid`,
+`TranscriptFragment`. The `versionSequence` JSON field is no longer
+referenced by any cell but the type stays optional in `copy.ts` to keep
+the diff surgical -- editorial cleanup pass can remove it later.
+
+`.ftr-svg--menubar` and `.ftr-svg--versions` rules removed from
+`globals.css`; replaced with `.ftr-svg--popover` and `.ftr-svg--nobot`
+(both pinned to transparent background since they paint their own
+dark fill).
+
+Files in the diff:
+- `src/components/sections/Features.tsx` (rewrite of three visual
+  components + three new switch cases, three cases removed)
+- `src/app/globals.css` (4 line delta in the `.ftr-svg--*` block)
+- `content/copy.json` (three cell entries updated)
+- `CHANGELOG.md` (this entry)
+- `DECISIONS.md` (red-dot fidelity, integrations-skip, popover caret as
+  spotlight)
+- `HANDOFF.md` (Features section table updated)
+- `RETRO.md` (soldier entry)
+
+ASCII clean: zero hits across the diff for
+`[\x{2010}-\x{2015}\x{2018}-\x{201F}\x{2022}\x{00B7}\x{00A7}]`.
+
+Verification:
+- `npm run typecheck` -- exit 0
+- Playwright screenshot via CDP: viewport at 1440x900 @ 2x DPR,
+  scrolled to `#features`. All 6 cells render, all 6
+  `FeatureVisual.*` data-components present in the DOM:
+  `MiniTimelineFragment`, `ScreenVideoFrame`, `PopoverWidget`,
+  `DragOutGesture`, `NoBotGrid`, `TranscriptFragment`. Screenshots
+  saved at:
+  `screenshots/features-popover-nobot-transcript.png` (viewport)
+  `screenshots/features-popover-nobot-transcript-full.png` (full
+  Features section)
+
+Awaiting judge review.
+
+---
+
 ## 2026-05-21 — Features cells get inline-SVG illustrations (branch `feat/hero-v090`)
 
 Single follow-up commit on `feat/hero-v090`. Six cells in the Features section

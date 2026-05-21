@@ -4,6 +4,104 @@
 
 ---
 
+## 2026-05-21 -- Features section: three decisions baked into the cell swap
+
+### Decision 1: AUTO-DETECT popover keeps the RED Start-recording dot
+
+**Решение:** в `PopoverWidget` SVG mock'е (новая cell 03 illustration)
+маленький 8x8 dot на кнопке "Start recording" остаётся **красный
+`#dc2626`**, не accent green `#217a50`.
+
+**Контекст:** brief явно просил soldier judgement и просил
+зафиксировать выбор. Альтернатива -- заменить red dot на accent green
+ради проектной single-accent doctrine.
+
+**Альтернативы:**
+- a) **Accent green dot.** Отвергнуто: в реальном macOS app красный
+  dot -- это semantic indicator состояния "recording is active" и
+  "tap here to start" (red = action будет recording). Если landing
+  показывает green dot на кнопке Start, пользователь скачает app и
+  увидит red dot -- рассинхронизация между landing-обещанием и реальным
+  UI. Worse: на странице рядом есть green accent (Download button,
+  пр.) -- green dot читался бы как "go" / "started", вводя в заблуждение
+  по поводу состояния popover (мы рисуем именно **idle** state).
+- b) **No dot вообще.** Отвергнуто: дот это integral piece визуала
+  кнопки в реальном app, без него кнопка теряет product-recognition.
+- c) **Red dot, no other accent в иллюстрации.** Отвергнуто: тогда у
+  cell нет single-accent spotlight роли вообще, и cell визуально
+  читается как "продукт без брендинга".
+
+**Что выбрано:** red dot stays (product fidelity). Single accent role
+для этой cell = **dropdown caret/anchor at top-center** иллюстрации.
+Caret рисуется в `var(--color-accent)` и тонко связывает popover с
+menu-bar икон-источником сверху. Это даёт cell ровно один accent
+touchpoint, не конкурирующий с product-semantic red.
+
+### Decision 2: INTEGRATIONS skipped as a separate Features cell
+
+**Решение:** свободные два slot'а в Features (после удаления AUDIO и
+RE-RUN) заняты NO-BOT и TRANSCRIPT. INTEGRATIONS не получает
+отдельной cell.
+
+**Контекст:** brief давал три кандидата на два слота: NO-BOT,
+TRANSCRIPT, INTEGRATIONS. Brief сам флагнул INTEGRATIONS как risky и
+рекомендовал skip.
+
+**Why skip:**
+- Per `research/corder-feature-inventory-2026-05.md` section 10
+  ("Integrations + Downloads"), in-app Integrations card сейчас
+  буквально говорит "Soon" и отсылает users в profile menu. На landing
+  обещать integrations = vapour-promise. См. также inventory line 319:
+  *"The 0.9.0 settings pass removed the Gemini-key input and the in-pane
+  Integrations promo. Integrations now live exclusively in the profile
+  menu."*
+- DRAG cell (position 04) уже несёт integrations story для v0.9.0 в
+  честной форме: "Drag out, no export dialog" + Pricing tier mentions
+  "Drag-out to Notion, Obsidian, Apple Notes". Вторая cell про
+  integrations была бы дублированием на лучшем случае, vapour-promise
+  на худшем.
+- NO-BOT и TRANSCRIPT обе прямые ответы на верифицированные user
+  pain-points (skeptic structure F.A в research), их visual mocks
+  можно нарисовать честно (Zoom call grid без Corder; scrubber +
+  transcript line -- это РЕАЛЬНЫЕ artefacts продукта).
+
+**Альтернативы:**
+- a) **Honest framing INTEGRATIONS как "Lives in Finder, plays with
+  any tool that opens .txt/.md/.wav".** Отвергнуто: умно но дублирует
+  то что DRAG cell уже показывает. Cell-grid не нужен второй
+  integrations-narrative.
+- b) **Replace DRAG cell на INTEGRATIONS, add NO-BOT + TRANSCRIPT.**
+  Отвергнуто: DRAG illustration сильный visual hook, drag-gesture
+  читается мгновенно. NO-BOT + TRANSCRIPT покрывают новые story slots
+  без удаления уже-работающего DRAG.
+
+### Decision 3: Single accent role per illustration after the swap
+
+В каждой из трёх новых иллюстраций ровно один элемент использует
+`var(--color-accent)`:
+
+- `popover-widget` -- **dropdown caret/anchor** at top-center (signals
+  "this widget lives in the menu bar"). Red dot в Start-recording
+  кнопке остаётся product-semantic red, не считается за second
+  accent (это product chrome, не landing chrome).
+- `no-bot-grid` -- **annotation hairline + label "CORDER LIVES HERE"**.
+  Hairline тонкая `var(--color-accent)` 1px, label маленький accent
+  serif. Это spotlight, ВСЕ остальные элементы (tiles, badges,
+  participant labels) -- neutral grey / product palette (purple +
+  amber, scoped к product UI demos).
+- `transcript-fragment` -- **scrubber's accent progress fill +
+  playhead handle**. Filled portion track + handle circle. Purple
+  speaker badge "KH" -- НЕ second accent, это product UI palette
+  scoped к demos (same palette as Hero `HeroLibraryDemo`).
+
+**Verification:** grep на `var(--color-accent)` в каждом из трёх
+новых SVG функций даёт ровно один functional role (multiple
+`fill="var(--color-accent)"` в одной функции допустимо если они
+формируют ОДИН визуальный элемент, e.g. circle + smaller white inner
+circle = одна "ручка").
+
+---
+
 ## 2026-05-21 — Features cells: inline-SVG mocks instead of typographic gestures
 
 ### Решение: каждая cell получает свой inline-`<svg>` mock в стиле `GoogleMeetMock`
