@@ -42,6 +42,14 @@ export function Hero() {
         }}
       />
 
+      {/* Two ambient accent-green blobs in the hero background.
+       *  Pumble-style atmosphere in our own colour. Pure CSS, static,
+       *  low opacity, large filter-blur so the edges feel like coloured
+       *  fog rather than shapes. Sit behind every painted element and
+       *  never receive pointer events. */}
+      <div aria-hidden className="hero-blob hero-blob--tr" />
+      <div aria-hidden className="hero-blob hero-blob--bl" />
+
       <div className="page-container">
         <div className="mx-auto max-w-[1100px] text-center [text-wrap:balance]">
           <motion.h1
