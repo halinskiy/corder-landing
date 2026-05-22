@@ -27,6 +27,12 @@ export type FAQAccordionProps = {
   /** Optional class on the wrapper. */
   className?: string;
   dataSource?: string;
+  /**
+   * Fires each time an item flips state. `isOpen` is the NEW state after
+   * the toggle. Used by Corder Faq.tsx to send a `faq_open` analytics
+   * event when an item expands (ad-test instrumentation).
+   */
+  onItemToggle?: (index: number, isOpen: boolean) => void;
 };
 
 const DATA_SOURCE_DEFAULT = "ui-kit/components/section/FAQAccordion.tsx";
@@ -50,16 +56,21 @@ export function FAQAccordion({
   mode = "multi",
   className,
   dataSource,
+  onItemToggle,
 }: FAQAccordionProps) {
   const [openIndices, setOpenIndices] = useState<number[]>([]);
 
   const toggle = (idx: number) => {
     setOpenIndices((prev) => {
-      const isOpen = prev.includes(idx);
+      const wasOpen = prev.includes(idx);
+      const nextOpen = !wasOpen;
+      // Notify consumer with the new state. Fires on every toggle, both
+      // open and close; the consumer decides which transitions matter.
+      onItemToggle?.(idx, nextOpen);
       if (mode === "single") {
-        return isOpen ? [] : [idx];
+        return wasOpen ? [] : [idx];
       }
-      return isOpen ? prev.filter((i) => i !== idx) : [...prev, idx];
+      return wasOpen ? prev.filter((i) => i !== idx) : [...prev, idx];
     });
   };
 

@@ -7,6 +7,7 @@ import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Nav } from "@/components/sections/Nav";
 import { Pricing } from "@/components/sections/Pricing";
 import { WorksWith } from "@/components/sections/WorksWith";
+import { YoursPrivacy } from "@/components/sections/YoursPrivacy";
 import {
   CorderPresenceFormSentinel,
   CorderPresenceStaticSection,
@@ -19,6 +20,12 @@ export default function HomePage() {
       <Hero />
       <hr className="section-divider" />
       <HowItWorks />
+      <hr className="section-divider" />
+      {/* Privacy block lifted out of hero + FAQ ahead of the ad test
+          (2026-05-22). Reader who just saw "Record from anywhere" will
+          ask "wait, who has my audio?" right here -- and this answers
+          before they hit Fit / WorksWith. */}
+      <YoursPrivacy />
       <hr className="section-divider" />
       <Fit />
       <hr className="section-divider" />

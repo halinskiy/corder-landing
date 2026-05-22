@@ -3,6 +3,7 @@
 import { FAQAccordion } from "@/lib/ui-vendor/FAQAccordion";
 
 import { copy } from "@/content/copy";
+import { trackEvent } from "@/lib/track";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Faq.tsx";
 
@@ -47,6 +48,16 @@ export function Faq() {
             items={items}
             mode="multi"
             dataSource={DATA_SOURCE}
+            onItemToggle={(index, isOpen) => {
+              // Only the open transition counts as engagement; closes are
+              // noise in the ad-test funnel.
+              if (isOpen) {
+                trackEvent("faq_open", {
+                  index,
+                  question: items[index]?.question ?? "",
+                });
+              }
+            }}
           />
         </div>
       </div>
