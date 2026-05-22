@@ -74,6 +74,7 @@ export function Pricing() {
 type Tier = {
   name: string;
   price: string;
+  priceOriginal?: string;
   priceUnit: string;
   billNote?: string;
   badge?: string;
@@ -105,6 +106,14 @@ function PricingCard({ tier }: { tier: Tier }) {
 
         <div>
           <div className="pricing-card__price-row">
+            {tier.priceOriginal && (
+              <span
+                className="pricing-card__price-original"
+                aria-label={`Was ${tier.priceOriginal} a year`}
+              >
+                {tier.priceOriginal}
+              </span>
+            )}
             <span className="pricing-card__price">{tier.price}</span>
             <span className="pricing-card__price-suffix">/{tier.priceUnit}</span>
           </div>
