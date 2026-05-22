@@ -222,16 +222,12 @@
     "eyebrow": "Pricing",
     "heading": "Pricing",
     "subhead": "Two tiers. Free is genuinely free. Pro pays for the upgrade you actually use",
-    "annualToggleLabel": "Pay annually, save 31%",
     "tiers": [
       {
         "name": "Free",
-        "price": {
-          "monthly": "$0",
-          "annual": "$0"
-        },
-        "priceSuffix": "forever",
-        "subline": "",
+        "kind": "single",
+        "price": "$0",
+        "priceUnit": "forever",
         "features": [
           "Up to 60 minutes per recording",
           "Speaker labels and full-text search",
@@ -245,14 +241,26 @@
       },
       {
         "name": "Pro",
-        "price": {
-          "monthly": "$12",
-          "annual": "$99"
-        },
-        "priceSuffix": "month",
-        "priceSuffixAnnual": "year",
-        "annualNote": "$99/year, save 31%",
-        "subline": "",
+        "kind": "plans",
+        "highlight": true,
+        "plans": [
+          {
+            "label": "Monthly",
+            "price": "$12",
+            "unit": "month",
+            "note": "Cancel anytime",
+            "trackBilling": "monthly"
+          },
+          {
+            "label": "Annual",
+            "price": "$99",
+            "unit": "year",
+            "note": "Billed once a year",
+            "badge": "Save 31%",
+            "featured": true,
+            "trackBilling": "annual"
+          }
+        ],
         "features": [
           "Unlimited recording length",
           "Auto-summary with sections and decisions",
@@ -260,9 +268,6 @@
           "Early access to new features",
           "Everything in Free"
         ],
-        "cta": "Get Pro",
-        "ctaStyle": "primary",
-        "highlight": true,
         "trackEvent": "cta_pro_click"
       }
     ],
