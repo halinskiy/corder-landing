@@ -8,31 +8,24 @@ const DATA_SOURCE =
 /**
  * Section — "Your meetings stay yours".
  *
- * Three trust cards. Earlier each card carried a lucide icon (Lock /
- * UserX / EyeOff); user 2026-05-22 asked for "three different coloured
- * blobs of different shapes moving" instead -- the section should feel
- * alive rather than icon-grid.
+ * Three trust cards. Each carries a distinctively-shaped coloured shape
+ * (blob, star, diamond) rather than three near-identical rounded
+ * squircles. The shapes give the section visual rhythm in motion:
+ *   card 1  organic blob   forest accent green #217a50
+ *   card 2  five-point star speaker purple    #5a3aa6
+ *   card 3  rounded diamond speaker amber     #a16207
  *
- * Colours pulled from the existing palette so the rest of the design
- * system stays consistent:
- *   - card 1  forest accent green  #217a50  (project accent)
- *   - card 2  speaker purple       #5a3aa6  (used inside hero transcript)
- *   - card 3  speaker amber        #a16207  (used inside hero transcript)
- *
- * Each blob is a single SVG circle with `border-radius` driven by CSS
- * keyframes for the morph, and a slight `transform: translate` so the
- * shape drifts. Three different keyframe sets give each blob its own
- * personality. Animation is pause-able via PauseOffscreen.
+ * Each shape rotates / pulses on its own keyframe so none of the three
+ * moves the same way at the same time. PauseOffscreen halts all three
+ * when the section leaves the viewport.
  */
 export function YoursPrivacy() {
   const { yoursPrivacy } = copy;
 
-  // Map the icon slug from copy.json onto a blob colour class. Content
-  // stays declarative; future copy edits don't need to touch React code.
-  const BLOB_VARIANT: Record<string, string> = {
-    lock: "yours-privacy-blob--green",
-    "user-x": "yours-privacy-blob--purple",
-    "eye-off": "yours-privacy-blob--amber",
+  const SHAPE_FOR: Record<string, React.ComponentType> = {
+    lock: BlobShape,
+    "user-x": StarShape,
+    "eye-off": DiamondShape,
   };
 
   return (
@@ -78,7 +71,7 @@ export function YoursPrivacy() {
         {/* Three cards */}
         <div className="yours-privacy-grid mt-10 md:mt-14">
           {yoursPrivacy.cards.map((card) => {
-            const variant = BLOB_VARIANT[card.icon] ?? "yours-privacy-blob--green";
+            const Shape = SHAPE_FOR[card.icon] ?? BlobShape;
             return (
               <article
                 key={card.heading}
@@ -87,10 +80,9 @@ export function YoursPrivacy() {
                 data-source={DATA_SOURCE}
                 data-tokens="color-bg,color-text,color-border,color-accent,radius-window,font-serif,font-sans"
               >
-                <div
-                  className={`yours-privacy-blob ${variant}`}
-                  aria-hidden
-                />
+                <div className="yours-privacy-blob-wrap" aria-hidden>
+                  <Shape />
+                </div>
                 <h3 className="yours-privacy-card__heading">{card.heading}</h3>
                 <p className="yours-privacy-card__body">{card.body}</p>
               </article>
@@ -99,5 +91,90 @@ export function YoursPrivacy() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* ----------------------------------------------------------------------
+ *  Three shape components -- each is its own SVG so the geometries can
+ *  diverge sharply. Radial-gradient fills give each shape a "ball"
+ *  highlight at the top-left, deeper colour at the centre, matching
+ *  the existing visual language.
+ * -------------------------------------------------------------------- */
+
+function BlobShape() {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      className="yp-shape yp-shape--blob"
+      data-component="YoursPrivacyBlob"
+    >
+      <defs>
+        <radialGradient id="yp-grad-blob" cx="30%" cy="25%" r="80%">
+          <stop offset="0%" stopColor="#7bc49f" />
+          <stop offset="75%" stopColor="#217a50" />
+        </radialGradient>
+      </defs>
+      {/* Asymmetric organic splat -- deliberately not a circle. */}
+      <path
+        d="M40 4 C54 6 60 18 58 32 C56 48 42 60 28 58 C12 56 2 44 4 28 C6 12 24 2 40 4 Z"
+        fill="url(#yp-grad-blob)"
+      />
+    </svg>
+  );
+}
+
+function StarShape() {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      className="yp-shape yp-shape--star"
+      data-component="YoursPrivacyStar"
+    >
+      <defs>
+        <radialGradient id="yp-grad-star" cx="35%" cy="30%" r="80%">
+          <stop offset="0%" stopColor="#a082dc" />
+          <stop offset="75%" stopColor="#5a3aa6" />
+        </radialGradient>
+      </defs>
+      {/* Five-point star, slightly rounded line-join so it doesn't read
+       *  as a sheriff's badge. Computed: outer radius 28, inner radius
+       *  11, centred at (32, 32). */}
+      <path
+        d="M32 4 L37.8 23.2 L57.6 23.2 L41.6 35.2 L47.4 54.4 L32 42.8 L16.6 54.4 L22.4 35.2 L6.4 23.2 L26.2 23.2 Z"
+        fill="url(#yp-grad-star)"
+        strokeLinejoin="round"
+        stroke="url(#yp-grad-star)"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+function DiamondShape() {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      className="yp-shape yp-shape--diamond"
+      data-component="YoursPrivacyDiamond"
+    >
+      <defs>
+        <radialGradient id="yp-grad-diamond" cx="40%" cy="25%" r="80%">
+          <stop offset="0%" stopColor="#dcaa5f" />
+          <stop offset="75%" stopColor="#a16207" />
+        </radialGradient>
+      </defs>
+      {/* Rounded diamond -- 45-degree-rotated square with a chunky
+       *  corner radius so it reads as a soft rhombus, not a hard
+       *  geometry sticker. */}
+      <rect
+        x="14"
+        y="14"
+        width="36"
+        height="36"
+        rx="8"
+        transform="rotate(45 32 32)"
+        fill="url(#yp-grad-diamond)"
+      />
+    </svg>
   );
 }
