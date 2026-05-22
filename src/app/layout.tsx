@@ -6,6 +6,7 @@ import { PauseOffscreen } from "@/components/providers/PauseOffscreen";
 import { CorderPresenceProvider } from "@/components/presence/CorderPresence";
 
 import { copy } from "@/content/copy";
+import { PADDLE_ENV, PADDLE_TOKEN } from "@/lib/paddle";
 
 import "./globals.css";
 
@@ -195,6 +196,13 @@ const TWQ_SCRIPT = TWQ_ID
 // which src/lib/track.ts calls for every event.
 const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
+// Paddle.js v2 init -- runs synchronously after the CDN script tag loads.
+// `eventCallback` forwards `checkout.completed` into Plausible + Twitter
+// pixel so the ad funnel can attribute the conversion. The script is
+// injected in HEAD so the checkout overlay is ready by the time the user
+// clicks Get Pro in Pricing.
+const PADDLE_INIT_SCRIPT = `try{Paddle.Environment.set(${JSON.stringify(PADDLE_ENV)});Paddle.Initialize({token:${JSON.stringify(PADDLE_TOKEN)},eventCallback:function(d){if(d&&d.name==="checkout.completed"){try{if(window.plausible)window.plausible("checkout_completed");if(window.twq)window.twq("event","tw-checkout-completed",{});}catch(e){}}}});}catch(e){console.error("Paddle init failed",e);}`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -217,6 +225,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {PLAUSIBLE_DOMAIN && (
           <link rel="preconnect" href="https://plausible.io" crossOrigin="" />
         )}
+        {/* Paddle CDN -- preconnect saves TLS handshake on the first
+            checkout-open click. The checkout iframe pulls from
+            buy.paddle.com / buy.sandbox.paddle.com depending on env. */}
+        <link rel="preconnect" href="https://cdn.paddle.com" crossOrigin="" />
+        <link rel="preconnect" href="https://buy.paddle.com" crossOrigin="" />
+        <link rel="preconnect" href="https://buy.sandbox.paddle.com" crossOrigin="" />
         {/* Structured data: SoftwareApplication + Organization + WebSite.
          * Inline before scripts so Googlebot encounters it early in HEAD. */}
         <script
@@ -256,6 +270,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             />
           </>
         )}
+        {/* Paddle.js v2 -- loaded synchronously so the init script below
+            sees `window.Paddle` immediately. Sandbox/production switch
+            lives in `src/lib/paddle.ts`. */}
+        <script src="https://cdn.paddle.com/paddle/v2/paddle.js" />
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: PADDLE_INIT_SCRIPT }}
+        />
       </head>
       <body>
         <PauseOffscreen />
