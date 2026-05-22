@@ -30,16 +30,145 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const SITE_URL = "https://getcorder.com";
+
 export const metadata: Metadata = {
-  title: copy.meta.title,
+  metadataBase: new URL(SITE_URL),
+  // Title template: child pages can set their own title and Next.js will
+  // wrap it. The home page sets `title: copy.meta.title` directly (no template).
+  title: {
+    default: copy.meta.title,
+    template: "%s | Corder",
+  },
   description: copy.meta.description,
+  applicationName: "Corder",
+  authors: [{ name: "Corder", url: SITE_URL }],
+  creator: "Corder",
+  publisher: "Corder",
+  keywords: [
+    "mac meeting recorder",
+    "macOS meeting recorder",
+    "record zoom call",
+    "record google meet",
+    "record microsoft teams",
+    "meeting transcription",
+    "speaker labels",
+    "no bot meeting recorder",
+    "private meeting recorder",
+    "local meeting transcription",
+    "gemini transcription",
+    "corder app",
+  ],
+  category: "productivity",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: copy.meta.ogTitle,
     description: copy.meta.ogDescription,
     type: "website",
     locale: "en_US",
     siteName: "Corder",
+    url: SITE_URL,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Corder. Record what was said. The Mac meeting recorder. No bot in the call.",
+        type: "image/png",
+      },
+    ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: copy.meta.ogTitle,
+    description: copy.meta.ogDescription,
+    images: ["/og-image.png"],
+  },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/favicon.ico"],
+  },
+  manifest: "/manifest.webmanifest",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  other: {
+    // Pinned colour for browser UI (Chrome address bar, Safari header).
+    "theme-color": "#217a50",
+  },
+};
+
+// JSON-LD structured data: SoftwareApplication + Organization + WebSite.
+// Embedded as a single <script type="application/ld+json"> in the head so
+// Googlebot picks it up without parsing JavaScript.
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${SITE_URL}/#software`,
+      name: "Corder",
+      url: SITE_URL,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "macOS 14",
+      description: copy.meta.description,
+      image: `${SITE_URL}/og-image.png`,
+      softwareVersion: "0.9",
+      offers: [
+        {
+          "@type": "Offer",
+          name: "Free",
+          price: "0",
+          priceCurrency: "USD",
+          description: "Up to 60 minutes per recording, unlimited local recordings, speaker labels.",
+        },
+        {
+          "@type": "Offer",
+          name: "Pro Monthly",
+          price: "12",
+          priceCurrency: "USD",
+          description: "Unlimited recording length, auto-summary, priority support, early access.",
+        },
+        {
+          "@type": "Offer",
+          name: "Pro Annual",
+          price: "99",
+          priceCurrency: "USD",
+          description: "Annual plan, billed once a year. Saves 31% vs monthly.",
+        },
+      ],
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#org`,
+      name: "Corder",
+      url: SITE_URL,
+      logo: `${SITE_URL}/icon-512.png`,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#site`,
+      url: SITE_URL,
+      name: "Corder",
+      publisher: { "@id": `${SITE_URL}/#org` },
+      inLanguage: "en",
+    },
+  ],
 };
 
 // Synchronous pre-hydration script: read `?motion=0` and `prefers-reduced-motion`
@@ -88,6 +217,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {PLAUSIBLE_DOMAIN && (
           <link rel="preconnect" href="https://plausible.io" crossOrigin="" />
         )}
+        {/* Structured data: SoftwareApplication + Organization + WebSite.
+         * Inline before scripts so Googlebot encounters it early in HEAD. */}
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+        />
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP_SCRIPT }}

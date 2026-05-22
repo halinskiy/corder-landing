@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Corder brand mark master SVG.
+     Single source for all favicon / app-icon variants. Geometry
+     mirrors the Nav and Footer brand mark so the identity reads
+     the same in a browser tab as on the page. Tile 1024x1024
+     radius 232, two 160x600 black bars vertically centred. -->
+
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <rect x="0" y="0" width="1024" height="1024" rx="232" fill="#ffffff" stroke="rgba(0, 0, 0, 0.06)" stroke-width="1"/>
+  <rect x="312" y="212" width="160" height="600" rx="44" fill="#0a0a0a"/>
+  <rect x="552" y="212" width="160" height="600" rx="44" fill="#0a0a0a"/>
+</svg>
