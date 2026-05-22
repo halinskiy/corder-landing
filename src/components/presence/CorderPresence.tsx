@@ -270,7 +270,7 @@ function CorderPresenceForm() {
   const { newsletter } = copy;
   const [status, setStatus] = useState<"idle" | "submitted">("idle");
   const [email, setEmail] = useState("");
-  // `bottom` is recomputed on scroll so the form pins 32px above the
+  // `bottom` is recomputed on scroll so the form pins 64px above the
   // footer baseline once the baseline approaches the viewport bottom.
   // Default = 32px viewport-bottom inset.
   const [bottomPx, setBottomPx] = useState(32);
@@ -296,11 +296,11 @@ function CorderPresenceForm() {
       // If the baseline is below the viewport, default behaviour: pin
       // the form 32px from the viewport bottom. Once the baseline is
       // inside (or above) the viewport, the form's bottom-anchor moves
-      // upward so it sits 32px above the baseline top edge.
+      // upward so it sits 64px above the baseline top edge.
       if (r.top >= viewportH - 32) {
         setBottomPx(32);
       } else {
-        setBottomPx(Math.round(viewportH - r.top + 32));
+        setBottomPx(Math.round(viewportH - r.top + 64));
       }
     };
     const onScrollOrResize = () => {
@@ -349,10 +349,11 @@ function CorderPresenceForm() {
         display: "flex",
         flexDirection: "column",
         gap: "14px",
-        // 40px top + 40px bottom: matches the visual breathing room the
-        // user requested. Side insets stay at 22px so the email pill +
-        // Subscribe button still reach close to the card edges.
-        padding: "40px 22px",
+        // 22px all sides -- equal horizontal + vertical padding so the
+        // card reads as a tight ticket rather than a tall capsule.
+        // User asked the form be shorter on 2026-05-22; earlier we had
+        // 40px top/bottom which was too generous.
+        padding: "22px",
         boxSizing: "border-box",
       }}
       transition={{ layout: MORPH_TRANSITION }}

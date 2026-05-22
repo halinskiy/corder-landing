@@ -1742,6 +1742,22 @@ button:focus:not(:focus-visible) {
   color: var(--color-text);
 }
 
+/* Original (pre-discount) price on the Annual slab. Sits to the LEFT of
+ * the current price in the same baseline, struck through, muted. Reads
+ * as "was $144, now $99". Slightly smaller so the eye still lands on
+ * the bold current price first. */
+.pricing-card__price-original {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(26px, 3.4vw, 36px);
+  line-height: 1;
+  letter-spacing: -0.014em;
+  color: var(--color-text-subtle);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-text-subtle);
+  text-decoration-thickness: 1.5px;
+}
+
 .pricing-card__price-suffix {
   font-family: var(--font-sans);
   font-size: 14px;
@@ -3115,7 +3131,7 @@ button:focus:not(:focus-visible) {
 
 .site-footer {
   border-top: 1px solid var(--color-border);
-  padding-block: 64px 32px;
+  padding-block: 96px 48px;
   background: var(--color-bg);
   /* Create a stacking context so the footer blob (z-index: -1) paints
    * above the footer's white background instead of slipping behind it
@@ -3123,8 +3139,11 @@ button:focus:not(:focus-visible) {
   isolation: isolate;
 }
 
+/* Taller footer at md+ so the floating CorderPresenceForm (which pins
+ * 64px above .site-footer__baseline) has real headroom to land in
+ * without the form crowding the baseline copyright line. */
 @media (min-width: 768px) {
-  .site-footer { padding-block: 96px 40px; }
+  .site-footer { padding-block: 144px 56px; }
 }
 
 .site-footer__grid {
