@@ -43,7 +43,8 @@
     ],
     "subhead": "Keeps the {{Transcript}} on your Mac. No bot joins the call",
     "ctaPrimary": "Download for Mac",
-    "ctaSecondary": "How it works"
+    "ctaSecondary": "How it works",
+    "ctaHint": "Free up to 60 min per recording. Upgrade anytime."
   },
   "audienceLine": {
     "text": "For founders taking investor calls, consultants on client kickoffs, and anyone who thinks out loud and needs it written down",
@@ -220,8 +221,8 @@
   "pricing": {
     "eyebrow": "Pricing",
     "heading": "Pricing",
-    "subhead": "Every tier includes speaker labels, full-text search, drag-out to any app, Sparkle auto-updates, and optional Dropbox archive",
-    "annualToggleLabel": "Pay annually, get 3 months free",
+    "subhead": "Two tiers. Free is genuinely free. Pro pays for the upgrade you actually use",
+    "annualToggleLabel": "Pay annually, save 31%",
     "tiers": [
       {
         "name": "Free",
@@ -234,65 +235,37 @@
         "features": [
           "Up to 60 minutes per recording",
           "Speaker labels and full-text search",
-          "Drag-out to Notion, Obsidian, Apple Notes"
+          "Drag-out to Notion, Obsidian, Apple Notes",
+          "Unlimited local recordings"
         ],
         "cta": "Download for Mac",
         "ctaStyle": "secondary",
-        "highlight": false
+        "highlight": false,
+        "trackEvent": "cta_download_click"
       },
       {
         "name": "Pro",
         "price": {
-          "monthly": "$14",
-          "annual": "$10.50"
+          "monthly": "$12",
+          "annual": "$99"
         },
-        "priceSuffix": "per month",
-        "annualNote": "$126 billed annually",
+        "priceSuffix": "month",
+        "priceSuffixAnnual": "year",
+        "annualNote": "$99/year, save 31%",
         "subline": "",
         "features": [
-          "Choose the model per recording",
+          "Unlimited recording length",
+          "Auto-summary with sections and decisions",
           "Priority support, direct line to the maker",
           "Early access to new features",
-          "3 months free when you pay annually"
+          "Everything in Free"
         ],
-        "cta": "Download for Mac",
+        "cta": "Get Pro",
         "ctaStyle": "primary",
-        "highlight": true
-      },
-      {
-        "name": "Personal",
-        "price": {
-          "monthly": "$9",
-          "annual": "$6.75"
-        },
-        "priceSuffix": "per month",
-        "annualNote": "$81 billed annually",
-        "subline": "",
-        "features": [
-          "No limit on individual recording length",
-          "All Free tier features",
-          "3 months free when you pay annually"
-        ],
-        "cta": "Download for Mac",
-        "ctaStyle": "secondary",
-        "highlight": false
+        "highlight": true,
+        "trackEvent": "cta_pro_click"
       }
     ],
-    "lifetime": {
-      "name": "Lifetime",
-      "price": "$99",
-      "priceSuffix": "one time",
-      "badge": "Launch offer",
-      "subline": "Unlimited Gemini 2.5 Flash forever. Includes a 30-day Pro trial, then Flash free or $14/month to stay on Pro",
-      "features": [
-        "Unlimited Gemini 2.5 Flash, forever",
-        "30-day Gemini 2.5 Pro trial included",
-        "All current and future Free tier features",
-        "No monthly bill"
-      ],
-      "cta": "Get Lifetime Access",
-      "ctaStyle": "secondary"
-    },
     "microcopy": "Pricing in USD. No credit card to download. Cancel anytime"
   },
   "faq": {
@@ -301,43 +274,43 @@
     "items": [
       {
         "q": "Does Corder send my audio to the cloud?",
-        "a": "Yes, for the transcription step. Audio uploads over HTTPS to Google's Gemini 2.5 Flash at generativelanguage.googleapis.com. Google transcribes it and discards the audio when the call finishes. The transcript and the local audio file stay on your Mac in ~/Library/Application Support/Corder/ until you delete them"
+        "a": "For transcription, audio chunks are sent to the Google Gemini API and discarded after processing. Gemini does not train on this data per their API terms. The raw recording, the transcript, and the database stay only on your Mac. Speaker separation runs entirely on-device."
       },
       {
         "q": "Does the other side know I am recording?",
-        "a": "Corder records system audio at the OS level. No third participant joins your call. The other side sees nothing different in their participant list and receives no recording-disclosure prompt from a SaaS. Whether you tell the other side you are recording is a legal and professional question that depends on your jurisdiction. Corder does not handle disclosure for you"
+        "a": "No. Corder records the audio that already plays through your Mac. No bot joins the meeting and no notification is sent to participants. You are responsible for telling them where local law requires it, for example California or Germany."
       },
       {
         "q": "Where does my audio live?",
-        "a": "On your Mac, in ~/Library/Application Support/Corder/. If you turn on Dropbox archive, a copy goes to your own Dropbox app folder. Delete the file from Finder to remove it. Corder has no server-side storage"
+        "a": "~/Library/Application Support/Corder/recordings/. You can browse, copy, or delete files directly in Finder. An optional Dropbox archive offloads originals to your own Dropbox if you set it up."
       },
       {
         "q": "Does it record Zoom, Meet, Discord?",
-        "a": "Yes. Corder captures system audio at the OS level, so it works with anything that plays sound on your Mac: Zoom, Google Meet, Discord, Teams, FaceTime, or a room mic plugged into the audio interface. The platform does not matter"
+        "a": "Yes, anything that plays through your Mac. Zoom, Google Meet, Microsoft Teams, FaceTime, Discord, Slack huddles, browser-based calls, even Notion or Obsidian voice notes."
       },
       {
         "q": "Which languages does it support?",
-        "a": "Gemini 2.5 Flash handles most major languages. English, Russian, and mixed-language calls work well. Other languages work too; accuracy depends on the model. If you need consistent accuracy on a specific language, test the free tier first"
+        "a": "Transcription works in 40+ languages including English, Spanish, French, German, Portuguese, Italian, Polish, Dutch, Swedish, Czech, Turkish, Japanese, Korean, Chinese, Hindi, Arabic, Vietnamese, Indonesian, Ukrainian, and Russian. The interface is available in 20 of them."
       },
       {
         "q": "Does it need an internet connection?",
-        "a": "For transcription, yes. Recording itself works offline. The audio files locally and the transcript fills in once you reconnect. If you close the app before reconnecting, transcription runs the next time you open it"
+        "a": "Recording works fully offline. Your meeting is saved locally regardless. Transcription requires internet for the Gemini API call. If you are offline when you stop a recording, Corder queues the meeting and transcribes it when the connection returns."
       },
       {
         "q": "Which version of macOS does it require?",
-        "a": "macOS 14 Sonoma or later. Apple Silicon is recommended; Intel Macs work too"
+        "a": "macOS 14 (Sonoma) or later. macOS 15+ is recommended for the best performance."
       },
       {
         "q": "Can I export the transcript?",
-        "a": "Select any part of the transcript and drag it into Notion, Obsidian, Apple Notes, or any text editor. Text lands plain. There is no export dialog, no file format to choose, no download button. If you want a plain text file, drag to the Finder"
+        "a": "Yes. Plain text, Markdown, JSON, or one ZIP with audio plus video plus transcript. Or drag any meeting straight into Notion, Apple Notes, or Obsidian and the formatting is preserved."
       },
       {
-        "q": "What is the difference between Flash and Pro?",
-        "a": "Gemini 2.5 Flash is fast, accurate, and included in every tier. It handles most calls well. Gemini 2.5 Pro is a larger model with better accuracy on noisy rooms, cross-talk, heavy accents, and fast speakers. On the Pro tier, you choose the model before each recording"
+        "q": "What is the difference between Flash and Pro models?",
+        "a": "Flash (default in Free) is fast and accurate for everyday meetings. The Pro model on the Pro tier is slower but catches harder accents, technical jargon, and crosstalk better. Useful for sales calls, interviews, and technical syncs."
       },
       {
         "q": "Is there a free trial for the Pro model?",
-        "a": "The Free and Personal tiers use Flash only. The Lifetime tier includes a 30-day Pro trial. Pro subscribers access Gemini 2.5 Pro from day one. There is no separate trial for Pro outside of those paths"
+        "a": "Yes. The first 3 recordings on the Pro tier are free when you upgrade. Cancel before billing if it does not earn its keep."
       }
     ]
   },
@@ -521,16 +494,25 @@
             "href": "#features"
           },
           {
-            "label": "Privacy",
-            "href": "#privacy"
-          },
-          {
             "label": "Pricing",
             "href": "#pricing"
           },
           {
             "label": "Changelog",
             "href": "#"
+          }
+        ]
+      },
+      {
+        "heading": "Legal",
+        "links": [
+          {
+            "label": "Privacy Policy",
+            "href": "/privacy-policy/"
+          },
+          {
+            "label": "Terms",
+            "href": "/terms/"
           }
         ]
       },
@@ -561,6 +543,28 @@
     "placeholder": "Your email",
     "cta": "Subscribe",
     "successMessage": "Thanks. You'll hear from us when something ships"
+  },
+  "yoursPrivacy": {
+    "eyebrow": "Private by design",
+    "heading": "Your meetings stay yours",
+    "subhead": "Built different. Local-first, no cloud lock-in.",
+    "cards": [
+      {
+        "icon": "lock",
+        "heading": "Local storage",
+        "body": "Recordings, transcripts, and your database live only on this Mac. Browse them in Finder anytime."
+      },
+      {
+        "icon": "user-x",
+        "heading": "No third-party bot",
+        "body": "Corder records the audio playing through your speakers. The other side never sees a Corder bot in their call."
+      },
+      {
+        "icon": "eye-off",
+        "heading": "No telemetry",
+        "body": "No analytics, no usage tracking, no anonymous pings. The only network calls are Gemini for transcription and Sparkle for updates."
+      }
+    ]
   },
   "howItWorks": {
     "eyebrow": "",

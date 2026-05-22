@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { autoWireTracking, trackEvent } from "@/lib/track";
+
 /**
  * PauseOffscreen
  *
@@ -26,6 +28,12 @@ import { useEffect } from "react";
 export function PauseOffscreen() {
   useEffect(() => {
     if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") return;
+
+    // Ad-test instrumentation: fire one pageview when the root provider
+    // mounts, and start the click-delegation that turns every
+    // data-track-event element into an event call. See src/lib/track.ts.
+    trackEvent("pageview");
+    const unbindTracking = autoWireTracking();
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -62,6 +70,7 @@ export function PauseOffscreen() {
     return () => {
       window.clearInterval(interval);
       io.disconnect();
+      unbindTracking();
     };
   }, []);
 
