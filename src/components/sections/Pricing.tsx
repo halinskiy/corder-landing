@@ -3,6 +3,10 @@
 import { Check } from "lucide-react";
 
 import { copy } from "@/content/copy";
+import {
+  PADDLE_PRICE_BY_BILLING,
+  PADDLE_SUCCESS_URL,
+} from "@/lib/paddle";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Pricing.tsx";
 
@@ -134,6 +138,21 @@ function PricingCard({ tier }: { tier: Tier }) {
           data-track-event={tier.trackEvent}
           data-track-tier={tier.name}
           data-track-billing={tier.trackBilling}
+          onClick={(e) => {
+            const priceId = tier.trackBilling
+              ? PADDLE_PRICE_BY_BILLING[tier.trackBilling]
+              : undefined;
+            if (priceId && typeof window !== "undefined" && window.Paddle) {
+              e.preventDefault();
+              window.Paddle.Checkout.open({
+                items: [{ priceId, quantity: 1 }],
+                successUrl: PADDLE_SUCCESS_URL,
+              });
+            }
+            // If Paddle isn't loaded (offline, ad-blocker, etc.) the link
+            // falls through to the `#download` anchor so the click is
+            // never a dead end.
+          }}
           style={
             ctaPrimary
               ? undefined
