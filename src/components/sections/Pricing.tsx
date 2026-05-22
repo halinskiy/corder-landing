@@ -89,60 +89,62 @@ function PricingCard({ tier }: { tier: Tier }) {
   const ctaPrimary = tier.ctaStyle === "primary";
   return (
     <article
-      className={`pricing-card${tier.highlight ? " pricing-card--highlight" : ""}`}
+      className={`pricing-card pricing-card--horizontal${tier.highlight ? " pricing-card--highlight" : ""}`}
       data-component="PricingCard"
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-text,color-border,color-accent,radius-window,font-serif,font-sans"
     >
-      <div className="pricing-card__header">
-        <span className="pricing-card__plan-label">{tier.name}</span>
-        {tier.badge && (
-          <span className="pricing-card__badge">{tier.badge}</span>
-        )}
-      </div>
-
-      <div>
-        <div className="pricing-card__price-row">
-          <span className="pricing-card__price">{tier.price}</span>
-          <span className="pricing-card__price-suffix">/{tier.priceUnit}</span>
+      {/* Summary column: plan label + badge, price block, bill note, CTA. */}
+      <div className="pricing-card__summary">
+        <div className="pricing-card__header">
+          <span className="pricing-card__plan-label">{tier.name}</span>
+          {tier.badge && (
+            <span className="pricing-card__badge">{tier.badge}</span>
+          )}
         </div>
-        {tier.billNote && (
-          <p className="pricing-card__annual-note">{tier.billNote}</p>
-        )}
+
+        <div>
+          <div className="pricing-card__price-row">
+            <span className="pricing-card__price">{tier.price}</span>
+            <span className="pricing-card__price-suffix">/{tier.priceUnit}</span>
+          </div>
+          {tier.billNote && (
+            <p className="pricing-card__annual-note">{tier.billNote}</p>
+          )}
+        </div>
+
+        <a
+          href="#download"
+          className={
+            ctaPrimary
+              ? "pricing-card__cta cta-pill cta-pill--primary"
+              : "pricing-card__cta cta-pill cta-pill--ghost"
+          }
+          data-track-event={tier.trackEvent}
+          data-track-tier={tier.name}
+          data-track-billing={tier.trackBilling}
+          style={
+            ctaPrimary
+              ? undefined
+              : {
+                  border: "1px solid var(--color-border-strong)",
+                  color: "var(--color-text)",
+                  backgroundColor: "transparent",
+                }
+          }
+        >
+          <span className="cta-text">{tier.cta}</span>
+        </a>
       </div>
 
-      <div className="pricing-card__divider" />
-
-      <ul className="pricing-card__features">
+      {/* Features column: same list both slabs (both ARE Pro). */}
+      <ul className="pricing-card__features pricing-card__features--col">
         {tier.features.map((feature) => (
           <li key={feature} className="pricing-card__feature">
             <span>{feature}</span>
           </li>
         ))}
       </ul>
-
-      <a
-        href="#download"
-        className={
-          ctaPrimary
-            ? "pricing-card__cta cta-pill cta-pill--primary"
-            : "pricing-card__cta cta-pill cta-pill--ghost"
-        }
-        data-track-event={tier.trackEvent}
-        data-track-tier={tier.name}
-        data-track-billing={tier.trackBilling}
-        style={
-          ctaPrimary
-            ? undefined
-            : {
-                border: "1px solid var(--color-border-strong)",
-                color: "var(--color-text)",
-                backgroundColor: "transparent",
-              }
-        }
-      >
-        <span className="cta-text">{tier.cta}</span>
-      </a>
     </article>
   );
 }

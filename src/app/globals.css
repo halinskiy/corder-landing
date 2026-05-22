@@ -1497,15 +1497,13 @@ button:focus:not(:focus-visible) {
   grid-template-columns: 1fr;
 }
 
-/* Two-package model 2026-05-22 v3: Monthly + Annual side by side at md+.
- * Free is not a card here -- the download itself is free, hinted in the
- * Hero. The pricing section is purely about the subscription choice. */
+/* Two-package model 2026-05-22 v4: Monthly + Annual stack vertically as
+ * full-width horizontal slabs. Each slab is itself a 2-col grid (summary
+ * on the left, features on the right). Full page width, no max-width cap. */
 @media (min-width: 768px) {
   .pricing-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 20px;
-    max-width: 880px;
-    margin-inline: auto;
   }
 }
 
@@ -1632,6 +1630,66 @@ button:focus:not(:focus-visible) {
 
 .pricing-card--highlight .pricing-card__plan-label {
   color: var(--color-accent);
+}
+
+/* Horizontal slab layout. Summary col on the left (cap ~360px so the
+ * price stays prominent), features col on the right (eats remaining
+ * width). Stacks back to a vertical card on mobile. */
+.pricing-card--horizontal {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .pricing-card--horizontal {
+    grid-template-columns: minmax(260px, 320px) 1fr;
+    gap: 48px;
+    padding: 36px 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pricing-card--horizontal {
+    grid-template-columns: minmax(280px, 360px) 1fr;
+    gap: 64px;
+    padding: 40px 48px;
+  }
+}
+
+.pricing-card__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Hairline divider between summary and features columns at md+. On
+ * mobile they already stack so no divider needed. */
+@media (min-width: 768px) {
+  .pricing-card__summary {
+    padding-right: 24px;
+    border-right: 1px solid var(--color-border);
+  }
+}
+@media (min-width: 1024px) {
+  .pricing-card__summary { padding-right: 32px; }
+}
+
+/* Features in the right column. Single column at md, two columns at lg+
+ * to make the slab read fully across the page (5 features in 2 cols
+ * = 3 short rows, sits nicely beside the summary). */
+.pricing-card__features--col {
+  padding-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+  .pricing-card__features--col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 32px;
+    align-content: center;
+  }
 }
 
 .pricing-card--highlight {
