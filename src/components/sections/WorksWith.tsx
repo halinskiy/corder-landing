@@ -2,10 +2,10 @@ import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/WorksWith.tsx";
 
-// next.config.ts sets basePath="/corder-landing" only in production. Static
-// SVGs under /public must carry that prefix when referenced in markup so they
-// resolve correctly on GitHub Pages. In dev (basePath="") the prefix is empty.
-const ASSET_PREFIX = process.env.NODE_ENV === "production" ? "/corder-landing" : "";
+// Static SVGs live under public/logos/ and are served from the site root.
+// Earlier this carried a "/corder-landing" basePath because the site was
+// published at github.io/corder-landing/. After the move to getcorder.com
+// (2026-05-22) basePath dropped to "", so logos resolve at /logos/*.svg.
 
 const LOGO_FILE: Record<string, string> = {
   Zoom: "zoom.svg",
@@ -118,7 +118,7 @@ function AppTile({ name }: { name: string }) {
     <div className="works-with-tile">
       {file && (
         <img
-          src={`${ASSET_PREFIX}/logos/${file}`}
+          src={`/logos/${file}`}
           alt=""
           width={26}
           height={26}

@@ -71,9 +71,9 @@ export default function PrivacyPolicyPage() {
             </ul>
             <p>
               On the marketing site you are reading right now,
-              halinskiy.github.io/corder-landing, we run two third-party
-              scripts: Microsoft Clarity for heatmaps and (when a paid ad
-              campaign is live) the Twitter Pixel plus Plausible Analytics.
+              getcorder.com, we run two third-party scripts: Microsoft
+              Clarity for heatmaps and (when a paid ad campaign is live)
+              the Twitter Pixel plus Plausible Analytics.
               These observe browsing behaviour on the site only. They do
               not see anything inside the application.
             </p>
