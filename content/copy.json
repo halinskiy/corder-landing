@@ -509,6 +509,10 @@
             "href": "/privacy-policy/"
           },
           {
+            "label": "Refund Policy",
+            "href": "/refunds/"
+          },
+          {
             "label": "Terms",
             "href": "/terms/"
           }
