@@ -30,35 +30,38 @@ export function Faq() {
       className="relative w-full"
     >
       <div className="page-container py-8 md:py-[52px]">
-        <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
-            <h2
-              className="section-heading"
-              data-component="FaqHeading"
-              data-source={DATA_SOURCE}
-              data-tokens="display-md,font-serif,lh-display,ls-display,color-text"
-            >
-              {faq.heading}
-            </h2>
-          </div>
-        </div>
+        {/* `.faq-list` wrap reserves the right side of the page for the
+            floating CorderPresenceForm. At lg+ it pulls the FAQ items in
+            by 436px (form right-inset 32 + form width 380 + 64px gap
+            minus page-container padding 40), so the FAQ buttons never
+            run under the subscribe card. */}
+        <div className="faq-list">
+          <h2
+            className="section-heading"
+            data-component="FaqHeading"
+            data-source={DATA_SOURCE}
+            data-tokens="display-md,font-serif,lh-display,ls-display,color-text"
+          >
+            {faq.heading}
+          </h2>
 
-        <div className="mt-12 md:mt-16">
-          <FAQAccordion
-            items={items}
-            mode="multi"
-            dataSource={DATA_SOURCE}
-            onItemToggle={(index, isOpen) => {
-              // Only the open transition counts as engagement; closes are
-              // noise in the ad-test funnel.
-              if (isOpen) {
-                trackEvent("faq_open", {
-                  index,
-                  question: items[index]?.question ?? "",
-                });
-              }
-            }}
-          />
+          <div className="mt-12 md:mt-16">
+            <FAQAccordion
+              items={items}
+              mode="multi"
+              dataSource={DATA_SOURCE}
+              onItemToggle={(index, isOpen) => {
+                // Only the open transition counts as engagement; closes are
+                // noise in the ad-test funnel.
+                if (isOpen) {
+                  trackEvent("faq_open", {
+                    index,
+                    question: items[index]?.question ?? "",
+                  });
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
     </section>

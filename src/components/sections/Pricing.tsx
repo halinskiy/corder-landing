@@ -1,29 +1,27 @@
 "use client";
 
-import { useState } from "react";
-
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Pricing.tsx";
 
-type Billing = "monthly" | "annual";
-
 /**
  * Section 6 — Pricing.
  *
- * Two tier cards (Free / Pro) in equal columns at md+, stack at base.
- * Updated 2026-05-22 for ad-test: dropped Personal tier and the Lifetime
- * plank; copy.json carries only Free + Pro. Annual toggle: Pro switches
- * from "$12/month" to "$99/year, save 31%". Free stays at $0/forever in
- * both modes.
+ * Two horizontal slabs stacked vertically. Free above, Pro below.
  *
- * Track events fire from data-track-event on each CTA so analytics picks
- * up cta_download_click (Free) and cta_pro_click (Pro) without touching
- * component-level click handlers.
+ * Free uses a single price block (`$0 /forever`) + a secondary CTA pill.
+ * Pro replaces the old monthly/annual toggle with two Corder-style plan
+ * cards rendered side-by-side inside the summary column. Each plan card
+ * is itself a CTA: clicking "Monthly" sends cta_pro_click with
+ * billing=monthly; clicking "Annual" sends billing=annual. The Annual
+ * card is `featured` (accent border + Save 31% tag) so the eye lands
+ * there first.
+ *
+ * No JS state (no toggle, no useState). The component is now a thin
+ * presentational shell over copy.json.
  */
 export function Pricing() {
   const { pricing } = copy;
-  const [billing, setBilling] = useState<Billing>("monthly");
 
   return (
     <section
@@ -57,40 +55,10 @@ export function Pricing() {
           </div>
         </div>
 
-        {/* Annual toggle */}
-        <div className="mt-12 flex flex-wrap items-center gap-4 md:mt-16">
-          <div
-            className="pricing-toggle"
-            role="group"
-            aria-label="Billing period"
-            data-component="PricingToggle"
-            data-source={DATA_SOURCE}
-            data-tokens="radius-pill,color-text,color-bg,color-border,ease-out"
-          >
-            <button
-              type="button"
-              className="pricing-toggle__btn"
-              aria-pressed={billing === "monthly"}
-              onClick={() => setBilling("monthly")}
-            >
-              Monthly
-            </button>
-            <button
-              type="button"
-              className="pricing-toggle__btn"
-              aria-pressed={billing === "annual"}
-              onClick={() => setBilling("annual")}
-            >
-              Annual
-            </button>
-          </div>
-          <span className="pricing-savings">{pricing.annualToggleLabel}</span>
-        </div>
-
-        {/* Tier grid */}
-        <div className="mt-10 pricing-grid">
+        {/* Tier slabs */}
+        <div className="mt-10 pricing-grid md:mt-14">
           {pricing.tiers.map((tier) => (
-            <PricingCard key={tier.name} tier={tier} billing={billing} />
+            <PricingCard key={tier.name} tier={tier as Tier} />
           ))}
         </div>
 
@@ -101,56 +69,96 @@ export function Pricing() {
   );
 }
 
-type Tier = (typeof copy)["pricing"]["tiers"][number];
+// ---------------------------------------------------------------------------
+//   Types -- two tier shapes share the same array, discriminated by `kind`.
+// ---------------------------------------------------------------------------
 
-function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
-  const price = billing === "annual" ? tier.price.annual : tier.price.monthly;
-  const ctaPrimary = tier.ctaStyle === "primary";
-  const isFree = tier.name === "Free";
-  // Pro: annual mode flips the per-month suffix to per-year.
-  const priceSuffix =
-    billing === "annual" && !isFree && "priceSuffixAnnual" in tier && tier.priceSuffixAnnual
-      ? tier.priceSuffixAnnual
-      : tier.priceSuffix;
+type TierBase = {
+  name: string;
+  features: readonly string[];
+  highlight?: boolean;
+};
 
+type SingleTier = TierBase & {
+  kind: "single";
+  price: string;
+  priceUnit: string;
+  cta: string;
+  ctaStyle: "primary" | "secondary";
+  trackEvent: string;
+};
+
+type Plan = {
+  label: string;
+  price: string;
+  unit: string;
+  note: string;
+  badge?: string;
+  featured?: boolean;
+  trackBilling: "monthly" | "annual";
+};
+
+type PlansTier = TierBase & {
+  kind: "plans";
+  plans: readonly Plan[];
+  trackEvent: string;
+};
+
+type Tier = SingleTier | PlansTier;
+
+// ---------------------------------------------------------------------------
+//   PricingCard -- one horizontal slab. Renders one of two summary shapes
+//   depending on tier.kind.
+// ---------------------------------------------------------------------------
+
+function PricingCard({ tier }: { tier: Tier }) {
   return (
     <article
-      className={`pricing-card${tier.highlight ? " pricing-card--highlight" : ""}`}
+      className={`pricing-card pricing-card--horizontal${tier.highlight ? " pricing-card--highlight" : ""}`}
       data-component="PricingCard"
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-text,color-border,color-accent,radius-window,font-serif,font-sans"
     >
-      <div className="pricing-card__header">
-        <h3 className="pricing-card__name">{tier.name}</h3>
-        {tier.highlight && (
-          <span className="pricing-card__badge">Recommended</span>
-        )}
-      </div>
-
-      <div>
-        <div className="pricing-card__price-row">
-          <span className="pricing-card__price">{price}</span>
-          <span className="pricing-card__price-suffix">/{priceSuffix}</span>
+      <div className="pricing-card__summary">
+        <div className="pricing-card__header">
+          <h3 className="pricing-card__name">{tier.name}</h3>
+          {tier.highlight && (
+            <span className="pricing-card__badge">Recommended</span>
+          )}
         </div>
-        {billing === "annual" && tier.annualNote && !isFree && (
-          <p className="pricing-card__annual-note">{tier.annualNote}</p>
+
+        {tier.kind === "single" ? (
+          <SingleSummary tier={tier} />
+        ) : (
+          <PlansSummary tier={tier} />
         )}
       </div>
 
-      {tier.subline && <p className="pricing-card__subline">{tier.subline}</p>}
-
-      <div className="pricing-card__divider" />
-
-      <ul className="pricing-card__features">
+      <ul className="pricing-card__features pricing-card__features--col">
         {tier.features.map((feature) => (
           <li key={feature} className="pricing-card__feature">
             <span>{feature}</span>
           </li>
         ))}
       </ul>
+    </article>
+  );
+}
 
+// ---------------------------------------------------------------------------
+//   Single-price tier (Free).
+// ---------------------------------------------------------------------------
+
+function SingleSummary({ tier }: { tier: SingleTier }) {
+  const ctaPrimary = tier.ctaStyle === "primary";
+  return (
+    <>
+      <div className="pricing-card__price-row">
+        <span className="pricing-card__price">{tier.price}</span>
+        <span className="pricing-card__price-suffix">/{tier.priceUnit}</span>
+      </div>
       <a
-        href={isFree ? "#download" : "#download"}
+        href="#download"
         className={
           ctaPrimary
             ? "pricing-card__cta cta-pill cta-pill--primary"
@@ -158,7 +166,6 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
         }
         data-track-event={tier.trackEvent}
         data-track-tier={tier.name}
-        data-track-billing={billing}
         style={
           ctaPrimary
             ? undefined
@@ -171,7 +178,41 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
       >
         <span className="cta-text">{tier.cta}</span>
       </a>
-    </article>
+    </>
   );
 }
 
+// ---------------------------------------------------------------------------
+//   Plans tier (Pro: Monthly + Annual).
+// ---------------------------------------------------------------------------
+
+function PlansSummary({ tier }: { tier: PlansTier }) {
+  return (
+    <div className="pricing-plans" role="group" aria-label="Choose a billing period">
+      {tier.plans.map((plan) => (
+        <a
+          key={plan.label}
+          href="#download"
+          className={`pricing-plan${plan.featured ? " pricing-plan--featured" : ""}`}
+          data-component="PricingPlan"
+          data-source={DATA_SOURCE}
+          data-track-event={tier.trackEvent}
+          data-track-tier={tier.name}
+          data-track-billing={plan.trackBilling}
+        >
+          <span className="pricing-plan__label">
+            {plan.label}
+            {plan.badge && (
+              <span className="pricing-plan__save">{plan.badge}</span>
+            )}
+          </span>
+          <span className="pricing-plan__price-row">
+            <span className="pricing-plan__price">{plan.price}</span>
+            <span className="pricing-plan__unit">/{plan.unit}</span>
+          </span>
+          <span className="pricing-plan__note">{plan.note}</span>
+        </a>
+      ))}
+    </div>
+  );
+}
