@@ -3495,79 +3495,73 @@ button:focus:not(:focus-visible) {
   .yours-privacy-card { padding: 32px 28px; gap: 14px; }
 }
 
-/* Animated blob replacement for the icon.
- *
- * Each card carries one blob -- single coloured shape with an organic
- * border-radius. The shape morphs across 4 keyframes and drifts a few
- * pixels with translate(). Three different keyframe sets per colour
- * give each card its own personality (one rolls, one squishes, one
- * sways).
- *
- * The radial-gradient gives the blob a soft "ball" feel rather than
- * a flat blob -- highlight at top-left, deeper colour at the centre.
- * Pause-able via PauseOffscreen on the section root. */
-.yours-privacy-blob {
+/* Three distinct shape icons -- blob, star, diamond -- replacing the
+ * old near-identical squircle blobs. Each SVG carries its own
+ * radial-gradient fill, and each has its own personality keyframe
+ * (rotation, scale pulse, sway). PauseOffscreen halts all three when
+ * the section leaves the viewport. */
+
+.yours-privacy-blob-wrap {
   width: 56px;
   height: 56px;
   margin-bottom: 4px;
-  will-change: transform, border-radius;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.yours-privacy-blob--green {
-  background: radial-gradient(circle at 30% 25%,
-    rgba(123, 196, 159, 0.85) 0%,
-    #217a50 75%);
-  border-radius: 58% 42% 55% 45% / 55% 50% 50% 45%;
-  animation: yp-blob-roll 14s ease-in-out infinite;
+.yp-shape {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  transform-origin: center center;
+  will-change: transform;
 }
 
-.yours-privacy-blob--purple {
-  background: radial-gradient(circle at 35% 30%,
-    rgba(160, 130, 220, 0.92) 0%,
-    #5a3aa6 75%);
-  border-radius: 50% 60% 45% 55% / 65% 40% 60% 35%;
-  animation: yp-blob-squish 17s ease-in-out infinite;
+.yp-shape--blob {
+  animation: yp-shape-blob 14s ease-in-out infinite;
 }
 
-.yours-privacy-blob--amber {
-  background: radial-gradient(circle at 40% 25%,
-    rgba(220, 170, 95, 0.90) 0%,
-    #a16207 75%);
-  border-radius: 65% 35% 50% 50% / 40% 55% 45% 60%;
-  animation: yp-blob-sway 19s ease-in-out infinite;
+.yp-shape--star {
+  animation: yp-shape-star 17s ease-in-out infinite;
 }
 
-/* Three personality keyframes -- different morph paths so the three
- * blobs never share the same shape at the same time. */
-
-@keyframes yp-blob-roll {
-  0%   { border-radius: 58% 42% 55% 45% / 55% 50% 50% 45%; transform: translate(0, 0) rotate(0deg); }
-  25%  { border-radius: 48% 52% 42% 58% / 60% 45% 55% 40%; transform: translate(-4px, 5px) rotate(-2deg); }
-  50%  { border-radius: 62% 38% 50% 50% / 45% 58% 42% 55%; transform: translate(-7px, -3px) rotate(3deg); }
-  75%  { border-radius: 44% 56% 60% 40% / 52% 48% 60% 40%; transform: translate(-2px, 6px) rotate(-1deg); }
-  100% { border-radius: 58% 42% 55% 45% / 55% 50% 50% 45%; transform: translate(0, 0) rotate(0deg); }
+.yp-shape--diamond {
+  animation: yp-shape-diamond 19s ease-in-out infinite;
 }
 
-@keyframes yp-blob-squish {
-  0%   { border-radius: 50% 60% 45% 55% / 65% 40% 60% 35%; transform: translate(0, 0) scale(1); }
-  25%  { border-radius: 60% 40% 55% 45% / 50% 60% 45% 55%; transform: translate(3px, -2px) scale(1.05); }
-  50%  { border-radius: 40% 60% 65% 35% / 55% 45% 60% 40%; transform: translate(5px, 4px) scale(0.96); }
-  75%  { border-radius: 55% 45% 50% 50% / 45% 60% 40% 55%; transform: translate(2px, -3px) scale(1.04); }
-  100% { border-radius: 50% 60% 45% 55% / 65% 40% 60% 35%; transform: translate(0, 0) scale(1); }
+/* Blob: gentle rotation + breath-like scale, like a drifting ink drop. */
+@keyframes yp-shape-blob {
+  0%   { transform: rotate(0deg)   scale(1);    }
+  25%  { transform: rotate(-6deg)  scale(1.04); }
+  50%  { transform: rotate(8deg)   scale(0.97); }
+  75%  { transform: rotate(-3deg)  scale(1.05); }
+  100% { transform: rotate(0deg)   scale(1);    }
 }
 
-@keyframes yp-blob-sway {
-  0%   { border-radius: 65% 35% 50% 50% / 40% 55% 45% 60%; transform: translate(0, 0) rotate(0deg); }
-  25%  { border-radius: 50% 50% 55% 45% / 55% 45% 60% 40%; transform: translate(4px, 3px) rotate(4deg); }
-  50%  { border-radius: 40% 60% 45% 55% / 50% 60% 40% 55%; transform: translate(6px, -2px) rotate(-3deg); }
-  75%  { border-radius: 55% 45% 60% 40% / 60% 45% 55% 40%; transform: translate(3px, 4px) rotate(2deg); }
-  100% { border-radius: 65% 35% 50% 50% / 40% 55% 45% 60%; transform: translate(0, 0) rotate(0deg); }
+/* Star: slow continuous spin + tiny pulse on the points. */
+@keyframes yp-shape-star {
+  0%   { transform: rotate(0deg)   scale(1);    }
+  25%  { transform: rotate(90deg)  scale(0.96); }
+  50%  { transform: rotate(180deg) scale(1.06); }
+  75%  { transform: rotate(270deg) scale(0.98); }
+  100% { transform: rotate(360deg) scale(1);    }
+}
+
+/* Diamond: rocking sway without going full rotation, plus a wobble. */
+@keyframes yp-shape-diamond {
+  0%   { transform: rotate(0deg)   scale(1);    }
+  25%  { transform: rotate(12deg)  scale(1.05); }
+  50%  { transform: rotate(-8deg)  scale(0.96); }
+  75%  { transform: rotate(10deg)  scale(1.04); }
+  100% { transform: rotate(0deg)   scale(1);    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .yours-privacy-blob { animation: none !important; }
+  .yp-shape { animation: none !important; }
 }
-:root[data-motion="off"] .yours-privacy-blob { animation: none !important; }
+:root[data-motion="off"] .yp-shape { animation: none !important; }
 
 .yours-privacy-card__heading {
   margin: 0;
