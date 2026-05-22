@@ -77,12 +77,15 @@ export function HowItWorks() {
     offset: ["start start", "end end"],
   });
 
-  // Chapter activates RIGHT AS the window starts moving toward the next
-  // slot. Window snap zones are 0.34-0.36 and 0.64-0.66; switch chapter
-  // at 0.30 and 0.60 so the new mockup is already in place when the
-  // window finishes settling.
+  // Chapter activates exactly when the window crosses INTO the next
+  // snap. Window snap zones are 0.34-0.36 and 0.64-0.66; flipping the
+  // chapter at 0.30 / 0.60 made the new mockup appear ~0.04 of progress
+  // BEFORE the heading entered the viewport. Pushing to 0.35 / 0.65
+  // (the snap centres) makes the chapter swap coincide with the
+  // window movement -- user reads the new heading and sees the
+  // matching mockup at the same moment.
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    const next: Chapter = p < 0.3 ? 1 : p < 0.6 ? 2 : 3;
+    const next: Chapter = p < 0.35 ? 1 : p < 0.65 ? 2 : 3;
     setActiveChapter((current) => (current === next ? current : next));
   });
 

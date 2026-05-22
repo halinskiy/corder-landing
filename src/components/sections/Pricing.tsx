@@ -1,5 +1,7 @@
 "use client";
 
+import { Check } from "lucide-react";
+
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Pricing.tsx";
@@ -150,7 +152,10 @@ function PricingCard({ tier }: { tier: Tier }) {
       <ul className="pricing-card__features pricing-card__features--col">
         {tier.features.map((feature) => (
           <li key={feature} className="pricing-card__feature">
-            <span>{feature}</span>
+            <span className="pricing-card__feature-icon" aria-hidden>
+              <Check size={14} strokeWidth={2.4} />
+            </span>
+            <span className="pricing-card__feature-text">{feature}</span>
           </li>
         ))}
       </ul>

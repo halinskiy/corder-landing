@@ -1794,24 +1794,40 @@ button:focus:not(:focus-visible) {
 
 .pricing-card__feature {
   display: grid;
-  grid-template-columns: 16px 1fr;
+  grid-template-columns: 22px 1fr;
   gap: 12px;
-  align-items: baseline;
+  align-items: start;
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.5;
   color: var(--color-text);
 }
 
-.pricing-card__feature::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  margin-top: 9px;
-  justify-self: center;
+/* Replacement for the old ::before dot. Now an accent-tinted tile with
+ * a thick check glyph inside. Reads as a real "checklist" -- each row
+ * says "you get this", not "here's another bullet". The tile uses
+ * accent-subtle as its fill so it stays calm in dense feature lists. */
+.pricing-card__feature-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(33, 122, 80, 0.10);
+  color: var(--color-accent);
+  margin-top: 2px;
+}
+
+.pricing-card--highlight .pricing-card__feature-icon {
+  background: rgba(33, 122, 80, 0.18);
+}
+
+.pricing-card__feature-text {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
 }
 
 .pricing-card__cta {
