@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 
 import { MotionProvider } from "@/components/providers/MotionProvider";
+import { PauseOffscreen } from "@/components/providers/PauseOffscreen";
 import { CorderPresenceProvider } from "@/components/presence/CorderPresence";
 
 import { copy } from "@/content/copy";
@@ -60,6 +61,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
+        {/* Clarity is loaded via the IIFE below; pre-resolve the DNS + TLS
+         * handshake so the first beacon doesn't block the main thread on a
+         * cold connection. Lighthouse estimated ~240ms savings. */}
+        <link rel="preconnect" href="https://www.clarity.ms" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://www.clarity.ms" />
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP_SCRIPT }}
@@ -70,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <PauseOffscreen />
         <MotionProvider>
           <CorderPresenceProvider>{children}</CorderPresenceProvider>
         </MotionProvider>

@@ -159,18 +159,9 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
               }
         }
       >
-        {ctaPrimary && tier.highlight && (
-          <span className="cta-sparkles" aria-hidden>
-            <span>✦</span>
-            <span>✧</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✧</span>
-            <span>✦</span>
-            <span>✧</span>
-            <span>✦</span>
-          </span>
-        )}
+        {/* CTA sparkles were 8 infinite-looping animated spans even when the
+         * Pricing section was off-screen. Removed 2026-05-22 on perf grounds
+         * (Speed Index 12.9s, TBT 740ms). See DECISIONS.md. */}
         <span className="cta-text">{tier.cta}</span>
       </a>
     </article>
