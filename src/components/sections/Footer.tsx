@@ -26,7 +26,9 @@ export function Footer() {
       data-tokens="color-bg,color-text,color-text-muted,color-border,font-serif,font-sans"
       className="site-footer relative overflow-hidden"
     >
-      <div aria-hidden className="section-blob section-blob--footer" />
+      {/* Footer blob removed 2026-05-22 (user request, perf pass). The pulse
+       * animation was running every 3.6s indefinitely and the blob itself
+       * sat behind every footer paint. */}
       <div className="page-container">
         <div className="site-footer__grid">
           <div className="site-footer__brand-col">
