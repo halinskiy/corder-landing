@@ -41,6 +41,7 @@ export function WorksWith() {
       data-component="WorksWith"
       data-source={DATA_SOURCE}
       data-tokens="color-text,color-text-muted,color-border,color-accent,font-serif"
+      data-pauseable
       className="relative w-full"
     >
       <div className="page-container py-8 md:py-[52px]">

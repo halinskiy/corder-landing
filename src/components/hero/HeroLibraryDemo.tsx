@@ -256,6 +256,8 @@ export function HeroLibraryDemo() {
         data-reveal={reveal}
         data-playing={playing ? "true" : "false"}
         data-theme={theme}
+        data-pauseable
+
         role="img"
         aria-label="Corder Library window with transcript and per-speaker timeline"
       >
