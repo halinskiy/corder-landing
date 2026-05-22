@@ -12,6 +12,44 @@ Format:
 
 ---
 
+## 2026-05-22 -- Perf pass: 58 -> 96 Lighthouse, static blobs, no sparkles, IO-pause
+
+User reported scroll lag after the Lenis removal landed earlier the same day. Audit found the real culprit: five concurrent infinite-loop animations were repainting whether sections were on-screen or not. Lighthouse spelt it out -- Performance 58, Speed Index 12.9s, TBT 740ms.
+
+### Before / after
+
+| Metric | Before | After | Notes |
+|---|---|---|---|
+| Performance score | 58 | **96** | desktop, prod |
+| FCP | 0.6s | **0.3s** | |
+| LCP | 1.6s | **1.4s** | under the 1.5s project bar |
+| TBT | 740ms | **0ms** | the headline win |
+| Speed Index | 12.9s | **0.6s** | nothing infinite still loops |
+| TTI | 1.8s | 1.4s | |
+| Main-thread work | 2.9s | 0.6s | |
+| Bootup JS | 1.6s | 0.2s | |
+| Frame p50 (scroll) | 16.7ms | 16.7ms | unchanged perfect |
+| Frame p95 (scroll) | 33.5ms | **17.7ms** | no more half-rate drops |
+| Frame p99 (scroll) | 50.1ms | **17.7ms** | no stalls |
+| Long frames > 50ms | 2 | **0** | clean 60fps |
+
+### What changed
+
+1. **Static blobs.** Six jelly loops collapsed into static accent ovals. All keyframes deleted. `will-change` dropped -- nothing animates, no compositor layer cost.
+2. **Footer blob removed entirely.** User call. CSS + keyframe + render-site all gone.
+3. **CTA sparkles deleted.** 8 infinite opacity+transform animations per highlighted Pricing CTA -- biggest off-screen drain since Pricing sits below the fold. `.cta-shimmer` highlight pulse kept.
+4. **PauseOffscreen utility** (`src/components/providers/PauseOffscreen.tsx`): single global IntersectionObserver toggles `data-anim-paused` on every `[data-pauseable]` root. CSS rule pauses every animation in that subtree. Tagged WorksWith (marquee 80s) + HeroLibraryDemo (caret + scrub 18s).
+5. **Preconnect Clarity.** `<link rel="preconnect" href="https://www.clarity.ms">` + `dns-prefetch`. Lighthouse estimated 240ms.
+
+### Verified on prod (https://halinskiy.github.io/corder-landing/)
+
+- Running animations on a static load: 43 -> 2.
+- Running animations off-screen at any moment: 23 -> 0.
+- `[data-pauseable]` toggles correctly (HeroLibraryDemo paused after scroll-past, WorksWith resumes when in view).
+- 0 `.cta-sparkles` nodes, 0 `.section-blob--footer` nodes, hero blob computed `animationName: "none"`.
+
+---
+
 ## 2026-05-22 -- Popover SVG 1:1 port, presence-form bottom padding fix, Lenis removal (branch `feat/hero-v090`)
 
 Two consecutive iterations on Features.PopoverWidget plus a perf-driven cleanup pass triggered by user-reported scroll lag.
