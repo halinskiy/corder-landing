@@ -221,46 +221,13 @@
   "pricing": {
     "eyebrow": "Pricing",
     "heading": "Pricing",
-    "subhead": "Two tiers. Free is genuinely free. Pro pays for the upgrade you actually use",
+    "subhead": "Pay monthly or save 31% on the annual plan. The free tier ships with the download",
     "tiers": [
       {
-        "name": "Free",
-        "kind": "single",
-        "price": "$0",
-        "priceUnit": "forever",
-        "features": [
-          "Up to 60 minutes per recording",
-          "Speaker labels and full-text search",
-          "Drag-out to Notion, Obsidian, Apple Notes",
-          "Unlimited local recordings"
-        ],
-        "cta": "Download for Mac",
-        "ctaStyle": "secondary",
-        "highlight": false,
-        "trackEvent": "cta_download_click"
-      },
-      {
-        "name": "Pro",
-        "kind": "plans",
-        "highlight": true,
-        "plans": [
-          {
-            "label": "Monthly",
-            "price": "$12",
-            "unit": "month",
-            "note": "Cancel anytime",
-            "trackBilling": "monthly"
-          },
-          {
-            "label": "Annual",
-            "price": "$99",
-            "unit": "year",
-            "note": "Billed once a year",
-            "badge": "Save 31%",
-            "featured": true,
-            "trackBilling": "annual"
-          }
-        ],
+        "name": "Monthly",
+        "price": "$12",
+        "priceUnit": "month",
+        "billNote": "Cancel anytime",
         "features": [
           "Unlimited recording length",
           "Auto-summary with sections and decisions",
@@ -268,10 +235,33 @@
           "Early access to new features",
           "Everything in Free"
         ],
-        "trackEvent": "cta_pro_click"
+        "cta": "Get Pro",
+        "ctaStyle": "secondary",
+        "highlight": false,
+        "trackEvent": "cta_pro_click",
+        "trackBilling": "monthly"
+      },
+      {
+        "name": "Annual",
+        "price": "$99",
+        "priceUnit": "year",
+        "billNote": "Billed once a year. Just $8.25 a month",
+        "badge": "Save 31%",
+        "features": [
+          "Unlimited recording length",
+          "Auto-summary with sections and decisions",
+          "Priority support, direct line to the maker",
+          "Early access to new features",
+          "Everything in Free"
+        ],
+        "cta": "Get Pro",
+        "ctaStyle": "primary",
+        "highlight": true,
+        "trackEvent": "cta_pro_click",
+        "trackBilling": "annual"
       }
     ],
-    "microcopy": "Pricing in USD. No credit card to download. Cancel anytime"
+    "microcopy": "Pricing in USD. No credit card to download. Free tier comes with the Mac app"
   },
   "faq": {
     "eyebrow": "Questions",
