@@ -3421,7 +3421,8 @@ button:focus:not(:focus-visible) {
   color: var(--color-text-muted);
 }
 
-.legal-page .legal-body ul {
+.legal-page .legal-body ul,
+.legal-page .legal-body ol {
   margin: 0 0 14px;
   padding-left: 22px;
   color: var(--color-text-muted);
