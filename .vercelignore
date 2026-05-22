@@ -1,0 +1,23 @@
+# Dev artefacts -- Vercel rebuilds from source
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Local screenshots from Playwright probes (~19 MB)
+screenshots/
+.playwright-mcp/
+
+# Docs are useful to keep with the deploy for repo-mounted inspection
+# but the deploy itself doesn't need RETRO / CHANGELOG / DECISIONS.
+# Let Vercel pull them from the git source instead -- keep them committed,
+# excluded only from the CLI tarball.
+RETRO.md
+CHANGELOG.md
+DECISIONS.md
+COPY_AUDIT.md
+HANDOFF.md
+CORRECTIONS.md
+
+# Mac
+.DS_Store
