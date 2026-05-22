@@ -1486,50 +1486,116 @@ button:focus:not(:focus-visible) {
  *  Section 6 — Pricing
  * ---------------------------------------------------------------------- */
 
-.pricing-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  padding: 4px;
-  background: var(--color-bg);
+/* Pricing toggle + .pricing-savings removed 2026-05-22 -- replaced by the
+ * two Corder-style plan cards inside the Pro tier (.pricing-plan). */
+
+/* ----------------------------------------------------------------------
+ *  Pricing plan cards (Pro tier: Monthly + Annual)
+ *
+ *  Each plan is a small clickable card in the Corder UI vocabulary:
+ *  hairline border, radius-button, label row + price row + note row.
+ *  Featured (Annual) card carries the accent border + accent-subtle fill
+ *  + a "SAVE 31%" eyebrow next to the label.
+ * ---------------------------------------------------------------------- */
+
+.pricing-plans {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  width: 100%;
 }
 
-.pricing-toggle__btn {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  padding: 8px 16px;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  border-radius: var(--radius-pill);
+@media (min-width: 480px) {
+  .pricing-plans {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+.pricing-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-button);
+  background: var(--color-bg);
+  color: var(--color-text);
+  text-decoration: none;
   cursor: pointer;
   transition:
+    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
     background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.pricing-toggle__btn[aria-pressed="true"] {
-  background: var(--color-accent);
-  color: var(--color-bg);
+.pricing-plan:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
 }
 
-.pricing-savings {
-  display: inline-flex;
-  align-items: center;
-  height: 42px;
-  padding: 8px 20px;
-  border-radius: var(--radius-pill);
+.pricing-plan--featured {
+  border-color: var(--color-accent);
   background: var(--color-accent-subtle);
-  color: var(--color-accent);
+}
+
+.pricing-plan__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.pricing-plan--featured .pricing-plan__label {
+  color: var(--color-accent);
+}
+
+.pricing-plan__save {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding-inline: 8px;
+  border-radius: var(--radius-button);
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pricing-plan__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.pricing-plan__price {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -0.018em;
+  color: var(--color-text);
+}
+
+.pricing-plan__unit {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.pricing-plan__note {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-text-subtle);
 }
 
 .pricing-grid {
@@ -1538,14 +1604,15 @@ button:focus:not(:focus-visible) {
   grid-template-columns: 1fr;
 }
 
-/* Two-tier model 2026-05-22: Free + Pro share equal columns at md+.
- * Wider cards make each tier read as a real product rather than a list
- * of features pinched into a thin column. */
+/* Two-tier model 2026-05-22 v2: Free + Pro stack vertically as full-width
+ * horizontal slabs. Each card is itself a 2-column grid (summary on the
+ * left, features on the right). With only two tiers the side-by-side grid
+ * left empty space on the page; vertical stacking uses every pixel and
+ * keeps the eye moving down. */
 @media (min-width: 768px) {
   .pricing-grid {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 920px;
-    margin-inline: auto;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 
@@ -1559,6 +1626,32 @@ button:focus:not(:focus-visible) {
   line-height: 1.45;
   color: var(--color-text-subtle);
   text-align: center;
+}
+
+/* ----------------------------------------------------------------------
+ *  FAQ list -- reserve right gutter for the floating CorderPresenceForm
+ *
+ *  At lg+ the .presence-form sits fixed at `right:32px; width:380px`. The
+ *  FAQ items used to extend across the full page-container width and run
+ *  under the floating card. Pull the FAQ items in so a 64px gap separates
+ *  the accordion right edge from the form left edge.
+ *
+ *  Measured at 1440 viewport (calc is viewport-independent since both the
+ *  form and the page-container right edge are anchored to the viewport):
+ *    accordion natural right  page_container_right - page_container_padding_right (40)
+ *                             1350 - 40 = 1310
+ *    form left edge           viewport_right - 32 - 380 = 1028
+ *    desired accordion right  1028 - 64 = 964
+ *    => margin-right          1310 - 964 = 346
+ *
+ *  Below lg the floating form is either hidden (≤ 640px) or visually less
+ *  competitive, so the reservation only kicks in at lg+.
+ * ---------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .faq-list {
+    margin-right: 346px;
+  }
 }
 
 /* ----------------------------------------------------------------------
@@ -1631,6 +1724,67 @@ button:focus:not(:focus-visible) {
 
 @media (min-width: 1024px) {
   .pricing-card { padding: 36px 32px; }
+}
+
+/* Horizontal slab variant. Summary col on the left (auto-fit, capped),
+ * features col on the right (eats the rest of the width). At narrow
+ * widths the card collapses back to a vertical stack. */
+.pricing-card--horizontal {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .pricing-card--horizontal {
+    grid-template-columns: minmax(260px, 320px) 1fr;
+    gap: 48px;
+    padding: 36px 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pricing-card--horizontal {
+    grid-template-columns: minmax(280px, 360px) 1fr;
+    gap: 64px;
+    padding: 40px 48px;
+  }
+}
+
+/* Left column inside the slab -- name + price + CTA. flex-column so the
+ * CTA can sit pinned to the bottom of the column on tall slabs. */
+.pricing-card__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Visual hairline between the two columns at md+; on mobile the columns
+ * already stack so the divider would orphan -- hide it there. */
+@media (min-width: 768px) {
+  .pricing-card__summary {
+    padding-right: 24px;
+    border-right: 1px solid var(--color-border);
+  }
+}
+@media (min-width: 1024px) {
+  .pricing-card__summary { padding-right: 32px; }
+}
+
+/* Features rendered in the right column. Two-column at lg+ to keep the
+ * slab from feeling top-heavy when only 4-5 bullets are listed. */
+.pricing-card__features--col {
+  padding-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+  .pricing-card__features--col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 32px;
+    align-content: center;
+  }
 }
 
 .pricing-card--highlight {
