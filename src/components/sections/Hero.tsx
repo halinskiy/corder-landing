@@ -100,11 +100,23 @@ export function Hero() {
             data-tokens="radius-pill,color-accent,color-bg,ease-out"
           >
             <a
-              href="#pricing"
+              href="#download"
               className="cta-pill cta-pill--primary inline-flex h-14 min-w-[200px] items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[17px] font-medium md:min-w-[260px] md:px-9"
+              data-track-event="cta_download_click"
+              data-track-source="hero"
             >
               {hero.ctaPrimary}
             </a>
+            {hero.ctaHint && (
+              <p
+                className="hero-cta-hint"
+                data-component="HeroCtaHint"
+                data-source={DATA_SOURCE}
+                data-tokens="text-sm,color-text-subtle,font-sans"
+              >
+                {hero.ctaHint}
+              </p>
+            )}
           </motion.div>
         </div>
 

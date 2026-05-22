@@ -53,6 +53,19 @@ const MOTION_BOOTSTRAP_SCRIPT = `(function(){try{var s=new URLSearchParams(locat
 // (Next.js next/script doesn't fit static exports cleanly).
 const CLARITY_SCRIPT = `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "wphp8abt99");`;
 
+// Twitter / X pixel (twq). Loads only when NEXT_PUBLIC_TWQ_ID is set --
+// otherwise the snippet is omitted entirely so the page doesn't ship a
+// non-functional vendor script. Event ID mapping lives in src/lib/track.ts.
+const TWQ_ID = process.env.NEXT_PUBLIC_TWQ_ID;
+const TWQ_SCRIPT = TWQ_ID
+  ? `!function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments)},s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');twq('config','${TWQ_ID}');`
+  : null;
+
+// Plausible analytics. Privacy-first, ~1KB, cookie-less. Loads only when
+// NEXT_PUBLIC_PLAUSIBLE_DOMAIN is set. The script exposes window.plausible
+// which src/lib/track.ts calls for every event.
+const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -61,11 +74,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        {/* Clarity is loaded via the IIFE below; pre-resolve the DNS + TLS
-         * handshake so the first beacon doesn't block the main thread on a
-         * cold connection. Lighthouse estimated ~240ms savings. */}
+        {/* Preconnect: Clarity + (when configured) Twitter pixel CDN +
+         * Plausible. Saves the TLS handshake on the first beacon, which
+         * Lighthouse estimated at ~240ms for Clarity alone. */}
         <link rel="preconnect" href="https://www.clarity.ms" crossOrigin="" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
+        {TWQ_ID && (
+          <>
+            <link rel="preconnect" href="https://static.ads-twitter.com" crossOrigin="" />
+            <link rel="preconnect" href="https://analytics.twitter.com" crossOrigin="" />
+          </>
+        )}
+        {PLAUSIBLE_DOMAIN && (
+          <link rel="preconnect" href="https://plausible.io" crossOrigin="" />
+        )}
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP_SCRIPT }}
@@ -74,6 +96,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: CLARITY_SCRIPT }}
         />
+        {TWQ_SCRIPT && (
+          <script
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: TWQ_SCRIPT }}
+          />
+        )}
+        {PLAUSIBLE_DOMAIN && (
+          <>
+            <script
+              defer
+              data-domain={PLAUSIBLE_DOMAIN}
+              src="https://plausible.io/js/script.js"
+            />
+            {/* Manual API + pageview-only mode: lets src/lib/track.ts fire
+             * named events and prevents Plausible from double-counting the
+             * pageview we send from PauseOffscreen on mount. */}
+            <script
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{
+                __html: "window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }",
+              }}
+            />
+          </>
+        )}
       </head>
       <body>
         <PauseOffscreen />

@@ -11,13 +11,15 @@ type Billing = "monthly" | "annual";
 /**
  * Section 6 — Pricing.
  *
- * Three tier cards (Free / Personal / Pro) in equal columns at md+, stack
- * at base. The Lifetime offer is a separate full-width plank below the
- * grid, not a fourth column. Annual toggle controls monthly/annual prices
- * with the "3 months free" framing from pricing-brief.md (never "save 25%").
+ * Two tier cards (Free / Pro) in equal columns at md+, stack at base.
+ * Updated 2026-05-22 for ad-test: dropped Personal tier and the Lifetime
+ * plank; copy.json carries only Free + Pro. Annual toggle: Pro switches
+ * from "$12/month" to "$99/year, save 31%". Free stays at $0/forever in
+ * both modes.
  *
- * No icons. Bullet markers are the typographic middle dot · in accent. Pro
- * is highlighted via a darker border + tint, not a coloured fill or shadow.
+ * Track events fire from data-track-event on each CTA so analytics picks
+ * up cta_download_click (Free) and cta_pro_click (Pro) without touching
+ * component-level click handlers.
  */
 export function Pricing() {
   const { pricing } = copy;
@@ -105,6 +107,11 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
   const price = billing === "annual" ? tier.price.annual : tier.price.monthly;
   const ctaPrimary = tier.ctaStyle === "primary";
   const isFree = tier.name === "Free";
+  // Pro: annual mode flips the per-month suffix to per-year.
+  const priceSuffix =
+    billing === "annual" && !isFree && "priceSuffixAnnual" in tier && tier.priceSuffixAnnual
+      ? tier.priceSuffixAnnual
+      : tier.priceSuffix;
 
   return (
     <article
@@ -123,7 +130,7 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
       <div>
         <div className="pricing-card__price-row">
           <span className="pricing-card__price">{price}</span>
-          <span className="pricing-card__price-suffix">/{tier.priceSuffix}</span>
+          <span className="pricing-card__price-suffix">/{priceSuffix}</span>
         </div>
         {billing === "annual" && tier.annualNote && !isFree && (
           <p className="pricing-card__annual-note">{tier.annualNote}</p>
@@ -143,12 +150,15 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
       </ul>
 
       <a
-        href="#pricing"
+        href={isFree ? "#download" : "#download"}
         className={
           ctaPrimary
             ? "pricing-card__cta cta-pill cta-pill--primary"
             : "pricing-card__cta cta-pill cta-pill--ghost"
         }
+        data-track-event={tier.trackEvent}
+        data-track-tier={tier.name}
+        data-track-billing={billing}
         style={
           ctaPrimary
             ? undefined
@@ -159,9 +169,6 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: Billing }) {
               }
         }
       >
-        {/* CTA sparkles were 8 infinite-looping animated spans even when the
-         * Pricing section was off-screen. Removed 2026-05-22 on perf grounds
-         * (Speed Index 12.9s, TBT 740ms). See DECISIONS.md. */}
         <span className="cta-text">{tier.cta}</span>
       </a>
     </article>
