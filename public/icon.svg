@@ -6,7 +6,10 @@
      radius 232, two 160x600 black bars vertically centred. -->
 
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
-  <rect x="0" y="0" width="1024" height="1024" rx="232" fill="#ffffff" stroke="rgba(0, 0, 0, 0.06)" stroke-width="1"/>
+  <!-- Stroke width 32 in master scales to ~1px at 32x32 favicon and
+       reads on white browser tabs / address bars. Earlier 1px master
+       stroke was 0.03px in the rasterised favicon and disappeared. -->
+  <rect x="16" y="16" width="992" height="992" rx="224" fill="#ffffff" stroke="rgba(0, 0, 0, 0.18)" stroke-width="32"/>
   <rect x="312" y="212" width="160" height="600" rx="44" fill="#0a0a0a"/>
   <rect x="552" y="212" width="160" height="600" rx="44" fill="#0a0a0a"/>
 </svg>
