@@ -44,7 +44,7 @@
     "subhead": "Keeps the {{Transcript}} on your Mac. No bot joins the call",
     "ctaPrimary": "Download for Mac",
     "ctaSecondary": "How it works",
-    "ctaHint": "Free up to 60 min per recording. Upgrade anytime."
+    "ctaHint": "Requires macOS 14 (Sonoma) or later"
   },
   "audienceLine": {
     "text": "For founders taking investor calls, consultants on client kickoffs, and anyone who thinks out loud and needs it written down",
@@ -221,13 +221,15 @@
   "pricing": {
     "eyebrow": "Pricing",
     "heading": "Pricing",
-    "subhead": "Pay monthly or save 31% on the annual plan. The free tier ships with the download",
+    "subhead": "Launch pricing on both plans, only for the next 3 months. The free tier always ships with the download",
     "tiers": [
       {
         "name": "Monthly",
-        "price": "$12",
+        "price": "$8",
+        "priceOriginal": "$12",
         "priceUnit": "month",
-        "billNote": "Cancel anytime",
+        "billNote": "$24 paid for 3 months upfront. Launch promo, ends in 3 months",
+        "badge": "Launch offer",
         "features": [
           "Unlimited recording length",
           "Auto-summary with sections and decisions",
@@ -239,7 +241,7 @@
         "ctaStyle": "secondary",
         "highlight": false,
         "trackEvent": "cta_pro_click",
-        "trackBilling": "monthly"
+        "trackBilling": "monthly_launch"
       },
       {
         "name": "Annual",
