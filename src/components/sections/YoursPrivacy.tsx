@@ -1,7 +1,5 @@
 "use client";
 
-import { EyeOff, Lock, UserX } from "lucide-react";
-
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE =
@@ -10,29 +8,31 @@ const DATA_SOURCE =
 /**
  * Section — "Your meetings stay yours".
  *
- * Privacy as a stand-alone block, added 2026-05-22 ahead of paid ad
- * traffic. The headline angle ("no cloud lock-in, no telemetry, no
- * third-party bot") was already in the brief but split across hero
- * and FAQ. This section pulls it into one editorial beat positioned
- * between HowItWorks and Fit -- right where a skeptical reader who
- * just saw "Record from anywhere" asks "wait, who actually has my
- * audio?".
+ * Three trust cards. Earlier each card carried a lucide icon (Lock /
+ * UserX / EyeOff); user 2026-05-22 asked for "three different coloured
+ * blobs of different shapes moving" instead -- the section should feel
+ * alive rather than icon-grid.
  *
- * Three cards: Local storage, No third-party bot, No telemetry. Icons
- * come from lucide-react (Lock, UserX, EyeOff) and inherit the page
- * accent via currentColor. Same hairline border + radius-window as
- * Privacy cards in template-design so the visual rhyme reads.
+ * Colours pulled from the existing palette so the rest of the design
+ * system stays consistent:
+ *   - card 1  forest accent green  #217a50  (project accent)
+ *   - card 2  speaker purple       #5a3aa6  (used inside hero transcript)
+ *   - card 3  speaker amber        #a16207  (used inside hero transcript)
+ *
+ * Each blob is a single SVG circle with `border-radius` driven by CSS
+ * keyframes for the morph, and a slight `transform: translate` so the
+ * shape drifts. Three different keyframe sets give each blob its own
+ * personality. Animation is pause-able via PauseOffscreen.
  */
 export function YoursPrivacy() {
   const { yoursPrivacy } = copy;
 
-  // Map the icon name from copy.json to the actual lucide component.
-  // Keeping the mapping here means the content file stays declarative
-  // and content editors don't import React components.
-  const ICONS: Record<string, typeof Lock> = {
-    lock: Lock,
-    "user-x": UserX,
-    "eye-off": EyeOff,
+  // Map the icon slug from copy.json onto a blob colour class. Content
+  // stays declarative; future copy edits don't need to touch React code.
+  const BLOB_VARIANT: Record<string, string> = {
+    lock: "yours-privacy-blob--green",
+    "user-x": "yours-privacy-blob--purple",
+    "eye-off": "yours-privacy-blob--amber",
   };
 
   return (
@@ -41,6 +41,7 @@ export function YoursPrivacy() {
       data-component="YoursPrivacy"
       data-source={DATA_SOURCE}
       data-tokens="color-text,color-text-muted,color-border,color-accent,radius-window,font-serif,font-sans"
+      data-pauseable
       className="relative w-full"
     >
       <div className="page-container py-10 md:py-[64px]">
@@ -77,7 +78,7 @@ export function YoursPrivacy() {
         {/* Three cards */}
         <div className="yours-privacy-grid mt-10 md:mt-14">
           {yoursPrivacy.cards.map((card) => {
-            const Icon = ICONS[card.icon] ?? Lock;
+            const variant = BLOB_VARIANT[card.icon] ?? "yours-privacy-blob--green";
             return (
               <article
                 key={card.heading}
@@ -86,9 +87,10 @@ export function YoursPrivacy() {
                 data-source={DATA_SOURCE}
                 data-tokens="color-bg,color-text,color-border,color-accent,radius-window,font-serif,font-sans"
               >
-                <div className="yours-privacy-card__icon" aria-hidden>
-                  <Icon size={22} strokeWidth={1.6} />
-                </div>
+                <div
+                  className={`yours-privacy-blob ${variant}`}
+                  aria-hidden
+                />
                 <h3 className="yours-privacy-card__heading">{card.heading}</h3>
                 <p className="yours-privacy-card__body">{card.body}</p>
               </article>

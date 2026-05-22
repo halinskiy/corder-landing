@@ -10,7 +10,7 @@
     "links": [
       {
         "label": "How it works",
-        "href": "#how"
+        "href": "#how-it-works"
       },
       {
         "label": "Works with",
@@ -228,13 +228,13 @@
         "price": "$8",
         "priceOriginal": "$12",
         "priceUnit": "month",
-        "billNote": "$24 paid for 3 months upfront. Launch promo, ends in 3 months",
+        "billNote": "Pay $24 upfront for 3 months. Launch offer, limited time",
         "badge": "Launch offer",
         "features": [
           "Unlimited recording length",
           "Auto-summary with sections and decisions",
           "Priority support, direct line to the maker",
-          "Early access to new features",
+          "New features as they ship",
           "Everything in Free"
         ],
         "cta": "Get Pro",
@@ -251,11 +251,11 @@
         "billNote": "Billed once a year. Just $8.25 a month",
         "badge": "Save 31%",
         "features": [
-          "Unlimited recording length",
-          "Auto-summary with sections and decisions",
-          "Priority support, direct line to the maker",
-          "Early access to new features",
-          "Everything in Free"
+          "Save $45 a year vs monthly",
+          "Price locked at $99, forever",
+          "First in line for new features",
+          "Free upgrades to future Pro models",
+          "Everything in Monthly"
         ],
         "cta": "Get Pro",
         "ctaStyle": "primary",
