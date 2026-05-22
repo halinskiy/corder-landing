@@ -244,6 +244,7 @@
       {
         "name": "Annual",
         "price": "$99",
+        "priceOriginal": "$144",
         "priceUnit": "year",
         "billNote": "Billed once a year. Just $8.25 a month",
         "badge": "Save 31%",
