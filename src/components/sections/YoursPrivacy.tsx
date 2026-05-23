@@ -106,17 +106,20 @@ function BlobShape() {
     <svg
       viewBox="0 0 64 64"
       className="yp-shape yp-shape--blob"
-      data-component="YoursPrivacyBlob"
+      data-component="YoursPrivacyHexagon"
     >
       <defs>
-        <radialGradient id="yp-grad-blob" cx="30%" cy="25%" r="80%">
+        <radialGradient id="yp-grad-blob" cx="35%" cy="25%" r="80%">
           <stop offset="0%" stopColor="#7bc49f" />
           <stop offset="75%" stopColor="#217a50" />
         </radialGradient>
       </defs>
-      {/* Asymmetric organic splat -- deliberately not a circle. */}
-      <path
-        d="M40 4 C54 6 60 18 58 32 C56 48 42 60 28 58 C12 56 2 44 4 28 C6 12 24 2 40 4 Z"
+      {/* Hexagon -- six clean edges, no stroke. Reads as geometric
+       *  but distinct from a circle, star, or diamond. Earlier pass
+       *  used a wide stroke with stroke-linejoin: round which rounded
+       *  the corners so heavily the silhouette read as a circle. */}
+      <polygon
+        points="32,2 56,16 56,48 32,62 8,48 8,16"
         fill="url(#yp-grad-blob)"
       />
     </svg>
