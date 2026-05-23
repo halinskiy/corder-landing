@@ -68,6 +68,40 @@
     0 18px 40px rgba(0, 0, 0, 0.07);
 }
 
+/* Hero -> HIW morph helpers.
+ *
+ * `.hero-demo-live`: the framer motion.div that wraps the actual
+ * HeroLibraryDemo while presence.mode === "live" (i.e. user is still
+ * in the Hero phase). Carries the shared `layoutId="corder-presence"`.
+ * When pastHero flips true, this element unmounts and HIW's
+ * .hiw-window-wrap mounts with the same layoutId — framer FLIP-morphs
+ * the bounds, the user reads it as the block flying from Hero into the
+ * HIW row 1 slot. No CSS box of its own beyond what HeroLibraryDemo
+ * already provides; this wrapper is purely a framer-layout anchor.
+ *
+ * `.hero-demo-ghost`: dashed placeholder shown after the live element
+ * has morphed away. Same aspect ratio + max-width as the demo so the
+ * Hero composition keeps its visual weight when the user scrolls back
+ * up. Dashed border + zero fill -- reads as "the window lived here".
+ */
+.hero-demo-live {
+  /* The motion.div wrapper. No background / border of its own --
+   * HeroLibraryDemo inside paints the shell. */
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.hero-demo-ghost {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  aspect-ratio: 1180 / 720;
+  border: 1.5px dashed rgba(10, 10, 10, 0.10);
+  border-radius: 12px;
+  background: transparent;
+}
+
 /* Dark theme — token overrides only. Identical palette to the real
  * macOS Corder app (.dark scope in Corder/Web/src/styles.css). The
  * theme flip is data-driven on the demo root; the rest of the landing

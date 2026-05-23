@@ -129,22 +129,24 @@ function BlobShape() {
       {/*
        * Soft equilateral-ish triangle pointing up, all three corners
        * rounded with quadratic curves so the silhouette reads as a
-       * friendly geometric mark, not a hard warning sign. Vertex math:
-       *   apex          (32,  4)
-       *   bottom-right  (58, 56)
-       *   bottom-left   ( 6, 56)
-       * Each vertex is replaced with a Q-curve that starts ~7 units
-       * along the incoming edge and ends ~7 units along the outgoing
-       * edge, with the sharp vertex as the control point. The result
-       * is a triangle with ~7-unit corner radii inside a 64x64 viewBox.
+       * friendly geometric mark, not a hard warning sign. Path is
+       * scaled to 85% of the 64x64 viewBox so the triangle reads a
+       * touch smaller than the star and the diamond neighbours --
+       * those silhouettes naturally fill more of their bounding box,
+       * an un-scaled triangle was looking visually larger.
+       * Vertex math (post-scale, centred at (32,32)):
+       *   apex          (32,  8)
+       *   bottom-right  (54, 52)
+       *   bottom-left   (10, 52)
+       * Corner radius ~6 inside the 64x64 viewBox.
        */}
       <path
-        d="M 29 10
-           Q 32 4, 35 10
-           L 55 50
-           Q 58 56, 51 56
-           L 13 56
-           Q 6 56, 9 50
+        d="M 29 13
+           Q 32 8, 35 13
+           L 51 47
+           Q 54 52, 48 52
+           L 16 52
+           Q 10 52, 13 47
            Z"
         fill="url(#yp-grad-blob)"
       />
