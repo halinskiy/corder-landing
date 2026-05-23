@@ -492,16 +492,33 @@
         "heading": "Product",
         "links": [
           {
+            "label": "How it works",
+            "href": "#how-it-works"
+          },
+          {
+            "label": "Works with",
+            "href": "#works-with"
+          },
+          {
             "label": "Features",
             "href": "#features"
           },
           {
             "label": "Pricing",
             "href": "#pricing"
+          }
+        ]
+      },
+      {
+        "heading": "Support",
+        "links": [
+          {
+            "label": "FAQ",
+            "href": "#faq"
           },
           {
-            "label": "Changelog",
-            "href": "#"
+            "label": "Contact Us",
+            "href": "#contact"
           }
         ]
       },
@@ -519,23 +536,6 @@
           {
             "label": "Terms",
             "href": "/terms/"
-          }
-        ]
-      },
-      {
-        "heading": "Resources",
-        "links": [
-          {
-            "label": "Source",
-            "href": "#"
-          },
-          {
-            "label": "Brand kit",
-            "href": "#"
-          },
-          {
-            "label": "Contact",
-            "href": "#"
           }
         ]
       }
