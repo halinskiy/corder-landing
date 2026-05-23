@@ -112,13 +112,13 @@ function BlobShape() {
     <svg
       viewBox="0 0 64 64"
       className="yp-shape yp-shape--blob"
-      data-component="YoursPrivacyBlob"
+      data-component="YoursPrivacyTriangle"
     >
       <defs>
-        {/* 5-stop radial: pastel highlight, mint mid, deep forest core,
-         *  soft outer fade. Highlight is pinned upper-left so the shape
-         *  reads as lit from above-left. */}
-        <radialGradient id="yp-grad-blob" cx="32%" cy="24%" r="86%">
+        {/* 5-stop radial: pastel highlight near the top apex, mint mid,
+         *  deep forest core, soft outer fade. Highlight cx/cy chosen so
+         *  the "lit-from-above" pinpoint sits just under the top point. */}
+        <radialGradient id="yp-grad-blob" cx="50%" cy="28%" r="80%">
           <stop offset="0%"  stopColor="#f0f8f3" />
           <stop offset="22%" stopColor="#bce0cc" />
           <stop offset="50%" stopColor="#6fb38c" />
@@ -127,21 +127,25 @@ function BlobShape() {
         </radialGradient>
       </defs>
       {/*
-       * Asymmetric organic blob. Five vertices at deliberately different
-       * radii from centre (30, 30, 24, 31, 28) so the silhouette has a
-       * clear lower-right indent and an elongated bottom-left lobe --
-       * the shape reads as a soft ink drop, not a near-circle. Earlier
-       * passes used near-uniform radii and bezier smoothing rounded the
-       * result back to a sphere; here the (44,52) vertex is pulled in
-       * by ~6 units against its neighbours to expose the asymmetry.
+       * Soft equilateral-ish triangle pointing up, all three corners
+       * rounded with quadratic curves so the silhouette reads as a
+       * friendly geometric mark, not a hard warning sign. Vertex math:
+       *   apex          (32,  4)
+       *   bottom-right  (58, 56)
+       *   bottom-left   ( 6, 56)
+       * Each vertex is replaced with a Q-curve that starts ~7 units
+       * along the incoming edge and ends ~7 units along the outgoing
+       * edge, with the sharp vertex as the control point. The result
+       * is a triangle with ~7-unit corner radii inside a 64x64 viewBox.
        */}
       <path
-        d="M 32 2
-           C 48 2, 58 8, 60 22
-           C 62 36, 50 44, 44 52
-           C 38 58, 34 62, 24 62
-           C 14 62, 4 52, 4 30
-           C 4 16, 14 4, 32 2 Z"
+        d="M 29 10
+           Q 32 4, 35 10
+           L 55 50
+           Q 58 56, 51 56
+           L 13 56
+           Q 6 56, 9 50
+           Z"
         fill="url(#yp-grad-blob)"
       />
     </svg>
