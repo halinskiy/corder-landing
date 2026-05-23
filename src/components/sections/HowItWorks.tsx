@@ -64,6 +64,52 @@ export function HowItWorks() {
   // `layoutId`. When motion is disabled, the morph never engages.
   const presence = useCorderPresenceMode();
 
+  // Morph-freeze state. When mode transitions hero -> window the framer
+  // FLIP would chase a moving destination (HIW window-wrap's absolute
+  // position is computed from scrollYProgress every frame), which makes
+  // the morph feel scroll-coupled. Freezing the wrap to position:fixed
+  // at its captured viewport rect for the duration of the framer
+  // animation (~400ms) detaches destination from scroll. After the
+  // freeze releases, the spring-smoothed absolute positioning resumes
+  // and HIW's row 1 -> 2 -> 3 snap takes over.
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [morphFrozen, setMorphFrozen] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  } | null>(null);
+  const prevMode = useRef(presence.mode);
+  useEffect(() => {
+    const prev = prevMode.current;
+    prevMode.current = presence.mode;
+    // Trigger the freeze whenever the mode transition crosses the "hero"
+    // boundary in either direction. Both directions matter -- on
+    // scroll-up the morph reverses Hero <- HIW and we want the same
+    // clean one-shot.
+    const crossesHero =
+      prev !== presence.mode && (prev === "hero" || presence.mode === "hero");
+    if (!crossesHero) return;
+    // Capture at next frame so the newly mounted wrap has its initial
+    // absolute-positioned rect computed.
+    const rafId = window.requestAnimationFrame(() => {
+      const el = wrapRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setMorphFrozen({
+        top: r.top,
+        left: r.left,
+        width: r.width,
+        height: r.height,
+      });
+    });
+    const t = window.setTimeout(() => setMorphFrozen(null), 520);
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(t);
+    };
+  }, [presence.mode]);
+
   // Active chapter -- 1 = Record from anywhere, 2 = Have your meeting,
   // 3 = Tune it. The chapter is driven by scrollYProgress on the same
   // section the window position uses, so the chapter change is locked
@@ -172,8 +218,24 @@ export function HowItWorks() {
               "hidden", the orb (mounted at page root) owns the id. */}
           {(presence.mode === "static" || presence.mode === "window") && (
             <motion.div
+              ref={wrapRef}
               className="hiw-window-wrap"
-              style={{ top: windowTop, left: windowLeft }}
+              style={
+                morphFrozen
+                  ? {
+                      // Freeze in viewport coords for the morph duration.
+                      // Overrides .hiw-window-wrap's translateY(-50%) via
+                      // the explicit transform: none below; framer FLIP
+                      // animates against a stationary destination.
+                      position: "fixed",
+                      top: `${morphFrozen.top}px`,
+                      left: `${morphFrozen.left}px`,
+                      width: `${morphFrozen.width}px`,
+                      height: `${morphFrozen.height}px`,
+                      transform: "none",
+                    }
+                  : { top: windowTop, left: windowLeft }
+              }
               aria-hidden="true"
             >
               <motion.div
