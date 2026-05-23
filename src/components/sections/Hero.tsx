@@ -3,6 +3,11 @@
 import { motion, useReducedMotion } from "framer-motion";
 
 import { HeroLibraryDemo } from "@/components/hero/HeroLibraryDemo";
+import {
+  CORDER_PRESENCE_LAYOUT_ID,
+  CORDER_PRESENCE_MORPH_TRANSITION,
+  useHeroPresenceMode,
+} from "@/components/presence/CorderPresence";
 
 import { copy } from "@/content/copy";
 
@@ -11,6 +16,7 @@ const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export function Hero() {
   const reduced = useReducedMotion() ?? false;
+  const heroPresence = useHeroPresenceMode();
   const { hero } = copy;
 
   const variants = reduced
@@ -121,7 +127,31 @@ export function Hero() {
         </div>
 
         <div className="hero-demo-wrap mt-14 md:mt-20">
-          <HeroLibraryDemo />
+          {heroPresence.mode === "live" ? (
+            // Live block: HeroLibraryDemo wrapped in motion.div with the
+            // shared layoutId. When the user scrolls into HIW, the
+            // sentinel flips pastHero true; this element unmounts, HIW's
+            // window-wrap mounts with the same layoutId, and framer
+            // FLIP-morphs the bounds. Visually the whole block flies
+            // from Hero into HIW row 1.
+            <motion.div
+              layoutId={CORDER_PRESENCE_LAYOUT_ID}
+              transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
+              className="hero-demo-live"
+              data-component="HeroDemoLive"
+            >
+              <HeroLibraryDemo />
+            </motion.div>
+          ) : heroPresence.mode === "ghost" ? (
+            // Past the handoff. HIW owns the layoutId now; Hero shows a
+            // dashed placeholder so the page composition still reads
+            // correctly when the user scrolls back up.
+            <div className="hero-demo-ghost" aria-hidden="true" />
+          ) : (
+            // Motion disabled. No morph, no layoutId. Render the demo
+            // flat, exactly as the pre-morph build did.
+            <HeroLibraryDemo />
+          )}
         </div>
       </div>
     </section>
