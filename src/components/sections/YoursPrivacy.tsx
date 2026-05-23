@@ -9,15 +9,21 @@ const DATA_SOURCE =
  * Section — "Your meetings stay yours".
  *
  * Three trust cards. Each carries a distinctively-shaped coloured shape
- * (blob, star, diamond) rather than three near-identical rounded
- * squircles. The shapes give the section visual rhythm in motion:
- *   card 1  organic blob   forest accent green #217a50
- *   card 2  five-point star speaker purple    #5a3aa6
- *   card 3  rounded diamond speaker amber     #a16207
+ * (organic blob, star, diamond). The shapes give the section visual
+ * rhythm in motion:
+ *   card 1  organic asymmetric blob   forest accent green #217a50
+ *   card 2  five-point star           speaker purple      #5a3aa6
+ *   card 3  rounded diamond           speaker amber       #a16207
  *
  * Each shape rotates / pulses on its own keyframe so none of the three
  * moves the same way at the same time. PauseOffscreen halts all three
  * when the section leaves the viewport.
+ *
+ * Gradient construction (all three shapes): a 5-stop radial gradient with
+ * a pastel pinpoint highlight in the upper-left and a deep saturated core
+ * at ~85%, then a softer fade-out at 100%. Five stops give the colour
+ * interpolation enough head-room that the eye never sees a hard band --
+ * this was the "rough/harsh" issue with the earlier 2-stop version.
  */
 export function YoursPrivacy() {
   const { yoursPrivacy } = copy;
@@ -106,20 +112,36 @@ function BlobShape() {
     <svg
       viewBox="0 0 64 64"
       className="yp-shape yp-shape--blob"
-      data-component="YoursPrivacyHexagon"
+      data-component="YoursPrivacyBlob"
     >
       <defs>
-        <radialGradient id="yp-grad-blob" cx="35%" cy="25%" r="80%">
-          <stop offset="0%" stopColor="#7bc49f" />
-          <stop offset="75%" stopColor="#217a50" />
+        {/* 5-stop radial: pastel highlight, mint mid, deep forest core,
+         *  soft outer fade. Highlight is pinned upper-left so the shape
+         *  reads as lit from above-left. */}
+        <radialGradient id="yp-grad-blob" cx="32%" cy="24%" r="86%">
+          <stop offset="0%"  stopColor="#f0f8f3" />
+          <stop offset="22%" stopColor="#bce0cc" />
+          <stop offset="50%" stopColor="#6fb38c" />
+          <stop offset="80%" stopColor="#2f8358" />
+          <stop offset="100%" stopColor="#1f6843" />
         </radialGradient>
       </defs>
-      {/* Hexagon -- six clean edges, no stroke. Reads as geometric
-       *  but distinct from a circle, star, or diamond. Earlier pass
-       *  used a wide stroke with stroke-linejoin: round which rounded
-       *  the corners so heavily the silhouette read as a circle. */}
-      <polygon
-        points="32,2 56,16 56,48 32,62 8,48 8,16"
+      {/*
+       * Asymmetric organic blob. Five vertices at deliberately different
+       * radii from centre (30, 30, 24, 31, 28) so the silhouette has a
+       * clear lower-right indent and an elongated bottom-left lobe --
+       * the shape reads as a soft ink drop, not a near-circle. Earlier
+       * passes used near-uniform radii and bezier smoothing rounded the
+       * result back to a sphere; here the (44,52) vertex is pulled in
+       * by ~6 units against its neighbours to expose the asymmetry.
+       */}
+      <path
+        d="M 32 2
+           C 48 2, 58 8, 60 22
+           C 62 36, 50 44, 44 52
+           C 38 58, 34 62, 24 62
+           C 14 62, 4 52, 4 30
+           C 4 16, 14 4, 32 2 Z"
         fill="url(#yp-grad-blob)"
       />
     </svg>
@@ -134,9 +156,12 @@ function StarShape() {
       data-component="YoursPrivacyStar"
     >
       <defs>
-        <radialGradient id="yp-grad-star" cx="35%" cy="30%" r="80%">
-          <stop offset="0%" stopColor="#a082dc" />
-          <stop offset="75%" stopColor="#5a3aa6" />
+        <radialGradient id="yp-grad-star" cx="34%" cy="28%" r="86%">
+          <stop offset="0%"  stopColor="#f1edfb" />
+          <stop offset="22%" stopColor="#cebcf0" />
+          <stop offset="50%" stopColor="#9276d2" />
+          <stop offset="80%" stopColor="#6948b4" />
+          <stop offset="100%" stopColor="#4a2f8c" />
         </radialGradient>
       </defs>
       {/* Five-point star, slightly rounded line-join so it doesn't read
@@ -161,9 +186,12 @@ function DiamondShape() {
       data-component="YoursPrivacyDiamond"
     >
       <defs>
-        <radialGradient id="yp-grad-diamond" cx="40%" cy="25%" r="80%">
-          <stop offset="0%" stopColor="#dcaa5f" />
-          <stop offset="75%" stopColor="#a16207" />
+        <radialGradient id="yp-grad-diamond" cx="38%" cy="24%" r="86%">
+          <stop offset="0%"  stopColor="#fcf4e0" />
+          <stop offset="22%" stopColor="#f1d196" />
+          <stop offset="50%" stopColor="#d6a44b" />
+          <stop offset="80%" stopColor="#a87213" />
+          <stop offset="100%" stopColor="#7c5208" />
         </radialGradient>
       </defs>
       {/* Rounded diamond -- 45-degree-rotated square with a chunky
