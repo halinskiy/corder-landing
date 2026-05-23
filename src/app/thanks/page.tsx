@@ -14,14 +14,14 @@ const DATA_SOURCE = "projects/corder-landing/src/app/thanks/page.tsx";
 /**
  * /thanks -- post-checkout welcome page.
  *
- * Layout mirrors the Vendo dashboard reference the maker likes: brand
- * mark top-left, small "Pro activated" tag top-right, an oversize serif
- * greeting on the left, lead line under it, two action cards side by
- * side (primary accent-fill + secondary hairline), and a small status
- * row underneath.
+ * Compact one-screen layout: brand bar at top, single serif heading,
+ * short lead, two side-by-side action cards, light status row. The
+ * page is the *quietest* surface on the site -- a buyer just paid,
+ * they want a clear next-step, not another marketing page. Fits in a
+ * standard 800px-tall laptop viewport without scrolling.
  *
- * Linked from Paddle Checkout's successUrl. Not in the sitemap; tagged
- * noindex in metadata above so search engines never see it.
+ * Linked from Paddle Checkout's `settings.successUrl`. Tagged
+ * noindex so search engines never see it.
  */
 export default function ThanksPage() {
   return (
@@ -31,7 +31,6 @@ export default function ThanksPage() {
       className="thanks-page"
     >
       <div className="thanks-page__inner">
-        {/* Top bar: brand wordmark left, small status pill right. */}
         <header className="thanks-page__top">
           <Link href="/" className="thanks-page__brand" aria-label="Corder home">
             <BrandMark />
@@ -40,36 +39,27 @@ export default function ThanksPage() {
           <span className="thanks-page__status">Pro activated</span>
         </header>
 
-        {/* Hero block: eyebrow, big serif heading, lead line. */}
         <section className="thanks-page__hero">
-          <p className="thanks-page__eyebrow">Welcome to Pro</p>
-          <h1 className="thanks-page__heading">
-            You&apos;re in. Welcome to Pro.
-          </h1>
+          <h1 className="thanks-page__heading">You&apos;re in.</h1>
           <p className="thanks-page__lead">
-            We&apos;ve emailed your licence key. Open Corder, paste the key,
-            start recording without limits. The inbox should land in 1-2
-            minutes.
+            Licence key is on its way to your inbox. Open Corder and paste it
+            in. Should land within 1-2 minutes.
           </p>
         </section>
 
-        {/* Two action cards. Left primary (open the Mac app), right
-            secondary (find the email). Same shape as Vendo: heading,
-            body, arrow CTA. */}
         <section className="thanks-page__cards">
           <a
             href="corder://activate"
             className="thanks-card thanks-card--primary"
             data-track-event="thanks_open_corder"
           >
-            <h2 className="thanks-card__heading">Open Corder</h2>
+            <div className="thanks-card__row">
+              <h2 className="thanks-card__heading">Open Corder</h2>
+              <ArrowRight />
+            </div>
             <p className="thanks-card__body">
-              Launch the Mac app. Pro activates automatically once it sees
-              the licence on your account.
+              Launch the Mac app. Pro activates as soon as it sees the licence.
             </p>
-            <span className="thanks-card__cta">
-              Open <ArrowRight />
-            </span>
           </a>
 
           <a
@@ -77,21 +67,19 @@ export default function ThanksPage() {
             className="thanks-card thanks-card--secondary"
             data-track-event="thanks_no_email"
           >
-            <h2 className="thanks-card__heading">Can&apos;t find the email?</h2>
+            <div className="thanks-card__row">
+              <h2 className="thanks-card__heading">No email?</h2>
+              <ArrowRight />
+            </div>
             <p className="thanks-card__body">
-              Check spam first (sender is{" "}
-              <code>noreply@paddle.com</code>). Still nothing? Drop us a
-              line and we resend in minutes.
+              Check spam (sender <code>noreply@paddle.com</code>). Still
+              nothing, email us and we resend.
             </p>
-            <span className="thanks-card__cta">
-              Email support <ArrowRight />
-            </span>
           </a>
         </section>
 
-        {/* Status row -- small grey separator items, Vendo footer style. */}
         <footer className="thanks-page__status-row">
-          <span>14-day refund window</span>
+          <span>14-day refund</span>
           <span aria-hidden>·</span>
           <span>Cancel anytime</span>
           <span aria-hidden>·</span>
@@ -107,8 +95,8 @@ export default function ThanksPage() {
 function BrandMark() {
   return (
     <svg
-      width="32"
-      height="32"
+      width="28"
+      height="28"
       viewBox="0 0 1024 1024"
       aria-hidden="true"
       role="img"
@@ -129,12 +117,13 @@ function BrandMark() {
   );
 }
 
-/* Inline arrow glyph -- matches the Vendo card "→" affordance. */
+/* Inline arrow glyph -- sits inline with each card's heading. */
 function ArrowRight() {
   return (
     <svg
-      width="18"
-      height="18"
+      className="thanks-card__arrow"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
