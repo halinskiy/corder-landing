@@ -118,12 +118,14 @@ function BlobShape() {
         {/* 5-stop radial: pastel highlight near the top apex, mint mid,
          *  deep forest core, soft outer fade. Highlight cx/cy chosen so
          *  the "lit-from-above" pinpoint sits just under the top point. */}
-        <radialGradient id="yp-grad-blob" cx="50%" cy="28%" r="80%">
-          <stop offset="0%"  stopColor="#f0f8f3" />
-          <stop offset="22%" stopColor="#bce0cc" />
-          <stop offset="50%" stopColor="#6fb38c" />
-          <stop offset="80%" stopColor="#2f8358" />
-          <stop offset="100%" stopColor="#1f6843" />
+        {/* Soft 3-stop radial. Removed the near-white #f0f8f3 stop --
+         *  it produced a hot specular highlight the user disliked.
+         *  Now the brightest point is a light-mint tone of the same
+         *  green family, so "lit from above" reads as a gentle wash. */}
+        <radialGradient id="yp-grad-blob" cx="42%" cy="34%" r="78%">
+          <stop offset="0%"  stopColor="#a8d4be" />
+          <stop offset="55%" stopColor="#5fa580" />
+          <stop offset="100%" stopColor="#286c46" />
         </radialGradient>
       </defs>
       {/*
@@ -162,12 +164,11 @@ function StarShape() {
       data-component="YoursPrivacyStar"
     >
       <defs>
-        <radialGradient id="yp-grad-star" cx="34%" cy="28%" r="86%">
-          <stop offset="0%"  stopColor="#f1edfb" />
-          <stop offset="22%" stopColor="#cebcf0" />
-          <stop offset="50%" stopColor="#9276d2" />
-          <stop offset="80%" stopColor="#6948b4" />
-          <stop offset="100%" stopColor="#4a2f8c" />
+        {/* Soft 3-stop radial -- same softening as the triangle. */}
+        <radialGradient id="yp-grad-star" cx="38%" cy="32%" r="80%">
+          <stop offset="0%"  stopColor="#bda8e0" />
+          <stop offset="55%" stopColor="#8266c4" />
+          <stop offset="100%" stopColor="#4f3691" />
         </radialGradient>
       </defs>
       {/* Five-point star, slightly rounded line-join so it doesn't read
@@ -192,11 +193,10 @@ function DiamondShape() {
       data-component="YoursPrivacyDiamond"
     >
       <defs>
-        <radialGradient id="yp-grad-diamond" cx="38%" cy="24%" r="86%">
-          <stop offset="0%"  stopColor="#fcf4e0" />
-          <stop offset="22%" stopColor="#f1d196" />
-          <stop offset="50%" stopColor="#d6a44b" />
-          <stop offset="80%" stopColor="#a87213" />
+        {/* Soft 3-stop radial -- same softening as the triangle. */}
+        <radialGradient id="yp-grad-diamond" cx="40%" cy="32%" r="80%">
+          <stop offset="0%"  stopColor="#dfb777" />
+          <stop offset="55%" stopColor="#c08735" />
           <stop offset="100%" stopColor="#7c5208" />
         </radialGradient>
       </defs>
