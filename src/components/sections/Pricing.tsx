@@ -77,6 +77,27 @@ export function Pricing() {
 
 // ---------------------------------------------------------------------------
 
+/**
+ * Renders a bill-note string with the upfront cash amount (e.g. "Pay $24")
+ * highlighted in the accent colour. The regex matches the literal phrase
+ * "Pay $N" or "Pay $N.NN" at any position. Everything else stays in the
+ * normal muted text colour. If the note doesn't contain a "Pay $..." token
+ * the original string passes through unchanged.
+ */
+function renderBillNote(note: string) {
+  const re = /(Pay \$\d+(?:\.\d+)?)/;
+  const parts = note.split(re);
+  return parts.map((part, i) =>
+    re.test(part) ? (
+      <span key={i} className="pricing-card__annual-note__amount">
+        {part}
+      </span>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
+
 type Tier = {
   name: string;
   price: string;
@@ -124,7 +145,9 @@ function PricingCard({ tier }: { tier: Tier }) {
             <span className="pricing-card__price-suffix">/{tier.priceUnit}</span>
           </div>
           {tier.billNote && (
-            <p className="pricing-card__annual-note">{tier.billNote}</p>
+            <p className="pricing-card__annual-note">
+              {renderBillNote(tier.billNote)}
+            </p>
           )}
         </div>
 

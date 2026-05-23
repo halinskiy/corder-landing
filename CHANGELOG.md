@@ -12,6 +12,29 @@ Format:
 
 ---
 
+## 2026-05-23 -- Monthly billNote cleanup + YoursPrivacy blob redesign
+
+Two user-asked polish items:
+
+1. **Pricing Monthly bill-note** — removed "Launch offer" from the text body (it's already shown as the corner badge, so the line read as a duplicate). New text: "Pay $24 upfront for 3 months. Limited time". The "Pay $24" segment now renders in the accent forest green via a new `.pricing-card__annual-note__amount` style. Component-side, `renderBillNote()` regex-splits the string at `Pay $N` so any future tier can opt-in by including that token.
+
+2. **YoursPrivacy Local storage shape** — user found the polygon hexagon (the previous attempt) too sharp, and the green gradient too "torn / rough". Two-part fix:
+   - **Shape**: replaced the polygon hexagon with a proper asymmetric organic blob (bezier path, vertices at varied radii 24-31 so the silhouette has a visible lower-right indent and elongated bottom-left lobe -- it reads as a soft ink drop, not a sphere). Earlier passes used near-uniform radii which bezier smoothing rounded back to a circle.
+   - **Gradient**: upgraded all three shapes (blob / star / diamond) from 2-stop to 5-stop radial gradients with pastel highlights, intermediate tints, deep cores, soft outer fade. The colour interpolation now has head-room so the eye never sees a hard band.
+
+### Files
+
+- `content/copy.json` -- `pricing.tiers[0].billNote` rewritten.
+- `src/components/sections/Pricing.tsx` -- added `renderBillNote()` helper, switched billNote render through it.
+- `src/app/globals.css` -- added `.pricing-card__annual-note__amount`.
+- `src/components/sections/YoursPrivacy.tsx` -- new blob path, 5-stop gradients on all three shapes.
+
+### Next
+
+Awaiting user feedback. Paddle "Something went wrong" overlay (sandbox config) still pending dashboard checks on the user side -- not a code change.
+
+---
+
 ## 2026-05-22 -- Perf pass: 58 -> 96 Lighthouse, static blobs, no sparkles, IO-pause
 
 User reported scroll lag after the Lenis removal landed earlier the same day. Audit found the real culprit: five concurrent infinite-loop animations were repainting whether sections were on-screen or not. Lighthouse spelt it out -- Performance 58, Speed Index 12.9s, TBT 740ms.
