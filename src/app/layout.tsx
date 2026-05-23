@@ -4,7 +4,6 @@ import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import { PauseOffscreen } from "@/components/providers/PauseOffscreen";
 import { CorderPresenceProvider } from "@/components/presence/CorderPresence";
-import { MorphingWindowGhost } from "@/components/morph/MorphingWindowGhost";
 
 import { copy } from "@/content/copy";
 import { PADDLE_ENV, PADDLE_TOKEN } from "@/lib/paddle";
@@ -285,10 +284,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MotionProvider>
           <CorderPresenceProvider>{children}</CorderPresenceProvider>
         </MotionProvider>
-        {/* Hero -> HIW window-shell morph. Mounts at the page root so
-         * it sits in a fixed-position layer over both sections. Auto-
-         * hides on mobile, reduced-motion, and ?motion=0. */}
-        <MorphingWindowGhost />
       </body>
     </html>
   );

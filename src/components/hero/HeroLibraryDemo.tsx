@@ -257,9 +257,6 @@ export function HeroLibraryDemo() {
         data-playing={playing ? "true" : "false"}
         data-theme={theme}
         data-pauseable
-        /* Hero end of the Hero -> HIW morph. MorphingWindowGhost
-         * reads this rect each scroll frame as the start position. */
-        data-morph-anchor="hero"
         role="img"
         aria-label="Corder Library window with transcript and per-speaker timeline"
       >

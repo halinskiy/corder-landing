@@ -16,6 +16,7 @@ import { copy } from "@/content/copy";
 import {
   CORDER_PRESENCE_LAYOUT_ID,
   CORDER_PRESENCE_MORPH_TRANSITION,
+  CorderPresenceHeroSentinel,
   CorderPresenceSentinel,
   useCorderPresenceMode,
 } from "@/components/presence/CorderPresence";
@@ -159,20 +160,21 @@ export function HowItWorks() {
         </div>
       ) : (
         <div ref={sectionRef} className="hiw-track page-container">
-          {/* Animated window -- z above all row content. Hidden once the
-              user has scrolled past the section so the bottom-right orb
-              (mounted at the page root) owns the shared `layoutId` and
-              framer can interpolate the bounding box smoothly between the
-              two states. When motion is disabled the window renders without
-              any layoutId so it never tries to morph. */}
-          {presence.mode !== "hidden" && (
+          {/* Hero -> HIW sentinel. When this element crosses the
+              viewport vertical centre going down, presence.pastHero
+              flips true and the live block morphs out of Hero into
+              this section's window slot via framer layoutId. */}
+          <CorderPresenceHeroSentinel />
+          {/* Animated window. Render when mode is "static" (motion off,
+              plain render) or "window" (live morph target). When mode
+              is "hero", Hero owns the layoutId, so HIW must NOT mount
+              a competing element with the same id. When mode is
+              "hidden", the orb (mounted at page root) owns the id. */}
+          {(presence.mode === "static" || presence.mode === "window") && (
             <motion.div
               className="hiw-window-wrap"
               style={{ top: windowTop, left: windowLeft }}
               aria-hidden="true"
-              /* HIW end of the Hero -> HIW morph. MorphingWindowGhost
-               * reads this rect each scroll frame as the end target. */
-              data-morph-anchor="hiw"
             >
               <motion.div
                 className="hiw-window-inner"

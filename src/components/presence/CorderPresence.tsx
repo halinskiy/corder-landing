@@ -43,6 +43,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -68,6 +69,13 @@ const MORPH_TRANSITION = {
 // ---------------------------------------------------------------------------
 
 type CorderPresenceContextValue = {
+  /** True once the user has scrolled to (or past) the HowItWorks heading
+   *  area. While false, the live-window layoutId belongs to the Hero
+   *  block (mode "hero"). When it flips true, framer FLIPs the layoutId
+   *  bounds from the Hero rect into the HIW row-1 rect -- the whole
+   *  block visually flies from Hero into the first HIW slot. */
+  pastHero: boolean;
+  setPastHero: (value: boolean) => void;
   pastHowItWorks: boolean;
   setPastHowItWorks: (value: boolean) => void;
   pastFormZone: boolean;
@@ -88,6 +96,8 @@ export function useCorderPresence(): CorderPresenceContextValue {
     // Soft fallback rather than a throw — the hook is consumed by sections
     // that may render in isolation in tests / story books.
     return {
+      pastHero: false,
+      setPastHero: () => {},
       pastHowItWorks: false,
       setPastHowItWorks: () => {},
       pastFormZone: false,
@@ -106,6 +116,7 @@ export function useCorderPresence(): CorderPresenceContextValue {
  * {orb, form} is mounted at a time (driven by the `mode` selector below).
  */
 export function CorderPresenceProvider({ children }: { children: ReactNode }) {
+  const [pastHero, setPastHero] = useState(false);
   const [pastHowItWorks, setPastHowItWorks] = useState(false);
   const [pastFormZone, setPastFormZone] = useState(false);
   const framerPrefersReduced = useReducedMotion() ?? false;
@@ -130,13 +141,15 @@ export function CorderPresenceProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CorderPresenceContextValue>(
     () => ({
+      pastHero,
+      setPastHero,
       pastHowItWorks,
       setPastHowItWorks,
       pastFormZone,
       setPastFormZone,
       motionDisabled,
     }),
-    [pastHowItWorks, pastFormZone, motionDisabled],
+    [pastHero, pastHowItWorks, pastFormZone, motionDisabled],
   );
 
   return (
@@ -715,13 +728,14 @@ export function CorderPresenceStaticSection() {
 // ---------------------------------------------------------------------------
 
 /**
- * Read whether the window-state of the morph should be rendered. The
- * HowItWorks section calls this to decide whether to render `.hiw-window-wrap`
- * with the framer layoutId attached.
+ * Read whether the HIW window-state should be rendered.
  *
  * Returns:
  *  - { mode: "static" } — motion disabled, render the plain window without
  *    any layoutId or AnimatePresence wrapping.
+ *  - { mode: "hero" }   — user is still in Hero; HIW should NOT render its
+ *    window-wrap because Hero owns the layoutId for the live block. The
+ *    HIW row-1 slot shows only a dashed ghost placeholder.
  *  - { mode: "window" } — render the window WITH layoutId="corder-presence"
  *    so framer can morph it into the orb when the user scrolls past.
  *  - { mode: "hidden" } — user is past HowItWorks; window is unmounted so
@@ -729,12 +743,98 @@ export function CorderPresenceStaticSection() {
  */
 export function useCorderPresenceMode():
   | { mode: "static" }
+  | { mode: "hero" }
   | { mode: "window" }
   | { mode: "hidden" } {
-  const { pastHowItWorks, motionDisabled } = useCorderPresence();
+  const { pastHero, pastHowItWorks, motionDisabled } = useCorderPresence();
   if (motionDisabled) return { mode: "static" };
   if (pastHowItWorks) return { mode: "hidden" };
+  if (!pastHero) return { mode: "hero" };
   return { mode: "window" };
+}
+
+/**
+ * Mirror hook for the Hero section. Tells Hero whether to render its
+ * HeroLibraryDemo wrapped in the layoutId motion element (the morph
+ * source) or just the static dashed placeholder.
+ *
+ * Returns:
+ *  - { mode: "static" }   — motion disabled, render HeroLibraryDemo flat.
+ *  - { mode: "live" }     — render HeroLibraryDemo inside a motion.div
+ *    that carries the shared `layoutId="corder-presence"`. When pastHero
+ *    flips true, framer FLIP-morphs its bounds into the HIW window slot.
+ *  - { mode: "ghost" }    — user has scrolled past the Hero -> HIW
+ *    handoff. HIW owns the layoutId; Hero shows only a dashed placeholder
+ *    so the heading still reads "this is where the window lived".
+ */
+export function useHeroPresenceMode():
+  | { mode: "static" }
+  | { mode: "live" }
+  | { mode: "ghost" } {
+  const { pastHero, motionDisabled } = useCorderPresence();
+  if (motionDisabled) return { mode: "static" };
+  if (!pastHero) return { mode: "live" };
+  return { mode: "ghost" };
+}
+
+/**
+ * Sentinel placed at the top of HowItWorks. When it crosses the viewport's
+ * 50% line going down, `pastHero` flips true and the live block morphs
+ * out of Hero into HIW. When it crosses back up (scrolling toward Hero),
+ * it flips false and the block morphs back. Bidirectional so the morph
+ * is reversible -- a fast scroll up returns the live block to Hero.
+ */
+export function CorderPresenceHeroSentinel() {
+  const { setPastHero, motionDisabled } = useCorderPresence();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (motionDisabled) return;
+    if (typeof window === "undefined") return;
+    const el = ref.current;
+    if (!el) return;
+
+    // rootMargin -50% bottom = sentinel fires when its top crosses the
+    // viewport vertical centre. Matches "Record from anywhere just
+    // appears on screen".
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setPastHero(true);
+          } else {
+            // Not intersecting: check direction. If sentinel is BELOW the
+            // trigger line (positive top), user is back in Hero -> flip
+            // false. If above (negative top), user is past -> stay true.
+            if (entry.boundingClientRect.top > 0) {
+              setPastHero(false);
+            } else {
+              setPastHero(true);
+            }
+          }
+        }
+      },
+      { threshold: 0, rootMargin: "0px 0px -50% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [motionDisabled, setPastHero]);
+
+  return (
+    <div
+      ref={ref}
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: 1,
+        height: 1,
+        pointerEvents: "none",
+        opacity: 0,
+      }}
+    />
+  );
 }
 
 export const CORDER_PRESENCE_LAYOUT_ID = "corder-presence";
