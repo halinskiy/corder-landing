@@ -778,11 +778,22 @@ export function useHeroPresenceMode():
 }
 
 /**
- * Sentinel placed at the top of HowItWorks. When it crosses the viewport's
- * 50% line going down, `pastHero` flips true and the live block morphs
- * out of Hero into HIW. When it crosses back up (scrolling toward Hero),
- * it flips false and the block morphs back. Bidirectional so the morph
- * is reversible -- a fast scroll up returns the live block to Hero.
+ * Sentinel placed at the top of the .hiw-track. `pastHero` flips true
+ * the moment the sentinel crosses the viewport's TOP edge -- not the
+ * centre. At that scroll position, HIW row 1 naturally sits at ~35% of
+ * the viewport (its useTransform "top: 35vh" target), so the morph
+ * lands the block exactly where row 1's dashed placeholder lives. An
+ * earlier IntersectionObserver fired at the viewport centre instead,
+ * which froze the destination at ~85% of the viewport (the very
+ * bottom) -- the block visually landed below where the user expected
+ * it ("встаёт ниже слишком").
+ *
+ * Bidirectional: when the user scrolls back up and the sentinel re-
+ * enters the viewport (top > 0), `pastHero` flips false and the block
+ * morphs back to its Hero slot.
+ *
+ * Implementation: rAF-throttled scroll listener, single
+ * getBoundingClientRect read per frame, no layout thrash.
  */
 export function CorderPresenceHeroSentinel() {
   const { setPastHero, motionDisabled } = useCorderPresence();
@@ -793,31 +804,24 @@ export function CorderPresenceHeroSentinel() {
     if (typeof window === "undefined") return;
     const el = ref.current;
     if (!el) return;
-
-    // rootMargin -50% bottom = sentinel fires when its top crosses the
-    // viewport vertical centre. Matches "Record from anywhere just
-    // appears on screen".
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setPastHero(true);
-          } else {
-            // Not intersecting: check direction. If sentinel is BELOW the
-            // trigger line (positive top), user is back in Hero -> flip
-            // false. If above (negative top), user is past -> stay true.
-            if (entry.boundingClientRect.top > 0) {
-              setPastHero(false);
-            } else {
-              setPastHero(true);
-            }
-          }
-        }
-      },
-      { threshold: 0, rootMargin: "0px 0px -50% 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    let rafId = 0;
+    const tick = () => {
+      rafId = 0;
+      const top = el.getBoundingClientRect().top;
+      setPastHero(top <= 0);
+    };
+    const schedule = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(tick);
+    };
+    schedule(); // initial state
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
   }, [motionDisabled, setPastHero]);
 
   return (
