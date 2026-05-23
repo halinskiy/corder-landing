@@ -170,6 +170,9 @@ export function HowItWorks() {
               className="hiw-window-wrap"
               style={{ top: windowTop, left: windowLeft }}
               aria-hidden="true"
+              /* HIW end of the Hero -> HIW morph. MorphingWindowGhost
+               * reads this rect each scroll frame as the end target. */
+              data-morph-anchor="hiw"
             >
               <motion.div
                 className="hiw-window-inner"
