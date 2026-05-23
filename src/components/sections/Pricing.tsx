@@ -167,9 +167,14 @@ function PricingCard({ tier }: { tier: Tier }) {
               : undefined;
             if (priceId && typeof window !== "undefined" && window.Paddle) {
               e.preventDefault();
+              // Paddle.js v2: successUrl lives under `settings`, NOT at the
+              // top level. Putting it at the top level silently falls back
+              // to Paddle's default success modal -- the checkout still
+              // completes, but the buyer never lands on /thanks and we
+              // lose the conversion-tracking pageview there.
               window.Paddle.Checkout.open({
                 items: [{ priceId, quantity: 1 }],
-                successUrl: PADDLE_SUCCESS_URL,
+                settings: { successUrl: PADDLE_SUCCESS_URL },
               });
             }
             // If Paddle isn't loaded (offline, ad-blocker, etc.) the link

@@ -3300,32 +3300,42 @@ button:focus:not(:focus-visible) {
  *  status row beneath.
  * ---------------------------------------------------------------------- */
 
+/* ----------------------------------------------------------------------
+ *  /thanks -- post-checkout welcome page
+ *
+ *  Compact one-screen layout. Designed to fit in a standard 800px laptop
+ *  viewport without scrolling. Inspired by the Vendo dashboard style the
+ *  maker likes (brand bar, oversize serif greeting, two cards) but tuned
+ *  much tighter -- buyer just paid, give them a clear next-step, not a
+ *  marketing page.
+ * -------------------------------------------------------------------- */
+
 .thanks-page {
   min-height: 100vh;
   background: var(--color-bg);
-  padding-block: 48px 96px;
+  padding-block: 28px 32px;
+  display: flex;
 }
 
 .thanks-page__inner {
-  max-width: 1100px;
+  max-width: 1040px;
+  width: 100%;
   margin-inline: auto;
-  padding-inline: 32px;
+  padding-inline: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
 @media (min-width: 768px) {
-  .thanks-page__inner { padding-inline: 56px; }
+  .thanks-page__inner { padding-inline: 48px; gap: 36px; }
 }
 
-/* Top bar: brand left, status right. */
+/* Top bar: brand left, status right. Sits flat with no big margin. */
 .thanks-page__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 96px;
-}
-
-@media (min-width: 768px) {
-  .thanks-page__top { margin-bottom: 140px; }
 }
 
 .thanks-page__brand {
@@ -3334,7 +3344,7 @@ button:focus:not(:focus-visible) {
   gap: 10px;
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: 18px;
+  font-size: 17px;
   letter-spacing: -0.01em;
   color: var(--color-text);
   text-decoration: none;
@@ -3355,82 +3365,80 @@ button:focus:not(:focus-visible) {
   text-transform: uppercase;
 }
 
-/* Hero: small eyebrow, gigantic serif heading, lead. */
+/* Hero: tight single-line serif heading + short lead. */
 .thanks-page__hero {
-  margin-bottom: 48px;
-}
-
-@media (min-width: 768px) {
-  .thanks-page__hero { margin-bottom: 64px; }
-}
-
-.thanks-page__eyebrow {
-  margin: 0 0 16px;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase;
-  color: var(--color-text-muted);
+  max-width: 60ch;
 }
 
 .thanks-page__heading {
   margin: 0;
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: clamp(44px, 6.6vw, 88px);
-  line-height: 1.04;
-  letter-spacing: -0.022em;
+  font-size: clamp(32px, 4.2vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   color: var(--color-text);
-  max-width: 14ch;
 }
 
 .thanks-page__lead {
-  margin: 28px 0 0;
+  margin: 14px 0 0;
   font-family: var(--font-sans);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.55;
   color: var(--color-text-muted);
-  max-width: 56ch;
+  max-width: 50ch;
 }
 
-/* Two action cards. Same Vendo shape: heading, body, arrow CTA pinned
- * to the lower-left. Primary card is accent-filled; secondary stays on
- * a hairline border. */
+/* Two action cards. Heading row with inline arrow; one-line body below.
+ * Primary card is accent-filled, secondary stays on hairline border. */
 .thanks-page__cards {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
-  margin-bottom: 56px;
+  gap: 14px;
 }
 
 @media (min-width: 768px) {
   .thanks-page__cards {
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 16px;
   }
 }
 
 .thanks-card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 32px 28px 24px;
+  gap: 8px;
+  padding: 20px 22px;
   border-radius: var(--radius-window);
-  min-height: 240px;
   text-decoration: none;
   transition:
     transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (min-width: 1024px) {
-  .thanks-card { padding: 40px 36px 28px; }
+  .thanks-card { padding: 24px 26px; }
 }
 
 .thanks-card:hover {
   transform: translateY(-2px);
+}
+
+.thanks-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.thanks-card__arrow {
+  flex-shrink: 0;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.thanks-card:hover .thanks-card__arrow {
+  transform: translateX(3px);
 }
 
 .thanks-card--primary {
@@ -3458,17 +3466,16 @@ button:focus:not(:focus-visible) {
   margin: 0;
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: 28px;
-  line-height: 1.15;
-  letter-spacing: -0.014em;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.012em;
 }
 
 .thanks-card__body {
   margin: 0;
-  flex: 1;
   font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .thanks-card--primary .thanks-card__body {
@@ -3496,27 +3503,14 @@ button:focus:not(:focus-visible) {
   color: #ffffff;
 }
 
-.thanks-card__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  margin-top: 12px;
-}
-
-/* Status row -- the small "3 campaigns running · ..." line in Vendo. */
+/* Quiet status row, no heavy top border. */
 .thanks-page__status-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  padding-top: 32px;
-  border-top: 1px solid var(--color-border);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 13px;
   color: var(--color-text-subtle);
 }
 

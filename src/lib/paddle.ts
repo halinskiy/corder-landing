@@ -48,7 +48,18 @@ declare global {
       Checkout: {
         open: (options: {
           items: Array<{ priceId: string; quantity: number }>;
-          successUrl?: string;
+          /**
+           * Paddle.js v2: per-checkout overrides live here. Top-level
+           * `successUrl` is silently ignored by v2 and the checkout
+           * falls back to the default Paddle success modal. Always pass
+           * the URL through `settings.successUrl`.
+           */
+          settings?: {
+            successUrl?: string;
+            displayMode?: "overlay" | "inline";
+            theme?: "light" | "dark";
+            locale?: string;
+          };
           customer?: { email?: string };
           customData?: Record<string, unknown>;
         }) => void;
