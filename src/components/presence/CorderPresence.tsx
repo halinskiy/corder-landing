@@ -779,18 +779,24 @@ export function useHeroPresenceMode():
 
 /**
  * Sentinel placed at the top of the .hiw-track. `pastHero` flips true
- * the moment the sentinel crosses the viewport's TOP edge -- not the
- * centre. At that scroll position, HIW row 1 naturally sits at ~35% of
- * the viewport (its useTransform "top: 35vh" target), so the morph
- * lands the block exactly where row 1's dashed placeholder lives. An
- * earlier IntersectionObserver fired at the viewport centre instead,
- * which froze the destination at ~85% of the viewport (the very
- * bottom) -- the block visually landed below where the user expected
- * it ("встаёт ниже слишком").
+ * when row 1's ghost is approaching the viewport's vertical centre
+ * from below, so the morph lands the block at row 1's natural slot
+ * by the time the user is reading "Record from anywhere".
+ *
+ * Trigger math: HIW row 1's window-wrap sits 35vh below the sentinel
+ * (sentinel = .hiw-track top, row 1 = top + 35vh). We want the morph
+ * to fire while the user is still mid-scroll, before they reach row 1.
+ * Firing when sentinel.top crosses 50% of the viewport puts row 1 at
+ * roughly 85% (entering from below); over the 400 ms framer FLIP, the
+ * user typically scrolls another ~10-20vh and row 1 settles around
+ * the viewport centre by the time the animation completes. The framer
+ * FLIP destination tracks row 1's *live* rect each frame, so the block
+ * lands exactly on the dashed placeholder regardless of scroll speed
+ * during the animation -- no fixed-position freeze, no jump on release.
  *
  * Bidirectional: when the user scrolls back up and the sentinel re-
- * enters the viewport (top > 0), `pastHero` flips false and the block
- * morphs back to its Hero slot.
+ * enters the viewport (top > 50%), `pastHero` flips false and the
+ * block morphs back to its Hero slot.
  *
  * Implementation: rAF-throttled scroll listener, single
  * getBoundingClientRect read per frame, no layout thrash.
@@ -808,7 +814,7 @@ export function CorderPresenceHeroSentinel() {
     const tick = () => {
       rafId = 0;
       const top = el.getBoundingClientRect().top;
-      setPastHero(top <= 0);
+      setPastHero(top <= window.innerHeight * 0.5);
     };
     const schedule = () => {
       if (rafId) return;
