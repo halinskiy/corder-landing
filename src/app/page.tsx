@@ -38,7 +38,12 @@ export default function HomePage() {
       {/* Form-zone sentinel sits BEFORE Faq so the orb (CorderPresence state B)
           morphs into the contact card (state C) while the user is still
           reading FAQ, not at the very last footer-scroll moment. Renders as
-          a zero-height anchor; no visual footprint. */}
+          a zero-height anchor; no visual footprint.
+
+          `#contact` anchor sits adjacent: the Nav "Contact Us" link
+          scrolls here so the user lands at the exact point where the
+          floating form has just expanded on the right. */}
+      <div id="contact" aria-hidden="true" />
       <CorderPresenceFormSentinel />
       <Faq />
       {/* Reduced-motion / ?motion=0 fallback: when the corner morph chain
