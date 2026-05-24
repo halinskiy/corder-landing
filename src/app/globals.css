@@ -4031,20 +4031,44 @@ button:focus:not(:focus-visible) {
   white-space: nowrap;
 }
 
-/* Letter: lifts via translateY and simultaneously paints a green
- * `text-shadow` whose downward offset matches the lift distance.
- * Because shadow offset = lift distance, the green copy of the
- * glyph stays anchored to the ORIGINAL letter position the whole
- * time -- the user reads it as "the letter rose out, leaving a
- * green ghost in the hole". No ::before, no z-index battles, no
- * background-fill needed: text-shadow is part of the letter so the
- * shadow and front don't bleed into each other. */
+/* Wrap: holds the per-letter `animation-delay` (set inline). The two
+ * inner layers -- the front character and the ::before ghost --
+ * inherit that delay and run the SAME keyframe so they ride the wave
+ * in lockstep. */
 .hero-wavy__letter {
+  position: relative;
   display: inline-block;
   color: var(--color-text);
-  will-change: transform, text-shadow;
+}
+
+/* Green ghost: opaque accent character, sits 6px below the front
+ * even at rest, and runs the lift keyframe in sync. Because front
+ * and ghost share the same animation curve and timing, the 6px
+ * vertical gap between them stays constant -- the green "wave" rides
+ * just under the black "wave". */
+.hero-wavy__letter::before {
+  content: attr(data-char);
+  position: absolute;
+  top: 6px;
+  left: 0;
+  color: var(--color-accent);
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
   animation: hero-wavy-letter 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  animation-fill-mode: both;
+  animation-delay: inherit;
+}
+
+/* Front letter: sits on top of the ghost at rest (covers it), lifts
+ * on the wave. */
+.hero-wavy__letter-front {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+  color: var(--color-text);
+  will-change: transform;
+  animation: hero-wavy-letter 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: inherit;
 }
 
 @keyframes hero-wavy-letter {
@@ -4052,28 +4076,27 @@ button:focus:not(:focus-visible) {
   60%,
   100% {
     transform: translateY(0);
-    text-shadow: 0 0 0 rgba(33, 122, 80, 0);
   }
   15% {
     transform: translateY(-12px);
-    text-shadow: 0 12px 0 rgba(33, 122, 80, 0.55);
   }
   30% {
     transform: translateY(0);
-    text-shadow: 0 0 0 rgba(33, 122, 80, 0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-wavy__letter {
+  .hero-wavy__letter::before,
+  .hero-wavy__letter-front {
     animation: none !important;
     transform: none !important;
-    text-shadow: none !important;
   }
+  .hero-wavy__letter::before { display: none; }
 }
 
-:root[data-motion="off"] .hero-wavy__letter {
+:root[data-motion="off"] .hero-wavy__letter::before,
+:root[data-motion="off"] .hero-wavy__letter-front {
   animation: none !important;
   transform: none !important;
-  text-shadow: none !important;
 }
+:root[data-motion="off"] .hero-wavy__letter::before { display: none; }
