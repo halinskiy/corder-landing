@@ -4031,102 +4031,69 @@ button:focus:not(:focus-visible) {
   white-space: nowrap;
 }
 
-/* Wrap: holds the per-letter `animation-delay` (set inline). The two
- * inner layers -- the front character and the ::before ghost --
- * inherit that delay and run the SAME keyframe so they ride the wave
- * in lockstep. */
+/* Single-layer text wave. Each letter runs the same bell-shaped
+ * keyframe, staggered 110ms behind the previous one. At any frozen
+ * frame, the letters inside the active window of their cycle sit at
+ * different points of the bell -- the centre of the wave is at the
+ * peak (-14px), the edges of the wave are at intermediate lifts
+ * (-4 / -10 / -10 / -4), letters not yet started or already past the
+ * window are at rest. That gives the wave its readable shape without
+ * a separate ghost layer.
+ *
+ * Green tint rides the lift via text-shadow -- offset and opacity
+ * scale with transform so the colour only appears where the wave is
+ * actively passing. No ::before, no second span: serifs render
+ * cleanly because there's only ever one glyph drawn per letter. */
 .hero-wavy__letter {
-  position: relative;
   display: inline-block;
   color: var(--color-text);
+  will-change: transform, text-shadow;
+  animation: hero-wave 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-/* Green ghost: opaque accent character. `top: 0` + line-height
- * inherited means its glyph baseline matches the front's exactly
- * (no line-box drift). The +6px downward offset lives in the ghost
- * keyframe so the green stays 6px BELOW the front the whole time --
- * not above it, which the earlier `top: 6px` produced because that
- * placed the ::before's line-box top below the line-box top while
- * its glyph then rendered on a baseline already higher than the
- * front's baseline. */
-.hero-wavy__letter::before {
-  content: attr(data-char);
-  position: absolute;
-  top: 0;
-  left: 0;
-  font: inherit;
-  line-height: inherit;
-  color: var(--color-accent);
-  z-index: 0;
-  pointer-events: none;
-  will-change: transform;
-  animation: hero-wavy-letter-ghost 4.5s cubic-bezier(0.4, 0, 0.2, 1)
-    infinite;
-  animation-delay: inherit;
-}
-
-/* Front letter: sits on top of the ghost at rest (covers it), lifts
- * on the wave. */
-.hero-wavy__letter-front {
-  position: relative;
-  display: inline-block;
-  z-index: 1;
-  color: var(--color-text);
-  will-change: transform;
-  animation: hero-wavy-letter-front 4.5s cubic-bezier(0.4, 0, 0.2, 1)
-    infinite;
-  animation-delay: inherit;
-}
-
-/* Front: 0 -> -12 -> 0. Ghost: 6 -> -6 -> 6. Both peak at 15% of
- * cycle; gap between them is a constant 6px throughout. */
-@keyframes hero-wavy-letter-front {
+@keyframes hero-wave {
+  /* Rest -- ~55% of cycle. */
   0%,
-  60%,
+  45%,
   100% {
     transform: translateY(0);
+    text-shadow: 0 0 0 rgba(33, 122, 80, 0);
   }
-  15% {
-    transform: translateY(-12px);
+  /* Bell ramp up. */
+  8% {
+    transform: translateY(-4px);
+    text-shadow: 0 4px 0 rgba(33, 122, 80, 0.18);
   }
-  30% {
-    transform: translateY(0);
+  16% {
+    transform: translateY(-10px);
+    text-shadow: 0 10px 0 rgba(33, 122, 80, 0.4);
   }
-}
-
-/* Ghost is OFF (opacity 0) at rest and only fades in for the lift
- * window -- visible exclusively where the wave is currently passing.
- * Position still rides the wave (6 -> -6 -> 6), so when it does
- * show it's 6px below the front. */
-@keyframes hero-wavy-letter-ghost {
-  0%,
-  60%,
-  100% {
-    transform: translateY(6px);
-    opacity: 0;
+  /* Peak. */
+  22% {
+    transform: translateY(-14px);
+    text-shadow: 0 14px 0 rgba(33, 122, 80, 0.55);
   }
-  15% {
-    transform: translateY(-6px);
-    opacity: 1;
+  /* Bell ramp down. */
+  28% {
+    transform: translateY(-10px);
+    text-shadow: 0 10px 0 rgba(33, 122, 80, 0.4);
   }
-  30% {
-    transform: translateY(6px);
-    opacity: 0;
+  36% {
+    transform: translateY(-4px);
+    text-shadow: 0 4px 0 rgba(33, 122, 80, 0.18);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-wavy__letter::before,
-  .hero-wavy__letter-front {
+  .hero-wavy__letter {
     animation: none !important;
     transform: none !important;
+    text-shadow: none !important;
   }
-  .hero-wavy__letter::before { display: none; }
 }
 
-:root[data-motion="off"] .hero-wavy__letter::before,
-:root[data-motion="off"] .hero-wavy__letter-front {
+:root[data-motion="off"] .hero-wavy__letter {
   animation: none !important;
   transform: none !important;
+  text-shadow: none !important;
 }
-:root[data-motion="off"] .hero-wavy__letter::before { display: none; }
