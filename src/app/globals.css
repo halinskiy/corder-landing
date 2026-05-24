@@ -4094,17 +4094,24 @@ button:focus:not(:focus-visible) {
   }
 }
 
+/* Ghost is OFF (opacity 0) at rest and only fades in for the lift
+ * window -- visible exclusively where the wave is currently passing.
+ * Position still rides the wave (6 -> -6 -> 6), so when it does
+ * show it's 6px below the front. */
 @keyframes hero-wavy-letter-ghost {
   0%,
   60%,
   100% {
     transform: translateY(6px);
+    opacity: 0;
   }
   15% {
     transform: translateY(-6px);
+    opacity: 1;
   }
   30% {
     transform: translateY(6px);
+    opacity: 0;
   }
 }
 
