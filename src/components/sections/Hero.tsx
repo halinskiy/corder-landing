@@ -182,18 +182,21 @@ function WavyHeadline({ text }: { text: string }) {
         <span key={`w-${wi}`} className="hero-wavy__word">
           {Array.from(word).map((ch) => {
             const i = letterIndex++;
-            // Single span per letter. Lift + green text-shadow are both
-            // animated on the same element so the shadow's downward
-            // offset always equals the lift distance -- the green stays
-            // anchored to the original glyph position while the letter
-            // itself floats above it.
+            // Two-layer letter: the front span lifts on the wave; the
+            // ::before ghost (CSS reads data-char) sits permanently 6px
+            // below the front and runs the SAME keyframe -- so both
+            // layers ride the wave together, green stays consistently
+            // 6px under black, creating the "wave inside a wave" the
+            // user described. The shared animation-delay is set inline
+            // on the wrap and both layers inherit it.
             return (
               <span
                 key={`l-${i}`}
                 className="hero-wavy__letter"
+                data-char={ch}
                 style={{ animationDelay: `${i * 70}ms` }}
               >
-                {ch}
+                <span className="hero-wavy__letter-front">{ch}</span>
               </span>
             );
           })}
