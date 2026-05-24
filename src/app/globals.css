@@ -4041,21 +4041,27 @@ button:focus:not(:focus-visible) {
   color: var(--color-text);
 }
 
-/* Green ghost: opaque accent character, sits 6px below the front
- * even at rest, and runs the lift keyframe in sync. Because front
- * and ghost share the same animation curve and timing, the 6px
- * vertical gap between them stays constant -- the green "wave" rides
- * just under the black "wave". */
+/* Green ghost: opaque accent character. `top: 0` + line-height
+ * inherited means its glyph baseline matches the front's exactly
+ * (no line-box drift). The +6px downward offset lives in the ghost
+ * keyframe so the green stays 6px BELOW the front the whole time --
+ * not above it, which the earlier `top: 6px` produced because that
+ * placed the ::before's line-box top below the line-box top while
+ * its glyph then rendered on a baseline already higher than the
+ * front's baseline. */
 .hero-wavy__letter::before {
   content: attr(data-char);
   position: absolute;
-  top: 6px;
+  top: 0;
   left: 0;
+  font: inherit;
+  line-height: inherit;
   color: var(--color-accent);
   z-index: 0;
   pointer-events: none;
   will-change: transform;
-  animation: hero-wavy-letter 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: hero-wavy-letter-ghost 4.5s cubic-bezier(0.4, 0, 0.2, 1)
+    infinite;
   animation-delay: inherit;
 }
 
@@ -4067,11 +4073,14 @@ button:focus:not(:focus-visible) {
   z-index: 1;
   color: var(--color-text);
   will-change: transform;
-  animation: hero-wavy-letter 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: hero-wavy-letter-front 4.5s cubic-bezier(0.4, 0, 0.2, 1)
+    infinite;
   animation-delay: inherit;
 }
 
-@keyframes hero-wavy-letter {
+/* Front: 0 -> -12 -> 0. Ghost: 6 -> -6 -> 6. Both peak at 15% of
+ * cycle; gap between them is a constant 6px throughout. */
+@keyframes hero-wavy-letter-front {
   0%,
   60%,
   100% {
@@ -4082,6 +4091,20 @@ button:focus:not(:focus-visible) {
   }
   30% {
     transform: translateY(0);
+  }
+}
+
+@keyframes hero-wavy-letter-ghost {
+  0%,
+  60%,
+  100% {
+    transform: translateY(6px);
+  }
+  15% {
+    transform: translateY(-6px);
+  }
+  30% {
+    transform: translateY(6px);
   }
 }
 
