@@ -3996,3 +3996,70 @@ button:focus:not(:focus-visible) {
   }
 }
 
+
+/* ----------------------------------------------------------------------
+ *  Hero headline wave -- per-letter shimmer
+ *
+ *  Each letter is wrapped in `.hero-wavy__letter` with a staggered
+ *  `animation-delay`. The keyframe briefly lifts the letter 3px and
+ *  dims its colour to the muted text token, then settles back to rest.
+ *  With a 70ms delay between letters, the sequence reads as a soft wave
+ *  flowing left-to-right through the line, then a brief pause, then
+ *  another wave -- the Airbnb-style "lifted text with another shade
+ *  underneath" effect.
+ *
+ *  Animation is infinite but pauseable: `data-pauseable` on the parent
+ *  h1 lets PauseOffscreen halt it when the hero leaves the viewport.
+ *  Reduced motion + ?motion=0 freeze the letters at their rest state.
+ * -------------------------------------------------------------------- */
+
+.hero-wavy {
+  display: inline;
+}
+
+.hero-wavy__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.hero-wavy__letter {
+  display: inline-block;
+  will-change: transform, color;
+  animation: hero-wavy-letter 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-fill-mode: both;
+  /* Slight padding so transform: translateY doesn't clip against the
+   * h1 line-box -- the lift would otherwise feel cramped on the top. */
+  padding-top: 6px;
+  margin-top: -6px;
+}
+
+@keyframes hero-wavy-letter {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    color: var(--color-text);
+  }
+  15% {
+    transform: translateY(-6px);
+    color: var(--color-accent);
+  }
+  30% {
+    transform: translateY(0);
+    color: var(--color-text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wavy__letter {
+    animation: none !important;
+    transform: none !important;
+    color: var(--color-text) !important;
+  }
+}
+
+:root[data-motion="off"] .hero-wavy__letter {
+  animation: none !important;
+  transform: none !important;
+  color: var(--color-text) !important;
+}
