@@ -3773,31 +3773,40 @@ button:focus:not(:focus-visible) {
   animation: yp-shape-diamond 19s ease-in-out infinite;
 }
 
-/* Blob: gentle rotation + breath-like scale, like a drifting ink drop. */
+/* Blob-deformation keyframes. Independent scaleX / scaleY at each
+ * keyframe so the silhouette periodically squishes horizontally then
+ * stretches vertically (or the inverse), mimicking a real ink-drop
+ * blob trying to settle. Each shape uses different timing + amplitude
+ * pairs so the three never pulse in sync. */
+
+/* Triangle (Local storage): subtle drift + ~8% squish, slow tempo. */
 @keyframes yp-shape-blob {
-  0%   { transform: rotate(0deg)   scale(1);    }
-  25%  { transform: rotate(-6deg)  scale(1.04); }
-  50%  { transform: rotate(8deg)   scale(0.97); }
-  75%  { transform: rotate(-3deg)  scale(1.05); }
-  100% { transform: rotate(0deg)   scale(1);    }
+  0%   { transform: rotate(0deg)   scale(1,    1);    }
+  18%  { transform: rotate(-3deg)  scale(1.08, 0.93); }
+  38%  { transform: rotate(2deg)   scale(0.94, 1.07); }
+  58%  { transform: rotate(-2deg)  scale(1.06, 0.96); }
+  80%  { transform: rotate(4deg)   scale(0.97, 1.04); }
+  100% { transform: rotate(0deg)   scale(1,    1);    }
 }
 
-/* Star: slow continuous spin + tiny pulse on the points. */
+/* Star: continuous slow spin combined with point-pull squish. */
 @keyframes yp-shape-star {
-  0%   { transform: rotate(0deg)   scale(1);    }
-  25%  { transform: rotate(90deg)  scale(0.96); }
-  50%  { transform: rotate(180deg) scale(1.06); }
-  75%  { transform: rotate(270deg) scale(0.98); }
-  100% { transform: rotate(360deg) scale(1);    }
+  0%   { transform: rotate(0deg)   scale(1,    1);    }
+  22%  { transform: rotate(80deg)  scale(0.94, 1.07); }
+  44%  { transform: rotate(170deg) scale(1.07, 0.93); }
+  66%  { transform: rotate(250deg) scale(0.96, 1.05); }
+  88%  { transform: rotate(330deg) scale(1.04, 0.97); }
+  100% { transform: rotate(360deg) scale(1,    1);    }
 }
 
-/* Diamond: rocking sway without going full rotation, plus a wobble. */
+/* Diamond: rocking sway + alternating squish, no full rotation. */
 @keyframes yp-shape-diamond {
-  0%   { transform: rotate(0deg)   scale(1);    }
-  25%  { transform: rotate(12deg)  scale(1.05); }
-  50%  { transform: rotate(-8deg)  scale(0.96); }
-  75%  { transform: rotate(10deg)  scale(1.04); }
-  100% { transform: rotate(0deg)   scale(1);    }
+  0%   { transform: rotate(0deg)   scale(1,    1);    }
+  20%  { transform: rotate(8deg)   scale(1.07, 0.95); }
+  42%  { transform: rotate(-6deg)  scale(0.95, 1.06); }
+  62%  { transform: rotate(7deg)   scale(1.05, 0.96); }
+  82%  { transform: rotate(-3deg)  scale(0.97, 1.04); }
+  100% { transform: rotate(0deg)   scale(1,    1);    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4022,15 +4031,20 @@ button:focus:not(:focus-visible) {
   white-space: nowrap;
 }
 
+/* Letter: lifts via translateY and simultaneously paints a green
+ * `text-shadow` whose downward offset matches the lift distance.
+ * Because shadow offset = lift distance, the green copy of the
+ * glyph stays anchored to the ORIGINAL letter position the whole
+ * time -- the user reads it as "the letter rose out, leaving a
+ * green ghost in the hole". No ::before, no z-index battles, no
+ * background-fill needed: text-shadow is part of the letter so the
+ * shadow and front don't bleed into each other. */
 .hero-wavy__letter {
   display: inline-block;
-  will-change: transform, color;
+  color: var(--color-text);
+  will-change: transform, text-shadow;
   animation: hero-wavy-letter 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   animation-fill-mode: both;
-  /* Slight padding so transform: translateY doesn't clip against the
-   * h1 line-box -- the lift would otherwise feel cramped on the top. */
-  padding-top: 6px;
-  margin-top: -6px;
 }
 
 @keyframes hero-wavy-letter {
@@ -4038,15 +4052,15 @@ button:focus:not(:focus-visible) {
   60%,
   100% {
     transform: translateY(0);
-    color: var(--color-text);
+    text-shadow: 0 0 0 rgba(33, 122, 80, 0);
   }
   15% {
-    transform: translateY(-6px);
-    color: var(--color-accent);
+    transform: translateY(-12px);
+    text-shadow: 0 12px 0 rgba(33, 122, 80, 0.55);
   }
   30% {
     transform: translateY(0);
-    color: var(--color-text);
+    text-shadow: 0 0 0 rgba(33, 122, 80, 0);
   }
 }
 
@@ -4054,12 +4068,12 @@ button:focus:not(:focus-visible) {
   .hero-wavy__letter {
     animation: none !important;
     transform: none !important;
-    color: var(--color-text) !important;
+    text-shadow: none !important;
   }
 }
 
 :root[data-motion="off"] .hero-wavy__letter {
   animation: none !important;
   transform: none !important;
-  color: var(--color-text) !important;
+  text-shadow: none !important;
 }
