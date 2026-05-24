@@ -182,6 +182,11 @@ function WavyHeadline({ text }: { text: string }) {
         <span key={`w-${wi}`} className="hero-wavy__word">
           {Array.from(word).map((ch) => {
             const i = letterIndex++;
+            // Single span per letter. Lift + green text-shadow are both
+            // animated on the same element so the shadow's downward
+            // offset always equals the lift distance -- the green stays
+            // anchored to the original glyph position while the letter
+            // itself floats above it.
             return (
               <span
                 key={`l-${i}`}
