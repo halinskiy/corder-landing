@@ -31,22 +31,24 @@ export default function VerifyPage() {
       data-component="VerifyPage"
       data-source={DATA_SOURCE}
     >
-      <div className="legal-body account-verify-body">
-        <a href="/" className="account-brand" aria-label="Corder home">
-          <BrandMark />
-          <span>Corder</span>
-        </a>
-        <h1 className="account-auth-heading">Verifying your link…</h1>
-        <p className="account-auth-lead">
-          One second -- we're signing you in. You'll land in your account
-          page automatically.
-        </p>
-        <div className="account-verify-spinner" aria-hidden>
-          <span />
-          <span />
-          <span />
+      <div className="page-container py-16 md:py-24">
+        <div className="mx-auto max-w-[460px] account-verify-body">
+          <a href="/" className="account-brand" aria-label="Corder home">
+            <BrandMark />
+            <span>Corder</span>
+          </a>
+          <h1 className="account-auth-heading">Verifying your link…</h1>
+          <p className="account-auth-lead">
+            One second -- we're signing you in. You'll land in your
+            account page automatically.
+          </p>
+          <div className="account-verify-spinner" aria-hidden>
+            <span />
+            <span />
+            <span />
+          </div>
+          <VerifyClient />
         </div>
-        <VerifyClient />
       </div>
     </main>
   );
