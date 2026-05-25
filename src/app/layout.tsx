@@ -109,8 +109,11 @@ export const metadata: Metadata = {
     },
   },
   other: {
-    // Pinned colour for browser UI (Chrome address bar, Safari header).
-    "theme-color": "#217a50",
+    // Pinned colour for browser UI (Chrome address bar, Safari header,
+    // PWA status bar). Matches `--color-bg` so the mobile status area
+    // visually continues the page background instead of carrying the
+    // accent green, which read as a coloured header strip on mobile.
+    "theme-color": "#ffffff",
   },
 };
 

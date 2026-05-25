@@ -19,7 +19,9 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
-    theme_color: "#217a50",
+    /* White matches `--color-bg`; the mobile status bar / PWA chrome
+     * should continue the page background, not show a coloured strip. */
+    theme_color: "#ffffff",
     orientation: "portrait",
     icons: [
       { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
