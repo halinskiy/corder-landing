@@ -224,11 +224,16 @@ function HeadlineWithRec({
 
   useEffect(() => {
     if (timerRef.current) window.clearTimeout(timerRef.current);
+    // 5 s page-settle on first mount so the user sees the headline in
+    // plain text before the first auto-click. Subsequent phases run
+    // 3 s recording / 7 s rest. User feedback 2026-05-25: "захожу на
+    // сайт и сразу вижу красный Record, а должен черный и только
+    // потом красный".
     const delay = warmedRef.current
       ? recState === "rest"
         ? 7000
         : 3000
-      : 1800;
+      : 5000;
     warmedRef.current = true;
     timerRef.current = window.setTimeout(flip, delay);
     return () => {
