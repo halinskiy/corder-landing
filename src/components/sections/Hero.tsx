@@ -73,10 +73,8 @@ export function Hero() {
             data-component="HeroHeadline"
             data-source={DATA_SOURCE}
             data-tokens="display-lg,font-serif,lh-display,ls-display,color-text"
-            data-pauseable
-            aria-label={hero.headline}
           >
-            <WavyHeadline text={hero.headline} />
+            {hero.headline}
           </motion.h1>
 
           <motion.p
@@ -128,7 +126,6 @@ export function Hero() {
           </motion.div>
         </div>
 
-{/* Helper rendered above via <WavyHeadline />; defined at module bottom. */}
         <div className="hero-demo-wrap mt-14 md:mt-20">
           {heroPresence.mode === "live" ? (
             // Live block: HeroLibraryDemo wrapped in motion.div with the
@@ -158,55 +155,5 @@ export function Hero() {
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * WavyHeadline — splits the headline into individual letters wrapped in
- * spans, each staggered by a small delay so an infinite CSS keyframe
- * sends a soft wave across the line. Each letter briefly lifts -3px and
- * dims to the muted text colour, then settles back -- the visual effect
- * is the Airbnb-style "shimmer" the user asked for.
- *
- * Word-level outer spans keep `white-space: nowrap` so letter wrapping
- * never breaks a word in the middle. PauseOffscreen pauses the wave
- * once the hero leaves the viewport (data-pauseable on the parent h1).
- * Reduced motion + ?motion=0 freeze all letters at their rest state.
- */
-function WavyHeadline({ text }: { text: string }) {
-  let letterIndex = 0;
-  const words = text.split(" ");
-  return (
-    <span aria-hidden="true" className="hero-wavy">
-      {words.map((word, wi) => (
-        <span key={`w-${wi}`} className="hero-wavy__word">
-          {Array.from(word).map((ch) => {
-            const i = letterIndex++;
-            // The letter is a single span riding a bell-shaped lift.
-            // The ::after pseudo on the same span carries a small
-            // opaque green blob below it; both share the same keyframe
-            // but the blob plays it ~160 ms behind so it trails the
-            // letter's motion (inertia). CSS variable --d holds the
-            // base delay; the letter uses --d directly, the blob uses
-            // calc(--d + lag) so the trail offset stays constant
-             // across the full stagger.
-            return (
-              <span
-                key={`l-${i}`}
-                className="hero-wavy__letter"
-                style={
-                  {
-                    "--d": `${i * 110}ms`,
-                  } as React.CSSProperties
-                }
-              >
-                {ch}
-              </span>
-            );
-          })}
-          {wi < words.length - 1 ? " " : ""}
-        </span>
-      ))}
-    </span>
   );
 }
