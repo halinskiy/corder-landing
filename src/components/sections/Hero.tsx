@@ -271,50 +271,6 @@ function HeadlineWithRec({
         }}
       >
         {target}
-        {/*
-         * Comic-book click sound effect: jagged 10-point starburst
-         * outline + "click!" lettering inside + two small motion
-         * strokes outside. All elements share one SVG so they pop /
-         * scale / fade together as a single comic frame. Permanent
-         * Marker font for the lettering keeps the marker-on-paper
-         * feel; the rest is pure stroke geometry.
-         */}
-        <svg
-          className="hero-rec-pill__burst"
-          viewBox="-50 -50 100 100"
-          aria-hidden="true"
-          focusable="false"
-        >
-          {/* 10-point spiky star (POW!-style). Alternating outer
-           * (radius ~38) and inner (radius ~12) vertices around the
-           * circle, computed from `points` so the silhouette is
-           * spiky but predictable. */}
-          <polygon
-            className="hero-rec-pill__burst-star"
-            points="0,-38 4,-14 26,-22 11,-4 38,0 11,4 26,22 4,14 0,38 -4,14 -26,22 -11,4 -38,0 -11,-4 -26,-22 -4,-14"
-          />
-          {/* "click!" lettering centred inside the burst. SVG <text>
-           * inherits font via CSS class. */}
-          <text
-            className="hero-rec-pill__burst-text"
-            x="0"
-            y="6"
-            textAnchor="middle"
-          >
-            click!
-          </text>
-          {/* Two extra motion strokes that sit just outside the
-           * starburst, top-left and top-right, like the doodle the
-           * user sketched as reference. */}
-          <path
-            className="hero-rec-pill__burst-stroke"
-            d="M -52 -32 q -2 -10 4 -18"
-          />
-          <path
-            className="hero-rec-pill__burst-stroke"
-            d="M 52 -32 q 2 -10 -4 -18"
-          />
-        </svg>
       </span>
       {after}
     </>
