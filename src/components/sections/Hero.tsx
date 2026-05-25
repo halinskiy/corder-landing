@@ -182,16 +182,23 @@ function WavyHeadline({ text }: { text: string }) {
         <span key={`w-${wi}`} className="hero-wavy__word">
           {Array.from(word).map((ch) => {
             const i = letterIndex++;
-            // Single span per letter -- the bell-shaped keyframe gives
-            // the wave its natural shape (centre letters most lifted,
-            // edge letters less so) entirely through stagger, no
-            // double-layer ghost hack. Green tint is on the same
-            // element via a text-shadow that scales with the lift.
+            // The letter is a single span riding a bell-shaped lift.
+            // The ::after pseudo on the same span carries a small
+            // opaque green blob below it; both share the same keyframe
+            // but the blob plays it ~160 ms behind so it trails the
+            // letter's motion (inertia). CSS variable --d holds the
+            // base delay; the letter uses --d directly, the blob uses
+            // calc(--d + lag) so the trail offset stays constant
+             // across the full stagger.
             return (
               <span
                 key={`l-${i}`}
                 className="hero-wavy__letter"
-                style={{ animationDelay: `${i * 110}ms` }}
+                style={
+                  {
+                    "--d": `${i * 110}ms`,
+                  } as React.CSSProperties
+                }
               >
                 {ch}
               </span>
