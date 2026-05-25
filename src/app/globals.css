@@ -4031,24 +4031,44 @@ button:focus:not(:focus-visible) {
   white-space: nowrap;
 }
 
-/* Single-layer text wave. Each letter runs the same bell-shaped
- * keyframe, staggered 110ms behind the previous one. At any frozen
- * frame, the letters inside the active window of their cycle sit at
- * different points of the bell -- the centre of the wave is at the
- * peak (-14px), the edges of the wave are at intermediate lifts
- * (-4 / -10 / -10 / -4), letters not yet started or already past the
- * window are at rest. That gives the wave its readable shape without
- * a separate ghost layer.
+/* Text wave with inertia trail.
  *
- * Green tint rides the lift via text-shadow -- offset and opacity
- * scale with transform so the colour only appears where the wave is
- * actively passing. No ::before, no second span: serifs render
- * cleanly because there's only ever one glyph drawn per letter. */
+ * Letter: bell-shaped lift, single span, no shadow tricks.
+ * Blob (::after): small opaque green circle below each letter that
+ * runs the SAME lift keyframe but ~160 ms behind, so it trails the
+ * letter's motion like a heavy follower with inertia. Lower peak
+ * amplitude on the blob (-10 vs the letter's -14) so it never quite
+ * catches up. Opacity ramps with the lift so the blob is invisible
+ * at rest and only flashes through during the wave passage.
+ *
+ * CSS variable `--d` carries each letter's stagger delay (set
+ * inline). The blob reads `calc(var(--d) + 160ms)` so the lag stays
+ * constant across the full wave.
+ */
 .hero-wavy__letter {
+  position: relative;
   display: inline-block;
   color: var(--color-text);
-  will-change: transform, text-shadow;
-  animation: hero-wave 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+  animation: hero-wave 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: var(--d, 0ms);
+}
+
+.hero-wavy__letter::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 0.18em;
+  height: 0.18em;
+  background: var(--color-accent);
+  border-radius: 50%;
+  transform: translate(-50%, -0.2em);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: hero-wave-blob 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: calc(var(--d, 0ms) + 160ms);
 }
 
 @keyframes hero-wave {
@@ -4057,43 +4077,75 @@ button:focus:not(:focus-visible) {
   45%,
   100% {
     transform: translateY(0);
-    text-shadow: 0 0 0 rgba(33, 122, 80, 0);
   }
   /* Bell ramp up. */
   8% {
     transform: translateY(-4px);
-    text-shadow: 0 4px 0 rgba(33, 122, 80, 0.18);
   }
   16% {
     transform: translateY(-10px);
-    text-shadow: 0 10px 0 rgba(33, 122, 80, 0.4);
   }
   /* Peak. */
   22% {
     transform: translateY(-14px);
-    text-shadow: 0 14px 0 rgba(33, 122, 80, 0.55);
   }
   /* Bell ramp down. */
   28% {
     transform: translateY(-10px);
-    text-shadow: 0 10px 0 rgba(33, 122, 80, 0.4);
   }
   36% {
     transform: translateY(-4px);
-    text-shadow: 0 4px 0 rgba(33, 122, 80, 0.18);
+  }
+}
+
+@keyframes hero-wave-blob {
+  /* Mirrors the letter's bell with smaller amplitude (-10 peak vs
+   * -14 on the letter) so the blob always lags both in time AND
+   * height -- the inertial follower never overshoots its anchor. */
+  0%,
+  45%,
+  100% {
+    transform: translate(-50%, -0.2em);
+    opacity: 0;
+  }
+  8% {
+    transform: translate(-50%, calc(-0.2em - 3px));
+    opacity: 0.5;
+  }
+  16% {
+    transform: translate(-50%, calc(-0.2em - 7px));
+    opacity: 1;
+  }
+  22% {
+    transform: translate(-50%, calc(-0.2em - 10px));
+    opacity: 1;
+  }
+  28% {
+    transform: translate(-50%, calc(-0.2em - 7px));
+    opacity: 1;
+  }
+  36% {
+    transform: translate(-50%, calc(-0.2em - 3px));
+    opacity: 0.5;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-wavy__letter {
+  .hero-wavy__letter,
+  .hero-wavy__letter::after {
     animation: none !important;
     transform: none !important;
-    text-shadow: none !important;
+  }
+  .hero-wavy__letter::after {
+    display: none;
   }
 }
 
-:root[data-motion="off"] .hero-wavy__letter {
+:root[data-motion="off"] .hero-wavy__letter,
+:root[data-motion="off"] .hero-wavy__letter::after {
   animation: none !important;
   transform: none !important;
-  text-shadow: none !important;
+}
+:root[data-motion="off"] .hero-wavy__letter::after {
+  display: none;
 }
