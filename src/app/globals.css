@@ -4213,53 +4213,53 @@ button:focus:not(:focus-visible) {
  * via stacked `box-shadow` items (offset = distance, spread = line
  * length). `transform: scale()` on the animation drives the radial
  * expansion -- shadows scale with their parent. */
-/* Comic-style speed lines that flash ABOVE the word for a moment on
- * every click. Five short vertical lines spread across the top of
- * the pill via stacked `box-shadow` copies of the ::after element.
- * The lines just appear and disappear -- no outward motion -- which
- * reads as the comic-book "snap" of a click. */
-.hero-rec-pill::after {
-  content: "";
+/* Comic-style burst: three short curved strokes that radiate from
+ * just above the word on every click / autoflip. Rendered as an SVG
+ * child of the pill so the strokes are real curves (Q-paths), not
+ * box-shadow rectangles -- the user asked for hand-drawn doodles, not
+ * bars. Positioned absolutely above the glyph; only visible during
+ * the 320 ms squeeze window. */
+.hero-rec-pill__burst {
   position: absolute;
-  /* Anchored just above the glyph. */
   bottom: 100%;
   left: 50%;
+  width: 2.4em;
+  height: 1.2em;
   margin-bottom: 0.18em;
-  width: 0.16em;
-  height: 0.5em;
-  background: var(--rec);
-  border-radius: 0.08em;
   transform: translateX(-50%);
-  opacity: 0;
+  fill: none;
+  stroke: var(--rec);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   pointer-events: none;
-  /* Four additional line copies via box-shadow at outward x-offsets.
-   * Slight upward shift on the outer two makes the row arc up a
-   * touch -- the speed-line "fan". */
-  box-shadow:
-    -1.8em -0.08em 0 var(--rec),
-    -0.9em -0.04em 0 var(--rec),
-    0.9em -0.04em 0 var(--rec),
-    1.8em -0.08em 0 var(--rec);
+  opacity: 0;
+  overflow: visible;
 }
 
-.hero-rec-pill--squeeze::after {
-  animation: hero-rec-burst 320ms cubic-bezier(0.16, 1, 0.3, 1);
+.hero-rec-pill--squeeze .hero-rec-pill__burst {
+  animation: hero-rec-burst 360ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Flash: lines appear, hold briefly, fade out. No translateY / scale
- * -- they don't fly anywhere, just blink in and out. */
+/* Burst flight: strokes appear, drift up a touch, fade out. The
+ * slight upward translateY reads as the doodles being thrown out of
+ * the word's centre on the click. */
 @keyframes hero-rec-burst {
   0% {
     opacity: 0;
+    transform: translate(-50%, 0.18em);
   }
-  20% {
+  30% {
     opacity: 1;
+    transform: translate(-50%, 0);
   }
-  55% {
+  60% {
     opacity: 1;
+    transform: translate(-50%, -0.06em);
   }
   100% {
     opacity: 0;
+    transform: translate(-50%, -0.18em);
   }
 }
 
