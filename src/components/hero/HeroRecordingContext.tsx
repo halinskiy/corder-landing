@@ -36,7 +36,7 @@ type Ctx = {
 
 const HeroRecordingContext = createContext<Ctx | null>(null);
 
-const WARM_UP_MS = 2_000;
+const WARM_UP_MS = 3_500;
 const RECORDING_MS = 3_000;
 const REST_MS = 7_000;
 

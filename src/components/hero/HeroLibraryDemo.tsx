@@ -29,9 +29,12 @@ export function HeroLibraryDemo() {
   // recording flag goes from true -> false.
   const { recording: contextRecording, setRecording: setContextRecording } =
     useHeroRecording();
-  const [mode, setMode] = useState<DemoMode>(
-    contextRecording ? "recording" : "transcript",
-  );
+  // Always start in `transcript` so the first paint shows the
+  // finished-transcript UI -- no recording banner flash on page
+  // load. Sync effect below promotes to "recording" once the
+  // context auto-cycle (or the user) flips contextRecording to
+  // true.
+  const [mode, setMode] = useState<DemoMode>("transcript");
   const [elapsed, setElapsed] = useState(0);
   // Right-panel tab — Recording (default) shows the audio scrubber +
   // Timeline; Settings shows a stack of decorative setting cards.
