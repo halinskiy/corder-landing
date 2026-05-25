@@ -1106,17 +1106,52 @@ button:focus:not(:focus-visible) {
   .feature-cell { padding: 40px 36px 44px; min-height: 340px; }
 }
 
-/* Mobile: cells stack single-column, no need for uniform min-height
- * (that was a desktop-grid alignment requirement). Tighten padding
- * and let each cell size to its content. */
+/* Mobile: AllTrails-Plus style list -- small 80x80 rounded
+ * thumbnail on the left, heading + body stacked on the right.
+ * The 80x80 box clips the desktop-scale visuals via overflow:
+ * hidden; an inner transform: scale shrinks them so the gist of
+ * each visual is still recognisable at thumbnail size. */
 @media (max-width: 639px) {
   .feature-cell {
-    padding: 20px 22px 22px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
     min-height: 0;
   }
+  .feature-cell__text {
+    flex: 1;
+    min-width: 0;
+  }
   .feature-cell__visual {
+    order: -1; /* thumbnail to the LEFT of the text */
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
     min-height: 0 !important;
-    padding-top: 14px;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  /* Scale the desktop-sized visual contents down so they fit the
+   * 80x80 thumbnail and the silhouette still reads. Source visuals
+   * are typically authored at ~280-340px width, so 0.28 lands them
+   * inside the box with a comfortable margin. */
+  .feature-cell__visual > * {
+    transform: scale(0.28);
+    transform-origin: center center;
+  }
+  .feature-cell__heading {
+    margin-top: 0 !important;
+    margin-bottom: 4px !important;
   }
 }
 
