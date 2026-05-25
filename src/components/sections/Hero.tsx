@@ -271,6 +271,26 @@ function HeadlineWithRec({
         }}
       >
         {target}
+        {/*
+         * Comic-style burst: three short curved strokes radiating
+         * from above the word. SVG sits absolutely positioned right
+         * above the glyph. Strokes only -- no fill -- so they read
+         * as ink doodles. Animation triggered by the wrap's
+         * `hero-rec-pill--squeeze` class on every click / autoflip.
+         */}
+        <svg
+          className="hero-rec-pill__burst"
+          viewBox="0 0 100 50"
+          aria-hidden="true"
+          focusable="false"
+        >
+          {/* Left stroke -- short, slightly curling inward at the top. */}
+          <path d="M 22 48 q -2 -14 3 -28 q 1 -3 2 -6" />
+          {/* Centre stroke -- the tallest, almost vertical. */}
+          <path d="M 50 48 q -1 -16 2 -34" />
+          {/* Right stroke -- bends outward, slight zig at the tip. */}
+          <path d="M 78 48 q 3 -10 -1 -22 q -1 -3 2 -8" />
+        </svg>
       </span>
       {after}
     </>
