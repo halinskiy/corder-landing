@@ -29,7 +29,7 @@ export default function TermsPage() {
           <p className="section-eyebrow">Legal</p>
           <h1 className="section-heading">Terms</h1>
           <p className="section-subhead">
-            Last updated: 22 May 2026. Working draft.
+            Last updated: 25 May 2026. Working draft.
           </p>
 
           <div className="legal-body">
@@ -74,6 +74,19 @@ export default function TermsPage() {
               the Gemini API and on audio quality. We do not warrant any
               specific level of accuracy and we are not liable for damage
               caused by transcription errors.
+            </p>
+
+            <h2>Account and magic-link sign-in</h2>
+            <p>
+              You can use Corder anonymously by downloading the Mac app and
+              recording locally. Creating an account on getcorder.com is
+              optional, and unlocks Pro features, subscription management,
+              referrals, and product update emails you opt into. We do not
+              use passwords; sign-in is via a one-time link sent to the
+              email you provided. Magic links expire 15 minutes after they
+              are generated. Refer to our{" "}
+              <Link href="/privacy-policy/">Privacy Policy</Link> for how
+              account data is stored and when it is removed.
             </p>
 
             <h2>Refunds</h2>

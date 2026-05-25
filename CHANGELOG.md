@@ -12,6 +12,82 @@ Format:
 
 ---
 
+## 2026-05-25 — Phase 1 account infrastructure (frontend scaffold)
+
+Strategic pivot: even if Pro doesn't take off, accounts give us an
+email base for future products and reactivation. Magic-link auth, no
+passwords. Today's session shipped Phase 1: the FRONTEND surface for
+the whole flow, wired to mock data so the maker can review the UI
+end-to-end before backend infra exists.
+
+### What landed
+
+- `src/lib/account-types.ts` — `UserAccount`, `Subscription`,
+  `SubscriptionPlan`, `SubscriptionStatus`, `NotificationPrefs`,
+  `Referral`. Plain TS types, no runtime values. Mirrors the
+  Postgres schema the Cloudflare Worker will write to in Phase 3.
+- `src/lib/account-mock.ts` — `MOCK_USER` constant + `formatBillingDate`
+  helper. Phase 3 swaps these for real fetch calls; the types are
+  the contract.
+- `/signup` — single-email form + "Send magic link" submit, lands
+  on a "Check your inbox" confirmation. Phase 1 mock submit.
+- `/login` — same form, different copy ("Welcome back").
+- `/verify?token=…` — loading spinner + auto-redirect to `/account`
+  after 800 ms. Phase 3 will swap for the real Worker call.
+- `/account` — five sections: Profile (email readonly, name editable
+  inline, Apple ID placeholder), Subscription (plan badge + status
+  + next billing + Manage Subscription -> Paddle Customer Portal),
+  Notifications (3 toggles), Referrals (code + share link + stats
+  + reward explainer), Danger zone (Delete account with DELETE-
+  typed modal confirm). All state local-only for Phase 1.
+- `<MagicLinkForm>` and `<AccountView>` client components.
+- Nav: new "Account" link at the end of the menu row, before the
+  Download CTA.
+- Privacy Policy + Terms: added Account-data section to Privacy
+  describing email/name retention + GDPR 30-day grace deletion;
+  added Magic-link section to Terms.
+- Reward model: bilateral 1 month free for referrer AND referee
+  when the referee completes at least one Pro month (per user
+  preference 2026-05-25).
+- New 404: shorter, single-line heading, drops the brand-mark
+  block and "Or jump to FAQ" link, reuses the `.legal-page +
+  .legal-body` shell so its top offset matches the other
+  standalone pages.
+- Memory note `feedback_corder_standalone_page_offsets.md` —
+  enforces .legal-page + .legal-body shell for every new
+  standalone page in this project; no min-height vh centring,
+  no decorative brand mark, no auto-centred bodies.
+
+### Phase 2 (next, blocked on user actions)
+
+User to set up:
+1. Supabase project + share `URL` + `anon` + `service_role` keys.
+2. Resend account + verified `getcorder.com` sender + API key.
+3. Cloudflare `wrangler` install + token for Worker deploys.
+4. DNS: `api.getcorder.com` CNAME to the future Worker subdomain.
+5. Paddle Dashboard: webhook URL + webhook secret.
+
+### Phase 3 (after Phase 2 keys land)
+
+- Cloudflare Worker on `api.getcorder.com` with: `POST
+  /auth/magic-link`, `GET /auth/verify`, `GET /me`, `PATCH /me`,
+  `DELETE /me`, `GET /me/subscription`, `POST /auth/logout`,
+  `GET /check?email=…`, `POST /paddle/webhook`.
+- Supabase schema (`users`, `magic_links`, `subscriptions`,
+  `referrals`, `notifications` tables).
+- Resend templates: magic-link email, welcome email, deletion
+  confirmation, monthly digest (later).
+- Replace mock-call sites in `MagicLinkForm`, `VerifyClient`,
+  `AccountView` with real fetch calls.
+
+### Other polish in this session
+
+- /404 redesign (per memory feedback): single-line heading, no
+  brand mark, no FAQ link, .legal-page shell.
+- Privacy / Terms: bumped `Last updated` to 25 May 2026.
+
+---
+
 ## 2026-05-23 -- Monthly billNote cleanup + YoursPrivacy blob redesign
 
 Two user-asked polish items:

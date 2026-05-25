@@ -5,14 +5,38 @@
 | Service | What for | Where wired |
 |---|---|---|
 | Google Fonts (IBM Plex Sans / Serif / Mono) | Typography, all three weights/styles | `app/layout.tsx` via `next/font/google` |
+| GitHub Releases | Notarized Mac app `.zip` download | Direct link `github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip` on Hero CTA + both Nav CTAs |
+| Paddle (sandbox) | Pro Monthly + Pro Annual checkout via overlay | `src/lib/paddle.ts`, init in `src/app/layout.tsx`, fired by Pricing CTAs |
+| Microsoft Clarity | Heatmaps + session replay | Static script in `layout.tsx` |
+| Plausible | Privacy-first analytics + custom events | Static script + manual API in `layout.tsx`; events via `src/lib/track.ts` |
+| Twitter Pixel | Ad attribution | Static script in `layout.tsx` when `NEXT_PUBLIC_TWQ_ID` is set |
+| Google Search Console | Indexing + Performance | Verification file `public/google6657f24bde52d2b3.html`, sitemap submitted |
 
-## External services planned but not wired yet
+## External services planned but not wired yet (Account infrastructure)
 
 | Service | What for | Required env var | Phase |
 |---|---|---|---|
-| Plausible / Fathom (analytics) | Cold-traffic conversion measurement on Download CTA | `NEXT_PUBLIC_ANALYTICS_DOMAIN` | After section 8 (final CTA) |
-| Vercel | Hosting + edge CDN | none (Vercel project link) | After full landing passes judge |
-| Sparkle release feed | Linked from "Download" CTA | static URL in `copy.json` | After section 6 (pricing) |
+| **Supabase Postgres** | Users / magic_links / subscriptions / referrals / notifications | `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (Worker only) | 2-3 |
+| **Resend** | Magic-link emails + receipts + opt-in product updates | `RESEND_API_KEY` (Worker only), verified `getcorder.com` sender + DKIM/SPF DNS | 2-3 |
+| **Cloudflare Worker** at `api.getcorder.com` | Auth endpoints + Paddle webhook + `/check` for Mac app | `JWT_SECRET`, `PADDLE_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` | 3 |
+| **Paddle webhooks** | `subscription.created / updated / canceled` -> Worker -> Supabase | Set webhook URL `https://api.getcorder.com/paddle/webhook` in Paddle dashboard + copy webhook secret | 4 |
+| **Mac app `/check?email=…`** | Daily cached Pro-status check from the menu bar | `getcorder.com` URL in `AppSettings`; the Mac app caches the response in `AppSettings.isPro` for 24h | 4 |
+
+## Env vars
+
+| Var | Where read | Public? |
+|---|---|---|
+| `NEXT_PUBLIC_PADDLE_ENV` | `src/lib/paddle.ts` | yes |
+| `NEXT_PUBLIC_PADDLE_TOKEN` | `src/lib/paddle.ts` | yes (sandbox public token) |
+| `NEXT_PUBLIC_PADDLE_PRICE_MONTHLY` | `src/lib/paddle.ts` | yes |
+| `NEXT_PUBLIC_PADDLE_PRICE_ANNUAL` | `src/lib/paddle.ts` | yes |
+| `NEXT_PUBLIC_TWQ_ID` | `src/app/layout.tsx` (Twitter pixel) | yes |
+| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | `src/app/layout.tsx` | yes |
+| `NEXT_PUBLIC_SUPABASE_URL` (Phase 3) | Worker | yes |
+| `SUPABASE_SERVICE_ROLE_KEY` (Phase 3) | Worker only | NO |
+| `RESEND_API_KEY` (Phase 3) | Worker only | NO |
+| `JWT_SECRET` (Phase 3) | Worker only | NO |
+| `PADDLE_WEBHOOK_SECRET` (Phase 4) | Worker only | NO |
 
 ## Env vars
 

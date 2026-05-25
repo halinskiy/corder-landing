@@ -90,3 +90,81 @@ App Router only, single page at `/`. No dynamic routes yet.
 
 - `Inspector` from `@aisoldier/ui-kit` is mounted in `app/layout.tsx` behind `process.env.NODE_ENV === 'development'`. Cmd+click any element to see its `data-component`, `data-source`, `data-tokens`.
 - All structural elements carry these three attributes.
+
+## Account infrastructure (2026-05-25)
+
+Magic-link authentication added as a strategic pivot — accounts give
+us an email base for future products and reactivation even if Pro
+doesn't take off. Phase 1 (frontend scaffold) shipped; Phases 2-5
+(Supabase + Resend + Worker + Paddle webhook + Mac app `/check`)
+land once the backend services are provisioned.
+
+### Routes
+
+| Path | Component | Phase 1 state |
+|---|---|---|
+| `/signup` | `MagicLinkForm` (mode="signup") | Mock submit -> "Check your inbox" |
+| `/login`  | `MagicLinkForm` (mode="login")  | Same form, different copy |
+| `/verify?token=…` | `VerifyClient` | 800ms spinner -> redirect `/account` |
+| `/account` | `AccountView` | Renders `MOCK_USER`, all writes local |
+
+All four reuse the `.legal-page + .legal-body` shell -- top offset
+matches `/privacy-policy`, `/terms`, `/refunds`, `/thanks`.
+
+### Files
+
+```
+src/lib/
+├── account-types.ts          UserAccount / Subscription / Notifications / Referral
+└── account-mock.ts           MOCK_USER + formatBillingDate
+
+src/components/account/
+├── MagicLinkForm.tsx         Shared email -> magic-link form for /signup + /login
+├── VerifyClient.tsx          Phase-1 mock redirector
+└── AccountView.tsx           Five-section client component for /account
+                              (Profile, Subscription, Notifications, Referrals,
+                              Danger zone with DELETE-typed confirm)
+
+src/app/signup/page.tsx
+src/app/login/page.tsx
+src/app/verify/page.tsx       robots: noindex
+src/app/account/page.tsx      robots: noindex
+```
+
+### Phase 3 backend (planned, blocked on user actions)
+
+- **Cloudflare Worker** at `api.getcorder.com` exposing:
+  - `POST /auth/magic-link { email }` -> 200 + Resend email
+  - `GET /auth/verify?token=…` -> 302 redirect with set-cookie JWT
+  - `GET /me`, `PATCH /me`, `DELETE /me`
+  - `GET /me/subscription`
+  - `POST /auth/logout`
+  - `GET /check?email=…` -> { pro, status, expires_at } for Mac app
+  - `POST /paddle/webhook` -> mirror subscription.created/updated/canceled
+- **Supabase Postgres** for users / magic_links / subscriptions /
+  referrals / notifications tables.
+- **Resend** for transactional email (magic links + receipts +
+  optional product updates).
+- **Paddle Customer Portal** linked from Subscription card via
+  `customer-portal.paddle.com/<customer-id>` (Worker resolves this
+  from the Paddle customer object on `GET /me/subscription`).
+
+### Mac app integration (Phase 4)
+
+- After magic-link sign-in inside the Mac app's onboarding wizard,
+  the app calls `GET /check?email=…` once per 24h and caches the
+  result in `AppSettings.isPro`.
+- A menubar popover row "Open account" launches the system browser
+  to `getcorder.com/account`. The user lands logged-in if the
+  cookie is alive; otherwise they go through the magic-link flow.
+
+### Privacy / GDPR
+
+- Account deletion has a 30-day grace period before the row is
+  permanently removed (standard GDPR erasure pattern). The grace
+  window is implemented in the Worker, not the UI.
+- Every marketing email carries a one-click unsubscribe footer that
+  toggles `notifications.productUpdates / tipsAndTricks /
+  newFeatures` off WITHOUT deleting the account.
+- Privacy Policy + Terms updated 2026-05-25 with explicit Account
+  data and magic-link sign-in sections.
