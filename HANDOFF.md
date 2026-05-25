@@ -405,3 +405,33 @@ If option 1 is taken, document the loss in the project README so the Webflow sit
 - [ ] How sticky-window: optionally add a 5th step "Search" if copywriter expands flow. Current 4-step matches copy.json.
 - [ ] Pricing: server-state for billing cookie if A/B testing reveals conversion impact of sticky-monthly default.
 - [ ] Real Lighthouse measurement on prod-on-Vercel after deploy (4G throttled). Section 0 iter-3 LCP measurement was 820ms on raw localhost — well under 1500ms target but not the regulated test condition.
+
+---
+
+## Account infrastructure handoff (2026-05-25, Phase 1 only)
+
+The four account routes (`/signup`, `/login`, `/verify`, `/account`)
+are scaffolded as static-export React pages. Webflow developer
+notes:
+
+- Pages are CLIENT-INTERACTIVE only. They do not call any backend
+  yet -- forms submit to mock state, /account renders `MOCK_USER`.
+  Worker code lands in Phase 3 and the existing component code in
+  `MagicLinkForm.tsx`, `VerifyClient.tsx`, `AccountView.tsx` is the
+  CONTRACT for the Phase 3 fetch calls. Don't reimplement those in
+  Webflow; they're React-only by design.
+
+- The four routes ARE part of the static export and CAN be served
+  through GitHub Pages / Cloudflare Pages as-is. The Phase 3
+  backend lives at `api.getcorder.com` (separate Cloudflare Worker
+  subdomain) so the landing host doesn't need any server runtime.
+
+- Privacy Policy + Terms have a new Account-data section. These
+  will need to be flagged for the maker's lawyer review before any
+  EU-region paid traffic.
+
+- Memory: every standalone page (legal, account, 404, thanks) uses
+  the SAME `.legal-page + .legal-body` shell. Don't introduce
+  decorative brand marks, min-height: 100vh centring, or new outer
+  containers on new pages -- this was confirmed multiple times
+  with the maker. See `feedback_corder_standalone_page_offsets`.

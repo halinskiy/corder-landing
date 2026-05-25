@@ -76,6 +76,19 @@ export function Nav() {
               {link.label}
             </a>
           ))}
+          {/* Account link sits at the end of the nav row, before the
+           *  Download CTA. Phase 1 always shows it; Phase 3 will gate
+           *  the visible label on auth state ("Account" if logged in,
+           *  "Log in" otherwise). */}
+          <a
+            href="/account"
+            className="nav-link px-3 py-2 text-[15px] font-medium"
+            style={{ color: "var(--color-text-muted)" }}
+            data-component="NavAccount"
+            data-source={DATA_SOURCE}
+          >
+            Account
+          </a>
         </nav>
 
         <a

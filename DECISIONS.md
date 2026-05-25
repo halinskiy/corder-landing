@@ -4,6 +4,54 @@
 
 ---
 
+## 2026-05-25 — Account infrastructure: magic-link auth, Supabase + Resend + Cloudflare Worker
+
+**Decision.** Add a full account layer to the landing: `/signup`,
+`/login`, `/verify`, `/account`. Magic-link authentication (no
+passwords). Backend is a Cloudflare Worker on `api.getcorder.com`
+writing to Supabase Postgres; email goes through Resend; Paddle
+subscriptions sync via webhook.
+
+**Why.** Strategic pivot: even if Pro doesn't convert at the
+expected rate, the account base gives us (1) an email list of
+qualified leads for future products, (2) a reactivation channel
+for past free-tier users, (3) a referral funnel with a bilateral
+1-month-free reward (codified in `Referral.qualifiedCount` +
+`freeMonthsEarned` in `account-types.ts`), (4) a place to surface
+subscription self-service so support volume drops.
+
+**Alternatives.**
+- *Passwords.* Rejected. Reset flows are a support burden for a
+  small team and the magic-link UX is now the indie-tool default.
+- *OAuth-only (Sign in with Apple / Google).* Rejected as primary
+  because it makes us depend on third-party consent forms for
+  basic signup; Sign in with Apple lands later as a SECOND option
+  that links to an existing email account.
+- *Cloudflare D1 instead of Supabase.* D1 is edge-native and
+  faster, but Supabase's web dashboard for inspecting users + the
+  mature JS SDK won the trade-off for a 2-3 day setup.
+- *Loops instead of Resend.* Loops has a built-in magic-link
+  template, but charges sooner. Resend's React Email components +
+  3k/mo free tier covers us for the first thousand signups.
+
+**Reward model: bilateral 1 month free.** When a referee signs up
+via `/?ref=CODE` AND completes at least one paid month, BOTH the
+referrer and the referee get one month of Pro credited. The
+Paddle `subscription.created` webhook on the referee's first cycle
+triggers the credit.
+
+**Ship order.**
+- Phase 1 (today): frontend pages wired to mock data. Allows the
+  maker to review UI without any backend.
+- Phase 2 (user TODO): create Supabase project + Resend account +
+  Cloudflare token + Paddle webhook URL.
+- Phase 3: Worker code + DB schema + email templates + replace mock
+  fetch calls in `MagicLinkForm` / `VerifyClient` / `AccountView`.
+- Phase 4: Mac app integration of `GET /check?email=…`.
+- Phase 5: end-to-end test + Paddle sandbox -> production keys.
+
+---
+
 ## 2026-05-22 -- Drop Lenis. Native `scroll-behavior: smooth` only.
 
 **Decision.** Remove the `LenisProvider` wrapper. Use native CSS `scroll-behavior: smooth` on the html element with `scroll-padding-top: 88px` for the sticky nav offset.

@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
           <p className="section-eyebrow">Legal</p>
           <h1 className="section-heading">Privacy Policy</h1>
           <p className="section-subhead">
-            Last updated: 22 May 2026. Working draft.
+            Last updated: 25 May 2026. Working draft.
           </p>
 
           <div className="legal-body">
@@ -85,6 +85,29 @@ export default function PrivacyPolicyPage() {
               <li>No advertising profiles built from your meetings.</li>
               <li>No third-party bot is added to your calls.</li>
             </ul>
+
+            <h2>Account data</h2>
+            <p>
+              If you create an account on getcorder.com we store only what
+              is needed to run the service: your email address, your display
+              name (which you choose, can edit anytime, and defaults to the
+              local part of your email), an opaque internal user id, and
+              your subscription status. We use your email to send you a
+              one-time magic-link sign-in code on request, receipts, and
+              any optional product-update emails you opt into in your
+              account preferences. We do not sell, rent, or share this data
+              with anyone outside the service operator.
+            </p>
+            <p>
+              You can edit your name, toggle the optional notification
+              categories, and delete your account at any time from{" "}
+              <a href="/account">/account</a>. Account deletion triggers a
+              30-day grace period for accidental removal; after that grace
+              window the row is removed from our database, your email is
+              unsubscribed from every list, and the linked Paddle
+              subscription is canceled. The 30-day grace mirrors the GDPR
+              standard for account erasure.
+            </p>
 
             <h2>Your rights</h2>
             <p>
