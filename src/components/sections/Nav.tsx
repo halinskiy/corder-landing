@@ -76,19 +76,10 @@ export function Nav() {
               {link.label}
             </a>
           ))}
-          {/* Account link sits at the end of the nav row, before the
-           *  Download CTA. Phase 1 always shows it; Phase 3 will gate
-           *  the visible label on auth state ("Account" if logged in,
-           *  "Log in" otherwise). */}
-          <a
-            href="/account"
-            className="nav-link px-3 py-2 text-[15px] font-medium"
-            style={{ color: "var(--color-text-muted)" }}
-            data-component="NavAccount"
-            data-source={DATA_SOURCE}
-          >
-            Account
-          </a>
+          {/* Account link removed from nav per user request 2026-05-25.
+           *  /account still reachable via direct URL and the post-
+           *  magic-link redirect; just no top-level nav entry until
+           *  the auth gating in Phase 3 puts it back conditionally. */}
         </nav>
 
         <a
