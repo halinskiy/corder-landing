@@ -558,17 +558,17 @@
       {
         "icon": "lock",
         "heading": "Local storage",
-        "body": "Recordings, transcripts, and your database live only on this Mac. Browse them in Finder anytime."
+        "body": "Recordings stay on this Mac. Browse them in Finder anytime."
       },
       {
         "icon": "user-x",
         "heading": "No third-party bot",
-        "body": "Corder records the audio playing through your speakers. The other side never sees a Corder bot in their call."
+        "body": "Records system audio. The other side sees no bot in the call."
       },
       {
         "icon": "eye-off",
         "heading": "No telemetry",
-        "body": "No analytics, no usage tracking, no anonymous pings. The only network calls are Gemini for transcription and Sparkle for updates."
+        "body": "No analytics, no pings. Only Gemini for transcription, Sparkle for updates."
       }
     ]
   },
