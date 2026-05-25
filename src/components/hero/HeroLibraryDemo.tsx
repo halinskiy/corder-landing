@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useHeroRecording } from "./HeroRecordingContext";
+
 import "./HeroLibraryDemo.css";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/hero/HeroLibraryDemo.tsx";
@@ -20,7 +22,16 @@ export function HeroLibraryDemo() {
   const cardRef = useRef<HTMLDivElement>(null);
   const [reveal, setReveal] = useState<"initial" | "visible" | "reduced">("initial");
   const [playing, setPlaying] = useState(false);
-  const [mode, setMode] = useState<DemoMode>("recording");
+  // Mode is local to the demo but its `recording` slot is mirrored
+  // from `HeroRecordingContext` so the headline rec widget and the
+  // banner here flip together. The `transcribing` intermediate
+  // state is internal: it runs for 1.2s every time the shared
+  // recording flag goes from true -> false.
+  const { recording: contextRecording, setRecording: setContextRecording } =
+    useHeroRecording();
+  const [mode, setMode] = useState<DemoMode>(
+    contextRecording ? "recording" : "transcript",
+  );
   const [elapsed, setElapsed] = useState(0);
   // Right-panel tab — Recording (default) shows the audio scrubber +
   // Timeline; Settings shows a stack of decorative setting cards.
@@ -120,40 +131,47 @@ export function HeroLibraryDemo() {
   }, [mode]);
 
   const transcribingTimerRef = useRef<number | null>(null);
+  // Stop recording from the demo banner button: flips the shared
+  // state; the sync effect below handles the local mode swap +
+  // transcribing intermediate.
   const handleStopRecording = useCallback(() => {
-    setMode("transcribing");
-    if (transcribingTimerRef.current !== null) {
-      window.clearTimeout(transcribingTimerRef.current);
-    }
-    transcribingTimerRef.current = window.setTimeout(() => {
-      setMode("transcript");
-      transcribingTimerRef.current = null;
-    }, TRANSCRIBING_DURATION_MS);
-  }, []);
+    setContextRecording(false);
+  }, [setContextRecording]);
 
-  // Auto-stop the recording after 5 seconds so visitors see the full
-  // record -> transcribe -> transcript cycle without having to wait or
-  // click anything. (Was 120s previously, which meant most users left
-  // before the transcript ever appeared.)
+  // Sync local mode with the shared recording flag from
+  // HeroRecordingContext. When the headline rec widget toggles, the
+  // demo follows: true -> recording, false -> transcribing for 1.2s
+  // then transcript. The 5-second auto-stop that used to live here
+  // is gone; the context's auto-cycle (3s recording / 7s rest)
+  // drives both surfaces now.
   useEffect(() => {
-    if (mode !== "recording") return;
-    const id = window.setTimeout(() => {
-      handleStopRecording();
-    }, 5_000);
-    return () => window.clearTimeout(id);
-  }, [mode, handleStopRecording]);
-
-  // Restart recording from the transcript view: reset elapsed, drop the
-  // transcript, kick the blob back into its red speaking state.
-  const handleRestartRecording = useCallback(() => {
-    if (transcribingTimerRef.current !== null) {
-      window.clearTimeout(transcribingTimerRef.current);
-      transcribingTimerRef.current = null;
+    if (contextRecording) {
+      if (transcribingTimerRef.current !== null) {
+        window.clearTimeout(transcribingTimerRef.current);
+        transcribingTimerRef.current = null;
+      }
+      setElapsed(0);
+      setPlaying(false);
+      setMode("recording");
+    } else if (mode === "recording") {
+      setMode("transcribing");
+      if (transcribingTimerRef.current !== null) {
+        window.clearTimeout(transcribingTimerRef.current);
+      }
+      transcribingTimerRef.current = window.setTimeout(() => {
+        setMode("transcript");
+        transcribingTimerRef.current = null;
+      }, TRANSCRIBING_DURATION_MS);
     }
-    setElapsed(0);
-    setPlaying(false);
-    setMode("recording");
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contextRecording]);
+
+  // Restart recording from the transcript view: push the shared
+  // state to recording; the sync effect above resets elapsed and
+  // flips the local mode for us.
+  const handleRestartRecording = useCallback(() => {
+    setContextRecording(true);
+  }, [setContextRecording]);
 
   useEffect(() => {
     return () => {
