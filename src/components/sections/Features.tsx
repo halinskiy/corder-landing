@@ -96,8 +96,14 @@ function FeatureCell({ cell }: { cell: FeatureCellData }) {
       data-source={DATA_SOURCE}
       data-tokens="font-serif,font-mono,color-text,color-text-muted,color-accent,color-border,color-surface"
     >
-      <h3 className="feature-cell__heading">{cell.heading}</h3>
-      <p className="feature-cell__body">{cell.body}</p>
+      {/* Wrap heading + body so the mobile row layout (visual left,
+       *  text right) can flex them together as one column. Desktop
+       *  layout (text top, visual bottom) is unaffected -- the wrap
+       *  is a transparent passthrough there. */}
+      <div className="feature-cell__text">
+        <h3 className="feature-cell__heading">{cell.heading}</h3>
+        <p className="feature-cell__body">{cell.body}</p>
+      </div>
       <FeatureVisual cell={cell} />
     </article>
   );
