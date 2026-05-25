@@ -214,11 +214,11 @@ function HeadlineWithRec({
     // Mid-squeeze: colour state actually flips.
     window.setTimeout(() => {
       setRecState((s) => (s === "rest" ? "recording" : "rest"));
-    }, 140);
+    }, 80);
     // End of squeeze: drop the class so the burst + transform reset.
     squeezeTimerRef.current = window.setTimeout(
       () => setSqueezing(false),
-      320,
+      200,
     );
   }, []);
 
