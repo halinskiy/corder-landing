@@ -40,15 +40,17 @@ export default function AccountPage() {
       data-component="AccountPage"
       data-source={DATA_SOURCE}
     >
-      <div className="legal-body account-body">
-        <header className="account-header">
-          <a href="/" className="account-brand" aria-label="Corder home">
-            <BrandMark />
-            <span>Corder</span>
-          </a>
-          <h1 className="account-title">Account</h1>
-        </header>
-        <AccountView />
+      <div className="page-container py-16 md:py-24">
+        <div className="mx-auto max-w-[760px] account-body">
+          <header className="account-header">
+            <a href="/" className="account-brand" aria-label="Corder home">
+              <BrandMark />
+              <span>Corder</span>
+            </a>
+            <h1 className="account-title">Account</h1>
+          </header>
+          <AccountView />
+        </div>
       </div>
     </main>
   );
