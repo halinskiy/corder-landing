@@ -79,10 +79,13 @@ export function Nav() {
         </nav>
 
         <a
-          href="#pricing"
+          href="https://github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip"
+          download="Corder.zip"
           data-component="NavCta"
           data-source={DATA_SOURCE}
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
+          data-track-event="cta_download_click"
+          data-track-source="nav"
           className="nav-cta ml-2 hidden h-10 items-center gap-2 rounded-full px-5 text-[15px] font-medium md:inline-flex"
           style={{
             border: "1px solid var(--color-accent)",
@@ -95,10 +98,13 @@ export function Nav() {
 
         {/* Mobile: compact CTA only */}
         <a
-          href="#pricing"
+          href="https://github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip"
+          download="Corder.zip"
           data-component="NavCta"
           data-source={DATA_SOURCE}
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
+          data-track-event="cta_download_click"
+          data-track-source="nav"
           className="nav-cta ml-2 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-medium md:hidden"
           style={{
             border: "1px solid var(--color-accent)",
