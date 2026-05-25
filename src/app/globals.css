@@ -4175,7 +4175,10 @@ button:focus:not(:focus-visible) {
  * -------------------------------------------------------------------- */
 
 .hero-rec-pill {
-  --rec: #e63946;
+  /* Matches the recording red used inside the HeroLibraryDemo
+   * transcript widget so the headline cue and the live UI share
+   * a single REC colour. */
+  --rec: #b7443d;
   position: relative;
   display: inline-block;
   cursor: pointer;
@@ -4190,7 +4193,7 @@ button:focus:not(:focus-visible) {
 
 .hero-rec-pill[data-rec="recording"] {
   color: var(--rec);
-  animation: hero-rec-blink 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  /* No blink -- user asked for a steady red while recording. */
 }
 
 .hero-rec-pill--squeeze {
@@ -4203,20 +4206,6 @@ button:focus:not(:focus-visible) {
   border-radius: 4px;
 }
 
-/* REC blink -- red dominates the cycle (visible 0-70% of the time).
- * A brief dip to the default text colour at ~85% reads as a
- * heartbeat-style indicator: mostly red with a rhythmic blink. */
-@keyframes hero-rec-blink {
-  0%,
-  70%,
-  100% {
-    color: var(--rec);
-  }
-  85% {
-    color: var(--color-text);
-  }
-}
-
 /* Comic-style "speed lines" burst around the pill on every click.
  * Eight short red lines radiate outward from the pill's centre;
  * each appears briefly at ~30% of the animation and fades while
@@ -4224,49 +4213,53 @@ button:focus:not(:focus-visible) {
  * via stacked `box-shadow` items (offset = distance, spread = line
  * length). `transform: scale()` on the animation drives the radial
  * expansion -- shadows scale with their parent. */
+/* Comic-style speed lines that flash ABOVE the word for a moment on
+ * every click. Five short vertical lines spread across the top of
+ * the pill via stacked `box-shadow` copies of the ::after element.
+ * The lines just appear and disappear -- no outward motion -- which
+ * reads as the comic-book "snap" of a click. */
 .hero-rec-pill::after {
   content: "";
   position: absolute;
-  top: 50%;
+  /* Anchored just above the glyph. */
+  bottom: 100%;
   left: 50%;
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
-  background: transparent;
+  margin-bottom: 0.18em;
+  width: 0.16em;
+  height: 0.5em;
+  background: var(--rec);
+  border-radius: 0.08em;
+  transform: translateX(-50%);
   opacity: 0;
   pointer-events: none;
-  /* Eight dots at compass positions, spread + offset chosen in em
-   * so they scale with the headline font-size. Larger spread (2px)
-   * makes the dots actually readable on both mobile and desktop
-   * sizes; the burst still feels comic-style brief because each
-   * dot only exists for the 360 ms animation window. */
+  /* Four additional line copies via box-shadow at outward x-offsets.
+   * Slight upward shift on the outer two makes the row arc up a
+   * touch -- the speed-line "fan". */
   box-shadow:
-    0 -1.4em 0 2px var(--rec),
-    1em -1em 0 2px var(--rec),
-    1.4em 0 0 2px var(--rec),
-    1em 1em 0 2px var(--rec),
-    0 1.4em 0 2px var(--rec),
-    -1em 1em 0 2px var(--rec),
-    -1.4em 0 0 2px var(--rec),
-    -1em -1em 0 2px var(--rec);
+    -1.8em -0.08em 0 var(--rec),
+    -0.9em -0.04em 0 var(--rec),
+    0.9em -0.04em 0 var(--rec),
+    1.8em -0.08em 0 var(--rec);
 }
 
 .hero-rec-pill--squeeze::after {
-  animation: hero-rec-burst 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: hero-rec-burst 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Flash: lines appear, hold briefly, fade out. No translateY / scale
+ * -- they don't fly anywhere, just blink in and out. */
 @keyframes hero-rec-burst {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.4);
   }
-  35% {
-    opacity: 0.85;
-    transform: translate(-50%, -50%) scale(0.85);
+  20% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.4);
   }
 }
 
