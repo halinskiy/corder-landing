@@ -4040,3 +4040,149 @@ button:focus:not(:focus-visible) {
   }
 }
 
+
+/* ----------------------------------------------------------------------
+ *  Hero "everything" record pill
+ *
+ *  Wraps the word "everything" in the headline as an outline-pill that
+ *  cycles through a recording lifecycle:
+ *    Phase A (0-5%)     outline rest -- thin red border, red text,
+ *                       transparent fill (looks like a button waiting
+ *                       to be clicked).
+ *    Phase B (5-15%)    click squeeze: scale 0.94, then back to 1.
+ *                       A pulse ring (::after) emanates from the pill
+ *                       at the same moment, expands + fades.
+ *    Phase C (15-50%)   recording: filled red, white text. Holds for
+ *                       most of the cycle so the meaning lands.
+ *    Phase D (50-60%)   second click: another squeeze + pulse ring,
+ *                       transitions back to outline.
+ *    Phase E (60-100%)  outline rest. Loop.
+ *
+ *  Cycle is 10 s with a 1.8 s initial delay so the page has time to
+ *  paint and settle before the first squeeze. The red is scoped here
+ *  (`--rec`) -- not introduced as a second brand accent, just a local
+ *  "REC" semantic colour for this one widget.
+ *
+ *  data-pauseable on the parent h1 lets PauseOffscreen halt the cycle
+ *  once the hero leaves the viewport (CPU/battery saver). Reduced
+ *  motion + ?motion=0 freeze the pill in the outline-rest state.
+ * -------------------------------------------------------------------- */
+
+.hero-rec-pill {
+  --rec: #e63946;
+  position: relative;
+  display: inline-block;
+  padding: 0 0.32em 0.04em;
+  margin-inline: 0.04em;
+  border: 2px solid var(--rec);
+  border-radius: 999px;
+  color: var(--rec);
+  background-color: transparent;
+  will-change: transform, color, background-color;
+  transform-origin: center center;
+  animation: hero-rec-state 10s cubic-bezier(0.4, 0, 0.2, 1) 1.8s infinite;
+}
+
+.hero-rec-pill::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px solid var(--rec);
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: center center;
+  animation: hero-rec-pulse 10s cubic-bezier(0.4, 0, 0.2, 1) 1.8s infinite;
+}
+
+/* Pill state: scale + colour + bg. Two squeezes per cycle (at the
+ * 6% and 51% marks) bracket the recording phase. */
+@keyframes hero-rec-state {
+  0%, 4% {
+    transform: scale(1);
+    color: var(--rec);
+    background-color: transparent;
+  }
+  /* First click: squeeze. */
+  6% {
+    transform: scale(0.94);
+    color: var(--rec);
+    background-color: transparent;
+  }
+  9% {
+    transform: scale(1);
+    color: var(--rec);
+    background-color: transparent;
+  }
+  /* Fill transition. */
+  13% {
+    transform: scale(1);
+    color: var(--rec);
+    background-color: rgba(230, 57, 70, 0.6);
+  }
+  15%, 50% {
+    transform: scale(1);
+    color: #ffffff;
+    background-color: var(--rec);
+  }
+  /* Second click: squeeze. */
+  51% {
+    transform: scale(0.94);
+    color: #ffffff;
+    background-color: var(--rec);
+  }
+  54% {
+    transform: scale(1);
+    color: #ffffff;
+    background-color: var(--rec);
+  }
+  /* Outline transition. */
+  58% {
+    transform: scale(1);
+    color: var(--rec);
+    background-color: rgba(230, 57, 70, 0.6);
+  }
+  62%, 100% {
+    transform: scale(1);
+    color: var(--rec);
+    background-color: transparent;
+  }
+}
+
+/* Pulse ring: two pulses per cycle, exactly bracketing the squeezes.
+ * Each pulse fades from semi-opaque at scale 1 to invisible at scale 1.7
+ * over ~9% of the cycle. */
+@keyframes hero-rec-pulse {
+  0%, 4%, 49%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  6%, 51% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  10%, 55% {
+    opacity: 0.25;
+    transform: scale(1.35);
+  }
+  15%, 60% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rec-pill,
+  .hero-rec-pill::after {
+    animation: none !important;
+    transform: none !important;
+  }
+  .hero-rec-pill::after { display: none; }
+}
+
+:root[data-motion="off"] .hero-rec-pill,
+:root[data-motion="off"] .hero-rec-pill::after {
+  animation: none !important;
+  transform: none !important;
+}
+:root[data-motion="off"] .hero-rec-pill::after { display: none; }
