@@ -612,11 +612,12 @@ html[data-motion="off"] .hero-library-demo *::after {
 
 .hl-transcript {
   flex: 1;
-  /* 2026-05-20: was overflow:hidden. Real app's transcript pane scrolls
-   * vertically; mirror it here so the dialog can carry more turns than
-   * fit in the window without clipping. Custom thin scrollbar matches
-   * the .modal-pop look from the real macOS Corder. */
-  overflow-y: auto;
+  /* 2026-05-25: back to overflow hidden -- the in-pane scroll was
+   * trapping page scroll on trackpads and touch devices (the user
+   * couldn't pass the demo with a vertical swipe because the inner
+   * pane captured the gesture). The decorative dialog now shows
+   * only what fits; the real macOS app still scrolls. */
+  overflow-y: hidden;
   overflow-x: hidden;
   padding: 8px 20px 12px;
   margin-bottom: 16px;
@@ -1202,7 +1203,10 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
  * tabIndex={-1} and have no real state. Promoted from the inventory
  * dossier 2026-05-20. */
 .hl-settings-pane {
-  overflow-y: auto;
+  /* 2026-05-25: was overflow-y: auto -- traps page scroll. The
+   * settings panel is decorative; hide overflow and let the page
+   * scroll through this section. */
+  overflow-y: hidden;
   overflow-x: hidden;
   min-height: 0;
   flex: 1;

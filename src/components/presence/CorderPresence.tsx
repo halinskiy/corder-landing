@@ -306,14 +306,16 @@ function CorderPresenceForm() {
         return;
       }
       const r = (baseline as HTMLElement).getBoundingClientRect();
-      // If the baseline is below the viewport, default behaviour: pin
-      // the form 32px from the viewport bottom. Once the baseline is
-      // inside (or above) the viewport, the form's bottom-anchor moves
-      // upward so it sits 64px above the baseline top edge.
-      if (r.top >= viewportH - 32) {
+      // Form's bottom edge should align with the bottom of the footer
+      // baseline ("© 2026 Corder. Powered by 3mpq Studio") so the
+      // floating card visually extends down to the copyright line --
+      // user feedback 2026-05-25 ("должен еще ниже опускаться вплоть
+      // до высоты © ..."). While the baseline is still below the
+      // viewport, default to 32px viewport-bottom inset.
+      if (r.bottom >= viewportH) {
         setBottomPx(32);
       } else {
-        setBottomPx(Math.round(viewportH - r.top + 64));
+        setBottomPx(Math.max(32, Math.round(viewportH - r.bottom)));
       }
     };
     const onScrollOrResize = () => {
