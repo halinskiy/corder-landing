@@ -4070,131 +4070,6 @@ button:focus:not(:focus-visible) {
 
 
 /* ----------------------------------------------------------------------
- *  Hero "everything" record pill v2
- *
- *  Two states, no in-between styling:
- *    Rest        plain text -- no border, no fill, just text-coloured
- *                glyph in the headline flow.
- *    Recording   red filled pill (::before bg), white text.
- *
- *  The transition between states is the click squeeze (-6 % scale,
- *  back to 100 %, ~300 ms). The fill snaps in immediately after the
- *  squeeze ends (no fade, no halo, no pulse ring) and snaps back at
- *  the next click. Layout never shifts because the pill bg is a
- *  position:absolute ::before that doesn't take space.
- *
- *  The ::before is offset 0.16 em below the wrap so the descender
- *  of "y" in "everything" sits well inside the bg with breathing
- *  room (previous version's bottom padding of 0.04 em put the
- *  outline kissing the letter).
- *
- *  data-pauseable on the parent h1 lets PauseOffscreen halt the
- *  cycle once the hero leaves the viewport. Reduced motion +
- *  ?motion=0 freeze the pill in the plain-text rest state.
- * -------------------------------------------------------------------- */
-
-.hero-rec-pill {
-  --rec: #e63946;
-  /* Initial mount uses a 1.8s page-settle delay; after the user
-   * interacts (HeadlineWithRec re-mounts on click) the inline
-   * style sets `--rec-delay: 0ms` so the click feels immediate. */
-  --rec-delay: 1.8s;
-  position: relative;
-  display: inline-block;
-  color: var(--color-text);
-  cursor: pointer;
-  will-change: transform, color;
-  transform-origin: center center;
-  animation: hero-rec-state 10s cubic-bezier(0.4, 0, 0.2, 1)
-    var(--rec-delay) infinite;
-}
-
-.hero-rec-pill:focus-visible {
-  outline: 2px solid var(--rec);
-  outline-offset: 4px;
-  border-radius: 4px;
-}
-
-.hero-rec-pill::before {
-  /* Pill bg layer. Sits behind the glyph by document order (no
-   * z-index needed -- ::before is drawn first). Insets are now
-   * tight on all four edges so the pill stays inside the word's
-   * own line-box and doesn't overlap the words around it
-   * ("Record" / "around"). Just enough bottom inset to wrap the
-   * "y" descender without clipping. */
-  content: "";
-  position: absolute;
-  inset: -0.02em -0.16em -0.12em -0.16em;
-  border-radius: 999px;
-  background: var(--rec);
-  opacity: 0;
-  pointer-events: none;
-  animation: hero-rec-fill 10s cubic-bezier(0.4, 0, 0.2, 1)
-    var(--rec-delay) infinite;
-}
-
-@keyframes hero-rec-state {
-  0%, 4% {
-    transform: scale(1);
-    color: var(--color-text);
-  }
-  /* First click squeeze. */
-  6% {
-    transform: scale(0.94);
-    color: var(--color-text);
-  }
-  9% {
-    transform: scale(1);
-    color: var(--color-text);
-  }
-  /* Snap to white as the fill snaps in. */
-  11%, 49% {
-    transform: scale(1);
-    color: #ffffff;
-  }
-  /* Second click squeeze. */
-  51% {
-    transform: scale(0.94);
-    color: #ffffff;
-  }
-  54% {
-    transform: scale(1);
-    color: #ffffff;
-  }
-  /* Snap back to text-colour as the fill snaps out. */
-  56%, 100% {
-    transform: scale(1);
-    color: var(--color-text);
-  }
-}
-
-@keyframes hero-rec-fill {
-  /* Hidden before and after the recording window; snaps to 1 at
-   * the post-click-1 moment and to 0 at post-click-2. */
-  0%, 9% { opacity: 0; }
-  11%, 54% { opacity: 1; }
-  56%, 100% { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-rec-pill,
-  .hero-rec-pill::before {
-    animation: none !important;
-    transform: none !important;
-  }
-  .hero-rec-pill { color: var(--color-text); }
-  .hero-rec-pill::before { display: none; }
-}
-
-:root[data-motion="off"] .hero-rec-pill,
-:root[data-motion="off"] .hero-rec-pill::before {
-  animation: none !important;
-  transform: none !important;
-}
-:root[data-motion="off"] .hero-rec-pill { color: var(--color-text); }
-:root[data-motion="off"] .hero-rec-pill::before { display: none; }
-
-/* ----------------------------------------------------------------------
  *  Hero headline + subhead -- mobile typography overrides
  *
  *  User asked for tighter line-height on both and more horizontal
@@ -4275,4 +4150,83 @@ button:focus:not(:focus-visible) {
     color: var(--color-text-muted);
   }
 
+}
+
+/* ----------------------------------------------------------------------
+ *  Hero "Record" recording indicator (no pill)
+ *
+ *  Plain text widget that lives inline in the headline. State machine:
+ *    rest        normal text colour, no decoration.
+ *    recording   text turns red and gently pulses between bright red
+ *                and a darker red (NOT to transparency -- this is how
+ *                a hardware REC light reads, by colour intensity).
+ *
+ *  React drives the binary state. CSS handles the visual transition
+ *  via `transition` on `color` (so the rest <-> recording swap is a
+ *  smooth fade, not a jump) and via the `hero-rec-blink` keyframe
+ *  that runs only while data-rec="recording".
+ *
+ *  The click moment adds a 280 ms class `.hero-rec-pill--squeeze`
+ *  that briefly scales the text to 0.94 -- snappy, matches the rest
+ *  of the doctrine easing.
+ *
+ *  user-select: none stops double-click from highlighting the word.
+ *  cursor: pointer + role=button + tabIndex make it a real button.
+ * -------------------------------------------------------------------- */
+
+.hero-rec-pill {
+  --rec: #e63946;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  color: var(--color-text);
+  user-select: none;
+  -webkit-user-select: none;
+  transform-origin: center center;
+  transition:
+    color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-rec-pill[data-rec="recording"] {
+  color: var(--rec);
+  animation: hero-rec-blink 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.hero-rec-pill--squeeze {
+  transform: scale(0.94);
+}
+
+.hero-rec-pill:focus-visible {
+  outline: 2px solid var(--rec);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* REC blink -- text colour pulses between the recording red and the
+ * default text colour (near-black). Sharper contrast than red ->
+ * dark-red, reads as a recording indicator alternating between "on"
+ * and "off". Never goes to transparent. */
+@keyframes hero-rec-blink {
+  0%,
+  100% {
+    color: var(--rec);
+  }
+  50% {
+    color: var(--color-text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rec-pill {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+:root[data-motion="off"] .hero-rec-pill {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
 }

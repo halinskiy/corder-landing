@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -77,7 +77,7 @@ export function Hero() {
             data-tokens="display-lg,font-serif,lh-display,ls-display,color-text"
             data-pauseable
           >
-            <HeadlineWithRec text={hero.headline} target="everything" />
+            <HeadlineWithRec text={hero.headline} target="Record" />
           </motion.h1>
 
           <motion.p
@@ -181,34 +181,78 @@ function HeadlineWithRec({
   text: string;
   target: string;
 }) {
-  // `clickKey` remounts the pill span on every click/keyboard
-  // activation; the CSS keyframe restarts from 0% so the user
-  // sees the exact same squeeze + fill cycle they would have
-  // seen from the auto-loop. The animation-delay is sourced
-  // from a CSS variable: 1.8s on first mount (page-settle
-  // pause) and 0ms after the user has interacted, so the click
-  // response is immediate.
-  const [clickKey, setClickKey] = useState(0);
+  // Binary state machine. The pill holds either "rest" or "recording".
+  // The auto-cycle alternates between them on a timer (1.8 s page-
+  // settle warm-up, then 7 s rest / 3 s recording). The CSS uses
+  // `[data-rec]` selectors to drive bg opacity + text colour as
+  // smooth transitions, so the swap is seamless even mid-flight.
+  //
+  // The user can click / Space / Enter to toggle state at any time.
+  // Toggling just flips the state -- the cycle keeps running, the
+  // next phase fires from the new state. No animation restart, no
+  // 0%-jump.
+  //
+  // The brief squeeze on every state change is a separate transient
+  // class that React adds for 280 ms each toggle. It maps cleanly to
+  // the existing transform-transition; no keyframe.
   const idx = text.indexOf(target);
+  const [recState, setRecState] = useState<"rest" | "recording">("rest");
+  const [squeezing, setSqueezing] = useState(false);
+  const warmedRef = useRef(false);
+  const timerRef = useRef<number | null>(null);
+  const squeezeTimerRef = useRef<number | null>(null);
+
+  const flip = useCallback(() => {
+    setRecState((s) => (s === "rest" ? "recording" : "rest"));
+    setSqueezing(true);
+    if (squeezeTimerRef.current)
+      window.clearTimeout(squeezeTimerRef.current);
+    squeezeTimerRef.current = window.setTimeout(
+      () => setSqueezing(false),
+      280,
+    );
+  }, []);
+
+  useEffect(() => {
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    const delay = warmedRef.current
+      ? recState === "rest"
+        ? 7000
+        : 3000
+      : 1800;
+    warmedRef.current = true;
+    timerRef.current = window.setTimeout(flip, delay);
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+    };
+  }, [recState, flip]);
+
+  useEffect(
+    () => () => {
+      if (squeezeTimerRef.current)
+        window.clearTimeout(squeezeTimerRef.current);
+    },
+    [],
+  );
+
   if (idx < 0) return <>{text}</>;
   const before = text.slice(0, idx);
   const after = text.slice(idx + target.length);
-  const delay = clickKey === 0 ? "1.8s" : "0ms";
+
   return (
     <>
       {before}
       <span
-        key={clickKey}
-        className="hero-rec-pill"
+        className={`hero-rec-pill${squeezing ? " hero-rec-pill--squeeze" : ""}`}
+        data-rec={recState}
         role="button"
         tabIndex={0}
         aria-label={`Toggle ${target} recording`}
-        style={{ "--rec-delay": delay } as React.CSSProperties}
-        onClick={() => setClickKey((k) => k + 1)}
+        onClick={flip}
         onKeyDown={(e) => {
           if (e.key === " " || e.key === "Enter") {
             e.preventDefault();
-            setClickKey((k) => k + 1);
+            flip();
           }
         }}
       >
