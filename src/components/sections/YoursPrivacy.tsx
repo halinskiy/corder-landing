@@ -47,14 +47,8 @@ export function YoursPrivacy() {
         {/* Header */}
         <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
           <div className="lg:col-span-9">
-            <p
-              className="section-eyebrow"
-              data-component="YoursPrivacyEyebrow"
-              data-source={DATA_SOURCE}
-              data-tokens="eyebrow,color-accent,font-sans"
-            >
-              {yoursPrivacy.eyebrow}
-            </p>
+            {/* Eyebrow removed per user request 2026-05-25 -- the
+                heading "Your meetings stay yours" speaks for itself. */}
             <h2
               className="section-heading"
               data-component="YoursPrivacyHeading"
@@ -89,8 +83,17 @@ export function YoursPrivacy() {
                 <div className="yours-privacy-blob-wrap" aria-hidden>
                   <Shape />
                 </div>
-                <h3 className="yours-privacy-card__heading">{card.heading}</h3>
-                <p className="yours-privacy-card__body">{card.body}</p>
+                {/* Text wrap so the mobile flex-row layout can keep
+                 *  heading + body stacked as one column on the right
+                 *  of the shape. Desktop layout (text below shape) is
+                 *  unaffected -- the wrap is a transparent passthrough
+                 *  there. */}
+                <div className="yours-privacy-card__text">
+                  <h3 className="yours-privacy-card__heading">
+                    {card.heading}
+                  </h3>
+                  <p className="yours-privacy-card__body">{card.body}</p>
+                </div>
               </article>
             );
           })}
