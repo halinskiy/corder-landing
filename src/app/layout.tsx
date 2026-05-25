@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
-import {
-  IBM_Plex_Mono,
-  IBM_Plex_Sans,
-  IBM_Plex_Serif,
-  Permanent_Marker,
-} from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import { PauseOffscreen } from "@/components/providers/PauseOffscreen";
@@ -33,19 +28,6 @@ const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-plex-mono",
-  display: "swap",
-});
-
-/**
- * Comic-style font, used only for the hand-lettered "click!" sound
- * effect that pops above the headline rec widget. Scoped via the
- * `--font-comic` CSS variable; nothing else on the landing uses
- * Permanent Marker. ~10kb single weight.
- */
-const permanentMarker = Permanent_Marker({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-comic",
   display: "swap",
 });
 
@@ -228,7 +210,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang={copy.meta.lang}
-      className={`${plexSans.variable} ${plexSerif.variable} ${plexMono.variable} ${permanentMarker.variable}`}
+      className={`${plexSans.variable} ${plexSerif.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
       <head>
