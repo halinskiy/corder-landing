@@ -202,14 +202,23 @@ function HeadlineWithRec({
   const timerRef = useRef<number | null>(null);
   const squeezeTimerRef = useRef<number | null>(null);
 
+  // flip: squeeze starts immediately; the state colour swap (rest <->
+  // recording) fires at ~140 ms when the squeeze is at peak, so the
+  // user reads "click compressed → text turned red", not "everything
+  // changed at once". Burst lines around the pill share the squeeze
+  // window (own `.hero-rec-pill--squeeze` class triggers them).
   const flip = useCallback(() => {
-    setRecState((s) => (s === "rest" ? "recording" : "rest"));
     setSqueezing(true);
     if (squeezeTimerRef.current)
       window.clearTimeout(squeezeTimerRef.current);
+    // Mid-squeeze: colour state actually flips.
+    window.setTimeout(() => {
+      setRecState((s) => (s === "rest" ? "recording" : "rest"));
+    }, 140);
+    // End of squeeze: drop the class so the burst + transform reset.
     squeezeTimerRef.current = window.setTimeout(
       () => setSqueezing(false),
-      280,
+      320,
     );
   }, []);
 

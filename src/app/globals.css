@@ -4190,7 +4190,7 @@ button:focus:not(:focus-visible) {
 
 .hero-rec-pill[data-rec="recording"] {
   color: var(--rec);
-  animation: hero-rec-blink 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: hero-rec-blink 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .hero-rec-pill--squeeze {
@@ -4203,17 +4203,70 @@ button:focus:not(:focus-visible) {
   border-radius: 4px;
 }
 
-/* REC blink -- text colour pulses between the recording red and the
- * default text colour (near-black). Sharper contrast than red ->
- * dark-red, reads as a recording indicator alternating between "on"
- * and "off". Never goes to transparent. */
+/* REC blink -- red dominates the cycle (visible 0-70% of the time).
+ * A brief dip to the default text colour at ~85% reads as a
+ * heartbeat-style indicator: mostly red with a rhythmic blink. */
 @keyframes hero-rec-blink {
   0%,
+  70%,
   100% {
     color: var(--rec);
   }
-  50% {
+  85% {
     color: var(--color-text);
+  }
+}
+
+/* Comic-style "speed lines" burst around the pill on every click.
+ * Eight short red lines radiate outward from the pill's centre;
+ * each appears briefly at ~30% of the animation and fades while
+ * scaling outward. The zero-size ::after carries all eight lines
+ * via stacked `box-shadow` items (offset = distance, spread = line
+ * length). `transform: scale()` on the animation drives the radial
+ * expansion -- shadows scale with their parent. */
+.hero-rec-pill::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  /* Eight dots at compass positions, spread + offset chosen in em
+   * so they scale with the headline font-size. Larger spread (2px)
+   * makes the dots actually readable on both mobile and desktop
+   * sizes; the burst still feels comic-style brief because each
+   * dot only exists for the 360 ms animation window. */
+  box-shadow:
+    0 -1.4em 0 2px var(--rec),
+    1em -1em 0 2px var(--rec),
+    1.4em 0 0 2px var(--rec),
+    1em 1em 0 2px var(--rec),
+    0 1.4em 0 2px var(--rec),
+    -1em 1em 0 2px var(--rec),
+    -1.4em 0 0 2px var(--rec),
+    -1em -1em 0 2px var(--rec);
+}
+
+.hero-rec-pill--squeeze::after {
+  animation: hero-rec-burst 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes hero-rec-burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  35% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.4);
   }
 }
 
