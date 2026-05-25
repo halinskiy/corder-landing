@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { motion, useReducedMotion } from "framer-motion";
 
 import { HeroLibraryDemo } from "@/components/hero/HeroLibraryDemo";
@@ -34,7 +36,7 @@ export function Hero() {
       data-component="Hero"
       data-source={DATA_SOURCE}
       data-tokens="display-lg,font-serif,color-text,ease-out"
-      className="relative w-full overflow-x-clip pt-40 pb-8 md:pt-32 md:pb-12"
+      className="relative w-full overflow-x-clip pt-[200px] pb-8 md:pt-[168px] md:pb-12"
     >
       {/* Atmospheric dot grid behind the demo, faded edges. */}
       <div
@@ -107,7 +109,8 @@ export function Hero() {
             data-tokens="radius-pill,color-accent,color-bg,ease-out"
           >
             <a
-              href="#download"
+              href="https://github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip"
+              download="Corder.zip"
               className="cta-pill cta-pill--primary inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[17px] font-medium md:w-auto md:min-w-[260px] md:px-9"
               data-track-event="cta_download_click"
               data-track-source="hero"
@@ -178,14 +181,37 @@ function HeadlineWithRec({
   text: string;
   target: string;
 }) {
+  // `clickKey` remounts the pill span on every click/keyboard
+  // activation; the CSS keyframe restarts from 0% so the user
+  // sees the exact same squeeze + fill cycle they would have
+  // seen from the auto-loop. The animation-delay is sourced
+  // from a CSS variable: 1.8s on first mount (page-settle
+  // pause) and 0ms after the user has interacted, so the click
+  // response is immediate.
+  const [clickKey, setClickKey] = useState(0);
   const idx = text.indexOf(target);
   if (idx < 0) return <>{text}</>;
   const before = text.slice(0, idx);
   const after = text.slice(idx + target.length);
+  const delay = clickKey === 0 ? "1.8s" : "0ms";
   return (
     <>
       {before}
-      <span className="hero-rec-pill" aria-label={`${target} (recording)`}>
+      <span
+        key={clickKey}
+        className="hero-rec-pill"
+        role="button"
+        tabIndex={0}
+        aria-label={`Toggle ${target} recording`}
+        style={{ "--rec-delay": delay } as React.CSSProperties}
+        onClick={() => setClickKey((k) => k + 1)}
+        onKeyDown={(e) => {
+          if (e.key === " " || e.key === "Enter") {
+            e.preventDefault();
+            setClickKey((k) => k + 1);
+          }
+        }}
+      >
         {target}
       </span>
       {after}

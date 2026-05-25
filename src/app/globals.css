@@ -4095,26 +4095,42 @@ button:focus:not(:focus-visible) {
 
 .hero-rec-pill {
   --rec: #e63946;
+  /* Initial mount uses a 1.8s page-settle delay; after the user
+   * interacts (HeadlineWithRec re-mounts on click) the inline
+   * style sets `--rec-delay: 0ms` so the click feels immediate. */
+  --rec-delay: 1.8s;
   position: relative;
   display: inline-block;
   color: var(--color-text);
+  cursor: pointer;
   will-change: transform, color;
   transform-origin: center center;
-  animation: hero-rec-state 10s cubic-bezier(0.4, 0, 0.2, 1) 1.8s infinite;
+  animation: hero-rec-state 10s cubic-bezier(0.4, 0, 0.2, 1)
+    var(--rec-delay) infinite;
+}
+
+.hero-rec-pill:focus-visible {
+  outline: 2px solid var(--rec);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 .hero-rec-pill::before {
   /* Pill bg layer. Sits behind the glyph by document order (no
-   * z-index needed -- ::before is drawn first). Inset values
-   * generous on the bottom so descenders breathe inside the bg. */
+   * z-index needed -- ::before is drawn first). Insets are now
+   * tight on all four edges so the pill stays inside the word's
+   * own line-box and doesn't overlap the words around it
+   * ("Record" / "around"). Just enough bottom inset to wrap the
+   * "y" descender without clipping. */
   content: "";
   position: absolute;
-  inset: -0.05em -0.32em -0.18em -0.32em;
+  inset: -0.02em -0.16em -0.12em -0.16em;
   border-radius: 999px;
   background: var(--rec);
   opacity: 0;
   pointer-events: none;
-  animation: hero-rec-fill 10s cubic-bezier(0.4, 0, 0.2, 1) 1.8s infinite;
+  animation: hero-rec-fill 10s cubic-bezier(0.4, 0, 0.2, 1)
+    var(--rec-delay) infinite;
 }
 
 @keyframes hero-rec-state {
