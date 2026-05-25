@@ -4171,54 +4171,72 @@ button:focus:not(:focus-visible) {
  * via stacked `box-shadow` items (offset = distance, spread = line
  * length). `transform: scale()` on the animation drives the radial
  * expansion -- shadows scale with their parent. */
-/* Comic-style click sound effect. Hand-lettered "click!" pops above
- * the word on every state change. Permanent Marker font (loaded in
- * layout.tsx) gives the marker-on-paper feel; small relative size
- * (0.42em) so the sfx stays a quiet flourish, not a billboard.
- * Rotated -7deg so the lettering reads hand-drawn, not typeset. */
-.hero-rec-pill__sfx {
+/* Comic-book click burst. One SVG holds three layers: a jagged
+ * 10-point starburst outline (POW!-style), "click!" lettering
+ * inside it (Permanent Marker, like a hand-drawn sound effect),
+ * and two small motion strokes outside at upper-left and upper-
+ * right. All animate together as one frame so the user reads it
+ * as a single comic snap. */
+.hero-rec-pill__burst {
   position: absolute;
   bottom: 100%;
   left: 50%;
-  margin-bottom: 0.32em;
-  transform: translateX(-50%) rotate(-7deg);
+  width: 1.8em;
+  height: 1.8em;
+  margin-bottom: 0.1em;
+  transform: translateX(-50%);
   transform-origin: 50% 100%;
-  font-family: var(--font-comic), "Permanent Marker", cursive;
-  font-size: 0.42em;
-  line-height: 1;
-  color: var(--rec);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+  overflow: visible;
   pointer-events: none;
   opacity: 0;
 }
 
-.hero-rec-pill--squeeze .hero-rec-pill__sfx {
-  animation: hero-rec-sfx 420ms cubic-bezier(0.16, 1, 0.3, 1);
+.hero-rec-pill__burst-star {
+  fill: none;
+  stroke: var(--rec);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
 }
 
-/* Sfx flight: pop in from below + rotation settle, hold briefly,
- * drift up + fade. Total 420 ms, slightly longer than the squeeze
- * so the lettering clears before the next state cycle. */
-@keyframes hero-rec-sfx {
+.hero-rec-pill__burst-text {
+  font-family: var(--font-comic), "Permanent Marker", cursive;
+  font-size: 18px;
+  fill: var(--rec);
+  letter-spacing: 0.04em;
+}
+
+.hero-rec-pill__burst-stroke {
+  fill: none;
+  stroke: var(--rec);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero-rec-pill--squeeze .hero-rec-pill__burst {
+  animation: hero-rec-burst 460ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Burst pop: scale-up from 0.55 with a quick counter-clockwise
+ * rotation, settle at 1.05, then drift up + rotate slightly out
+ * and fade. The whole comic frame lifts off the word as one. */
+@keyframes hero-rec-burst {
   0% {
     opacity: 0;
-    transform: translateX(-50%) rotate(-12deg) translateY(0.3em)
-      scale(0.55);
+    transform: translateX(-50%) rotate(-18deg) scale(0.5);
   }
-  35% {
+  30% {
     opacity: 1;
-    transform: translateX(-50%) rotate(-7deg) translateY(0) scale(1.06);
+    transform: translateX(-50%) rotate(-4deg) scale(1.08);
   }
   60% {
     opacity: 1;
-    transform: translateX(-50%) rotate(-7deg) translateY(-0.08em)
-      scale(1);
+    transform: translateX(-50%) rotate(0deg) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translateX(-50%) rotate(-5deg) translateY(-0.42em)
-      scale(1);
+    transform: translateX(-50%) rotate(8deg) translateY(-0.35em)
+      scale(1.05);
   }
 }
 
