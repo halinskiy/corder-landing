@@ -6,6 +6,10 @@ import { motion, useReducedMotion } from "framer-motion";
 
 import { HeroLibraryDemo } from "@/components/hero/HeroLibraryDemo";
 import {
+  HeroRecordingProvider,
+  useHeroRecording,
+} from "@/components/hero/HeroRecordingContext";
+import {
   CORDER_PRESENCE_LAYOUT_ID,
   CORDER_PRESENCE_MORPH_TRANSITION,
   useHeroPresenceMode,
@@ -32,6 +36,7 @@ export function Hero() {
       };
 
   return (
+    <HeroRecordingProvider>
     <section
       data-component="Hero"
       data-source={DATA_SOURCE}
@@ -159,6 +164,7 @@ export function Hero() {
         </div>
       </div>
     </section>
+    </HeroRecordingProvider>
   );
 }
 
@@ -195,51 +201,32 @@ function HeadlineWithRec({
   // The brief squeeze on every state change is a separate transient
   // class that React adds for 280 ms each toggle. It maps cleanly to
   // the existing transform-transition; no keyframe.
+  // Recording state lives in HeroRecordingContext so the headline
+  // and the demo banner share one source of truth. The auto-cycle
+  // (5s warm-up / 3s recording / 7s rest) is owned by the provider;
+  // here we only react to the boolean for the colour swap and pipe
+  // user clicks back through `toggle()`.
   const idx = text.indexOf(target);
-  const [recState, setRecState] = useState<"rest" | "recording">("rest");
+  const { recording, toggle } = useHeroRecording();
+  const recState = recording ? "recording" : "rest";
   const [squeezing, setSqueezing] = useState(false);
-  const warmedRef = useRef(false);
-  const timerRef = useRef<number | null>(null);
   const squeezeTimerRef = useRef<number | null>(null);
-
-  // flip: squeeze starts immediately; the state colour swap (rest <->
-  // recording) fires at ~140 ms when the squeeze is at peak, so the
-  // user reads "click compressed → text turned red", not "everything
-  // changed at once". Burst lines around the pill share the squeeze
-  // window (own `.hero-rec-pill--squeeze` class triggers them).
-  const flip = useCallback(() => {
-    setSqueezing(true);
-    if (squeezeTimerRef.current)
-      window.clearTimeout(squeezeTimerRef.current);
-    // Mid-squeeze: colour state actually flips.
-    window.setTimeout(() => {
-      setRecState((s) => (s === "rest" ? "recording" : "rest"));
-    }, 80);
-    // End of squeeze: drop the class so the burst + transform reset.
-    squeezeTimerRef.current = window.setTimeout(
-      () => setSqueezing(false),
-      200,
-    );
-  }, []);
+  // Track previous recording value so we can fire the squeeze on
+  // EVERY state change (auto-flip + user click both count).
+  const prevRecordingRef = useRef(recording);
 
   useEffect(() => {
-    if (timerRef.current) window.clearTimeout(timerRef.current);
-    // 5 s page-settle on first mount so the user sees the headline in
-    // plain text before the first auto-click. Subsequent phases run
-    // 3 s recording / 7 s rest. User feedback 2026-05-25: "захожу на
-    // сайт и сразу вижу красный Record, а должен черный и только
-    // потом красный".
-    const delay = warmedRef.current
-      ? recState === "rest"
-        ? 7000
-        : 3000
-      : 5000;
-    warmedRef.current = true;
-    timerRef.current = window.setTimeout(flip, delay);
-    return () => {
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-    };
-  }, [recState, flip]);
+    if (prevRecordingRef.current !== recording) {
+      prevRecordingRef.current = recording;
+      setSqueezing(true);
+      if (squeezeTimerRef.current)
+        window.clearTimeout(squeezeTimerRef.current);
+      squeezeTimerRef.current = window.setTimeout(
+        () => setSqueezing(false),
+        200,
+      );
+    }
+  }, [recording]);
 
   useEffect(
     () => () => {
@@ -248,6 +235,10 @@ function HeadlineWithRec({
     },
     [],
   );
+
+  // Click handler: just flip the shared state. The squeeze fires
+  // automatically via the effect above once `recording` flips.
+  const flip = useCallback(() => toggle(), [toggle]);
 
   if (idx < 0) return <>{text}</>;
   const before = text.slice(0, idx);
