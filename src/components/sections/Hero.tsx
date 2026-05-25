@@ -73,8 +73,9 @@ export function Hero() {
             data-component="HeroHeadline"
             data-source={DATA_SOURCE}
             data-tokens="display-lg,font-serif,lh-display,ls-display,color-text"
+            data-pauseable
           >
-            {hero.headline}
+            <HeadlineWithRec text={hero.headline} target="everything" />
           </motion.h1>
 
           <motion.p
@@ -155,5 +156,39 @@ export function Hero() {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * HeadlineWithRec — splits the headline text once at `target` (the
+ * word to wrap as an animated "record" pill) and renders the wrap
+ * inline. All the motion lives in the .hero-rec-pill CSS rule + its
+ * keyframes; this component is just structural. If `target` is not
+ * present in `text` the whole string renders untouched.
+ *
+ * The pill cycles: outline rest → click squeeze + pulse ring →
+ * filled red recording → click squeeze + pulse ring → outline rest.
+ * Loop. data-pauseable on the parent h1 stops the cycle once the
+ * hero leaves the viewport (CPU/battery saver).
+ */
+function HeadlineWithRec({
+  text,
+  target,
+}: {
+  text: string;
+  target: string;
+}) {
+  const idx = text.indexOf(target);
+  if (idx < 0) return <>{text}</>;
+  const before = text.slice(0, idx);
+  const after = text.slice(idx + target.length);
+  return (
+    <>
+      {before}
+      <span className="hero-rec-pill" aria-label={`${target} (recording)`}>
+        {target}
+      </span>
+      {after}
+    </>
   );
 }
