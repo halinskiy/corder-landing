@@ -108,7 +108,7 @@ export function Hero() {
           >
             <a
               href="#download"
-              className="cta-pill cta-pill--primary inline-flex h-14 min-w-[200px] items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[17px] font-medium md:min-w-[260px] md:px-9"
+              className="cta-pill cta-pill--primary inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[17px] font-medium md:w-auto md:min-w-[260px] md:px-9"
               data-track-event="cta_download_click"
               data-track-source="hero"
             >

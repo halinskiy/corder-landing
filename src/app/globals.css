@@ -1106,18 +1106,36 @@ button:focus:not(:focus-visible) {
   .feature-cell { padding: 40px 36px 44px; min-height: 340px; }
 }
 
-/* Mobile: AllTrails-Plus style list -- small 80x80 rounded
- * thumbnail on the left, heading + body stacked on the right.
- * The 80x80 box clips the desktop-scale visuals via overflow:
- * hidden; an inner transform: scale shrinks them so the gist of
- * each visual is still recognisable at thumbnail size. */
+/* Mobile (< 640px): AllTrails-Plus style list. The desktop card-
+ * with-six-cells layout is overridden into a flat list of rows --
+ * mobile-first principles applied here:
+ *
+ *  - .features-grid loses its border + radius. On a narrow viewport
+ *    the rows themselves provide visual cohesion; a card-on-card
+ *    wrap just eats horizontal space.
+ *  - Each row is full-width with internal padding only; rows are
+ *    separated by the hairline `.feature-cell + .feature-cell`
+ *    border-top rule outside the @media block.
+ *  - Heading drops from the desktop display-serif size to a compact
+ *    22 px so it sits on 1-2 lines next to the thumbnail.
+ *  - Thumbnail 88x88, scale(0.42) -- big enough to read the
+ *    silhouette of each visual at glance.
+ *  - Body 15 px / 1.5 line-height for comfortable multi-line wrap.
+ *
+ * Desktop + tablet (>=640px) are untouched. */
 @media (max-width: 639px) {
+  .features-grid {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
   .feature-cell {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 16px;
-    padding: 18px 20px;
+    padding: 18px 0;
     min-height: 0;
   }
   .feature-cell__text {
@@ -1127,12 +1145,12 @@ button:focus:not(:focus-visible) {
   .feature-cell__visual {
     order: -1; /* thumbnail to the LEFT of the text */
     flex-shrink: 0;
-    width: 80px;
-    height: 80px;
+    width: 88px;
+    height: 88px;
     min-height: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
-    border-radius: 14px;
+    border-radius: 16px;
     border: 1px solid var(--color-border);
     background: var(--color-surface);
     overflow: hidden;
@@ -1141,17 +1159,26 @@ button:focus:not(:focus-visible) {
     justify-content: center;
     position: relative;
   }
-  /* Scale the desktop-sized visual contents down so they fit the
-   * 80x80 thumbnail and the silhouette still reads. Source visuals
-   * are typically authored at ~280-340px width, so 0.28 lands them
-   * inside the box with a comfortable margin. */
+  /* Larger scale than the previous 0.28: 0.42 makes the silhouette
+   * of each visual (timeline rows, popover frame, drag icon, no-bot
+   * grid, language card) read at a glance instead of looking like a
+   * dot in the box. */
   .feature-cell__visual > * {
-    transform: scale(0.28);
+    transform: scale(0.42);
     transform-origin: center center;
   }
+  /* Heading: compact mobile size, keep the serif family. */
   .feature-cell__heading {
-    margin-top: 0 !important;
-    margin-bottom: 4px !important;
+    margin: 0 0 4px !important;
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.012em;
+  }
+  /* Body: nudged up for readability inside the right column. */
+  .feature-cell__body {
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+    color: var(--color-text-muted);
   }
 }
 
