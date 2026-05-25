@@ -26,23 +26,25 @@ export default function NotFound() {
       data-source={DATA_SOURCE}
       className="legal-page not-found-page"
     >
-      <div className="legal-body">
-        <h1 className="not-found-page__heading">
-          This page took a detour.
-        </h1>
-        <p className="not-found-page__body">
-          The path you followed moved, was renamed, or never existed.
-          Nothing is wrong with the app -- just this URL.
-        </p>
+      <div className="page-container py-16 md:py-24">
+        <div className="mx-auto max-w-[720px]">
+          <h1 className="not-found-page__heading">
+            This page took a detour.
+          </h1>
+          <p className="not-found-page__body">
+            The path you followed moved, was renamed, or never existed.
+            Nothing is wrong with the app -- just this URL.
+          </p>
 
-        <div className="not-found-page__actions">
-          <Link
-            href="/"
-            className="cta-pill cta-pill--primary not-found-page__cta"
-            data-track-event="not_found_back_home"
-          >
-            Back to corder.app
-          </Link>
+          <div className="not-found-page__actions">
+            <Link
+              href="/"
+              className="cta-pill cta-pill--primary not-found-page__cta"
+              data-track-event="not_found_back_home"
+            >
+              Back to corder.app
+            </Link>
+          </div>
         </div>
       </div>
     </main>

@@ -20,23 +20,25 @@ const DATA_SOURCE = "projects/corder-landing/src/app/login/page.tsx";
 export default function LoginPage() {
   return (
     <main className="legal-page" data-component="LoginPage" data-source={DATA_SOURCE}>
-      <div className="legal-body account-auth-body">
-        <a href="/" className="account-brand" aria-label="Corder home">
-          <BrandMark />
-          <span>Corder</span>
-        </a>
-        <h1 className="account-auth-heading">Welcome back</h1>
-        <p className="account-auth-lead">
-          Enter the email you signed up with. We send a one-time link --
-          click it and you're in. No password to remember.
-        </p>
-        <MagicLinkForm mode="login" />
-        <p className="account-auth-foot">
-          No account yet?{" "}
-          <a href="/signup" className="account-auth-link">
-            Create one
+      <div className="page-container py-16 md:py-24">
+        <div className="mx-auto max-w-[460px] account-auth-body">
+          <a href="/" className="account-brand" aria-label="Corder home">
+            <BrandMark />
+            <span>Corder</span>
           </a>
-        </p>
+          <h1 className="account-auth-heading">Welcome back</h1>
+          <p className="account-auth-lead">
+            Enter the email you signed up with. We send a one-time link --
+            click it and you're in. No password to remember.
+          </p>
+          <MagicLinkForm mode="login" />
+          <p className="account-auth-foot">
+            No account yet?{" "}
+            <a href="/signup" className="account-auth-link">
+              Create one
+            </a>
+          </p>
+        </div>
       </div>
     </main>
   );
