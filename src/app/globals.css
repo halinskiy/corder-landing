@@ -3224,7 +3224,10 @@ button:focus:not(:focus-visible) {
  * ---------------------------------------------------------------------- */
 
 .site-footer {
-  border-top: 1px solid var(--color-border);
+  /* No top border. Removed 2026-05-26 per maker -- the FAQ section
+   * already carries its own visual closure (baseline-aligned dividers
+   * inside .faq-list), and an extra hairline above the footer started
+   * to feel like a stacked rule next to the floating newsletter card. */
   padding-block: 96px 48px;
   background: var(--color-bg);
   /* Create a stacking context so the footer blob (z-index: -1) paints
@@ -3342,20 +3345,18 @@ button:focus:not(:focus-visible) {
   color: var(--color-text);
 }
 
-/* Footer divider — split out of the baseline row so it can stop short
- * of the floating newsletter card at md+. Card sits at `right:32px;
- * width:380px`, so leaving ~440px of clearance keeps the hairline well
- * to the left of the card edge. On mobile the card falls back to the
- * inline `.presence-static` section, so the divider spans the full
- * footer width. */
+/* Footer baseline divider -- same right-edge logic as .faq-list and
+ * .site-footer__top-rule. Full width below lg, margin-right: 346px at
+ * lg+ so the hairline stops at the same x as the FAQ item dividers
+ * and stays clear of the floating newsletter card. */
 .site-footer__divider {
   height: 1px;
   background: var(--color-border);
   margin-top: 64px;
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .site-footer__divider {
-    margin-right: 440px;
+    margin-right: 346px;
   }
 }
 

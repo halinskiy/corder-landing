@@ -29,7 +29,11 @@ export function Faq() {
       data-tokens="color-text,color-text-muted,color-border,font-serif,ease-out"
       className="relative w-full"
     >
-      <div className="page-container py-8 md:py-[52px]">
+      {/* +48px top push -- pulls FAQ away from the Pricing block edge
+          so the section reads as its own chapter rather than a tail to
+          Pricing. Bottom padding kept at original 8/52 because the
+          FormSentinel/Footer rhythm below already breathes. */}
+      <div className="page-container pt-[80px] pb-8 md:pt-[100px] md:pb-[52px]">
         {/* `.faq-list` wrap reserves the right side of the page for the
             floating CorderPresenceForm. At lg+ it pulls the FAQ items in
             by 436px (form right-inset 32 + form width 380 + 64px gap
