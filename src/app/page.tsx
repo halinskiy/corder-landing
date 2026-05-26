@@ -40,10 +40,10 @@ export default function HomePage() {
           reading FAQ, not at the very last footer-scroll moment. Renders as
           a zero-height anchor; no visual footprint.
 
-          `#contact` anchor sits adjacent: the Nav "Contact Us" link
-          scrolls here so the user lands at the exact point where the
-          floating form has just expanded on the right. */}
-      <div id="contact" aria-hidden="true" />
+          Old `#contact` mid-page div removed 2026-05-26: Nav "Contact Us"
+          now scrolls to `#site-footer-bottom` (the baseline copyright row
+          inside the footer) per maker request -- it should anchor to the
+          very bottom of the page, not the FAQ midpoint. */}
       <CorderPresenceFormSentinel />
       <Faq />
       {/* Reduced-motion / ?motion=0 fallback: when the corner morph chain
