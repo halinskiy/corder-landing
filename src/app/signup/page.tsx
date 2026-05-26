@@ -54,17 +54,18 @@ function BrandMark() {
       role="img"
     >
       <rect
-        x="0"
-        y="0"
-        width="1024"
-        height="1024"
-        rx="232"
+        x="6"
+        y="6"
+        width="1012"
+        height="1012"
+        rx="227"
+        ry="227"
         fill="#ffffff"
-        stroke="rgba(0, 0, 0, 0.06)"
-        strokeWidth="1"
+        stroke="rgba(0, 0, 0, 0.12)"
+        strokeWidth="12"
       />
-      <rect x="312" y="212" width="160" height="600" rx="44" fill="#0a0a0a" />
-      <rect x="552" y="212" width="160" height="600" rx="44" fill="#0a0a0a" />
+      <rect x="340" y="248" width="144" height="528" rx="72" ry="72" fill="#111111" />
+      <rect x="540" y="248" width="144" height="528" rx="72" ry="72" fill="#111111" />
     </svg>
   );
 }
