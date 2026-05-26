@@ -3228,7 +3228,12 @@ button:focus:not(:focus-visible) {
    * already carries its own visual closure (baseline-aligned dividers
    * inside .faq-list), and an extra hairline above the footer started
    * to feel like a stacked rule next to the floating newsletter card. */
-  padding-block: 96px 48px;
+  /* Top padding cut from 96 -> 32 (2026-05-26). The earlier 96/144
+   * was a landing pad for the floating CorderPresenceForm, but the
+   * card pins via JS-measured `bottomPx` against .site-footer__baseline,
+   * not via top padding. Keeping the headroom only stretched dead space
+   * between FAQ and footer. */
+  padding-block: 32px 48px;
   background: var(--color-bg);
   /* Create a stacking context so the footer blob (z-index: -1) paints
    * above the footer's white background instead of slipping behind it
@@ -3236,11 +3241,8 @@ button:focus:not(:focus-visible) {
   isolation: isolate;
 }
 
-/* Taller footer at md+ so the floating CorderPresenceForm (which pins
- * 64px above .site-footer__baseline) has real headroom to land in
- * without the form crowding the baseline copyright line. */
 @media (min-width: 768px) {
-  .site-footer { padding-block: 144px 56px; }
+  .site-footer { padding-block: 48px 56px; }
 }
 
 .site-footer__grid {
