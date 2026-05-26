@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Corder brand mark master SVG.
-     Single source for all favicon / app-icon variants. Geometry
-     mirrors the Nav and Footer brand mark so the identity reads
-     the same in a browser tab as on the page. Tile 1024x1024
-     radius 232, two 160x600 black bars vertically centred. -->
+<!-- Corder favicon master.
+     Mirrors the canonical mark in /Users/3mpq/corder-brand/ (bordered
+     variant). Pure flat shapes, no gradients. qlmanage and many image
+     renderers butcher SVG gradients at small sizes. The 12 px hairline
+     keeps the white squircle visible on light browser tabs; on dark
+     theme tabs the hairline reads as a soft edge rather than a hard
+     line. Geometry: 1024 x 1024 viewBox, squircle rx=227 with 6 px
+     inset, two black capsule bars 144 x 528 rx=72 at x=340/540. -->
 
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
-  <!-- Stroke width 32 in master scales to ~1px at 32x32 favicon and
-       reads on white browser tabs / address bars. Earlier 1px master
-       stroke was 0.03px in the rasterised favicon and disappeared. -->
-  <rect x="16" y="16" width="992" height="992" rx="224" fill="#ffffff" stroke="rgba(0, 0, 0, 0.18)" stroke-width="32"/>
-  <rect x="312" y="212" width="160" height="600" rx="44" fill="#0a0a0a"/>
-  <rect x="552" y="212" width="160" height="600" rx="44" fill="#0a0a0a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect x="6" y="6" width="1012" height="1012" rx="227" ry="227"
+        fill="#ffffff" stroke="rgba(0,0,0,0.12)" stroke-width="12"/>
+  <rect x="340" y="248" width="144" height="528" rx="72" ry="72" fill="#111111"/>
+  <rect x="540" y="248" width="144" height="528" rx="72" ry="72" fill="#111111"/>
 </svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Email-only variant of the Corder mark. Adds a thin 12 % black
+       hairline (same opacity as `.clarify-banner`'s border in the
+       Library) because the email shell is white and a pure white
+       squircle would otherwise vanish into the background. The
+       in-app AppIcon does not need this — Dock applies its own
+       shadow. Geometry identical to the canonical app icon. -->
+  <rect x="6" y="6" width="1012" height="1012" rx="227" ry="227"
+        fill="#ffffff"
+        stroke="rgba(0,0,0,0.12)" stroke-width="12"/>
+  <rect x="340" y="248" width="144" height="528" rx="72" ry="72" fill="#111111"/>
+  <rect x="540" y="248" width="144" height="528" rx="72" ry="72" fill="#111111"/>
+</svg>
