@@ -34,11 +34,13 @@
           font-size="60" font-weight="500" fill="#0a0a0a" letter-spacing="-1">Corder</text>
   </g>
 
-  <!-- Headline -->
-  <text x="72" y="320" font-family="Georgia, 'IBM Plex Serif', 'Times New Roman', serif"
+  <!-- Headline + subline anchored to the lower third of the card so the
+       brand mark sits in the top zone, empty cream breathes in the
+       middle, and the message lands near the bottom edge. Reads as a
+       footer-anchored layout in iMessage / Telegram link previews. -->
+  <text x="72" y="488" font-family="Georgia, 'IBM Plex Serif', 'Times New Roman', serif"
         font-size="84" font-weight="500" fill="#0a0a0a" letter-spacing="-1.6">Just Record Everything</text>
 
-  <!-- Single subline pulled close to the heading. -->
-  <text x="72" y="372" font-family="Helvetica, Arial, sans-serif"
+  <text x="72" y="540" font-family="Helvetica, Arial, sans-serif"
         font-size="28" fill="#525252">Without any bots in the call</text>
 </svg>
