@@ -2326,16 +2326,26 @@ button:focus:not(:focus-visible) {
   top: 0;
   left: 0;
   width: 48%;
-  transform: translateY(-50%);
+  /* `translate(-50%)` removed 2026-05-26 -- centring is now baked into
+   * the framer transform (`calc(${t}vh - 50%)`) so the transform string
+   * is the single source of truth. Setting it here would clash with the
+   * inline framer value. */
   z-index: 5;
   pointer-events: none;
   transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .hiw-window-inner {
   width: 100%;
   border-radius: var(--radius-window);
-  will-change: transform, filter;
+  /* Static box-shadow replaces the previous per-frame
+   * filter:drop-shadow pulse. drop-shadow forced a paint every scroll
+   * frame -- biggest source of jank in this section. Static elevation
+   * stays here; the lift "pulse" is delivered by the scale change alone
+   * (transform-only, compositor-safe). */
+  box-shadow: 0 10px 22px rgba(10, 10, 10, 0.1);
+  will-change: transform;
   transform-style: preserve-3d;
 }
 
