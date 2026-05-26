@@ -1381,6 +1381,14 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   inset: 0;
   width: 14px;
   height: 14px;
+  /* Optical centring nudge. The Lucide crescent is geometrically
+   * centred inside its 24×24 viewBox (bbox spans ~3 to ~21 on both
+   * axes), but the visual mass sits on the LEFT — the outer 9-radius
+   * arc is the thick lune, the right edge is a thin slip eaten by
+   * the inner 7-radius arc. Without this nudge the icon reads as
+   * "shifted to the left of the pill" next to the geometrically
+   * symmetric Globe / Archive icons. 1px is enough; 2px overshoots. */
+  transform: translateX(1px);
 }
 /* Moon icon stays visible in both themes — it's the affordance for
  * "open theme settings", not a preview of the next state. */
