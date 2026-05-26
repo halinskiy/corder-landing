@@ -1362,11 +1362,19 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
 }
 
 /* Sun icon — appears in dark mode, crossfades with the moon. Both
- * icons are wrapped in a positioned span and animated by opacity. */
+ * icons are wrapped in a positioned span and animated by opacity. The
+ * wrap is `inline-flex` so it stays as a positioned 14×14 box inside
+ * the flex .hl-icon-pill — earlier the implicit `display: inline`
+ * collapsed the wrap on Safari and pushed the moon icon to the top-
+ * left corner of the pill instead of the centre. */
 .hl-theme-icon-wrap {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 14px;
   height: 14px;
+  flex-shrink: 0;
 }
 .hl-theme-icon-wrap svg {
   position: absolute;
