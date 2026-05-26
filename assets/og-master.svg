@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Corder Open Graph / Twitter card master, 1200x630.
      Cream bg, dot grid centre-faded, brand mark + wordmark top
-     left, big serif headline, accent green underline, two muted
-     sublines, getcorder.com footer. Georgia fallback for serif so
-     the rasteriser does not depend on Plex Serif being installed. -->
+     left, big serif headline, single muted subline. No accent
+     underline, no footer domain row. Maker confirmed cleaner
+     read with just heading plus sub on 2026-05-26. Georgia
+     fallback for serif so the rasteriser does not depend on
+     Plex Serif being installed. -->
 
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <!-- Background -->
@@ -33,22 +35,10 @@
   </g>
 
   <!-- Headline -->
-  <text x="72" y="318" font-family="Georgia, 'IBM Plex Serif', 'Times New Roman', serif"
-        font-size="84" font-weight="500" fill="#0a0a0a" letter-spacing="-1.6">Record what was said.</text>
+  <text x="72" y="320" font-family="Georgia, 'IBM Plex Serif', 'Times New Roman', serif"
+        font-size="84" font-weight="500" fill="#0a0a0a" letter-spacing="-1.6">Just Record Everything</text>
 
-  <!-- Accent underline (single accent rule) -->
-  <rect x="72" y="354" width="120" height="4" rx="2" fill="#217a50"/>
-
-  <!-- Subline (two lines) -->
-  <text x="72" y="420" font-family="Helvetica, Arial, sans-serif"
-        font-size="28" fill="#525252">The Mac meeting recorder.</text>
-  <text x="72" y="458" font-family="Helvetica, Arial, sans-serif"
-        font-size="28" fill="#525252">No bot in the call.</text>
-
-  <!-- Footer row: domain + accent dot -->
-  <g transform="translate(72, 552)">
-    <circle cx="8" cy="0" r="6" fill="#217a50"/>
-    <text x="28" y="6" font-family="Helvetica, Arial, sans-serif"
-          font-size="18" font-weight="500" fill="#0a0a0a" letter-spacing="0.2">getcorder.com</text>
-  </g>
+  <!-- Single subline pulled close to the heading. -->
+  <text x="72" y="372" font-family="Helvetica, Arial, sans-serif"
+        font-size="28" fill="#525252">Without any bots in the call</text>
 </svg>
