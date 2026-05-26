@@ -262,20 +262,9 @@ function MeetingItem({
   );
 }
 
-/* Quiet recording-indicator blob -- static green orb, no canvas, no
- * animation. Sits in the bottom-right corner of mocks 1 and 3 the same
- * way the real HUD does in the macOS app. */
-function StaticBlob() {
-  return (
-    <span
-      className="hl-mock-blob"
-      aria-hidden="true"
-      data-component="HowItWorksMockup.StaticBlob"
-      data-source={DATA_SOURCE}
-      data-tokens="hl-accent"
-    />
-  );
-}
+/* StaticBlob removed 2026-05-26 per maker -- the blob now lives only
+ * inside HeroLibraryDemo, gated to the actual recording state. The
+ * mockups stay quieter without the green idle orb. */
 
 /* ════════════════════════════════════════════════════════════════════
  *  01 -- Dashboard mock
@@ -421,7 +410,6 @@ export function DashboardMock() {
             </div>
           </div>
         </div>
-        <StaticBlob />
       </div>
     </MockShell>
   );
@@ -689,7 +677,6 @@ export function LibraryMeetingMock() {
             </div>
           </div>
         </div>
-        <StaticBlob />
       </div>
     </MockShell>
   );
@@ -950,7 +937,6 @@ export function SettingsMock() {
             </div>
           </div>
         </div>
-        <StaticBlob />
       </div>
     </MockShell>
   );

@@ -302,18 +302,19 @@ export function HeroLibraryDemo() {
           />
         </div>
 
-        {/* Recording-indicator blob — bottom-right corner of the window
-          * during recording. Morphs shape, breathes red glow, mirrors the
-          * real macOS app's capture indicator. */}
-        {/* Always-visible capture indicator. Red + morphing while
-          * recording (click stops). Green + idle while a take is being
-          * transcribed or already on screen (click starts a new take). */}
-        {mode !== "transcribing" && (
+        {/* Recording-indicator blob -- only mounted during the
+          * "recording" state. Earlier it stayed mounted in "transcript"
+          * too (green idle orb) but per maker request 2026-05-26 the
+          * blob exists ONLY as the red capture indicator. Unmounting
+          * outside recording auto-kills the canvas requestAnimationFrame
+          * loop, which was a permanent 60fps cost even when the hero
+          * was scrolled off-screen. */}
+        {mode === "recording" && (
           <button
             type="button"
             className="hl-rec-blob"
-            aria-label={mode === "recording" ? "Stop recording" : "Start a new recording"}
-            onClick={mode === "recording" ? handleStopRecording : handleRestartRecording}
+            aria-label="Stop recording"
+            onClick={handleStopRecording}
             tabIndex={-1}
           >
             <RecBlobCanvas isSpeaking={isSpeaking} />

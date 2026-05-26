@@ -91,8 +91,11 @@ export function HowItWorks() {
     setActiveChapter((current) => (current === next ? current : next));
   });
 
-  // Stepped numeric targets in vh and %. Row centres at 35, 105, 175vh
-  // (rows are 70vh tall, section total 210vh).
+  // Stepped numeric targets. Row centres at 35, 105, 175vh (rows are
+  // 70vh tall, section total 210vh). Left targets 0% / 52% of container
+  // width -- converted below to a percentage of the window's OWN width
+  // (window is `width: 48%` of container, so container left% = own
+  // (left%) * (100/48) of own width).
   const targetTop = useTransform(
     scrollYProgress,
     [0, 0.34, 0.36, 0.64, 0.66, 1],
@@ -108,24 +111,31 @@ export function HowItWorks() {
   const topNum = useSpring(targetTop, SPRING);
   const leftNum = useSpring(targetLeft, SPRING);
 
-  const windowTop = useTransform(topNum, (v) => `${v}vh`);
-  const windowLeft = useTransform(leftNum, (v) => `${v}%`);
+  // Single GPU-composited transform string. translate3d uses % (relative
+  // to own width) for X and vh (viewport-fixed) for Y -- no layout
+  // reflow per frame, just compositor work. The `52 / 48 * 100 = 108.33`
+  // ratio converts container-left% to own-width-% (window is 48% of
+  // container; see .hiw-window-wrap width in globals.css). The trailing
+  // `- 50%` keeps the previous CSS-only `translateY(-50%)` vertical
+  // centring inside this one transform; the CSS rule is dropped so
+  // framer's transform is the single source of truth.
+  const windowTransform = useTransform(
+    [topNum, leftNum] as const,
+    ([t, l]: number[]) =>
+      `translate3d(${(l ?? 0) * (100 / 48)}%, calc(${t ?? 0}vh - 50%), 0)`,
+  );
 
-  // Lift pulse -- small bumps centred on each threshold. Drives scale +
-  // drop-shadow so the window appears to lift, travel, and settle.
+  // Scale pulse stays -- transform is compositor-friendly. The previous
+  // drop-shadow pulse was removed because filter:drop-shadow forces a
+  // paint every frame, which was the largest source of scroll jank in
+  // this section. Static box-shadow now lives on .hiw-window-inner in
+  // CSS so the elevation stays without the per-frame cost.
   const liftPulse = useTransform(
     scrollYProgress,
     [0.3, 0.35, 0.4, 0.6, 0.65, 0.7],
     [0, 1, 0, 0, 1, 0],
   );
   const scale = useTransform(liftPulse, [0, 1], [1, 1.035]);
-  const filterShadow = useTransform(
-    liftPulse,
-    (v) =>
-      `drop-shadow(0 ${10 + v * 24}px ${22 + v * 36}px rgba(10, 10, 10, ${
-        0.1 + v * 0.18
-      }))`,
-  );
 
   return (
     <section
@@ -174,12 +184,12 @@ export function HowItWorks() {
           {(presence.mode === "static" || presence.mode === "window") && (
             <motion.div
               className="hiw-window-wrap"
-              style={{ top: windowTop, left: windowLeft }}
+              style={{ transform: windowTransform }}
               aria-hidden="true"
             >
               <motion.div
                 className="hiw-window-inner"
-                style={{ scale, filter: filterShadow }}
+                style={{ scale }}
                 {...(presence.mode === "window"
                   ? {
                       layoutId: CORDER_PRESENCE_LAYOUT_ID,
