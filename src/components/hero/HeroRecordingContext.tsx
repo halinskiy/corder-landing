@@ -37,7 +37,12 @@ type Ctx = {
 const HeroRecordingContext = createContext<Ctx | null>(null);
 
 const WARM_UP_MS = 3_500;
-const RECORDING_MS = 3_000;
+// Bumped 3s -> 10s on 2026-05-26 (maker request). The previous 3s
+// felt rushed -- viewers barely registered the red rec pill before
+// the demo flipped back to the transcript surface. 10s gives enough
+// dwell time to read "Recording 00:0x Stop recording" and watch the
+// rec blob breathe before transcription kicks in.
+const RECORDING_MS = 10_000;
 const REST_MS = 7_000;
 
 export function HeroRecordingProvider({ children }: { children: ReactNode }) {
