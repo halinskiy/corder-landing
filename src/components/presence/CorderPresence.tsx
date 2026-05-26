@@ -359,6 +359,12 @@ function CorderPresenceForm() {
         background: "var(--color-bg)",
         border: "1px solid var(--color-border)",
         borderRadius: "var(--radius-window)",
+        // Soft elevation so the card reads as floating above the footer.
+        // Two-stop shadow: a short tight one for depth + a longer soft
+        // one for atmospheric lift. Matches the nav-pill shadow scale
+        // (4px/22px) so the two floating surfaces feel related.
+        boxShadow:
+          "0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.08)",
         pointerEvents: "auto",
         overflow: "hidden",
         display: "flex",

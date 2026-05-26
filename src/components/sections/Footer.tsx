@@ -39,7 +39,13 @@ export function Footer() {
               <FooterMark />
               <span className="site-footer__brand-name">{footer.brandMark}</span>
             </div>
-            <p className="site-footer__slogan">{footer.slogan}</p>
+            {/* Slogan with the word "Record" tinted REC red to echo the
+              * hero headline treatment. The split is regex-safe and stays
+              * silent if the word isn't present, so the copy stays driven
+              * by copy.json. */}
+            <p className="site-footer__slogan">
+              {renderSloganWithRec(footer.slogan)}
+            </p>
             {socials.length > 0 && (
               <ul className="site-footer__socials" aria-label="Corder on social">
                 {socials.map((s) => (
@@ -102,6 +108,24 @@ export function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+/* Renders the slogan with the word "Record" (case-insensitive, whole-word)
+ * coloured REC red — same `var(--rec)` used by the hero "Record" rec pill.
+ * If the word isn't present, returns the string unchanged so we don't
+ * silently break a future copy revision that drops the word. */
+function renderSloganWithRec(slogan: string) {
+  const parts = slogan.split(/(\bRecord\b)/);
+  if (parts.length === 1) return slogan;
+  return parts.map((part, i) =>
+    /^Record$/i.test(part) ? (
+      <span key={i} className="site-footer__slogan-rec">
+        {part}
+      </span>
+    ) : (
+      part
+    )
   );
 }
 
