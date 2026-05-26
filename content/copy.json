@@ -510,12 +510,7 @@
           {
             "label": "Pricing",
             "href": "#pricing"
-          }
-        ]
-      },
-      {
-        "heading": "Support",
-        "links": [
+          },
           {
             "label": "FAQ",
             "href": "#faq"
