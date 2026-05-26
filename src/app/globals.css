@@ -2543,6 +2543,14 @@ button:focus:not(:focus-visible) {
 .hl-mock-shell .hl-header-actions { gap: 6px; flex-shrink: 0; }
 .hl-mock-shell .hl-icon-pill { width: 24px; height: 24px; border: 1px solid var(--hl-border-strong); }
 .hl-mock-shell .hl-icon-pill svg { width: 11px; height: 11px; }
+/* The mock-shell pill is 24×24 with an 11×11 SVG. The default
+ * .hl-theme-icon-wrap is still 14×14, and its SVG carries `inset:0`,
+ * which pins an 11×11 SVG to the top-left of a 14×14 wrap — moon ends
+ * up offset upper-left of the pill centre (Globe / Archive are direct
+ * children of the pill so they centre cleanly). Shrink the wrap to
+ * match the SVG so the moon centres just like its siblings. */
+.hl-mock-shell .hl-theme-icon-wrap { width: 11px; height: 11px; }
+.hl-mock-shell .hl-theme-icon-wrap svg { width: 11px; height: 11px; }
 .hl-mock-shell .hl-profile-avatar { width: 22px; height: 22px; font-size: 10px; }
 .hl-mock-shell .hl-header-divider { height: 14px; }
 
@@ -3268,6 +3276,12 @@ button:focus:not(:focus-visible) {
   color: var(--color-text);
   max-width: 36ch;
   margin: 0;
+}
+/* Tints just the word "Record" inside the footer slogan, echoing the
+ * REC red used on the hero rec pill. Inherits font + size so the colour
+ * is the only change. */
+.site-footer__slogan-rec {
+  color: var(--rec);
 }
 
 .site-footer__brand-name {
