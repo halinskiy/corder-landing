@@ -3254,8 +3254,21 @@ button:focus:not(:focus-visible) {
 
 @media (min-width: 768px) {
   .site-footer__grid {
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 64px;
+    /* 4 columns at md+: brand (wide) + Product + Support + Legal,
+     * all on one row so the link columns align horizontally. With
+     * only 3 tracks the 4th child (Legal) used to wrap below Brand. */
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+  }
+}
+
+/* At lg+ reserve the right gutter for the floating CorderPresenceForm
+ * (same 346px right margin used by .faq-list and .site-footer__divider).
+ * Without it the rightmost link column (Legal) used to overlap the
+ * floating newsletter card. */
+@media (min-width: 1024px) {
+  .site-footer__grid {
+    margin-right: 346px;
   }
 }
 
