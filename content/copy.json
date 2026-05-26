@@ -13,10 +13,6 @@
         "href": "#how-it-works"
       },
       {
-        "label": "Works with",
-        "href": "#works-with"
-      },
-      {
         "label": "Features",
         "href": "#features"
       },
@@ -30,7 +26,7 @@
       },
       {
         "label": "Contact Us",
-        "href": "#contact"
+        "href": "#site-footer-bottom"
       }
     ],
     "ctaPrimary": "Download for Mac"
@@ -486,7 +482,24 @@
   },
   "footer": {
     "brandMark": "Corder",
-    "slogan": "A meeting recorder that doesn't join the meeting",
+    "slogan": "Just Record Everything",
+    "socials": [
+      {
+        "label": "X",
+        "href": "https://x.com/getcorder",
+        "icon": "x"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/halinskiy",
+        "icon": "github"
+      },
+      {
+        "label": "Email",
+        "href": "mailto:hello@getcorder.com",
+        "icon": "mail"
+      }
+    ],
     "columns": [
       {
         "heading": "Product",
@@ -494,10 +507,6 @@
           {
             "label": "How it works",
             "href": "#how-it-works"
-          },
-          {
-            "label": "Works with",
-            "href": "#works-with"
           },
           {
             "label": "Features",
@@ -518,7 +527,7 @@
           },
           {
             "label": "Contact Us",
-            "href": "#contact"
+            "href": "#site-footer-bottom"
           }
         ]
       },
