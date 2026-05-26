@@ -493,11 +493,6 @@
         "label": "GitHub",
         "href": "https://github.com/halinskiy",
         "icon": "github"
-      },
-      {
-        "label": "Email",
-        "href": "mailto:hello@getcorder.com",
-        "icon": "mail"
       }
     ],
     "columns": [
