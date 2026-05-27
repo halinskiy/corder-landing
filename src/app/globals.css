@@ -1914,10 +1914,19 @@ button:focus:not(:focus-visible) {
   gap: 22px;
   min-height: 100%;
 }
+/* Free has no priceOriginal strike-through and a one-line billNote;
+ * Pro and Max have both. Without reserving the same vertical space,
+ * Free's CTA floats higher than its siblings. Min-heights below
+ * reserve enough room for the two-line variant so all three CTAs
+ * land on the same baseline across the row. */
+.pricing-card--vertical .pricing-card__header {
+  min-height: 96px;
+}
 .pricing-card--vertical .pricing-card__price-block {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-height: 84px;
 }
 .pricing-card--vertical .pricing-card__cta {
   width: 100%;
@@ -2066,6 +2075,16 @@ button:focus:not(:focus-visible) {
 
 .pricing-card--highlight .pricing-card__feature-icon {
   background: rgba(33, 122, 80, 0.18);
+}
+/* The 'Everything in Free, plus:' header row inside the HIGHLIGHTED
+ * Pro card was getting the light-green tint from the rule above
+ * because both selectors carried the same (0,2,0) specificity and
+ * the highlight rule landed later in the cascade. Re-assert the
+ * dark fill via a higher-specificity selector so Pro and Max both
+ * render the header plus glyph as a dark capsule. */
+.pricing-card--highlight .pricing-card__feature--header .pricing-card__feature-icon {
+  background: rgba(10, 10, 10, 0.85);
+  color: #ffffff;
 }
 
 .pricing-card__feature-text {
@@ -3499,7 +3518,7 @@ button:focus:not(:focus-visible) {
 .site-footer__brand-name {
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1;
   letter-spacing: -0.01em;
   color: var(--color-text);
@@ -3521,6 +3540,15 @@ button:focus:not(:focus-visible) {
 }
 .site-footer__studio:hover {
   color: var(--color-accent);
+}
+
+/* Heart glyph next to '3mpq Studio'. Tiny optical lift so the emoji
+ * baseline matches the surrounding sans copyright line (emoji glyphs
+ * tend to sit visually higher than text on the same baseline). */
+.site-footer__heart {
+  display: inline-block;
+  font-size: 13px;
+  transform: translateY(1px);
 }
 
 .site-footer__col-heading {
