@@ -5080,27 +5080,18 @@ button:focus:not(:focus-visible) {
   color: var(--color-accent-deep, #0e3d28);
 }
 
-.install-page__footer-links {
-  margin-top: 48px;
+/* Bottom action row -- primary CTA back to the landing, ghost CTA
+ * for the help mailto. Pulled from the kit's .cta-pill family
+ * (same primary / ghost styles used by Hero, Pricing, FinalCta) so
+ * the install page reads as part of the same design system, not as
+ * a one-off help screen. */
+.install-page__footer-actions {
+  margin-top: 56px;
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--color-text-subtle);
   flex-wrap: wrap;
   justify-content: center;
-}
-.install-page__back {
-  color: var(--color-text-muted);
-  text-decoration: none;
-  transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.install-page__back:hover {
-  color: var(--color-text);
-}
-.install-page__dot {
-  opacity: 0.45;
 }
 
 /* Status pill at the top. Cream fill, hairline border, small dot
@@ -5145,29 +5136,29 @@ button:focus:not(:focus-visible) {
   to { transform: rotate(360deg); }
 }
 
-/* Three numbered step cards across the bottom. Stack on mobile, side
- * by side at md+. */
+/* Three install steps -- text-only after the maker dropped the
+ * illustrations (2026-05-27). Vertical list, left-aligned inside the
+ * centred page-container, with a numbered badge on the left and the
+ * step copy on the right. Badge stays the accent-filled disc used
+ * elsewhere on the site so the section reads consistent with the
+ * design system. */
 .install-steps {
   list-style: none;
   padding: 0;
   margin: 0;
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
-}
-@media (min-width: 768px) {
-  .install-steps {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .install-step {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 16px;
+  width: 100%;
 }
 
 .install-step__badge {
@@ -5183,31 +5174,16 @@ button:focus:not(:focus-visible) {
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.01em;
-}
-
-.install-step__art {
-  width: 100%;
-  aspect-ratio: 320 / 220;
-  border-radius: 16px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.install-step__svg {
-  width: 100%;
-  height: 100%;
-  display: block;
+  flex-shrink: 0;
 }
 
 .install-step__label {
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--color-text-muted);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--color-text);
   margin: 0;
-  max-width: 28ch;
-  text-align: center;
+  flex: 1;
 }
 .install-step__label em {
   color: var(--color-accent-deep, #0e3d28);
