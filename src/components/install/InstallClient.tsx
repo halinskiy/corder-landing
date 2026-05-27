@@ -21,10 +21,7 @@ const RELEASES_HTML_FALLBACK =
 // (Corder.zip, Corder.dmg) both match.
 const ASSET_RE = /^Corder[-.\w]*\.(zip|dmg)$/i;
 
-type Phase = "waiting" | "started" | "manual";
-
 export function InstallClient() {
-  const [phase, setPhase] = useState<Phase>("waiting");
   const [resolvedUrl, setResolvedUrl] = useState<string>(RELEASES_HTML_FALLBACK);
   const [resolvedName, setResolvedName] = useState<string>("Corder.zip");
   const triggeredRef = useRef(false);
@@ -73,7 +70,6 @@ export function InstallClient() {
         } catch {
           /* popup blocked, manual link below covers it */
         }
-        setPhase("manual");
         trackEvent("install_auto_download_fallback", {
           source: "install_page",
           reason: "no_asset_resolved",
@@ -81,8 +77,9 @@ export function InstallClient() {
         return;
       }
 
-      // Defer one tick so the "Download started" pill has painted
-      // before the browser's save dialog opens.
+      // Defer one tick so the page has painted before the browser's
+      // save dialog opens -- gives the user a moment to read the
+      // heading + manual fallback before the OS modal interrupts.
       window.setTimeout(() => {
         if (ac.signal.aborted) return;
         try {
@@ -93,13 +90,12 @@ export function InstallClient() {
           document.body.appendChild(a);
           a.click();
           a.remove();
-          setPhase("started");
           trackEvent("install_auto_download_started", {
             source: "install_page",
             asset: downloadName,
           });
         } catch {
-          setPhase("manual");
+          /* user can still use the manual link below */
         }
       }, 120);
     }
@@ -116,14 +112,8 @@ export function InstallClient() {
       className="install-page"
     >
       <div className="page-container py-16 md:py-24">
-        <div className="install-page__inner mx-auto max-w-[640px]">
-          <StatusPill phase={phase} />
-
-          <h1 className="install-page__heading">
-            Thanks for downloading.
-            <br />
-            Just a few steps left
-          </h1>
+        <div className="install-page__inner mx-auto max-w-[1080px]">
+          <h1 className="install-page__heading">Thanks for downloading.</h1>
 
           <p className="install-page__sub">
             Your download will begin automatically. If it did not start,{" "}
@@ -132,38 +122,36 @@ export function InstallClient() {
               download={resolvedName}
               className="install-page__manual-link"
               data-track-event="install_manual_download_click"
-              onClick={() => setPhase("started")}
             >
               download Corder manually.
             </a>
           </p>
 
-          <ol className="install-steps install-steps--text" aria-label="Install steps">
-            <li className="install-step install-step--text">
-              <div className="install-step__badge" aria-hidden>
+          <ol className="install-steps" aria-label="Install steps">
+            <li className="install-step-card">
+              <div className="install-step-card__badge" aria-hidden>
                 1
               </div>
-              <p className="install-step__label">
-                Open <em>Corder.zip</em> from your{" "}
-                <em>Downloads</em> folder.
+              <p className="install-step-card__label">
+                Open <em>Corder.zip</em> from your <em>Downloads</em> folder.
               </p>
             </li>
-            <li className="install-step install-step--text">
-              <div className="install-step__badge" aria-hidden>
+            <StepArrow />
+            <li className="install-step-card">
+              <div className="install-step-card__badge" aria-hidden>
                 2
               </div>
-              <p className="install-step__label">
-                Drag the <em>Corder</em> icon into your{" "}
-                <em>Applications</em> folder.
+              <p className="install-step-card__label">
+                Drag the <em>Corder</em> icon into your <em>Applications</em> folder.
               </p>
             </li>
-            <li className="install-step install-step--text">
-              <div className="install-step__badge" aria-hidden>
+            <StepArrow />
+            <li className="install-step-card">
+              <div className="install-step-card__badge" aria-hidden>
                 3
               </div>
-              <p className="install-step__label">
-                Open the Corder app from your{" "}
-                <em>Applications</em> folder.
+              <p className="install-step-card__label">
+                Open the Corder app from your <em>Applications</em> folder.
               </p>
             </li>
           </ol>
@@ -171,14 +159,14 @@ export function InstallClient() {
           <div className="install-page__footer-actions">
             <Link
               href="/"
-              className="cta-pill cta-pill--primary inline-flex h-11 items-center justify-center rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
+              className="cta-pill cta-pill--primary inline-flex h-14 w-full md:w-auto md:min-w-[260px] items-center justify-center rounded-[var(--radius-pill)] px-7 md:px-9 text-[17px] font-medium"
               data-track-event="install_back_home_click"
             >
               Back to corder.app
             </Link>
             <a
               href="mailto:hello@getcorder.com"
-              className="cta-pill cta-pill--ghost inline-flex h-11 items-center justify-center rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
+              className="install-page__ghost-cta cta-pill cta-pill--ghost inline-flex h-14 w-full md:w-auto md:min-w-[260px] items-center justify-center rounded-[var(--radius-pill)] px-7 md:px-9 text-[17px] font-medium"
               data-track-event="install_help_email_click"
             >
               Need help?
@@ -190,33 +178,18 @@ export function InstallClient() {
   );
 }
 
-function StatusPill({ phase }: { phase: Phase }) {
-  const label =
-    phase === "started"
-      ? "DOWNLOAD STARTED"
-      : phase === "manual"
-        ? "TAP THE LINK BELOW"
-        : "STARTING DOWNLOAD";
+/* Chevron between step cards. Sits as a non-list item in the ol; the
+ * StepArrow is aria-hidden so screen readers skip straight from step
+ * 1 to step 2 without "arrow" filler. On mobile the arrow rotates 90deg
+ * so it points downward between stacked cards. */
+function StepArrow() {
   return (
-    <div className="install-status-pill" data-phase={phase} role="status" aria-live="polite">
-      <span className="install-status-pill__dot" aria-hidden>
-        {phase === "started" ? (
-          <svg viewBox="0 0 14 14" width="14" height="14" aria-hidden>
-            <circle cx="7" cy="7" r="7" fill="currentColor" />
-            <path
-              d="M4 7.2l2 2 4-4.4"
-              fill="none"
-              stroke="#ffffff"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ) : (
-          <span className="install-status-pill__spinner" />
-        )}
-      </span>
-      <span className="install-status-pill__label">{label}</span>
-    </div>
+    <span aria-hidden="true" className="install-step-arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
+      </svg>
+    </span>
   );
 }
+
