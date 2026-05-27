@@ -598,7 +598,7 @@
     "baseline": "© 2026 Corder. Back to top"
   },
   "newsletter": {
-    "_note": "Powers CorderPresenceForm (the morphed orb-to-card at the bottom of the page) and CorderPresenceStaticSection (reduced-motion inline fallback). The standalone Newsletter section was removed 2026-05-20 in favour of the morph chain. Same field shape, same copy.",
+    "_note": "Retained for reference. As of 2026-05-27 the floating CorderPresence card shows a Download CTA instead of this newsletter form (see presenceCta below). Keep these fields in case the form re-mounts later.",
     "heading": "Be the first to know",
     "subhead": "New Feature Drops, No spam. We promise",
     "placeholder": "Your email",
@@ -606,6 +606,13 @@
     "submittingCta": "Subscribing...",
     "successMessage": "Thanks. You'll hear from us when something ships",
     "errorMessage": "Something went wrong. Try again in a moment."
+  },
+  "presenceCta": {
+    "_note": "Powers the floating CorderPresenceForm card and the inline CorderPresenceStaticSection (mobile / reduced-motion fallback). Replaced the newsletter form on 2026-05-27 -- the floating affordance is now a Download trigger, single goal.",
+    "heading": "Ready to record?",
+    "subhead": "Free download. macOS 14 or later. No bot in the call.",
+    "cta": "Download for Mac",
+    "ctaHref": "/install/"
   },
   "yoursPrivacy": {
     "eyebrow": "Private by design",
