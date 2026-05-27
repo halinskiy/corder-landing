@@ -1958,10 +1958,11 @@ button:focus:not(:focus-visible) {
   flex-grow: 1;
 }
 /* "Everything in Free / Pro, plus:" header row inside the feature
- * list. Plus glyph in muted dark circle, slightly heavier text than
- * the regular feature lines. Mirrors Granola's pattern. */
+ * list. Plus glyph in our accent green capsule so the cue reads as
+ * a brand-coloured continuation marker (maker request 2026-05-27).
+ * Text below stays accent-deep for legibility. */
 .pricing-card__feature--header .pricing-card__feature-icon {
-  background: rgba(10, 10, 10, 0.85);
+  background: var(--color-accent);
   color: #ffffff;
 }
 .pricing-card__feature--header .pricing-card__feature-text {
@@ -2107,10 +2108,10 @@ button:focus:not(:focus-visible) {
  * Pro card was getting the light-green tint from the rule above
  * because both selectors carried the same (0,2,0) specificity and
  * the highlight rule landed later in the cascade. Re-assert the
- * dark fill via a higher-specificity selector so Pro and Max both
- * render the header plus glyph as a dark capsule. */
+ * accent fill via a higher-specificity selector so Pro and Max both
+ * render the header plus glyph as the brand-green capsule. */
 .pricing-card--highlight .pricing-card__feature--header .pricing-card__feature-icon {
-  background: rgba(10, 10, 10, 0.85);
+  background: var(--color-accent);
   color: #ffffff;
 }
 
