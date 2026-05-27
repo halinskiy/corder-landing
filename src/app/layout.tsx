@@ -74,6 +74,11 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/og-image.png",
+        // secureUrl is the same value as url since the site is https-
+        // only. Older LinkedIn / Slack scrapers still look for this
+        // explicit `og:image:secure_url` tag and skip the preview
+        // when only `og:image` is set.
+        secureUrl: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "Corder. Record what was said. The Mac meeting recorder. No bot in the call.",
@@ -235,12 +240,14 @@ const TWQ_SCRIPT = TWQ_ID
 // which src/lib/track.ts calls for every event.
 const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
-// Paddle.js v2 init -- runs synchronously after the CDN script tag loads.
-// `eventCallback` forwards `checkout.completed` into Plausible + Twitter
-// pixel so the ad funnel can attribute the conversion. The script is
-// injected in HEAD so the checkout overlay is ready by the time the user
-// clicks Get Pro in Pricing.
-const PADDLE_INIT_SCRIPT = `try{Paddle.Environment.set(${JSON.stringify(PADDLE_ENV)});Paddle.Initialize({token:${JSON.stringify(PADDLE_TOKEN)},eventCallback:function(d){if(d&&d.name==="checkout.completed"){try{if(window.plausible)window.plausible("checkout_completed");if(window.twq)window.twq("event","tw-checkout-completed",{});}catch(e){}}}});}catch(e){console.error("Paddle init failed",e);}`;
+// Paddle.js v2 init. Wrapped in DOMContentLoaded so the deferred
+// paddle.js external (see <script defer> below) has finished loading
+// before the init reads `window.Paddle`. Deferred scripts run BEFORE
+// DOMContentLoaded fires, so this listener is the safe place to
+// initialise. `eventCallback` forwards `checkout.completed` into
+// Plausible + Twitter pixel so the ad funnel can attribute the
+// conversion.
+const PADDLE_INIT_SCRIPT = `document.addEventListener("DOMContentLoaded",function(){try{Paddle.Environment.set(${JSON.stringify(PADDLE_ENV)});Paddle.Initialize({token:${JSON.stringify(PADDLE_TOKEN)},eventCallback:function(d){if(d&&d.name==="checkout.completed"){try{if(window.plausible)window.plausible("checkout_completed");if(window.twq)window.twq("event","tw-checkout-completed",{});}catch(e){}}}});}catch(e){console.error("Paddle init failed",e);}});`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -309,10 +316,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             />
           </>
         )}
-        {/* Paddle.js v2 -- loaded synchronously so the init script below
-            sees `window.Paddle` immediately. Sandbox/production switch
-            lives in `src/lib/paddle.ts`. */}
-        <script src="https://cdn.paddle.com/paddle/v2/paddle.js" />
+        {/* Paddle.js v2 -- deferred so the external script stops
+            blocking parse + first paint. Saves ~200-400 ms TBT on
+            mobile per the 2026-05-27 SEO audit. The init script
+            below wraps its body in a DOMContentLoaded listener,
+            which fires AFTER the deferred external has executed,
+            so `window.Paddle` is guaranteed ready at init time.
+            Sandbox / production switch lives in `src/lib/paddle.ts`. */}
+        <script defer src="https://cdn.paddle.com/paddle/v2/paddle.js" />
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: PADDLE_INIT_SCRIPT }}
