@@ -27,10 +27,10 @@ export function Nav() {
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-text,color-border,color-accent,radius-pill"
       data-scrolled={scrolled ? "true" : "false"}
-      className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4"
+      className="pointer-events-none fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4"
     >
       <div
-        className="nav-pill flex w-full items-center justify-between gap-2 rounded-full pl-4 pr-2 md:w-auto md:justify-start"
+        className="nav-pill pointer-events-auto flex w-full items-center justify-between gap-2 rounded-full pl-4 pr-2 md:w-auto md:justify-start"
         style={{
           height: "56px",
           backgroundColor: scrolled
