@@ -222,7 +222,7 @@
   "pricing": {
     "eyebrow": "Pricing",
     "heading": "Pricing",
-    "subhead": "Launch pricing on Pro and Max, only for the next 3 months. The free tier always ships with the download",
+    "subhead": "The free tier always ships with the download",
     "billing": {
       "monthlyLabel": "Monthly",
       "annualLabel": "Yearly"

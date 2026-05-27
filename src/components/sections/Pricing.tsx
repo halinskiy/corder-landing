@@ -45,7 +45,10 @@ export function Pricing() {
     >
       <div aria-hidden className="section-blob section-blob--pricing" />
       <div className="page-container py-8 md:py-[52px]">
-        {/* Section head -- heading left, subhead + billing toggle right. */}
+        {/* Section head -- heading + subhead stacked on the left,
+            billing toggle alone on the right. Updated 2026-05-27 per
+            maker: short subhead lives under the heading where it
+            belongs, not next to the toggle. */}
         <div className="pricing-section-head">
           <div className="pricing-section-head__copy">
             <h2
@@ -56,10 +59,10 @@ export function Pricing() {
             >
               {pricing.heading}
             </h2>
+            <p className="pricing-section-head__subhead">{pricing.subhead}</p>
           </div>
 
           <div className="pricing-section-head__aside">
-            <p className="pricing-section-head__subhead">{pricing.subhead}</p>
             <PricingBillingToggle
               billing={billing}
               onChange={setBilling}

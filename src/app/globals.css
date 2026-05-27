@@ -153,23 +153,33 @@ button:focus:not(:focus-visible) {
 /* Granola-style scroll-state pill. Reads off the parent <header>'s
  * `data-scrolled` attribute (Nav.tsx flips it at scrollY > 8px).
  *
- *  At top  -- transparent fill, accent text + accent border. The hero
- *             CTA below the fold owns primary affordance; nav is quiet.
- *  Scrolled -- accent fill, white text. Same look as the old default,
- *             so once the user is past the hero the nav button is the
- *             obvious download trigger.
+ *  At top  -- transparent fill, standard hairline border + dark text.
+ *             Matches the .hl-icon-pill border language used inside
+ *             the live demo. Reads as a quiet utility button while
+ *             the hero Download CTA below the fold owns the primary
+ *             affordance. Apple glyph fills with accent so the brand
+ *             cue still reads (maker request 2026-05-27).
+ *  Scrolled -- accent fill, white text + white apple glyph. Once
+ *             past the hero the nav button becomes the obvious
+ *             download trigger.
  *
- * Hover/active rules above still apply -- :hover overrides background
- * with !important so both states land on the deep-green pressed look.
+ * Hover override (.nav-cta:hover with !important above) still lands
+ * both states on the deep-green pressed look.
  */
 .nav-cta--scroll-state {
   background-color: transparent;
-  border: 1px solid var(--color-accent);
+  border: 1px solid var(--color-border-strong, var(--color-border));
+  color: var(--color-text);
+}
+.nav-cta--scroll-state svg {
   color: var(--color-accent);
 }
 [data-component="Nav"][data-scrolled="true"] .nav-cta--scroll-state {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+[data-component="Nav"][data-scrolled="true"] .nav-cta--scroll-state svg {
   color: var(--color-bg);
 }
 
@@ -1628,28 +1638,15 @@ button:focus:not(:focus-visible) {
 }
 .pricing-section-head__aside {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
   flex-shrink: 0;
-}
-@media (min-width: 768px) {
-  .pricing-section-head__aside {
-    align-items: flex-end;
-    max-width: 360px;
-  }
 }
 .pricing-section-head__subhead {
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   color: var(--color-text-muted);
   margin: 0;
-}
-@media (min-width: 768px) {
-  .pricing-section-head__subhead {
-    text-align: right;
-  }
 }
 
 /* ----------------------------------------------------------------------
