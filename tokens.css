@@ -20,6 +20,16 @@
   --color-accent-deep: #0e3d28;
 
   /* =====================================================================
+   * REC RED -- semantic-only, used for the "recording" cue on the hero
+   * rec pill, the footer slogan's "Record" word, the account
+   * subscription-canceled label, and any future inline error state.
+   * NOT a second brand accent. Forest green stays the only brand colour.
+   * Promoted to a token 2026-05-27 -- previously scoped to .hero-rec-pill
+   * which left .site-footer__slogan-rec referencing an undefined variable.
+   * ===================================================================== */
+  --rec: #b7443d;
+
+  /* =====================================================================
    * NEUTRAL — warm-paper light palette aligned with the macOS app
    * ===================================================================== */
   --color-bg: #ffffff;
