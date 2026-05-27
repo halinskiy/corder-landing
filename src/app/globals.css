@@ -54,8 +54,14 @@ body {
 
 /* ----------------------------------------------------------------------
  *  Global focus-visible policy (WCAG 2.4.7 + doctrine UX).
- *  2px accent ring with 2px offset, inheriting radius so pill CTAs
- *  show a pill-shaped ring. Easing is doctrine's cubic-bezier.
+ *  2px accent ring with 2px offset. Modern browsers (Chrome 95+,
+ *  Firefox 88+, Safari 16.4+) draw the outline following the
+ *  element's own border-radius, so pill-shaped CTAs get a pill
+ *  focus ring without forcing border-radius here. The earlier
+ *  `border-radius: inherit` was wrong -- it overrode the button's
+ *  own 9999 px radius with the parent's 12 px and turned pill
+ *  focus rings into squared rectangles (maker called it out
+ *  2026-05-27).
  * ---------------------------------------------------------------------- */
 
 a:focus-visible,
@@ -66,7 +72,6 @@ select:focus-visible,
 [role="button"]:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-radius: inherit;
 }
 
 /* Remove the default focus ring on mouse-only focus events; keyboard
@@ -5240,8 +5245,12 @@ button:focus:not(:focus-visible) {
   width: 32px;
   height: 32px;
   border-radius: 9999px;
-  background: var(--color-accent);
-  color: #ffffff;
+  /* Secondary (ghost) language: white fill + hairline border + dark
+   * text. Same vocabulary as .cta-pill--ghost / .install-page__ghost
+   * so the badge reads as a quiet numeric chip, not a primary CTA. */
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
