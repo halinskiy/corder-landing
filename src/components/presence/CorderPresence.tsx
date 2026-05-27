@@ -51,7 +51,7 @@ import {
 import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
 
 import { copy } from "@/content/copy";
-import { useNewsletter } from "@/lib/newsletter";
+import { AppleIcon } from "@/components/icons/AppleIcon";
 
 const DATA_SOURCE_PROVIDER =
   "projects/corder-landing/src/components/presence/CorderPresence.tsx";
@@ -281,14 +281,11 @@ function CloudDownloadIcon() {
 // ---------------------------------------------------------------------------
 
 function CorderPresenceForm() {
-  const { newsletter } = copy;
-  const { status, email, setEmail, submit } = useNewsletter("landing-floating");
-  // `bottom` is recomputed on scroll so the form pins 64px above the
+  const cta = copy.presenceCta;
+  // `bottom` is recomputed on scroll so the card pins 64px above the
   // footer baseline once the baseline approaches the viewport bottom.
   // Default = 32px viewport-bottom inset.
   const [bottomPx, setBottomPx] = useState(32);
-
-  const handleSubmit = submit;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -339,37 +336,26 @@ function CorderPresenceForm() {
       data-source={DATA_SOURCE_PROVIDER}
       data-tokens="color-bg,color-border,color-text,color-accent,radius-window,font-serif,font-sans"
       role="region"
-      aria-label="Subscribe to product updates"
+      aria-label="Download Corder"
       style={{
         position: "fixed",
         right: "32px",
         bottom: `max(${bottomPx}px, calc(env(safe-area-inset-bottom, 0px) + 28px))`,
-        width: "380px",
-        // Card hugs its content (heading + subhead + form OR success
-        // message). Earlier we held a minHeight of 260px so the morph
-        // from orb to card had a chunky target -- the side effect was
-        // dead space below the Subscribe button on mobile. Remove the
-        // min and let padding handle the rhythm.
+        width: "360px",
         height: "auto",
         zIndex: 31,
         background: "var(--color-bg)",
         border: "1px solid var(--color-border)",
         borderRadius: "var(--radius-window)",
-        // Soft elevation so the card reads as floating above the footer.
-        // Two-stop shadow: a short tight one for depth + a longer soft
-        // one for atmospheric lift. Matches the nav-pill shadow scale
-        // (4px/22px) so the two floating surfaces feel related.
+        // Two-stop shadow matches the nav pill so both floating
+        // surfaces feel like a family.
         boxShadow:
           "0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.08)",
         pointerEvents: "auto",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        gap: "14px",
-        // 22px all sides -- equal horizontal + vertical padding so the
-        // card reads as a tight ticket rather than a tall capsule.
-        // User asked the form be shorter on 2026-05-22; earlier we had
-        // 40px top/bottom which was too generous.
+        gap: "16px",
         padding: "22px",
         boxSizing: "border-box",
       }}
@@ -379,7 +365,7 @@ function CorderPresenceForm() {
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "4px",
+          gap: "6px",
         }}
       >
         <h3
@@ -393,7 +379,7 @@ function CorderPresenceForm() {
             margin: 0,
           }}
         >
-          {newsletter.heading}
+          {cta.heading}
         </h3>
         <p
           style={{
@@ -404,77 +390,23 @@ function CorderPresenceForm() {
             margin: 0,
           }}
         >
-          {newsletter.subhead}
+          {cta.subhead}
         </p>
       </div>
 
-      {status === "submitted" ? (
-        <p
-          role="status"
-          aria-live="polite"
-          style={{
-            margin: 0,
-            fontFamily: "var(--font-sans)",
-            fontSize: "14px",
-            lineHeight: 1.5,
-            color: "var(--color-text-muted)",
-          }}
-        >
-          {newsletter.successMessage}
-        </p>
-      ) : (
-        <form
-          onSubmit={handleSubmit}
-          aria-label="Subscribe to product updates"
-          noValidate
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-          }}
-        >
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={newsletter.placeholder}
-            aria-label="Email address"
-            disabled={status === "submitting"}
-            aria-invalid={status === "error"}
-            className="presence-form-input"
-          />
-          <button
-            type="submit"
-            disabled={status === "submitting"}
-            data-track-event="newsletter_submit"
-            data-track-source="landing-floating"
-            className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] px-6 text-[15px] font-medium disabled:cursor-progress disabled:opacity-70"
-          >
-            {status === "submitting" ? newsletter.submittingCta : newsletter.cta}
-          </button>
-          {status === "error" && (
-            <p
-              role="alert"
-              aria-live="polite"
-              style={{
-                margin: "2px 0 0",
-                fontFamily: "var(--font-sans)",
-                fontSize: "13px",
-                lineHeight: 1.45,
-                color: "var(--rec, #b7443d)",
-              }}
-            >
-              {newsletter.errorMessage}
-            </p>
-          )}
-        </form>
-      )}
+      <a
+        href={cta.ctaHref}
+        data-track-event="cta_download_click"
+        data-track-source="presence-card"
+        className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
+      >
+        <AppleIcon size={15} />
+        {cta.cta}
+      </a>
       <style>{`
         @media (max-width: 640px) {
-          /* Mobile: equal insets on left + right + bottom so the form is
-           * symmetrically pinned, not cornered. Width is auto-derived
-           * from the left/right anchors. */
+          /* Mobile: equal insets on left + right + bottom so the card is
+           * symmetrically pinned, not cornered. */
           [data-component="CorderPresenceForm"] {
             width: auto !important;
             left: 28px !important;
@@ -482,44 +414,6 @@ function CorderPresenceForm() {
             bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
           }
         }
-        /* Input mirrors the project's existing pill-shaped search field
-         * (Search the transcript inside the Hero demo): 999px radius,
-         * hairline border, accent focus ring. Pairs with the cta-pill
-         * Subscribe button below. */
-        .presence-form-input {
-          width: 100%;
-          height: 48px;
-          padding: 0 20px;
-          border: 1px solid var(--color-border-strong);
-          border-radius: 999px;
-          background: var(--color-bg);
-          font-family: var(--font-sans);
-          font-size: 15px;
-          color: var(--color-text);
-          appearance: none;
-          -webkit-appearance: none;
-          outline: none;
-          box-sizing: border-box;
-          transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-            box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .presence-form-input:hover {
-          border-color: var(--color-text);
-        }
-        /* Pill input + pill focus ring. The global :focus-visible rule
-         * paints a rectangular outline AND forces border-radius: inherit
-         * (which collapses to 0 because the parent form has no radius).
-         * Override both so the pill shape and the halo both stay round. */
-        .presence-form-input:focus,
-        .presence-form-input:focus-visible {
-          outline: none !important;
-          border-radius: 999px !important;
-          border-color: var(--color-accent);
-          box-shadow: 0 0 0 3px rgba(33, 122, 80, 0.20);
-        }
-        /* Subscribe button uses the project's .cta-pill .cta-pill--primary
-         * classes (same pattern as Hero's Download for Mac CTA). No bespoke
-         * submit styles here - single source of truth. */
       `}</style>
     </motion.div>
   );
@@ -672,11 +566,10 @@ export function CorderPresenceFormSentinel() {
 
 export function CorderPresenceStaticSection() {
   const { motionDisabled } = useCorderPresence();
-  const { newsletter } = copy;
-  const { status, email, setEmail, submit } = useNewsletter("landing-static");
+  const cta = copy.presenceCta;
   // Mobile: a fixed-corner card stomps on footer content, so the
-  // subscribe form moves inline at the bottom of the page even when
-  // motion is on. Desktop keeps the floating morphing form unless
+  // download CTA moves inline at the bottom of the page even when
+  // motion is on. Desktop keeps the floating morphing card unless
   // motion is disabled.
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -690,67 +583,29 @@ export function CorderPresenceStaticSection() {
 
   if (!motionDisabled && !isMobile) return null;
 
-  const handleSubmit = submit;
-
   return (
     <section
-      id="newsletter"
+      id="download-cta"
       data-component="CorderPresenceStaticSection"
       data-source={DATA_SOURCE_PROVIDER}
-      data-tokens="color-bg,color-border,color-text,color-text-muted,color-accent,radius-button,font-serif,font-sans"
+      data-tokens="color-bg,color-border,color-text,color-text-muted,color-accent,radius-pill,font-serif,font-sans"
       className="presence-static"
     >
       <div className="page-container">
         <div className="presence-static__inner">
-          <h2 className="presence-static__heading">{newsletter.heading}</h2>
-          <p className="presence-static__subhead">{newsletter.subhead}</p>
+          <h2 className="presence-static__heading">{cta.heading}</h2>
+          <p className="presence-static__subhead">{cta.subhead}</p>
 
-          {status === "submitted" ? (
-            <p
-              className="presence-static__status"
-              role="status"
-              aria-live="polite"
-            >
-              {newsletter.successMessage}
-            </p>
-          ) : (
-            <form
-              className="presence-static__form"
-              onSubmit={handleSubmit}
-              aria-label="Subscribe to product updates"
-              noValidate
-            >
-              <input
-                type="email"
-                required
-                placeholder={newsletter.placeholder}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="presence-static__input"
-                aria-label="Email address"
-                disabled={status === "submitting"}
-                aria-invalid={status === "error"}
-              />
-              <button
-                type="submit"
-                disabled={status === "submitting"}
-                data-track-event="newsletter_submit"
-                data-track-source="landing-static"
-                className="presence-static__submit"
-              >
-                {status === "submitting" ? newsletter.submittingCta : newsletter.cta}
-              </button>
-              {status === "error" && (
-                <p
-                  role="alert"
-                  aria-live="polite"
-                  className="presence-static__status presence-static__status--error"
-                >
-                  {newsletter.errorMessage}
-                </p>
-              )}
-            </form>
-          )}
+          <a
+            href={cta.ctaHref}
+            data-track-event="cta_download_click"
+            data-track-source="presence-static"
+            className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
+            style={{ marginTop: 12 }}
+          >
+            <AppleIcon size={15} />
+            {cta.cta}
+          </a>
         </div>
       </div>
     </section>
