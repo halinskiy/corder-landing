@@ -1,33 +1,39 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { useState } from "react";
+
+import { Check, Plus } from "lucide-react";
 
 import { copy } from "@/content/copy";
 import {
   PADDLE_PRICE_BY_BILLING,
   PADDLE_SUCCESS_URL,
 } from "@/lib/paddle";
+import {
+  PricingBillingToggle,
+  type PricingBilling,
+} from "@/components/sections/PricingBillingToggle";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Pricing.tsx";
 
 /**
- * Section 6 — Pricing.
+ * Section 6 -- Pricing.
  *
- * Two paid packages: Monthly $12 + Annual $99. Free is not a card here --
- * the download itself is free (the Hero pill says so), so the pricing
- * section is only about the subscription tier.
+ * Three tiers (Free / Pro / Max) in a Granola-style 3-card grid. A
+ * monthly / yearly toggle sits to the right of the section heading and
+ * flips every card's price block in place (price + bill note swap; the
+ * feature list stays constant per tier).
  *
- * Annual carries the accent border + "SAVE 31%" badge + primary CTA so the
- * default visual choice is the annual plan. Monthly stays on a hairline
- * border with a secondary CTA.
+ * Tier copy + pricing comes from copy.json#pricing, written from the
+ * 2026-05-27 pricing brief in content/pricing-brief.md.
  *
- * Side-by-side 2 columns at md+, stacked at base. Each card is a real
- * pricing slab (name + price + bill-note + features + CTA).
- *
- * Track events: both CTAs fire cta_pro_click with billing=monthly|annual.
+ * The Free tier CTA is a direct download trigger (routes through
+ * /install). Pro and Max CTAs open Paddle checkout when the SDK is
+ * loaded, otherwise fall back to the #download anchor.
  */
 export function Pricing() {
   const { pricing } = copy;
+  const [billing, setBilling] = useState<PricingBilling>("annual");
 
   return (
     <section
@@ -39,9 +45,9 @@ export function Pricing() {
     >
       <div aria-hidden className="section-blob section-blob--pricing" />
       <div className="page-container py-8 md:py-[52px]">
-        {/* Header */}
-        <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
+        {/* Section head -- heading left, subhead + billing toggle right. */}
+        <div className="pricing-section-head">
+          <div className="pricing-section-head__copy">
             <h2
               className="section-heading"
               data-component="PricingHeading"
@@ -50,21 +56,27 @@ export function Pricing() {
             >
               {pricing.heading}
             </h2>
-            <p
-              className="section-subhead"
-              data-component="PricingSubhead"
-              data-source={DATA_SOURCE}
-              data-tokens="body-lg,lh-body,color-text-muted,font-sans"
-            >
-              {pricing.subhead}
-            </p>
+          </div>
+
+          <div className="pricing-section-head__aside">
+            <p className="pricing-section-head__subhead">{pricing.subhead}</p>
+            <PricingBillingToggle
+              billing={billing}
+              onChange={setBilling}
+              monthlyLabel={pricing.billing?.monthlyLabel ?? "Monthly"}
+              annualLabel={pricing.billing?.annualLabel ?? "Yearly"}
+            />
           </div>
         </div>
 
         {/* Tier grid */}
         <div className="mt-10 pricing-grid md:mt-14">
           {pricing.tiers.map((tier) => (
-            <PricingCard key={tier.name} tier={tier as Tier} />
+            <PricingCard
+              key={tier.name}
+              tier={tier as unknown as Tier}
+              billing={billing}
+            />
           ))}
         </div>
 
@@ -77,134 +89,127 @@ export function Pricing() {
 
 // ---------------------------------------------------------------------------
 
-/**
- * Renders a bill-note string with the upfront cash amount (e.g. "Pay $24")
- * highlighted in the accent colour. The regex matches the literal phrase
- * "Pay $N" or "Pay $N.NN" at any position. Everything else stays in the
- * normal muted text colour. If the note doesn't contain a "Pay $..." token
- * the original string passes through unchanged.
- */
-function renderBillNote(note: string) {
-  const re = /(Pay \$\d+(?:\.\d+)?)/;
-  const parts = note.split(re);
-  return parts.map((part, i) =>
-    re.test(part) ? (
-      <span key={i} className="pricing-card__annual-note__amount">
-        {part}
-      </span>
-    ) : (
-      <span key={i}>{part}</span>
-    ),
-  );
-}
-
-type Tier = {
-  name: string;
+type TierPrice = {
   price: string;
   priceOriginal?: string;
   priceUnit: string;
   billNote?: string;
-  badge?: string;
+};
+
+type Tier = {
+  name: string;
+  tagline?: string;
+  badge?: string | null;
   features: readonly string[];
   cta: string;
+  ctaHref?: string;
   ctaStyle: "primary" | "secondary";
   highlight: boolean;
   trackEvent: string;
-  trackBilling?: string;
+  trackBilling?: string | null;
+  monthly: TierPrice;
+  annual: TierPrice;
 };
 
-function PricingCard({ tier }: { tier: Tier }) {
+function PricingCard({ tier, billing }: { tier: Tier; billing: PricingBilling }) {
   const ctaPrimary = tier.ctaStyle === "primary";
+  const priceBlock = billing === "annual" ? tier.annual : tier.monthly;
+  const ctaHref = tier.ctaHref ?? "#download";
+
   return (
     <article
-      className={`pricing-card pricing-card--horizontal${tier.highlight ? " pricing-card--highlight" : ""}`}
+      className={`pricing-card pricing-card--vertical${tier.highlight ? " pricing-card--highlight" : ""}`}
       data-component="PricingCard"
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-text,color-border,color-accent,radius-window,font-serif,font-sans"
     >
-      {/* Summary column: plan label + badge, price block, bill note, CTA. */}
-      <div className="pricing-card__summary">
-        <div className="pricing-card__header">
+      <div className="pricing-card__header">
+        <div className="pricing-card__header-row">
           <span className="pricing-card__plan-label">{tier.name}</span>
           {tier.badge && (
             <span className="pricing-card__badge">{tier.badge}</span>
           )}
         </div>
-
-        <div>
-          <div className="pricing-card__price-row">
-            {tier.priceOriginal && (
-              <span
-                className="pricing-card__price-original"
-                aria-label={`Was ${tier.priceOriginal} a year`}
-              >
-                {tier.priceOriginal}
-              </span>
-            )}
-            <span className="pricing-card__price">{tier.price}</span>
-            <span className="pricing-card__price-suffix">/{tier.priceUnit}</span>
-          </div>
-          {tier.billNote && (
-            <p className="pricing-card__annual-note">
-              {renderBillNote(tier.billNote)}
-            </p>
-          )}
-        </div>
-
-        <a
-          href="#download"
-          className={
-            ctaPrimary
-              ? "pricing-card__cta cta-pill cta-pill--primary"
-              : "pricing-card__cta cta-pill cta-pill--ghost"
-          }
-          data-track-event={tier.trackEvent}
-          data-track-tier={tier.name}
-          data-track-billing={tier.trackBilling}
-          onClick={(e) => {
-            const priceId = tier.trackBilling
-              ? PADDLE_PRICE_BY_BILLING[tier.trackBilling]
-              : undefined;
-            if (priceId && typeof window !== "undefined" && window.Paddle) {
-              e.preventDefault();
-              // Paddle.js v2: successUrl lives under `settings`, NOT at the
-              // top level. Putting it at the top level silently falls back
-              // to Paddle's default success modal -- the checkout still
-              // completes, but the buyer never lands on /thanks and we
-              // lose the conversion-tracking pageview there.
-              window.Paddle.Checkout.open({
-                items: [{ priceId, quantity: 1 }],
-                settings: { successUrl: PADDLE_SUCCESS_URL },
-              });
-            }
-            // If Paddle isn't loaded (offline, ad-blocker, etc.) the link
-            // falls through to the `#download` anchor so the click is
-            // never a dead end.
-          }}
-          style={
-            ctaPrimary
-              ? undefined
-              : {
-                  border: "1px solid var(--color-border-strong)",
-                  color: "var(--color-text)",
-                  backgroundColor: "transparent",
-                }
-          }
-        >
-          <span className="cta-text">{tier.cta}</span>
-        </a>
+        {tier.tagline && (
+          <p className="pricing-card__tagline">{tier.tagline}</p>
+        )}
       </div>
 
-      {/* Features column: same list both slabs (both ARE Pro). */}
-      <ul className="pricing-card__features pricing-card__features--col">
-        {tier.features.map((feature) => (
-          <li key={feature} className="pricing-card__feature">
-            <span className="pricing-card__feature-icon" aria-hidden>
-              <Check size={14} strokeWidth={2.4} />
+      <div className="pricing-card__price-block">
+        <div className="pricing-card__price-row">
+          {priceBlock.priceOriginal && (
+            <span
+              className="pricing-card__price-original"
+              aria-label={`Was ${priceBlock.priceOriginal} a ${priceBlock.priceUnit}`}
+            >
+              {priceBlock.priceOriginal}
             </span>
-            <span className="pricing-card__feature-text">{feature}</span>
-          </li>
-        ))}
+          )}
+          <span className="pricing-card__price">{priceBlock.price}</span>
+          <span className="pricing-card__price-suffix">
+            /{priceBlock.priceUnit}
+          </span>
+        </div>
+        {priceBlock.billNote && (
+          <p className="pricing-card__annual-note">{priceBlock.billNote}</p>
+        )}
+      </div>
+
+      <a
+        href={ctaHref}
+        className={`pricing-card__cta cta-pill ${ctaPrimary ? "cta-pill--primary" : "cta-pill--ghost"}`}
+        data-track-event={tier.trackEvent}
+        data-track-tier={tier.name}
+        data-track-billing={tier.trackBilling ?? billing}
+        onClick={(e) => {
+          // Free tier: let the anchor navigate to /install.
+          if (!tier.trackBilling) return;
+          // Pro / Max: open Paddle if the SDK has loaded. Annual vs
+          // monthly maps to two distinct Paddle priceIds; the key is
+          // built from trackBilling + the active billing toggle.
+          const priceId =
+            PADDLE_PRICE_BY_BILLING[`${tier.trackBilling}_${billing}`] ??
+            PADDLE_PRICE_BY_BILLING[tier.trackBilling];
+          if (priceId && typeof window !== "undefined" && window.Paddle) {
+            e.preventDefault();
+            window.Paddle.Checkout.open({
+              items: [{ priceId, quantity: 1 }],
+              settings: { successUrl: PADDLE_SUCCESS_URL },
+            });
+          }
+        }}
+        style={
+          ctaPrimary
+            ? undefined
+            : {
+                border: "1px solid var(--color-border-strong)",
+                color: "var(--color-text)",
+                backgroundColor: "transparent",
+              }
+        }
+      >
+        <span className="cta-text">{tier.cta}</span>
+      </a>
+
+      <ul className="pricing-card__features">
+        {tier.features.map((feature, i) => {
+          const isHeader = /^Everything in /i.test(feature);
+          return (
+            <li
+              key={`${tier.name}-${i}`}
+              className={`pricing-card__feature${isHeader ? " pricing-card__feature--header" : ""}`}
+            >
+              <span className="pricing-card__feature-icon" aria-hidden>
+                {isHeader ? (
+                  <Plus size={14} strokeWidth={2.4} />
+                ) : (
+                  <Check size={14} strokeWidth={2.4} />
+                )}
+              </span>
+              <span className="pricing-card__feature-text">{feature}</span>
+            </li>
+          );
+        })}
       </ul>
     </article>
   );
