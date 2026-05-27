@@ -1921,7 +1921,11 @@ button:focus:not(:focus-visible) {
 .pricing-card--vertical {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  /* Tight gap between header (FREE/PRO/MAX label row) and the price
+   * block per maker (16 px). Was 22 px when the header also carried
+   * a 2-line tagline -- with the tagline gone the row is just a
+   * single label + optional badge, no need for the bigger rhythm. */
+  gap: 16px;
   /* Cards stretch to fill the grid row -- equal height across all
    * three tiers, strictly. The features list inside (rule below)
    * carries flex-grow:1 so the extra height is absorbed by the
@@ -1929,14 +1933,10 @@ button:focus:not(:focus-visible) {
   height: 100%;
 }
 /* Free has no priceOriginal strike-through and a one-line billNote;
- * Pro and Max carry both. Reserve the same vertical space for the
- * tier name+tagline block AND the price+billNote block so that all
- * three CTAs land on the same baseline despite the content delta.
- * Sizes computed against the Pro / Max variant: badge + plan label
- * + 2-line tagline ~110 px; $144 $99 row + 2-line billNote ~104 px. */
-.pricing-card--vertical .pricing-card__header {
-  min-height: 112px;
-}
+ * Pro and Max carry both. Reserve same vertical space for the
+ * price+billNote block so all three CTAs land on the same baseline.
+ * Header no longer needs its own min-height because the tagline is
+ * gone -- all three headers are naturally the same height now. */
 .pricing-card--vertical .pricing-card__price-block {
   display: flex;
   flex-direction: column;
