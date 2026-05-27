@@ -3170,22 +3170,36 @@ button:focus:not(:focus-visible) {
 .hl-set-rail .hl-set-switch-thumb { width: 10px; height: 10px; }
 .hl-set-rail .hl-set-switch.on .hl-set-switch-thumb { transform: translateX(12px); }
 
-/* v0.11 unified Settings dropdown trigger. Sits to the right of the
- * label / desc, hairline border, plan-label + chevron. Decorative
- * in the mock; in the real app it pops a popover with options. */
+/* v0.11 unified Settings dropdown block. Matches real Corder
+ * `.hk-block` / `.mic-block` in Web/src/components/SettingsPane.tsx:
+ * label on top, description below, full-width trigger underneath.
+ * Decorative in the mock; in the real app the trigger opens a
+ * portal popover with options. */
+.hl-settings-dropdown-block {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hl-settings-dropdown-block .hl-settings-row-label {
+  margin-bottom: 0;
+}
+.hl-settings-dropdown-block .hl-settings-row-desc {
+  margin-bottom: 6px;
+}
 .hl-set-dropdown {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
+  width: 100%;
   padding: 4px 8px;
   border: 1px solid var(--hl-border-strong);
   border-radius: 5px;
   background: var(--hl-bg);
   font-size: 10px;
   color: var(--hl-fg);
-  white-space: nowrap;
-  max-width: 130px;
-  overflow: hidden;
+  box-sizing: border-box;
 }
 .hl-set-dropdown svg {
   width: 10px;
@@ -3196,10 +3210,8 @@ button:focus:not(:focus-visible) {
 .hl-set-dropdown-value {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 500;
-}
-.hl-settings-row--dropdown {
-  align-items: center;
 }
 .hl-set-rail .hl-settings-hotkey { padding: 8px 10px; gap: 3px; }
 .hl-set-rail .hl-settings-hotkey-pill {

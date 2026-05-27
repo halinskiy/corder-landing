@@ -988,10 +988,11 @@ function SettingsToggleRow({
   );
 }
 
-/* v0.11 Settings dropdown row -- popover-style select trigger that
- * sits to the right of the label / desc. Hairline border, plan label
- * + chevron, no native macOS select. Used for Microphone, Transcription
- * model and Language inside SettingsMock. Decorative only. */
+/* v0.11 Settings dropdown row -- vertical stack matching the real
+ * Corder app (`.hk-block` / `.mic-block` in Web/src/components/
+ * SettingsPane.tsx): label on top, description below, FULL-WIDTH
+ * select trigger underneath. Decorative in the mock; in the real
+ * app the trigger opens a portal popover with the option list. */
 function SettingsDropdownRow({
   label,
   desc,
@@ -1002,11 +1003,9 @@ function SettingsDropdownRow({
   value: string;
 }) {
   return (
-    <div className="hl-settings-row hl-settings-row--dropdown" aria-label={label}>
-      <div className="hl-settings-row-text">
-        <div className="hl-settings-row-label">{label}</div>
-        <div className="hl-settings-row-desc">{desc}</div>
-      </div>
+    <div className="hl-settings-dropdown-block" aria-label={label}>
+      <div className="hl-settings-row-label">{label}</div>
+      <div className="hl-settings-row-desc">{desc}</div>
       <span className="hl-set-dropdown" aria-hidden="true">
         <span className="hl-set-dropdown-value">{value}</span>
         <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
