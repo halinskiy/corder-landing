@@ -529,6 +529,39 @@
     "minHours": 1,
     "maxHours": 100
   },
+  "contact": {
+    "_note": "Powers /contact hub (two cards: Sales + Help) and /contact/sales (form). Pattern mirrors granola.ai/contact -- centred serif heading, two equal cards with an icon + heading + action link, plus a microcopy fallback row.",
+    "title": "Contact us",
+    "cards": [
+      {
+        "icon": "team",
+        "heading": "Want Corder for your team?",
+        "linkLabel": "Talk to the maker",
+        "linkHref": "/contact/sales/"
+      },
+      {
+        "icon": "help",
+        "heading": "Need help or have feedback?",
+        "linkLabel": "hello@getcorder.com",
+        "linkHref": "mailto:hello@getcorder.com"
+      }
+    ],
+    "fallback": "Press, privacy, or legal? Reach the maker at ",
+    "fallbackEmail": "hello@getcorder.com",
+    "sales": {
+      "title": "Corder for teams",
+      "subhead": "Tell the maker how many seats you need, what tools you live in, and anything else worth knowing. Reply lands the same day.",
+      "emailLabel": "Work email",
+      "subjectLabel": "Company",
+      "messageLabel": "What are you looking for?",
+      "subjectPlaceholder": "Acme Inc",
+      "messagePlaceholder": "Seats, tools, timeline...",
+      "submitCta": "Send via Mail",
+      "submitNote": "Opens your default mail client with the message pre-filled. Nothing leaves until you hit Send there.",
+      "mailTo": "hello@getcorder.com",
+      "subjectPrefix": "Corder for teams"
+    }
+  },
   "footer": {
     "brandMark": "Corder",
     "slogan": "Just Record Everything",
@@ -566,7 +599,7 @@
           },
           {
             "label": "Contact Us",
-            "href": "#site-footer-bottom"
+            "href": "/contact/"
           }
         ]
       },
