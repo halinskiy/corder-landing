@@ -128,16 +128,16 @@ export function InstallClient() {
           <h1 className="install-page__heading">Thanks for downloading.</h1>
 
           <p className="install-page__sub">
-            Your download will begin automatically. If it did not start,{" "}
-            <a
-              href={resolvedUrl}
-              download={resolvedName}
-              className="install-page__manual-link"
-              data-track-event="install_manual_download_click"
-            >
-              download Corder manually.
-            </a>
+            Your download will begin automatically. If it did not start.
           </p>
+          <a
+            href={resolvedUrl}
+            download={resolvedName}
+            className="install-page__manual-link install-page__manual-link--standalone"
+            data-track-event="install_manual_download_click"
+          >
+            Download Corder manually
+          </a>
 
           <ol className="install-steps" aria-label="Install steps">
             <li className="install-step-card">
