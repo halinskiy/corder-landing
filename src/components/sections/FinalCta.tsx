@@ -50,7 +50,7 @@ export function FinalCta() {
               data-source={DATA_SOURCE}
               data-tokens="radius-pill,color-accent,color-bg,ease-out"
             >
-              <AppleIcon size={20} />
+              <AppleIcon size={24} />
               {finalCta.cta}
             </a>
           </div>

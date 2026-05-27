@@ -140,12 +140,6 @@ button:focus:not(:focus-visible) {
     transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
 }
-.nav-cta:hover {
-  background-color: var(--color-accent-deep, #0e3d28) !important;
-  border-color: var(--color-accent-deep, #0e3d28) !important;
-  color: var(--color-bg) !important;
-  transform: translateY(-1px);
-}
 .nav-cta:active {
   transform: scale(0.98);
 }
@@ -153,33 +147,41 @@ button:focus:not(:focus-visible) {
 /* Granola-style scroll-state pill. Reads off the parent <header>'s
  * `data-scrolled` attribute (Nav.tsx flips it at scrollY > 8px).
  *
- *  At top  -- transparent fill, standard hairline border + dark text.
- *             Matches the .hl-icon-pill border language used inside
- *             the live demo. Reads as a quiet utility button while
- *             the hero Download CTA below the fold owns the primary
- *             affordance. Apple glyph fills with accent so the brand
- *             cue still reads (maker request 2026-05-27).
- *  Scrolled -- accent fill, white text + white apple glyph. Once
- *             past the hero the nav button becomes the obvious
- *             download trigger.
+ *  At top  -- transparent fill, standard hairline border + dark text +
+ *             dark apple glyph. Reads as the quiet utility button
+ *             language used by .hl-icon-pill inside the live demo.
+ *  Scrolled -- accent fill, white text + white apple glyph.
  *
- * Hover override (.nav-cta:hover with !important above) still lands
- * both states on the deep-green pressed look.
- */
+ * Hover follows the SAME family as .hl-icon-pill (subtle bg tint +
+ * border darkens). When the button is in its scrolled accent-fill
+ * state, hover goes to accent-deep -- matches .cta-pill--primary:hover.
+ * Both rules are scoped (no !important) so they only fire in the
+ * appropriate state. */
 .nav-cta--scroll-state {
   background-color: transparent;
   border: 1px solid var(--color-border-strong, var(--color-border));
   color: var(--color-text);
 }
 .nav-cta--scroll-state svg {
-  color: var(--color-accent);
+  color: var(--color-text);
 }
+.nav-cta--scroll-state:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-color: var(--color-text);
+  color: var(--color-text);
+}
+
 [data-component="Nav"][data-scrolled="true"] .nav-cta--scroll-state {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-bg);
 }
 [data-component="Nav"][data-scrolled="true"] .nav-cta--scroll-state svg {
+  color: var(--color-bg);
+}
+[data-component="Nav"][data-scrolled="true"] .nav-cta--scroll-state:hover {
+  background-color: var(--color-accent-deep, #0e3d28);
+  border-color: var(--color-accent-deep, #0e3d28);
   color: var(--color-bg);
 }
 
