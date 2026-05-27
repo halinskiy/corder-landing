@@ -1,6 +1,7 @@
 "use client";
 
 import { copy } from "@/content/copy";
+import { AppleIcon } from "@/components/icons/AppleIcon";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/FinalCta.tsx";
 
@@ -49,6 +50,7 @@ export function FinalCta() {
               data-source={DATA_SOURCE}
               data-tokens="radius-pill,color-accent,color-bg,ease-out"
             >
+              <AppleIcon size={15} />
               {finalCta.cta}
             </a>
           </div>
