@@ -1592,6 +1592,11 @@ button:focus:not(:focus-visible) {
   display: grid;
   gap: 16px;
   grid-template-columns: 1fr;
+  /* Cards hug their own content; the grid does not stretch them to
+   * match the tallest sibling. Combined with align-self: start on
+   * each .pricing-card--vertical this kills the empty band Free
+   * used to paint under its last feature line. */
+  align-items: start;
 }
 
 /* Three-tier model 2026-05-27 v5: Free / Pro / Max as vertical cards in
@@ -1912,21 +1917,28 @@ button:focus:not(:focus-visible) {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  min-height: 100%;
+  /* Cards hug their content (each tier has a different feature
+   * count, so stretching all to the same height was painting a fat
+   * empty band under Free's last feature line). The parent
+   * .pricing-grid switches to align-items: start below so the cards
+   * stack from the top without filling the column height. */
+  height: auto;
+  align-self: start;
 }
 /* Free has no priceOriginal strike-through and a one-line billNote;
- * Pro and Max have both. Without reserving the same vertical space,
- * Free's CTA floats higher than its siblings. Min-heights below
- * reserve enough room for the two-line variant so all three CTAs
- * land on the same baseline across the row. */
+ * Pro and Max carry both. Reserve the same vertical space for the
+ * tier name+tagline block AND the price+billNote block so that all
+ * three CTAs land on the same baseline despite the content delta.
+ * Sizes computed against the Pro / Max variant: badge + plan label
+ * + 2-line tagline ~110 px; $144 $99 row + 2-line billNote ~104 px. */
 .pricing-card--vertical .pricing-card__header {
-  min-height: 96px;
+  min-height: 112px;
 }
 .pricing-card--vertical .pricing-card__price-block {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 84px;
+  min-height: 104px;
 }
 .pricing-card--vertical .pricing-card__cta {
   width: 100%;
@@ -5053,12 +5065,23 @@ button:focus:not(:focus-visible) {
 .install-page__heading {
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: clamp(34px, 4.4vw, 56px);
+  /* Single-line at every size per maker. Smaller clamp than the
+   * earlier two-line version so the heading does not wrap at the
+   * 1080 px inner width on a 1280 viewport. */
+  font-size: clamp(32px, 3.6vw, 48px);
   line-height: 1.12;
   letter-spacing: -0.022em;
   color: var(--color-text);
-  margin: 24px 0 12px;
-  max-width: 22ch;
+  margin: 0 0 16px;
+  max-width: none;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  /* On phones the heading wraps naturally -- there's no horizontal
+   * room to force it on one line. */
+  .install-page__heading {
+    white-space: normal;
+  }
 }
 
 .install-page__sub {
@@ -5080,68 +5103,25 @@ button:focus:not(:focus-visible) {
   color: var(--color-accent-deep, #0e3d28);
 }
 
-/* Bottom action row -- primary CTA back to the landing, ghost CTA
- * for the help mailto. Pulled from the kit's .cta-pill family
- * (same primary / ghost styles used by Hero, Pricing, FinalCta) so
- * the install page reads as part of the same design system, not as
- * a one-off help screen. */
+/* Bottom action stack -- primary CTA back to the landing, ghost CTA
+ * for the help mailto BELOW it. Buttons match the Hero Download
+ * pill scale (h-14, 17 px text) per maker request. .cta-pill
+ * --primary / --ghost classes are reused so the buttons read as
+ * the same family used everywhere else on the site. */
 .install-page__footer-actions {
   margin-top: 56px;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
-/* Status pill at the top. Cream fill, hairline border, small dot
- * (spinner or check) + uppercase label. Matches the "Introducing
- * Briefs" callout Granola uses above their headlines. */
-.install-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 18px 8px 12px;
-  background: rgba(33, 122, 80, 0.08);
-  border: 1px solid rgba(33, 122, 80, 0.16);
-  border-radius: 9999px;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--color-accent-deep, #0e3d28);
-  text-transform: uppercase;
-  transition: background-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.install-status-pill[data-phase="started"] {
-  background: rgba(33, 122, 80, 0.12);
-}
-.install-status-pill__dot {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  color: var(--color-accent);
-}
-.install-status-pill__spinner {
-  width: 12px;
-  height: 12px;
-  border-radius: 9999px;
-  border: 1.6px solid rgba(33, 122, 80, 0.3);
-  border-top-color: var(--color-accent);
-  animation: install-spinner 700ms linear infinite;
-}
-@keyframes install-spinner {
-  to { transform: rotate(360deg); }
-}
-
-/* Three install steps -- text-only after the maker dropped the
- * illustrations (2026-05-27). Vertical list, left-aligned inside the
- * centred page-container, with a numbered badge on the left and the
- * step copy on the right. Badge stays the accent-filled disc used
- * elsewhere on the site so the section reads consistent with the
- * design system. */
+/* Three install step CARDS (2026-05-27 v3). Each step lives in its
+ * own hairline card -- same border + radius language as
+ * .hl-meeting-item--failed in the live demo (referenced by the
+ * maker as the visual cue). A right-arrow glyph sits between cards
+ * on desktop so the trio reads as a step sequence. On mobile the
+ * cards stack and the arrows rotate 90 deg to point downward. */
 .install-steps {
   list-style: none;
   padding: 0;
@@ -5149,19 +5129,38 @@ button:focus:not(:focus-visible) {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  align-items: flex-start;
-  text-align: left;
+  align-items: center;
+  gap: 12px;
+}
+@media (min-width: 768px) {
+  .install-steps {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 8px;
+  }
 }
 
-.install-step {
+.install-step-card {
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 22px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-window);
+  box-sizing: border-box;
   width: 100%;
 }
+@media (min-width: 768px) {
+  .install-step-card {
+    width: auto;
+  }
+}
 
-.install-step__badge {
+.install-step-card__badge {
   width: 32px;
   height: 32px;
   border-radius: 9999px;
@@ -5177,16 +5176,49 @@ button:focus:not(:focus-visible) {
   flex-shrink: 0;
 }
 
-.install-step__label {
+.install-step-card__label {
   font-family: var(--font-sans);
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--color-text);
   margin: 0;
-  flex: 1;
 }
-.install-step__label em {
+.install-step-card__label em {
   color: var(--color-accent-deep, #0e3d28);
   font-style: normal;
   font-weight: 500;
+}
+
+/* Arrow between cards. Accent green, larger on desktop. On mobile
+ * stack the SVG rotates so the chevron points down between the
+ * stacked cards. */
+.install-step-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+.install-step-arrow svg {
+  width: 24px;
+  height: 24px;
+  transform: rotate(90deg);
+}
+@media (min-width: 768px) {
+  .install-step-arrow svg {
+    transform: none;
+  }
+}
+
+/* Need help? ghost CTA -- same hairline-border + dark-text language
+ * the Free pricing card's Download for Mac uses. Pulled into a class
+ * here so the inline JSX stays clean. */
+.install-page__ghost-cta {
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+  background-color: transparent;
+}
+.install-page__ghost-cta:hover {
+  border-color: var(--color-text);
+  background-color: rgba(0, 0, 0, 0.03);
 }
