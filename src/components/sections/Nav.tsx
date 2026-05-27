@@ -95,7 +95,7 @@ export function Nav() {
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
           data-track-event="cta_download_click"
           data-track-source="nav"
-          className="nav-cta nav-cta--scroll-state ml-2 hidden h-10 items-center gap-2 rounded-full pl-4 pr-5 text-[15px] font-medium md:inline-flex"
+          className="nav-cta nav-cta--scroll-state ml-2 hidden h-10 items-center gap-1.5 rounded-full pl-3.5 pr-5 text-[15px] font-medium md:inline-flex"
         >
           <AppleIcon size={20} />
           {nav.ctaPrimary}
@@ -109,7 +109,7 @@ export function Nav() {
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
           data-track-event="cta_download_click"
           data-track-source="nav"
-          className="nav-cta nav-cta--scroll-state ml-2 inline-flex h-10 items-center gap-2 rounded-full pl-3 pr-4 text-[14px] font-medium md:hidden"
+          className="nav-cta nav-cta--scroll-state ml-2 inline-flex h-10 items-center gap-1.5 rounded-full pl-3 pr-4 text-[14px] font-medium md:hidden"
         >
           <AppleIcon size={18} />
           {nav.ctaPrimaryMobile}

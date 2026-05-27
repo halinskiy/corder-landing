@@ -400,7 +400,7 @@ function CorderPresenceForm() {
         data-track-source="presence-card"
         className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
       >
-        <AppleIcon size={20} />
+        <AppleIcon size={24} />
         {cta.cta}
       </a>
       <style>{`
@@ -603,7 +603,7 @@ export function CorderPresenceStaticSection() {
             className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
             style={{ marginTop: 12 }}
           >
-            <AppleIcon size={18} />
+            <AppleIcon size={22} />
             {cta.cta}
           </a>
         </div>
