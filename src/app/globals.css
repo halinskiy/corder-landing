@@ -5067,8 +5067,10 @@ button:focus:not(:focus-visible) {
  * ---------------------------------------------------------------------- */
 
 .install-page {
-  min-height: calc(100vh - var(--nav-height, 88px));
+  min-height: 100vh;
   background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
 }
 
 .install-page__inner {
@@ -5076,6 +5078,17 @@ button:focus:not(:focus-visible) {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  /* The inner column fills the available page height so the footer
+   * actions can be pushed to the bottom via margin-top: auto. Top
+   * padding lives on the page-container wrapper; the symmetric
+   * bottom breathing comes from the actions' own margin-top + the
+   * page-container's bottom padding. */
+  min-height: calc(100vh - 8rem);
+}
+@media (min-width: 768px) {
+  .install-page__inner {
+    min-height: calc(100vh - 12rem);
+  }
 }
 
 .install-page__heading {
@@ -5120,12 +5133,14 @@ button:focus:not(:focus-visible) {
 }
 
 /* Bottom action stack -- primary CTA back to the landing, ghost CTA
- * for the help mailto BELOW it. Buttons match the Hero Download
- * pill scale (h-14, 17 px text) per maker request. .cta-pill
- * --primary / --ghost classes are reused so the buttons read as
- * the same family used everywhere else on the site. */
+ * for the help mailto BELOW it. margin-top: auto pushes the stack
+ * to the bottom of the .install-page__inner column so the bottom
+ * offset mirrors the top distance from heading -- symmetric
+ * breathing per maker. Buttons keep the Hero Download pill scale
+ * (h-14, 17 px text). */
 .install-page__footer-actions {
-  margin-top: 56px;
+  margin-top: auto;
+  padding-top: 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -5161,9 +5176,11 @@ button:focus:not(:focus-visible) {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 22px;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  gap: 18px;
+  padding: 28px 22px;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-window);
