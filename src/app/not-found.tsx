@@ -3,9 +3,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Not found | Corder",
+  title: { absolute: "Not found — Corder" },
   description:
     "The page you were looking for moved or never existed. Head back to corder.app.",
+  robots: { index: false, follow: true },
 };
 
 const DATA_SOURCE = "projects/corder-landing/src/app/not-found.tsx";

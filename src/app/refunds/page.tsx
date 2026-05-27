@@ -3,9 +3,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Refund Policy | Corder",
+  title: "Refund Policy",
   description:
     "How Corder handles refunds. 14-day no-questions-asked window on both monthly and annual Pro subscriptions.",
+  alternates: { canonical: "/refunds/" },
 };
 
 const DATA_SOURCE = "projects/corder-landing/src/app/refunds/page.tsx";

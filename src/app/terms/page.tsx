@@ -3,9 +3,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms | Corder",
+  title: "Terms",
   description:
     "Terms of use for Corder, the macOS meeting recorder. Plain-language working draft.",
+  alternates: { canonical: "/terms/" },
 };
 
 const DATA_SOURCE = "projects/corder-landing/src/app/terms/page.tsx";

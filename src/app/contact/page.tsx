@@ -6,9 +6,10 @@ import { copy } from "@/content/copy";
 const DATA_SOURCE = "projects/corder-landing/src/app/contact/page.tsx";
 
 export const metadata: Metadata = {
-  title: "Contact | Corder",
+  title: "Contact",
   description:
     "Talk to the maker about Corder for your team, or send a bug report, feature request, or a hello.",
+  alternates: { canonical: "/contact/" },
 };
 
 /**
