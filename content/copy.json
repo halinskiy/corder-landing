@@ -23,10 +23,6 @@
       {
         "label": "FAQ",
         "href": "#faq"
-      },
-      {
-        "label": "Contact Us",
-        "href": "#site-footer-bottom"
       }
     ],
     "ctaPrimary": "Download",
@@ -277,7 +273,6 @@
           "25 hours a month included",
           "Auto-summary with sections and action items",
           "Custom summary templates for your call type",
-          "Overage at $0.40/hour if you go over",
           "Priority support, direct line to the maker"
         ],
         "cta": "Get Pro",
@@ -306,7 +301,6 @@
         "features": [
           "Everything in Pro, plus:",
           "Unlimited transcription, fair use applies",
-          "Gemini 2.5 Pro model for sharper summaries",
           "Stronger handling of accents and crosstalk",
           "Early builds before public release",
           "Dedicated support, same-day reply"
