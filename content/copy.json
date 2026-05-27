@@ -263,10 +263,10 @@
           "billNote": "$10/mo for the first 3 months. $14/mo after"
         },
         "annual": {
-          "price": "$99",
-          "priceOriginal": "$144",
-          "priceUnit": "year",
-          "billNote": "$8.25 a month, billed yearly. Price locked"
+          "price": "$8.25",
+          "priceOriginal": "$14",
+          "priceUnit": "month",
+          "billNote": "$99 billed yearly. Price locked"
         },
         "features": [
           "Everything in Free, plus:",
@@ -293,10 +293,10 @@
           "billNote": "$24/mo for the first 3 months. $29/mo after"
         },
         "annual": {
-          "price": "$239",
-          "priceOriginal": "$348",
-          "priceUnit": "year",
-          "billNote": "$19.92 a month, billed yearly. Price locked"
+          "price": "$19.92",
+          "priceOriginal": "$29",
+          "priceUnit": "month",
+          "billNote": "$239 billed yearly. Price locked"
         },
         "features": [
           "Everything in Pro, plus:",
