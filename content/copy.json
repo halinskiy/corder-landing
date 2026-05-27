@@ -231,12 +231,12 @@
         "monthly": {
           "price": "$0",
           "priceUnit": "forever",
-          "billNote": "No credit card, no sign-up"
+          "billNote": "No credit card"
         },
         "annual": {
           "price": "$0",
           "priceUnit": "forever",
-          "billNote": "No credit card, no sign-up"
+          "billNote": "No credit card"
         },
         "features": [
           "5 hours of transcription a month",
@@ -265,7 +265,7 @@
         "annual": {
           "price": "$8.25",
           "priceUnit": "month",
-          "billNote": "$99 billed yearly. Price locked"
+          "billNote": "$99 billed yearly"
         },
         "features": [
           "Everything in Free, plus:",
@@ -294,7 +294,7 @@
         "annual": {
           "price": "$19.92",
           "priceUnit": "month",
-          "billNote": "$239 billed yearly. Price locked"
+          "billNote": "$239 billed yearly"
         },
         "features": [
           "Everything in Pro, plus:",
