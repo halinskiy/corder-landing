@@ -230,7 +230,7 @@
     "tiers": [
       {
         "name": "Free",
-        "tagline": "Great for solo users who manage their own Gemini API key.",
+        "tagline": "Great for trying Corder on a few calls a month.",
         "badge": null,
         "monthly": {
           "price": "$0",
@@ -243,12 +243,11 @@
           "billNote": "No credit card, no sign-up"
         },
         "features": [
-          "Record any meeting, unlimited length",
-          "Gemini 2.5 Flash transcription, speakers labelled",
+          "5 hours of transcription a month",
+          "Speakers labelled on every call",
           "Searchable transcript, drag out to Notion",
-          "Screen video captured alongside the transcript",
-          "30 days of meeting history on your Mac",
-          "Bring your own Gemini key, pay Google direct"
+          "Screen video captured alongside the audio",
+          "No bot joins the call"
         ],
         "cta": "Download for Mac",
         "ctaHref": "/install/",
@@ -259,7 +258,7 @@
       },
       {
         "name": "Pro",
-        "tagline": "Great for regular users who want zero API friction and sharper transcription on hard calls.",
+        "tagline": "Great for regular meetings, customer calls and design reviews.",
         "badge": "Launch offer",
         "monthly": {
           "price": "$10",
@@ -275,11 +274,10 @@
         },
         "features": [
           "Everything in Free, plus:",
-          "Transcription included, no Gemini key required",
-          "Gemini 2.5 Pro model for accents and crosstalk",
-          "Unlimited meeting history",
+          "25 hours a month included",
           "Auto-summary with sections and action items",
           "Custom summary templates for your call type",
+          "Overage at $0.40/hour if you go over",
           "Priority support, direct line to the maker"
         ],
         "cta": "Get Pro",
@@ -291,24 +289,25 @@
       },
       {
         "name": "Max",
-        "tagline": "Great for power users who record daily and want summaries delivered to their tools automatically.",
-        "badge": "Power user",
+        "tagline": "Great for people who record daily and want the sharpest summaries.",
+        "badge": "Launch offer",
         "monthly": {
-          "price": "$30",
+          "price": "$24",
+          "priceOriginal": "$29",
           "priceUnit": "month",
-          "billNote": "Cancel anytime"
+          "billNote": "$24/mo for the first 3 months. $29/mo after"
         },
         "annual": {
-          "price": "$299",
+          "price": "$239",
+          "priceOriginal": "$348",
           "priceUnit": "year",
-          "billNote": "$24.92 a month, billed yearly"
+          "billNote": "$19.92 a month, billed yearly. Price locked"
         },
         "features": [
           "Everything in Pro, plus:",
-          "API access, pull any transcript via REST",
-          "Webhooks, push summaries on meeting end",
-          "AI search across your full meeting library",
-          "Unlimited custom summary templates",
+          "Unlimited transcription, fair use applies",
+          "Gemini 2.5 Pro model for sharper summaries",
+          "Stronger handling of accents and crosstalk",
           "Early builds before public release",
           "Dedicated support, same-day reply"
         ],
