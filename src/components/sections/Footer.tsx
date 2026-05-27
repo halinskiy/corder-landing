@@ -55,7 +55,10 @@ export function Footer() {
                       href={s.href}
                       aria-label={s.label}
                       target={s.href.startsWith("http") ? "_blank" : undefined}
-                      rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      // `rel="me"` declares the linked profile as part of
+                      // the same brand entity. Cheap brand-graph signal
+                      // for Google + Mastodon-style identity verification.
+                      rel={s.href.startsWith("http") ? "me noopener noreferrer" : undefined}
                     >
                       <SocialIcon name={s.icon as SocialIcon} />
                     </a>
