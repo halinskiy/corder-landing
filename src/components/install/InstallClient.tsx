@@ -10,14 +10,19 @@ const DATA_SOURCE = "projects/corder-landing/src/components/install/InstallClien
 const RELEASES_API =
   "https://api.github.com/repos/halinskiy/corder-updates/releases/latest";
 
-// Fallback used when the GitHub API is rate-limited / blocked. Points
-// at the latest-release HTML page rather than a stale binary URL so
-// the user lands somewhere useful even if every fetch path fails.
-const RELEASES_HTML_FALLBACK =
-  "https://github.com/halinskiy/corder-updates/releases/latest";
+// Hardcoded fallback to the current release's notarized DMG. Used when
+// the GitHub API call fails (rate-limit, CORS, offline) so the user
+// still gets a real binary, not a 'see the releases page' HTML hop.
+// Update this URL + filename + isDmg defaults on every release; the
+// API resolver upgrades to the live `/releases/latest` URL when it
+// succeeds, so users on a fresh deploy with a fresh release get the
+// new asset automatically and this hardcode is only the safety net.
+const FALLBACK_URL =
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.11.0/Corder-0.11.0.dmg";
+const FALLBACK_NAME = "Corder-0.11.0.dmg";
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
-// might upload. Version suffix (e.g. Corder-0.10.0.zip) and naked names
+// might upload. Version suffix (e.g. Corder-0.11.0.dmg) and naked names
 // (Corder.zip, Corder.dmg) both match. The runtime scan below prefers a
 // .dmg over a .zip when both exist on the release -- DMG gives the user
 // a native mount + drag-to-Applications surface, whereas .zip is what
@@ -26,27 +31,32 @@ const DMG_RE = /^Corder[-.\w]*\.dmg$/i;
 const ZIP_RE = /^Corder[-.\w]*\.zip$/i;
 
 export function InstallClient() {
-  const [resolvedUrl, setResolvedUrl] = useState<string>(RELEASES_HTML_FALLBACK);
-  const [resolvedName, setResolvedName] = useState<string>("Corder.zip");
+  const [resolvedUrl, setResolvedUrl] = useState<string>(FALLBACK_URL);
+  const [resolvedName, setResolvedName] = useState<string>(FALLBACK_NAME);
   const triggeredRef = useRef(false);
 
-  // Resolve the actual asset URL via the GitHub API. The repo names
-  // its release artefact 'Corder-<version>.zip' (e.g. Corder-0.10.0.zip),
-  // so the static `/releases/latest/download/Corder.zip` URL pattern
-  // 404s. The API lookup picks the first .zip / .dmg asset on the
-  // latest release and downloads THAT.
+  // Resolve the actual asset URL via the GitHub API, then trigger the
+  // download. If the API call fails (rate-limit, CORS, offline) or
+  // returns no matching asset, fall back to the hardcoded FALLBACK_URL
+  // (the current notarised DMG). Either way the trigger fires -- the
+  // user never lands on an idle page.
+  //
+  // Trigger uses window.location.assign so cross-origin Content-
+  // Disposition: attachment responses (which GitHub release assets
+  // return) download in place without a popup-blocker hit. The earlier
+  // anchor.click() + download attribute path was ignored for cross-
+  // origin URLs and unreliable; the previous window.open fallback got
+  // killed by popup blockers entirely.
   useEffect(() => {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
 
-    const ac = new AbortController();
-
     async function start() {
-      let downloadUrl: string | null = null;
-      let downloadName = "Corder.zip";
+      let downloadUrl = FALLBACK_URL;
+      let downloadName = FALLBACK_NAME;
 
       try {
-        const res = await fetch(RELEASES_API, { signal: ac.signal });
+        const res = await fetch(RELEASES_API);
         if (res.ok) {
           const release = (await res.json()) as {
             assets?: Array<{ name: string; browser_download_url: string }>;
@@ -62,54 +72,38 @@ export function InstallClient() {
           }
         }
       } catch {
-        // GitHub API blocked / rate-limited / offline. Fall back to
-        // the releases page below so the user still has somewhere to go.
+        // API blocked / rate-limited / offline. downloadUrl already
+        // holds the hardcoded FALLBACK_URL, so the trigger below fires
+        // against a real binary either way.
       }
 
-      if (ac.signal.aborted) return;
-
-      const finalUrl = downloadUrl ?? RELEASES_HTML_FALLBACK;
-      setResolvedUrl(finalUrl);
+      setResolvedUrl(downloadUrl);
       setResolvedName(downloadName);
 
-      if (!downloadUrl) {
-        try {
-          window.open(RELEASES_HTML_FALLBACK, "_blank", "noopener,noreferrer");
-        } catch {
-          /* popup blocked, manual link below covers it */
-        }
-        trackEvent("install_auto_download_fallback", {
+      // Trigger via hidden iframe. Cross-origin URLs from GitHub
+      // release assets return `Content-Disposition: attachment` so the
+      // browser downloads the file and the iframe gets nothing to
+      // render -- user stays on /install/, no popup blocker, no
+      // navigation flash. The anchor-click + download-attribute trick
+      // gets ignored cross-origin by Chrome 83+, and window.open hits
+      // popup blockers. This is the path Sparkle uses for the same
+      // reason.
+      try {
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = downloadUrl;
+        document.body.appendChild(iframe);
+        window.setTimeout(() => iframe.remove(), 30_000);
+        trackEvent("install_auto_download_started", {
           source: "install_page",
-          reason: "no_asset_resolved",
+          asset: downloadName,
         });
-        return;
+      } catch {
+        /* user can still use the manual link below */
       }
-
-      // Defer one tick so the page has painted before the browser's
-      // save dialog opens -- gives the user a moment to read the
-      // heading + manual fallback before the OS modal interrupts.
-      window.setTimeout(() => {
-        if (ac.signal.aborted) return;
-        try {
-          const a = document.createElement("a");
-          a.href = downloadUrl;
-          a.download = downloadName;
-          a.rel = "noopener noreferrer";
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          trackEvent("install_auto_download_started", {
-            source: "install_page",
-            asset: downloadName,
-          });
-        } catch {
-          /* user can still use the manual link below */
-        }
-      }, 120);
     }
 
     start();
-    return () => ac.abort();
   }, []);
 
   // Step copy diverges by file type: DMG mounts a Finder window with
