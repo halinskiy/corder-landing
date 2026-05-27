@@ -222,50 +222,105 @@
   "pricing": {
     "eyebrow": "Pricing",
     "heading": "Pricing",
-    "subhead": "Launch pricing on both plans, only for the next 3 months. The free tier always ships with the download",
+    "subhead": "Launch pricing on Pro and Max, only for the next 3 months. The free tier always ships with the download",
+    "billing": {
+      "monthlyLabel": "Monthly",
+      "annualLabel": "Yearly"
+    },
     "tiers": [
       {
-        "name": "Monthly",
-        "price": "$10",
-        "priceOriginal": "$14",
-        "priceUnit": "month",
-        "billNote": "Pay $30 upfront for 3 months. Limited time",
-        "badge": "Launch offer",
+        "name": "Free",
+        "tagline": "Great for solo users who manage their own Gemini API key.",
+        "badge": null,
+        "monthly": {
+          "price": "$0",
+          "priceUnit": "forever",
+          "billNote": "No credit card, no sign-up"
+        },
+        "annual": {
+          "price": "$0",
+          "priceUnit": "forever",
+          "billNote": "No credit card, no sign-up"
+        },
         "features": [
-          "Unlimited recording length",
-          "Auto-summary with sections and decisions",
-          "Priority support, direct line to the maker",
-          "New features as they ship",
-          "Everything in Free"
+          "Record any meeting, unlimited length",
+          "Gemini 2.5 Flash transcription, speakers labelled",
+          "Searchable transcript, drag out to Notion",
+          "Screen video captured alongside the transcript",
+          "30 days of meeting history on your Mac",
+          "Bring your own Gemini key, pay Google direct"
         ],
-        "cta": "Get Pro",
+        "cta": "Download for Mac",
+        "ctaHref": "/install/",
         "ctaStyle": "secondary",
         "highlight": false,
-        "trackEvent": "cta_pro_click",
-        "trackBilling": "monthly_launch"
+        "trackEvent": "cta_free_click",
+        "trackBilling": null
       },
       {
-        "name": "Annual",
-        "price": "$99",
-        "priceOriginal": "$144",
-        "priceUnit": "year",
-        "billNote": "Billed once a year. Just $8.25 a month",
-        "badge": "Save 31%",
+        "name": "Pro",
+        "tagline": "Great for regular users who want zero API friction and sharper transcription on hard calls.",
+        "badge": "Launch offer",
+        "monthly": {
+          "price": "$10",
+          "priceOriginal": "$14",
+          "priceUnit": "month",
+          "billNote": "$10/mo for the first 3 months. $14/mo after"
+        },
+        "annual": {
+          "price": "$99",
+          "priceOriginal": "$144",
+          "priceUnit": "year",
+          "billNote": "$8.25 a month, billed yearly. Price locked"
+        },
         "features": [
-          "Save $45 a year vs monthly",
-          "Price locked at $99, forever",
-          "First in line for new features",
-          "Free upgrades to future Pro models",
-          "Everything in Monthly"
+          "Everything in Free, plus:",
+          "Transcription included, no Gemini key required",
+          "Gemini 2.5 Pro model for accents and crosstalk",
+          "Unlimited meeting history",
+          "Auto-summary with sections and action items",
+          "Custom summary templates for your call type",
+          "Priority support, direct line to the maker"
         ],
         "cta": "Get Pro",
+        "ctaHref": "#download",
         "ctaStyle": "primary",
         "highlight": true,
         "trackEvent": "cta_pro_click",
-        "trackBilling": "annual"
+        "trackBilling": "pro_launch"
+      },
+      {
+        "name": "Max",
+        "tagline": "Great for power users who record daily and want summaries delivered to their tools automatically.",
+        "badge": "Power user",
+        "monthly": {
+          "price": "$30",
+          "priceUnit": "month",
+          "billNote": "Cancel anytime"
+        },
+        "annual": {
+          "price": "$299",
+          "priceUnit": "year",
+          "billNote": "$24.92 a month, billed yearly"
+        },
+        "features": [
+          "Everything in Pro, plus:",
+          "API access, pull any transcript via REST",
+          "Webhooks, push summaries on meeting end",
+          "AI search across your full meeting library",
+          "Unlimited custom summary templates",
+          "Early builds before public release",
+          "Dedicated support, same-day reply"
+        ],
+        "cta": "Get Max",
+        "ctaHref": "#download",
+        "ctaStyle": "secondary",
+        "highlight": false,
+        "trackEvent": "cta_max_click",
+        "trackBilling": "max"
       }
     ],
-    "microcopy": "Pricing in USD. No credit card to download. Free tier comes with the Mac app"
+    "microcopy": "Prices in USD. No credit card to download. macOS 14 or later"
   },
   "faq": {
     "eyebrow": "Questions",
@@ -474,7 +529,7 @@
     "lineGoogle": "you'd pay Google about",
     "lineUs": "Free download. About $0.30 per recorded hour goes to Google",
     "cta": "Download for Mac",
-    "ctaHref": "#download",
+    "ctaHref": "/install/",
     "footer": "macOS 14+, Apple Silicon, Bring your own Gemini API key",
     "ratePerHour": 0.3,
     "defaultHours": 30,

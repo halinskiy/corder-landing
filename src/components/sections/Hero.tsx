@@ -115,8 +115,7 @@ export function Hero() {
             data-tokens="radius-pill,color-accent,color-bg,ease-out"
           >
             <a
-              href="https://github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip"
-              download="Corder.zip"
+              href="/install/"
               className="cta-pill cta-pill--primary inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[17px] font-medium md:w-auto md:min-w-[260px] md:px-9"
               data-track-event="cta_download_click"
               data-track-source="hero"

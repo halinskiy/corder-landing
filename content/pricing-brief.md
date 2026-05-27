@@ -1,142 +1,162 @@
-# Corder — Pricing Brief for Copywriter
-**Date:** 2026-05-09 (updated — §10 cost-formula tiers)
-**Source:** research/economics/corder-pricing-strategy.md
-**Read this before writing any pricing copy.**
+# Corder Pricing Brief
+# Written by 3mpq-economist — 2026-05-27
+# Supersedes the 2026-05-09 version (old 3-tier minute-cap model is void).
 
 ---
 
-## Final tiers (revised — 3-tier structure)
+## 1. Tier breakdown
 
-| Tier | Price | Minutes/month | Notes |
-|------|-------|--------------|-------|
-| Free | $0 | 300 min Flash total, max 60 min/recording | Forever. No credit card. |
-| Personal | $9/month | 600 min Flash only | Flash model only. No Pro. Annual: $6.75/month ($81/year). |
-| Pro | $14/month | 600 min Flash + 300 min Pro | Two models, user chooses per recording. Annual: $10.50/month ($126/year). |
-| Lifetime | $99 | Unlimited Flash forever | Launch offer. +30-day Pro trial, then $14/month or stay on Flash free. |
+### Free — $0 forever
+**Great for:** Solo users who want full recording power and are comfortable managing their own Gemini API key.
 
-Annual saves 25% on both Personal and Pro. Framing: "3 months free" (not "25% off").
+Badge: none. Free should not feel like a stripped trial. No badge.
 
----
+Feature lines (5-8, all under 8 words):
+- No credit card, no sign-up required
+- Record any meeting, unlimited length
+- Gemini 2.5 Flash transcription, speakers labelled
+- Full transcript: searchable, scrubable, drag-out to Notion
+- Screen video captured alongside the transcript
+- 30 days of meeting history, stored on your Mac
+- Bring your own Gemini key (you pay Google ~$0.30/hr)
 
-## What each tier signals to the buyer
-
-**Free:** This is a real product with a real limit, not a 7-day hook. 300 minutes is enough for 2-3 weeks of actual use. The user hits the wall naturally and upgrades by choice, not by expiry. No credit card. No catch. Signal: confidence in the product.
-
-**Personal ($9/month):** The economy tier for people who record regularly but do not need heavy-accent accuracy. 600 minutes = 10 hours. Flash handles 85% of calls fine. This is the "I record every client call but they are mostly clear audio" user. Not "cheap" — "right-sized."
-
-**Pro ($14/month):** Two models available per recording. Flash for standard calls, Pro for hard ones. The user chooses the model before each recording. 300 Pro minutes = 5 hours of Gemini 2.5 Pro per month. For founders and consultants with international clients, noisy calls, or multi-speaker meetings.
-
-**Lifetime ($99):** Launch-era price. One payment instead of monthly bills. Flash forever. For Product Hunt day and Indie Hackers launch. Not a permanent column.
+CTA: "Download for Mac"
 
 ---
 
-## Key messages per tier
+### Pro — $14/mo ($10/mo launch offer, first 3 months)
+**Great for:** Regular users who want zero API friction and sharper transcription on hard calls.
 
-**Free — what to say:**
-- "300 minutes of Gemini 2.5 Flash per month"
-- "Up to 60 minutes per recording"
-- "No credit card required"
-- "Speaker labels and search included"
-- "Resets on the 1st of each month"
+Badge: "Launch offer" on the $10 price only. Remove after the 3-month window. No badge on the $14 regular price.
 
-**Personal — what to say:**
-- "600 minutes of Gemini 2.5 Flash per month"
-- "No limit on recording length within the 600-minute pool"
-- "Flash transcription — fast, accurate, no bot"
-- Annual: "3 months free when you pay yearly"
+Annual: $99/yr ($8.25/mo effective). Note: "Price locked."
 
-**Pro — what to say:**
-- "600 Flash minutes + 300 Pro minutes per month"
-- "Choose the model for each recording — Flash for standard calls, Pro for accents, cross-talk, or poor audio"
-- "Gemini 2.5 Pro — better on hard audio"
-- Annual: "3 months free when you pay yearly"
+Feature lines:
+- Everything in Free, plus:
+- Transcription included, no Gemini key required
+- Gemini 2.5 Pro model for hard accents and crosstalk
+- Unlimited meeting history (Free keeps 30 days)
+- Auto-summary with sections and action items
+- Custom summary templates for your call type
+- Priority support, direct line to the maker
 
-**Below the pricing table (microcopy, all tiers):**
+CTA: "Get Pro"
+
+---
+
+### Max — $30/mo
+**Great for:** Power users who record daily and want their summaries delivered automatically to their tools.
+
+Badge: "Power user"
+
+Annual: OPEN QUESTION — see section 4.
+
+Feature lines:
+- Everything in Pro, plus:
+- API access — pull any transcript via REST
+- Webhook delivery — push summaries on meeting end
+- AI search across your full meeting library
+- Unlimited custom summary templates
+- Early builds before public release
+- Dedicated support with same-day SLA
+
+CTA: "Get Max"
+
+---
+
+## 2. The upgrade story
+
+### Free to Pro: what friction does Pro remove?
+
+Two things.
+
+First, the Gemini API key. Free users provision a key, paste it into settings, and get a Google bill. That is fine for a developer or a power user. It is real friction for a founder recording 15-20 hours a month who wants the thing to work. At $10/month launch price, Pro costs less than the Google pass-through bill for 34 hours of Flash transcription. Anyone recording more than 34 hours per month is already paying more via BYOK. Anyone who records less but does not want to manage API credentials will pay $10 to never think about it again.
+
+Second, the model. Gemini 2.5 Flash is accurate for clean calls. Gemini 2.5 Pro catches heavy accents, crosstalk, and domain-specific jargon that Flash misses. A consultant on a client call with a non-native speaker who loses two sentences loses money. The model upgrade is insurance.
+
+Third unlock: meeting history. The 30-day cap on Free means a user cannot pull a quote from a call 6 weeks ago. Unlimited history in Pro removes that ceiling with zero behavior change.
+
+### Pro to Max: what is the $20/mo worth?
+
+The only honest answer for a single-user macOS app is automation, not capacity. There are no teams to sell. No SSO. No workspace seat count.
+
+The Max upgrade sells time.
+
+A Pro user reads their summary, opens Notion, pastes it in. A Max user has the summary delivered to Notion the moment the call ends via webhook. For someone running 8-10 client calls a week, that is 30-40 minutes of copy-paste eliminated per week. At any billable rate above $50/hr, the $20/month pays for itself in one recovered session.
+
+The API access reinforces this. A Max user can build their own CRM integration, their own Obsidian sync, their own Slack digest. This is the audience who would have built those integrations anyway. Max gives them the surface to build against instead of screenscraping.
+
+AI search across all meetings is the third unlock. Not a list of transcripts to dig through. A single query that returns an answer from across the full library. "What did the client say about the deadline in April?" is a question Free and Pro users cannot answer without manual searching. Max makes that a two-second query.
+
+Do not position Max as "premium Pro." Position it as "the version you automate." The $20 gap is only justifiable if Max visibly earns time back every week. The copy must make that concrete.
+
+---
+
+## 3. Pricing brief for copywriter
+
+**Price anchors:** Free $0 / Pro $14 ($10 launch) / Max $30
+
+**What each price signals:**
+- Free: full product, not a trial. The signal is confidence.
+- Pro $14: SaaS-market parity. Granola Business is $14. Fireflies Pro is $10-18. $14 reads as "serious tool, not a toy." $10 launch reads as "founder price, get in early."
+- Max $30: deliberate power-user positioning. Not "enterprise." Not a seat count. $30 is the price of automation, not of storage or meeting minutes. Krisp Advanced is $15/mo; Fireflies Business is $19-29/mo. At $30 you are above the market midpoint, which is correct because the audience is people whose time is worth $100+/hr.
+
+**Language the prices support:**
+- Free: "download", "yours", "no sign-up", "keeps running", "your Mac only"
+- Pro: "included", "no key", "direct line", "launch price", "Pro model", "every call"
+- Max: "automates", "pipes into", "API", "webhook", "your tools", "on meeting end"
+
+**Language the prices do NOT support:**
+- "Premium" — forbidden word. Write the tier name "Pro" or "Max."
+- "Enterprise-grade" or "business-ready" — there are no teams, no workspace, no SSO at any tier
+- "Unlimited everything" — Free already has unlimited recording length. The differentiators are history, model, and automation, not time caps. "Unlimited" used loosely will confuse users who see a 30-day history limit on Free.
+- "Trial" or "free trial" about the Free tier — it is not a trial. It is the product with BYOK. Calling it a trial undermines the BYOK story and sounds like a SaaS hook.
+- "Save X%" on annual Pro — the existing "Price locked forever" line from copy.json is better. Use that.
+- "Advanced AI" — name the model. "Gemini 2.5 Pro" not "advanced AI."
+
+**Feature line rules:**
+- Under 8 words per line
+- Specific nouns only: "Gemini 2.5 Pro model", not "better transcription"
+- No parentheticals inside feature lines (use footnote microcopy below the table)
+- "Everything in Free, plus:" before each Pro line
+- "Everything in Pro, plus:" before each Max line
+
+**CTA wording:**
+- Free: "Download for Mac"
+- Pro (launch window): "Get Pro"
+- Pro (post-launch): "Start Pro"
+- Max: "Get Max"
+
+**Badge rules:**
+- Pro: "Launch offer" badge on the $10 price. Remove after 3-month window. Do not badge $14.
+- Max: "Power user" badge, small, subdued.
+- Free: no badge.
+
+**Annual microcopy:**
+- Pro: "$99/yr — $8.25 a month. Price locked."
+- Max annual: TBD (see open questions).
+
+**Microcopy below the table (all tiers):**
 - "No credit card to download"
 - "Cancel anytime"
-- "All prices in USD"
+- "Prices in USD"
 - "macOS 14 or later"
-- "Audio is processed by Gemini and deleted after transcription"
-- "Minutes reset on the 1st of each month"
+
+**Competitor context for voice calibration:**
+- Granola Basic (free) limits meeting history. Corder Free is more generous on storage but requires a Gemini key. Do not name Granola on the pricing page.
+- Fireflies Free gates AI summaries and transcript downloads. Corder Free includes both. Use this as a confidence signal, not as a comparison table item.
+- Otter Free caps at 300 min/month. Corder Free has no minute cap. Never advertise this as "vs Otter." Use it as internal confidence: our Free is genuinely generous, the BYOK requirement is the only ask.
 
 ---
 
-## CTA for each tier
+## 4. Open questions for the maker
 
-| Tier | CTA | Notes |
-|------|-----|-------|
-| Free | "Download for macOS" | Primary button. Do not say "Sign up" — it is a download. |
-| Personal | "Get Personal" | Do not say "Upgrade" — the user has not signed up yet on the pricing page. |
-| Pro | "Get Pro" | Same logic. Flat imperative. |
-| Lifetime | "Get Lifetime Access" | Secondary button style. Not the primary CTA. |
+1. **Is the Gemini API key truly removed in Pro, or does Pro include hosted transcription via a Corder-owned key?** The copy above assumes Corder pays Google on behalf of Pro and Max users. If the architecture is still BYOK but with a Corder-supplied key the user never sees, the feature line "no key required" reads the same to the buyer, but the unit economics change significantly. At $10/mo launch price and $0.30/hr Google pass-through, a Pro user recording more than 34 hours/month is unprofitable for Corder. Verify the margin model before shipping copy. ASSUMPTION: Pro = Corder-hosted transcription.
 
----
+2. **Does Gemini 2.5 Pro Ultra exist as a selectable model, or is Max's higher-accuracy claim hypothetical?** The FAQ in copy.json mentions Flash vs Pro as two models. If Max introduces a third model tier, it needs to ship before the pricing page goes live. If it does not ship, Max's accuracy line must be removed or reframed as "same Pro model, plus automation."
 
-## Language this price SUPPORTS
+3. **Is the API and webhook story real or roadmap?** If Max launches at $30/mo but the API is "coming soon," the tier has no upgrade story. Either ship the API first, or launch Max with a clear "API access in beta for early subscribers" qualifier.
 
-**Free:**
-- "Try before you buy" — yes, but do not call it a trial. Call it "free, with a monthly limit."
-- "Real transcription, not a demo" — yes.
+4. **Is the 30-day history limit on Free enforced in the app today?** If Free currently has unlimited local history, adding a cap is a product change that requires a release, not just a copy change. If it is already enforced, the feature line is accurate as written.
 
-**Personal $9/month:**
-- "Affordable" — yes.
-- "No-brainer for regular callers" — yes.
-- "Flash is fast and accurate for most calls" — yes.
-- Comparing to "less than a streaming subscription" — acceptable.
-
-**Pro $14/month:**
-- "Two models, one app" — yes. This is the differentiator.
-- "Right tool for hard audio" — yes.
-- "Same price as Granola, with model choice" — yes, for calibration.
-- "No-brainer" — still works at $14.
-
----
-
-## Language this price does NOT support
-
-- "Premium" — $14 is not premium. Write "Pro." The tier is named Pro, use that.
-- "Enterprise-grade" — wrong register. This is an individual macOS tool.
-- "Luxury" / "Investment" — nowhere on this page.
-- "Save 25%" for annual — accurate but feels like a sales pitch. Better: "3 months free" or "Pay for 9, get 12."
-- "Unlimited" for Free — there is a 300-minute cap. Never write "unlimited" for Free.
-- "Unlimited" for Personal — 600-minute cap. Do not write "unlimited." Write "600 minutes per month."
-- "The most affordable meeting recorder" — Otter Pro is $8.33/month, Tactiq is $8/month. We are not the cheapest. Do not claim it.
-- "Free trial" — Free IS the product, not a trial. Never call it a trial.
-- "Advanced AI" — name the model instead. "Gemini 2.5 Pro" not "advanced AI."
-- "Industry-leading" / "best-in-class" — generic. Banned.
-
----
-
-## Competitor context (for voice calibration)
-
-| Competitor | Free limit | Paid entry | Entry minutes | Our edge |
-|------------|-----------|------------|---------------|----------|
-| Otter.ai | 300 min | $8.33/mo (annual) | 1,200 min | No bot in the call |
-| MeetGeek | 180 min (3h) | $9.99/mo (annual) | 1,200 min | No bot in the call |
-| Granola | Unlimited history (30d) | $14/mo (annual) | Unlimited | No bot; model choice |
-| Fathom | 5 AI summaries, unlimited recordings | $16/mo (annual) | Unlimited | No bot; model choice |
-| Tactiq | 10 transcripts | $8/mo (annual) | 50 transcripts | No bot |
-
-Otter gives more Free minutes per month than Personal. If the buyer counts minutes, Otter wins on Free. The argument is not minutes — it is privacy: no bot joins the call. Every minute of comparison must come back to no-bot. That is the only differentiation that holds across all three paid tiers.
-
----
-
-## One sentence per tier for the pricing page
-
-**Free:** "Transcribe up to 300 minutes a month with Gemini 2.5 Flash — no bot, no credit card, no catch."
-
-**Personal:** "600 minutes of Flash transcription a month for people who record every call."
-
-**Pro:** "Flash for standard calls, Pro for hard ones. You choose the model. 600 + 300 minutes per month."
-
-Do not write these as headlines. Use them as subheads or feature summary lines under the tier name and price.
-
----
-
-## The unanswered question on the page (anticipate it)
-
-The buyer will ask: "Why are there minute limits when Fathom and Granola are unlimited?"
-
-Answer (in FAQ or tooltip, not in pricing table): "Corder processes audio through Gemini, which has API costs. Limits keep the product sustainable so it stays independent. Pro users get 15 hours of transcription per month across two models — enough for any active user."
-
-Write this as a human sentence, not a legal disclaimer.
+5. **Annual pricing for Max: what is the target?** $299/yr ($24.92/mo effective, saves $61) is the logical parallel to Pro's $99/yr. Needs a number before the pricing section can be designed.
