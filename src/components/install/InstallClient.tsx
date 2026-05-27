@@ -18,8 +18,12 @@ const RELEASES_HTML_FALLBACK =
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
 // might upload. Version suffix (e.g. Corder-0.10.0.zip) and naked names
-// (Corder.zip, Corder.dmg) both match.
-const ASSET_RE = /^Corder[-.\w]*\.(zip|dmg)$/i;
+// (Corder.zip, Corder.dmg) both match. The runtime scan below prefers a
+// .dmg over a .zip when both exist on the release -- DMG gives the user
+// a native mount + drag-to-Applications surface, whereas .zip is what
+// Sparkle uses for in-app auto-update.
+const DMG_RE = /^Corder[-.\w]*\.dmg$/i;
+const ZIP_RE = /^Corder[-.\w]*\.zip$/i;
 
 export function InstallClient() {
   const [resolvedUrl, setResolvedUrl] = useState<string>(RELEASES_HTML_FALLBACK);
@@ -47,7 +51,11 @@ export function InstallClient() {
           const release = (await res.json()) as {
             assets?: Array<{ name: string; browser_download_url: string }>;
           };
-          const match = release.assets?.find((a) => ASSET_RE.test(a.name));
+          // Prefer .dmg over .zip when both exist (cleaner UX for the
+          // user). Fall back to .zip if the release only ships zip.
+          const dmg = release.assets?.find((a) => DMG_RE.test(a.name));
+          const zip = release.assets?.find((a) => ZIP_RE.test(a.name));
+          const match = dmg ?? zip;
           if (match) {
             downloadUrl = match.browser_download_url;
             downloadName = match.name;
@@ -104,6 +112,10 @@ export function InstallClient() {
     return () => ac.abort();
   }, []);
 
+  // Step copy diverges by file type: DMG mounts a Finder window with
+  // an Applications shortcut; ZIP expands an .app you drag yourself.
+  const isDmg = /\.dmg$/i.test(resolvedName);
+
   return (
     <main
       data-component="InstallPage"
@@ -133,7 +145,15 @@ export function InstallClient() {
                 1
               </div>
               <p className="install-step-card__label">
-                Open <em>Corder.zip</em> from your <em>Downloads</em> folder.
+                {isDmg ? (
+                  <>
+                    Open <em>Corder.dmg</em> from your <em>Downloads</em> folder.
+                  </>
+                ) : (
+                  <>
+                    Open <em>Corder.zip</em> from your <em>Downloads</em> folder.
+                  </>
+                )}
               </p>
             </li>
             <StepArrow />
@@ -142,7 +162,15 @@ export function InstallClient() {
                 2
               </div>
               <p className="install-step-card__label">
-                Drag the <em>Corder</em> icon into your <em>Applications</em> folder.
+                {isDmg ? (
+                  <>
+                    Drag <em>Corder</em> into the <em>Applications</em> folder in the window that opens.
+                  </>
+                ) : (
+                  <>
+                    Drag the <em>Corder</em> icon into your <em>Applications</em> folder.
+                  </>
+                )}
               </p>
             </li>
             <StepArrow />
