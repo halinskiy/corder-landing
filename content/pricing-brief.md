@@ -160,3 +160,62 @@ Do not position Max as "premium Pro." Position it as "the version you automate."
 4. **Is the 30-day history limit on Free enforced in the app today?** If Free currently has unlimited local history, adding a cap is a product change that requires a release, not just a copy change. If it is already enforced, the feature line is accurate as written.
 
 5. **Annual pricing for Max: what is the target?** $299/yr ($24.92/mo effective, saves $61) is the logical parallel to Pro's $99/yr. Needs a number before the pricing section can be designed.
+
+---
+
+## 5. Maker decisions (2026-05-27, post-brief)
+
+Maker answered the five open questions. Locked pricing + feature
+copy is now driven by these decisions; copy.json#pricing reflects
+this section verbatim.
+
+### Q1 — Pro = hosted, NOT BYOK.
+
+BYOK at mass-market = conversion death (90% of users do not know
+what an API key is). All paid tiers are HOSTED. Free is hosted too,
+with a 5-hour monthly cap. Pro carries a 25-hour soft cap with
+"$0.40/hour overage if you go over" surfaced as a feature line, not
+hidden in a tooltip. Max is unlimited with a fair-use clause.
+
+Unit economics on Whisper API (gpt-4o-mini-transcribe, ~$0.36/hr
+dual-track): Pro 25h x $0.36 = $9 cost on $10 revenue at launch
+price = ~10% margin. Acceptable. Revisit if Whisper/Gemini cost
+shifts more than 30%.
+
+Free 5h x $0.36 = $1.80 cost. No revenue. Treated as customer
+acquisition cost.
+
+### Q2 — Model claim split.
+
+NO fake "Ultra" tier. Real public models only.
+- Pro: Gemini 2.5 Flash (or Whisper, depending on prod choice)
+- Max: Gemini 2.5 Pro for summaries, marginal cost increase
+  (~$0.05/hr), justifies the upper tier without inventing models.
+
+Marketing line on Max card: "Gemini 2.5 Pro model for sharper
+summaries". On Pro card: no model name -- just "Auto-summary".
+Avoids cluttering Pro with model trivia while the Max claim stays
+honest.
+
+### Q3 — API and webhooks SCRAPPED from launch features.
+
+Never sell roadmap as current. Both lines removed from Max card.
+Max differentiator at launch = unlimited hours + 2.5 Pro model +
+early builds + dedicated support. API ships 4-6 weeks post-launch
+as free value-add to existing Max subscribers (announce on
+Roadmap/Changelog, do not retro-add to landing copy until live).
+
+### Q4 — 30-day Free history cap NOT implemented in code.
+
+Removed from Free feature list entirely. Adding to copy without
+shipping the cap = misleading. When the app-side gate ships
+(MeetingRepository filter, lock-icon UI, 90-day grace window for
+Pro->Free downgrades), the line returns to the Free feature list.
+
+### Q5 — Max annual: $239/yr launch ($19.92/mo effective).
+
+Aggressive launch positioning (Granola Business is $30/mo / $288/yr).
+Below Granola, well below Otter Business. Locks in early adopters
+at a price the maker can raise to $29-30 once product-market fit
+is established 6 months in (classic SaaS pattern). priceOriginal
+shows $348 (12 x $29) so the discount math reads.
