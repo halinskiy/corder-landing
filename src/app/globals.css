@@ -4409,10 +4409,10 @@ button:focus:not(:focus-visible) {
  * -------------------------------------------------------------------- */
 
 .hero-rec-pill {
-  /* Matches the recording red used inside the HeroLibraryDemo
-   * transcript widget so the headline cue and the live UI share
-   * a single REC colour. */
-  --rec: #b7443d;
+  /* `--rec` is now a global token in tokens.css; the headline cue,
+   * the HeroLibraryDemo transcript widget, the account
+   * subscription-canceled label and the footer slogan's "Record"
+   * word all share it. */
   position: relative;
   display: inline-block;
   cursor: pointer;
