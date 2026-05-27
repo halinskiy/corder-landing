@@ -133,9 +133,9 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: PricingBilling })
             <span className="pricing-card__badge">{tier.badge}</span>
           )}
         </div>
-        {tier.tagline && (
-          <p className="pricing-card__tagline">{tier.tagline}</p>
-        )}
+        {/* Tagline removed from render 2026-05-27 per maker. Strings
+            still live in copy.json#pricing.tiers[].tagline in case
+            they come back later. */}
       </div>
 
       <div className="pricing-card__price-block">
