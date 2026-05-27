@@ -883,11 +883,29 @@ export function SettingsMock() {
 
             {/* Settings rail */}
             <div className="hl-settings-pane hl-set-rail">
+              {/* New in v0.11: Microphone / Transcription model / Language
+                  unified popover dropdowns (auto-flip up when there is no
+                  room below). Sits at the top of the rail so the headline
+                  visual of v0.11 reads first. */}
               <div className="hl-settings-card">
-                <SettingsToggleRow
-                  label="System notifications"
-                  desc="Notify on recording start, transcript ready, and network loss."
-                  on={false}
+                <SettingsDropdownRow
+                  label="Microphone"
+                  desc="Audio source Corder captures while recording."
+                  value="MacBook Pro Microphone"
+                />
+              </div>
+              <div className="hl-settings-card">
+                <SettingsDropdownRow
+                  label="Transcription model"
+                  desc="On-device Whisper Small. Larger models give sharper accuracy at the cost of disk."
+                  value="Whisper Small · 480 MB"
+                />
+              </div>
+              <div className="hl-settings-card">
+                <SettingsDropdownRow
+                  label="Language"
+                  desc="Primary language of your meetings. Picker moved here from the header."
+                  value="English"
                 />
               </div>
               <div className="hl-settings-card">
@@ -965,6 +983,35 @@ function SettingsToggleRow({
       </div>
       <span className={`hl-set-switch${on ? " on" : ""}`} aria-hidden="true">
         <span className="hl-set-switch-thumb" />
+      </span>
+    </div>
+  );
+}
+
+/* v0.11 Settings dropdown row -- popover-style select trigger that
+ * sits to the right of the label / desc. Hairline border, plan label
+ * + chevron, no native macOS select. Used for Microphone, Transcription
+ * model and Language inside SettingsMock. Decorative only. */
+function SettingsDropdownRow({
+  label,
+  desc,
+  value,
+}: {
+  label: string;
+  desc: string;
+  value: string;
+}) {
+  return (
+    <div className="hl-settings-row hl-settings-row--dropdown" aria-label={label}>
+      <div className="hl-settings-row-text">
+        <div className="hl-settings-row-label">{label}</div>
+        <div className="hl-settings-row-desc">{desc}</div>
+      </div>
+      <span className="hl-set-dropdown" aria-hidden="true">
+        <span className="hl-set-dropdown-value">{value}</span>
+        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 4.5l3 3 3-3" />
+        </svg>
       </span>
     </div>
   );

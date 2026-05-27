@@ -3164,6 +3164,38 @@ button:focus:not(:focus-visible) {
 .hl-set-rail .hl-set-switch { width: 26px; height: 14px; }
 .hl-set-rail .hl-set-switch-thumb { width: 10px; height: 10px; }
 .hl-set-rail .hl-set-switch.on .hl-set-switch-thumb { transform: translateX(12px); }
+
+/* v0.11 unified Settings dropdown trigger. Sits to the right of the
+ * label / desc, hairline border, plan-label + chevron. Decorative
+ * in the mock; in the real app it pops a popover with options. */
+.hl-set-dropdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid var(--hl-border-strong);
+  border-radius: 5px;
+  background: var(--hl-bg);
+  font-size: 10px;
+  color: var(--hl-fg);
+  white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+}
+.hl-set-dropdown svg {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  color: var(--hl-fg-muted);
+}
+.hl-set-dropdown-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+.hl-settings-row--dropdown {
+  align-items: center;
+}
 .hl-set-rail .hl-settings-hotkey { padding: 8px 10px; gap: 3px; }
 .hl-set-rail .hl-settings-hotkey-pill {
   margin-top: 6px;
