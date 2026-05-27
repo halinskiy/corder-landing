@@ -120,7 +120,7 @@ export function Hero() {
               data-track-event="cta_download_click"
               data-track-source="hero"
             >
-              <AppleIcon size={22} />
+              <AppleIcon size={28} />
               {hero.ctaPrimary}
             </a>
             {hero.ctaHint && (
