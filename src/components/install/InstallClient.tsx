@@ -7,43 +7,115 @@ import { trackEvent } from "@/lib/track";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/install/InstallClient.tsx";
 
-const ZIP_URL =
-  "https://github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip";
+const RELEASES_API =
+  "https://api.github.com/repos/halinskiy/corder-updates/releases/latest";
+
+// Fallback used when the GitHub API is rate-limited / blocked. Points
+// at the release asset that existed at the time of this build. Always
+// open the latest-release HTML page rather than a stale binary URL so
+// the user lands somewhere useful even if every fetch path fails.
+const RELEASES_HTML_FALLBACK =
+  "https://github.com/halinskiy/corder-updates/releases/latest";
+
+// Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
+// might upload. Version suffix (e.g. Corder-0.10.0.zip) and naked names
+// (Corder.zip, Corder.dmg) both match.
+const ASSET_RE = /^Corder[-.\w]*\.(zip|dmg)$/i;
 
 type Phase = "waiting" | "started" | "manual";
 
 export function InstallClient() {
   const [phase, setPhase] = useState<Phase>("waiting");
+  const [resolvedUrl, setResolvedUrl] = useState<string>(RELEASES_HTML_FALLBACK);
+  const [resolvedName, setResolvedName] = useState<string>("Corder.zip");
   const triggeredRef = useRef(false);
 
-  // Auto-trigger the download on mount via a real anchor click. Some
-  // browsers ignore window.location assignments with `download` headers
-  // when invoked from beforeLoad; an actual <a> in the DOM with
-  // `download` attribute is the reliable cross-browser path.
+  // Resolve the actual asset URL via the GitHub API. The repo names
+  // its release artefact 'Corder-<version>.zip' (e.g. Corder-0.10.0.zip),
+  // so the static `/releases/latest/download/Corder.zip` URL pattern
+  // 404s. The API lookup picks the first .zip / .dmg asset on the
+  // latest release and downloads THAT.
+  //
+  // Once resolved, fire the download via a real anchor click. Some
+  // browsers ignore window.location assignments with `download`
+  // headers when invoked from beforeLoad; an actual <a> in the DOM
+  // with `download` attribute is the reliable cross-browser path.
   useEffect(() => {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
 
-    // Defer one tick so React has mounted the page chrome before the
-    // browser's download prompt fires -- the user reads "Download
-    // started" before their save dialog opens.
-    const id = window.setTimeout(() => {
-      try {
-        const a = document.createElement("a");
-        a.href = ZIP_URL;
-        a.download = "Corder.zip";
-        a.rel = "noopener noreferrer";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setPhase("started");
-        trackEvent("install_auto_download_started", { source: "install_page" });
-      } catch {
-        setPhase("manual");
-      }
-    }, 120);
+    const ac = new AbortController();
 
-    return () => window.clearTimeout(id);
+    async function start() {
+      let downloadUrl: string | null = null;
+      let downloadName = "Corder.zip";
+
+      try {
+        const res = await fetch(RELEASES_API, { signal: ac.signal });
+        if (res.ok) {
+          const release = (await res.json()) as {
+            assets?: Array<{ name: string; browser_download_url: string }>;
+          };
+          const match = release.assets?.find((a) => ASSET_RE.test(a.name));
+          if (match) {
+            downloadUrl = match.browser_download_url;
+            downloadName = match.name;
+          }
+        }
+      } catch {
+        // GitHub API blocked / rate-limited / offline. Fall back to
+        // the releases page below so the user still has somewhere to go.
+      }
+
+      if (ac.signal.aborted) return;
+
+      // Update state for the manual-fallback link before triggering so
+      // a user who clicks it after the trigger goes to the resolved URL.
+      const finalUrl = downloadUrl ?? RELEASES_HTML_FALLBACK;
+      setResolvedUrl(finalUrl);
+      setResolvedName(downloadName);
+
+      if (!downloadUrl) {
+        // No direct asset URL -- send the user to the releases page
+        // in a new tab and show the manual phase so they understand.
+        try {
+          window.open(RELEASES_HTML_FALLBACK, "_blank", "noopener,noreferrer");
+        } catch {
+          /* popup blocked, manual link below covers it */
+        }
+        setPhase("manual");
+        trackEvent("install_auto_download_fallback", {
+          source: "install_page",
+          reason: "no_asset_resolved",
+        });
+        return;
+      }
+
+      // Defer one tick so the "Download started" pill has painted
+      // before the browser's save dialog opens.
+      window.setTimeout(() => {
+        if (ac.signal.aborted) return;
+        try {
+          const a = document.createElement("a");
+          a.href = downloadUrl;
+          a.download = downloadName;
+          a.rel = "noopener noreferrer";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setPhase("started");
+          trackEvent("install_auto_download_started", {
+            source: "install_page",
+            asset: downloadName,
+          });
+        } catch {
+          setPhase("manual");
+        }
+      }, 120);
+    }
+
+    start();
+    return () => ac.abort();
   }, []);
 
   return (
@@ -66,8 +138,8 @@ export function InstallClient() {
           <p className="install-page__sub">
             Your download will begin automatically. If it did not start,{" "}
             <a
-              href={ZIP_URL}
-              download="Corder.zip"
+              href={resolvedUrl}
+              download={resolvedName}
               className="install-page__manual-link"
               data-track-event="install_manual_download_click"
               onClick={() => setPhase("started")}
