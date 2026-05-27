@@ -103,7 +103,8 @@ export function Footer() {
             >
               3mpq Studio
             </a>
-            .
+            {" "}
+            <span aria-hidden="true" className="site-footer__heart">❤️</span>
           </span>
         </div>
       </div>
