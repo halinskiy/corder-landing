@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import { AccountView } from "@/components/account/AccountView";
 
 export const metadata: Metadata = {
-  title: "Account | Corder",
+  title: "Account",
   description:
     "Manage your Corder account, subscription, notification preferences, and referrals.",
+  alternates: { canonical: "/account/" },
   robots: { index: false, follow: false },
 };
 

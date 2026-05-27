@@ -128,32 +128,54 @@ const JSON_LD = {
       "@id": `${SITE_URL}/#software`,
       name: "Corder",
       url: SITE_URL,
-      applicationCategory: "BusinessApplication",
+      applicationCategory: ["BusinessApplication", "ProductivityApplication"],
       operatingSystem: "macOS 14",
       description: copy.meta.description,
       image: `${SITE_URL}/og-image.png`,
-      softwareVersion: "0.9",
+      softwareVersion: "0.10.0",
+      downloadUrl: `${SITE_URL}/install/`,
+      featureList: copy.features.cells.map((c) => c.heading).join(", "),
       offers: [
         {
           "@type": "Offer",
           name: "Free",
           price: "0",
           priceCurrency: "USD",
-          description: "Up to 60 minutes per recording, unlimited local recordings, speaker labels.",
+          category: "free",
+          description:
+            "5 hours of transcription a month, speaker labels, searchable transcript. No credit card, no sign-up.",
         },
         {
           "@type": "Offer",
           name: "Pro Monthly",
-          price: "12",
+          price: "10",
           priceCurrency: "USD",
-          description: "Unlimited recording length, auto-summary, priority support, early access.",
+          description:
+            "25 hours a month, auto-summary, custom templates, priority support. $10/mo first 3 months, $14/mo after.",
         },
         {
           "@type": "Offer",
           name: "Pro Annual",
           price: "99",
           priceCurrency: "USD",
-          description: "Annual plan, billed once a year. Saves 31% vs monthly.",
+          description:
+            "$99 billed yearly. Locks $8.25/mo effective rate. Price locked forever.",
+        },
+        {
+          "@type": "Offer",
+          name: "Max Monthly",
+          price: "24",
+          priceCurrency: "USD",
+          description:
+            "Unlimited transcription, stronger accents handling, early builds. $24/mo first 3 months, $29/mo after.",
+        },
+        {
+          "@type": "Offer",
+          name: "Max Annual",
+          price: "239",
+          priceCurrency: "USD",
+          description:
+            "$239 billed yearly. Locks $19.92/mo effective rate. Price locked forever.",
         },
       ],
     },
@@ -163,6 +185,11 @@ const JSON_LD = {
       name: "Corder",
       url: SITE_URL,
       logo: `${SITE_URL}/icon-512.png`,
+      // sameAs builds the brand-entity cluster Google uses for the
+      // Knowledge Graph. Without it the @getcorder Twitter account
+      // and the halinskiy GitHub aren't linked to getcorder.com in
+      // search.
+      sameAs: ["https://x.com/getcorder", "https://github.com/halinskiy"],
     },
     {
       "@type": "WebSite",
@@ -171,6 +198,15 @@ const JSON_LD = {
       name: "Corder",
       publisher: { "@id": `${SITE_URL}/#org` },
       inLanguage: "en",
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${SITE_URL}/#faq`,
+      mainEntity: copy.faq.items.map(({ q, a }) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
     },
   ],
 };

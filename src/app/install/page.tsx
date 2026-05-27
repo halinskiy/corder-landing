@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import { InstallClient } from "@/components/install/InstallClient";
 
 export const metadata: Metadata = {
-  title: "Install Corder | Corder",
+  title: "Install Corder",
   description:
     "Your Corder download started. Open the zip, drag Corder to Applications, then launch it. Three steps, two minutes.",
+  alternates: { canonical: "/install/" },
   robots: { index: false, follow: false },
 };
 
