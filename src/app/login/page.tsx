@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import { MagicLinkForm } from "@/components/account/MagicLinkForm";
 
 export const metadata: Metadata = {
-  title: "Log in | Corder",
+  title: "Log in",
   description:
     "Sign in to your Corder account. We email you a magic link -- no passwords, no setup.",
+  alternates: { canonical: "/login/" },
+  robots: { index: false, follow: true },
 };
 
 const DATA_SOURCE = "projects/corder-landing/src/app/login/page.tsx";

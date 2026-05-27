@@ -3,9 +3,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "You're in | Corder",
+  title: "You're in",
   description:
     "Welcome to Corder Pro. Your licence is in your inbox. Open the Mac app to activate.",
+  alternates: { canonical: "/thanks/" },
   robots: { index: false, follow: false },
 };
 

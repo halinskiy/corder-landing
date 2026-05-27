@@ -3,9 +3,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Corder",
+  title: "Privacy Policy",
   description:
     "How Corder handles your audio, transcripts, and account data. Local-first, no telemetry, no resale.",
+  alternates: { canonical: "/privacy-policy/" },
 };
 
 const DATA_SOURCE =

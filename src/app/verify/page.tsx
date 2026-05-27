@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import { VerifyClient } from "@/components/account/VerifyClient";
 
 export const metadata: Metadata = {
-  title: "Verifying… | Corder",
+  title: "Verifying",
   description:
     "Verifying your magic link. Hold on a second.",
+  alternates: { canonical: "/verify/" },
   robots: { index: false, follow: false },
 };
 
