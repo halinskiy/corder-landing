@@ -2051,7 +2051,14 @@ button:focus:not(:focus-visible) {
 
 .pricing-card__features {
   list-style: none;
-  padding: 0 0 36px 0;
+  /* `padding: 0 0 36px 0` removed 2026-05-27. It was a hold-over
+   * from the 2-card horizontal slab layout where the features list
+   * needed extra bottom space to align with the summary column.
+   * In the 3-card vertical layout it just painted 36 px of dead
+   * whitespace under the last feature line, stacked with the
+   * 32-36 px bottom padding on .pricing-card itself (~72 px total).
+   * The maker called it out as the 'huge bottom gap'. */
+  padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
