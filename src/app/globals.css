@@ -150,6 +150,29 @@ button:focus:not(:focus-visible) {
   transform: scale(0.98);
 }
 
+/* Granola-style scroll-state pill. Reads off the parent <header>'s
+ * `data-scrolled` attribute (Nav.tsx flips it at scrollY > 8px).
+ *
+ *  At top  -- transparent fill, accent text + accent border. The hero
+ *             CTA below the fold owns primary affordance; nav is quiet.
+ *  Scrolled -- accent fill, white text. Same look as the old default,
+ *             so once the user is past the hero the nav button is the
+ *             obvious download trigger.
+ *
+ * Hover/active rules above still apply -- :hover overrides background
+ * with !important so both states land on the deep-green pressed look.
+ */
+.nav-cta--scroll-state {
+  background-color: transparent;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+}
+[data-component="Nav"][data-scrolled="true"] .nav-cta--scroll-state {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
 @media (max-width: 640px) {
   .nav-cta {
     height: 44px;
@@ -3220,6 +3243,10 @@ button:focus:not(:focus-visible) {
   background: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
 }
+.presence-static__submit:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
 
 .presence-static__status {
   margin: 0;
@@ -3227,6 +3254,10 @@ button:focus:not(:focus-visible) {
   font-size: 14px;
   color: var(--color-text-muted);
   min-height: 20px;
+}
+.presence-static__status--error {
+  color: var(--rec, #b7443d);
+  margin-top: 8px;
 }
 
 /* ----------------------------------------------------------------------

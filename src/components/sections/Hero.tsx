@@ -16,6 +16,7 @@ import {
 } from "@/components/presence/CorderPresence";
 
 import { copy } from "@/content/copy";
+import { AppleIcon } from "@/components/icons/AppleIcon";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Hero.tsx";
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -120,6 +121,7 @@ export function Hero() {
               data-track-event="cta_download_click"
               data-track-source="hero"
             >
+              <AppleIcon size={16} />
               {hero.ctaPrimary}
             </a>
             {hero.ctaHint && (

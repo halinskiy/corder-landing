@@ -51,6 +51,7 @@ import {
 import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
 
 import { copy } from "@/content/copy";
+import { useNewsletter } from "@/lib/newsletter";
 
 const DATA_SOURCE_PROVIDER =
   "projects/corder-landing/src/components/presence/CorderPresence.tsx";
@@ -281,18 +282,13 @@ function CloudDownloadIcon() {
 
 function CorderPresenceForm() {
   const { newsletter } = copy;
-  const [status, setStatus] = useState<"idle" | "submitted">("idle");
-  const [email, setEmail] = useState("");
+  const { status, email, setEmail, submit } = useNewsletter("landing-floating");
   // `bottom` is recomputed on scroll so the form pins 64px above the
   // footer baseline once the baseline approaches the viewport bottom.
   // Default = 32px viewport-bottom inset.
   const [bottomPx, setBottomPx] = useState(32);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!email.trim()) return;
-    setStatus("submitted");
-  }
+  const handleSubmit = submit;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -412,7 +408,21 @@ function CorderPresenceForm() {
         </p>
       </div>
 
-      {status === "idle" ? (
+      {status === "submitted" ? (
+        <p
+          role="status"
+          aria-live="polite"
+          style={{
+            margin: 0,
+            fontFamily: "var(--font-sans)",
+            fontSize: "14px",
+            lineHeight: 1.5,
+            color: "var(--color-text-muted)",
+          }}
+        >
+          {newsletter.successMessage}
+        </p>
+      ) : (
         <form
           onSubmit={handleSubmit}
           aria-label="Subscribe to product updates"
@@ -430,29 +440,35 @@ function CorderPresenceForm() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder={newsletter.placeholder}
             aria-label="Email address"
+            disabled={status === "submitting"}
+            aria-invalid={status === "error"}
             className="presence-form-input"
           />
           <button
             type="submit"
-            className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
+            disabled={status === "submitting"}
+            data-track-event="newsletter_submit"
+            data-track-source="landing-floating"
+            className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] px-6 text-[15px] font-medium disabled:cursor-progress disabled:opacity-70"
           >
-            {newsletter.cta}
+            {status === "submitting" ? newsletter.submittingCta : newsletter.cta}
           </button>
+          {status === "error" && (
+            <p
+              role="alert"
+              aria-live="polite"
+              style={{
+                margin: "2px 0 0",
+                fontFamily: "var(--font-sans)",
+                fontSize: "13px",
+                lineHeight: 1.45,
+                color: "var(--rec, #b7443d)",
+              }}
+            >
+              {newsletter.errorMessage}
+            </p>
+          )}
         </form>
-      ) : (
-        <p
-          role="status"
-          aria-live="polite"
-          style={{
-            margin: 0,
-            fontFamily: "var(--font-sans)",
-            fontSize: "14px",
-            lineHeight: 1.5,
-            color: "var(--color-text-muted)",
-          }}
-        >
-          {newsletter.successMessage}
-        </p>
       )}
       <style>{`
         @media (max-width: 640px) {
@@ -657,8 +673,7 @@ export function CorderPresenceFormSentinel() {
 export function CorderPresenceStaticSection() {
   const { motionDisabled } = useCorderPresence();
   const { newsletter } = copy;
-  const [status, setStatus] = useState<"idle" | "submitted">("idle");
-  const [email, setEmail] = useState("");
+  const { status, email, setEmail, submit } = useNewsletter("landing-static");
   // Mobile: a fixed-corner card stomps on footer content, so the
   // subscribe form moves inline at the bottom of the page even when
   // motion is on. Desktop keeps the floating morphing form unless
@@ -675,11 +690,7 @@ export function CorderPresenceStaticSection() {
 
   if (!motionDisabled && !isMobile) return null;
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!email.trim()) return;
-    setStatus("submitted");
-  }
+  const handleSubmit = submit;
 
   return (
     <section
@@ -694,7 +705,15 @@ export function CorderPresenceStaticSection() {
           <h2 className="presence-static__heading">{newsletter.heading}</h2>
           <p className="presence-static__subhead">{newsletter.subhead}</p>
 
-          {status === "idle" ? (
+          {status === "submitted" ? (
+            <p
+              className="presence-static__status"
+              role="status"
+              aria-live="polite"
+            >
+              {newsletter.successMessage}
+            </p>
+          ) : (
             <form
               className="presence-static__form"
               onSubmit={handleSubmit}
@@ -709,19 +728,28 @@ export function CorderPresenceStaticSection() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="presence-static__input"
                 aria-label="Email address"
+                disabled={status === "submitting"}
+                aria-invalid={status === "error"}
               />
-              <button type="submit" className="presence-static__submit">
-                {newsletter.cta}
+              <button
+                type="submit"
+                disabled={status === "submitting"}
+                data-track-event="newsletter_submit"
+                data-track-source="landing-static"
+                className="presence-static__submit"
+              >
+                {status === "submitting" ? newsletter.submittingCta : newsletter.cta}
               </button>
+              {status === "error" && (
+                <p
+                  role="alert"
+                  aria-live="polite"
+                  className="presence-static__status presence-static__status--error"
+                >
+                  {newsletter.errorMessage}
+                </p>
+              )}
             </form>
-          ) : (
-            <p
-              className="presence-static__status"
-              role="status"
-              aria-live="polite"
-            >
-              {newsletter.successMessage}
-            </p>
           )}
         </div>
       </div>
