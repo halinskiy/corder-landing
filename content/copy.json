@@ -264,7 +264,6 @@
         },
         "annual": {
           "price": "$8.25",
-          "priceOriginal": "$14",
           "priceUnit": "month",
           "billNote": "$99 billed yearly. Price locked"
         },
@@ -294,7 +293,6 @@
         },
         "annual": {
           "price": "$19.92",
-          "priceOriginal": "$29",
           "priceUnit": "month",
           "billNote": "$239 billed yearly. Price locked"
         },
