@@ -1582,14 +1582,117 @@ button:focus:not(:focus-visible) {
   grid-template-columns: 1fr;
 }
 
-/* Two-package model 2026-05-22 v4: Monthly + Annual stack vertically as
- * full-width horizontal slabs. Each slab is itself a 2-col grid (summary
- * on the left, features on the right). Full page width, no max-width cap. */
+/* Three-tier model 2026-05-27 v5: Free / Pro / Max as vertical cards in
+ * a 3-col grid at md+, stacked at base. Each card is its own slab with
+ * summary on top (name + tagline + price + CTA) and feature checklist
+ * below. Matches the Granola Basic / Business / Enterprise pattern.
+ * At md+ (768) cards become 2 cols then 3 at lg (1024). */
 @media (min-width: 768px) {
   .pricing-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+@media (min-width: 1024px) {
+  .pricing-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
   }
+}
+
+/* ----------------------------------------------------------------------
+ *  Pricing section head -- heading on the LEFT, subhead + billing
+ *  toggle on the RIGHT with `justify-content: space-between`. Stacks
+ *  vertically below md. Replaces the old 12-col grid that pinned the
+ *  copy block to the left 8 columns and left dead space on the right.
+ * ---------------------------------------------------------------------- */
+.pricing-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-start;
+}
+@media (min-width: 768px) {
+  .pricing-section-head {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+}
+.pricing-section-head__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.pricing-section-head__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .pricing-section-head__aside {
+    align-items: flex-end;
+    max-width: 360px;
+  }
+}
+.pricing-section-head__subhead {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+@media (min-width: 768px) {
+  .pricing-section-head__subhead {
+    text-align: right;
+  }
+}
+
+/* ----------------------------------------------------------------------
+ *  Pricing billing toggle -- pill track with two segment buttons.
+ *  Active segment carries the accent fill; inactive is hairline-only.
+ *  Matches the kit's button language; lives only inside the Pricing
+ *  header aside so the styles stay scoped.
+ * ---------------------------------------------------------------------- */
+.pricing-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px;
+  background: var(--color-bg-elev, #f7f7f6);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  gap: 2px;
+}
+.pricing-toggle__seg {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pricing-toggle__seg:hover {
+  color: var(--color-text);
+}
+.pricing-toggle__seg[data-active="true"] {
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.pricing-toggle__seg:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 /* Hero CTA hint: small grey line under the Download pill, removes the
@@ -1784,8 +1887,58 @@ button:focus:not(:focus-visible) {
 
 .pricing-card__header {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pricing-card__header-row {
+  display: flex;
   align-items: center;
   gap: 8px;
+}
+.pricing-card__tagline {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: -0.012em;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 32ch;
+}
+
+/* Vertical 3-card layout (Granola pattern). Header on top with name +
+ * tagline, then price + bill note, then CTA, then feature checklist.
+ * Cards fill equal column heights via flex; the feature list grows to
+ * push the footer (nothing) to the bottom. */
+.pricing-card--vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-height: 100%;
+}
+.pricing-card--vertical .pricing-card__price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pricing-card--vertical .pricing-card__cta {
+  width: 100%;
+}
+.pricing-card--vertical .pricing-card__features {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+/* "Everything in Free / Pro, plus:" header row inside the feature
+ * list. Plus glyph in muted dark circle, slightly heavier text than
+ * the regular feature lines. Mirrors Granola's pattern. */
+.pricing-card__feature--header .pricing-card__feature-icon {
+  background: rgba(10, 10, 10, 0.85);
+  color: #ffffff;
+}
+.pricing-card__feature--header .pricing-card__feature-text {
+  color: var(--color-text);
+  font-weight: 500;
 }
 
 .pricing-card__name {
@@ -4846,4 +4999,191 @@ button:focus:not(:focus-visible) {
   .account-ref-stats { grid-template-columns: 1fr; }
   .account-card { padding: 20px 18px; }
   .account-card__heading { font-size: 18px; margin-bottom: 14px; }
+}
+
+/* ----------------------------------------------------------------------
+ *  /install -- post-download landing
+ *
+ *  Maker referenced Granola's /download page on 2026-05-27. Layout:
+ *  status pill on top, oversize serif "Thanks for downloading" heading,
+ *  helper line with manual-download fallback, then three numbered
+ *  illustration cards across the bottom. Same .legal-page shell so the
+ *  vertical offsets match the other standalone pages.
+ * ---------------------------------------------------------------------- */
+
+.install-page {
+  min-height: calc(100vh - var(--nav-height, 88px));
+  background: var(--color-bg);
+}
+
+.install-page__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.install-page__heading {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(34px, 4.4vw, 56px);
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+  color: var(--color-text);
+  margin: 24px 0 12px;
+  max-width: 22ch;
+}
+
+.install-page__sub {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  margin: 0 0 48px;
+  max-width: 56ch;
+}
+
+.install-page__manual-link {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+.install-page__manual-link:hover {
+  color: var(--color-accent-deep, #0e3d28);
+}
+
+.install-page__footer-links {
+  margin-top: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-subtle);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.install-page__back {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.install-page__back:hover {
+  color: var(--color-text);
+}
+.install-page__dot {
+  opacity: 0.45;
+}
+
+/* Status pill at the top. Cream fill, hairline border, small dot
+ * (spinner or check) + uppercase label. Matches the "Introducing
+ * Briefs" callout Granola uses above their headlines. */
+.install-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 12px;
+  background: rgba(33, 122, 80, 0.08);
+  border: 1px solid rgba(33, 122, 80, 0.16);
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--color-accent-deep, #0e3d28);
+  text-transform: uppercase;
+  transition: background-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.install-status-pill[data-phase="started"] {
+  background: rgba(33, 122, 80, 0.12);
+}
+.install-status-pill__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--color-accent);
+}
+.install-status-pill__spinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  border: 1.6px solid rgba(33, 122, 80, 0.3);
+  border-top-color: var(--color-accent);
+  animation: install-spinner 700ms linear infinite;
+}
+@keyframes install-spinner {
+  to { transform: rotate(360deg); }
+}
+
+/* Three numbered step cards across the bottom. Stack on mobile, side
+ * by side at md+. */
+.install-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+@media (min-width: 768px) {
+  .install-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+.install-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.install-step__badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--color-accent);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.install-step__art {
+  width: 100%;
+  aspect-ratio: 320 / 220;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.install-step__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.install-step__label {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 28ch;
+  text-align: center;
+}
+.install-step__label em {
+  color: var(--color-accent-deep, #0e3d28);
+  font-style: normal;
+  font-weight: 500;
 }

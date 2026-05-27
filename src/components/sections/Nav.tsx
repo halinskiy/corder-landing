@@ -89,8 +89,7 @@ export function Nav() {
             scrolls past 8px. The hero CTA below the fold provides the
             primary affordance until then, so the nav stays quiet. */}
         <a
-          href="https://github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip"
-          download="Corder.zip"
+          href="/install/"
           data-component="NavCta"
           data-source={DATA_SOURCE}
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
@@ -104,8 +103,7 @@ export function Nav() {
 
         {/* Mobile: compact CTA only */}
         <a
-          href="https://github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip"
-          download="Corder.zip"
+          href="/install/"
           data-component="NavCta"
           data-source={DATA_SOURCE}
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
