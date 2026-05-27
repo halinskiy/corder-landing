@@ -1592,11 +1592,12 @@ button:focus:not(:focus-visible) {
   display: grid;
   gap: 16px;
   grid-template-columns: 1fr;
-  /* Cards hug their own content; the grid does not stretch them to
-   * match the tallest sibling. Combined with align-self: start on
-   * each .pricing-card--vertical this kills the empty band Free
-   * used to paint under its last feature line. */
-  align-items: start;
+  /* Cards STRETCH to the tallest sibling so all three end at the
+   * same y (maker requirement 2026-05-27, strict). The extra height
+   * goes inside the card via flex-grow on the features list, not
+   * into a dead bottom padding -- visually equal cards, content
+   * stays anchored. */
+  align-items: stretch;
 }
 
 /* Three-tier model 2026-05-27 v5: Free / Pro / Max as vertical cards in
@@ -1921,13 +1922,11 @@ button:focus:not(:focus-visible) {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  /* Cards hug their content (each tier has a different feature
-   * count, so stretching all to the same height was painting a fat
-   * empty band under Free's last feature line). The parent
-   * .pricing-grid switches to align-items: start below so the cards
-   * stack from the top without filling the column height. */
-  height: auto;
-  align-self: start;
+  /* Cards stretch to fill the grid row -- equal height across all
+   * three tiers, strictly. The features list inside (rule below)
+   * carries flex-grow:1 so the extra height is absorbed by the
+   * checklist column, not as a painted bottom padding. */
+  height: 100%;
 }
 /* Free has no priceOriginal strike-through and a one-line billNote;
  * Pro and Max carry both. Reserve the same vertical space for the
@@ -1952,6 +1951,11 @@ button:focus:not(:focus-visible) {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  /* Eats the leftover height when the card stretches to match its
+   * taller siblings. Free has 5 features and Pro / Max have 6; the
+   * extra ~36 px lands inside the features container (after the last
+   * line) rather than as a painted bottom padding on the card. */
+  flex-grow: 1;
 }
 /* "Everything in Free / Pro, plus:" header row inside the feature
  * list. Plus glyph in muted dark circle, slightly heavier text than
