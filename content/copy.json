@@ -609,7 +609,7 @@
   "presenceCta": {
     "_note": "Powers the floating CorderPresenceForm card and the inline CorderPresenceStaticSection (mobile / reduced-motion fallback). Replaced the newsletter form on 2026-05-27 -- the floating affordance is now a Download trigger, single goal.",
     "heading": "Ready to record?",
-    "subhead": "Free download. macOS 14 or later. No bot in the call.",
+    "subhead": "Free download. macOS 14 or later",
     "cta": "Download for Mac",
     "ctaHref": "/install/"
   },
