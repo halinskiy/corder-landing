@@ -5118,8 +5118,15 @@ button:focus:not(:focus-visible) {
   font-size: 16px;
   line-height: 1.55;
   color: var(--color-text-muted);
-  margin: 0 0 48px;
-  max-width: 56ch;
+  margin: 0 0 8px;
+  max-width: none;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  /* On phones let the line wrap naturally -- no horizontal room. */
+  .install-page__sub {
+    white-space: normal;
+  }
 }
 
 .install-page__manual-link {
@@ -5130,6 +5137,10 @@ button:focus:not(:focus-visible) {
 }
 .install-page__manual-link:hover {
   color: var(--color-accent-deep, #0e3d28);
+}
+.install-page__manual-link--standalone {
+  display: inline-block;
+  margin: 0 0 48px;
 }
 
 /* Bottom action stack -- primary CTA back to the landing, ghost CTA
