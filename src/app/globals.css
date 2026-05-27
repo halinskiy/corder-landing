@@ -5281,7 +5281,10 @@ button:focus:not(:focus-visible) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-accent);
+  /* Same muted grey as the badge border + sub-line text, so the
+   * arrow reads as a quiet separator between numbered cards, not a
+   * second accent cue competing with the primary Back CTA below. */
+  color: var(--color-text-subtle);
   flex-shrink: 0;
 }
 .install-step-arrow svg {
