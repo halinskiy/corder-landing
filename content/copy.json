@@ -29,7 +29,8 @@
         "href": "#site-footer-bottom"
       }
     ],
-    "ctaPrimary": "Download for Mac"
+    "ctaPrimary": "Download",
+    "ctaPrimaryMobile": "Download"
   },
   "hero": {
     "eyebrow": "Mac meeting recorder",
@@ -225,10 +226,10 @@
     "tiers": [
       {
         "name": "Monthly",
-        "price": "$8",
-        "priceOriginal": "$12",
+        "price": "$10",
+        "priceOriginal": "$14",
         "priceUnit": "month",
-        "billNote": "Pay $24 upfront for 3 months. Limited time",
+        "billNote": "Pay $30 upfront for 3 months. Limited time",
         "badge": "Launch offer",
         "features": [
           "Unlimited recording length",
@@ -547,7 +548,9 @@
     "subhead": "New Feature Drops, No spam. We promise",
     "placeholder": "Your email",
     "cta": "Subscribe",
-    "successMessage": "Thanks. You'll hear from us when something ships"
+    "submittingCta": "Subscribing...",
+    "successMessage": "Thanks. You'll hear from us when something ships",
+    "errorMessage": "Something went wrong. Try again in a moment."
   },
   "yoursPrivacy": {
     "eyebrow": "Private by design",

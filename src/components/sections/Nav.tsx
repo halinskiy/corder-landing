@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { copy } from "@/content/copy";
+import { AppleIcon } from "@/components/icons/AppleIcon";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Nav.tsx";
 
@@ -82,6 +83,11 @@ export function Nav() {
            *  the auth gating in Phase 3 puts it back conditionally. */}
         </nav>
 
+        {/* Desktop Download. Granola-style scroll state: transparent
+            at the top of the page (just text + apple icon in accent
+            colour, no fill), fills with accent green once the user
+            scrolls past 8px. The hero CTA below the fold provides the
+            primary affordance until then, so the nav stays quiet. */}
         <a
           href="https://github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip"
           download="Corder.zip"
@@ -90,13 +96,9 @@ export function Nav() {
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
           data-track-event="cta_download_click"
           data-track-source="nav"
-          className="nav-cta ml-2 hidden h-10 items-center gap-2 rounded-full px-5 text-[15px] font-medium md:inline-flex"
-          style={{
-            border: "1px solid var(--color-accent)",
-            color: "var(--color-bg)",
-            backgroundColor: "var(--color-accent)",
-          }}
+          className="nav-cta nav-cta--scroll-state ml-2 hidden h-10 items-center gap-2 rounded-full px-5 text-[15px] font-medium md:inline-flex"
         >
+          <AppleIcon size={14} />
           {nav.ctaPrimary}
         </a>
 
@@ -109,14 +111,10 @@ export function Nav() {
           data-tokens="radius-pill,color-accent,color-bg,ease-out"
           data-track-event="cta_download_click"
           data-track-source="nav"
-          className="nav-cta ml-2 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-medium md:hidden"
-          style={{
-            border: "1px solid var(--color-accent)",
-            color: "var(--color-bg)",
-            backgroundColor: "var(--color-accent)",
-          }}
+          className="nav-cta nav-cta--scroll-state ml-2 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-medium md:hidden"
         >
-          Download for Mac
+          <AppleIcon size={13} />
+          {nav.ctaPrimaryMobile}
         </a>
       </div>
     </header>
