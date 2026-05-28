@@ -6,6 +6,27 @@ import { usePathname } from "next/navigation";
 const DATA_SOURCE = "projects/corder-landing/src/components/ui/BackToHomeBtn.tsx";
 
 /**
+ * Pathnames that opt OUT of the floating top-left back arrow.
+ *
+ *   /            home itself: nothing to go back to.
+ *   /install/    has a primary "Back" pill at the bottom of the
+ *                footer-actions stack; the floating arrow at the top
+ *                would compete with it for the same intent.
+ *   /contact/    same: the page ends with its own primary "Back" CTA.
+ *
+ * Pathnames stored with the trailing slash to match Next.js
+ * usePathname() output for static-exported routes; the fallback
+ * compares without the trailing slash too in case Next ever changes.
+ */
+const HIDE_ON = new Set([
+  "/",
+  "/install",
+  "/install/",
+  "/contact",
+  "/contact/",
+]);
+
+/**
  * BackToHomeBtn -- the single back-to-home affordance for every
  * non-home page.
  *
@@ -17,14 +38,13 @@ const DATA_SOURCE = "projects/corder-landing/src/components/ui/BackToHomeBtn.tsx
  * the other one opens the consent banner.
  *
  * Mounted once in src/app/layout.tsx; this component decides whether
- * to render based on the current pathname. Home (/) is excluded
- * because there is nothing to go back to. Every other page on the
- * site automatically gets the button without any per-page wiring.
+ * to render based on the current pathname. Pages in HIDE_ON above
+ * are skipped because they already carry their own primary "Back"
+ * affordance at the bottom of the page.
  */
 export function BackToHomeBtn() {
   const pathname = usePathname();
-  // Home does not need a back-to-home arrow.
-  if (pathname === null || pathname === "/") return null;
+  if (pathname === null || HIDE_ON.has(pathname)) return null;
 
   return (
     <Link
