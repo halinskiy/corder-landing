@@ -178,14 +178,6 @@ export function InstallClient() {
             </li>
           </ol>
 
-          <p className="install-page__chip">
-            <ChipIcon />
-            <span>
-              Apple Silicon (M1 or newer) for on-device transcription. Intel
-              Macs run cloud Whisper on the Pro tier.
-            </span>
-          </p>
-
           <div className="install-page__footer-actions">
             <Link
               href="/"
@@ -220,34 +212,6 @@ function StepArrow() {
         <path d="m13 6 6 6-6 6" />
       </svg>
     </span>
-  );
-}
-
-/* Inline glyph for the Apple Silicon chip note. Lucide "cpu". */
-function ChipIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="4" y="4" width="16" height="16" rx="2" />
-      <rect x="9" y="9" width="6" height="6" />
-      <path d="M9 1v3" />
-      <path d="M15 1v3" />
-      <path d="M9 20v3" />
-      <path d="M15 20v3" />
-      <path d="M20 9h3" />
-      <path d="M20 14h3" />
-      <path d="M1 9h3" />
-      <path d="M1 14h3" />
-    </svg>
   );
 }
 
