@@ -23,13 +23,13 @@ export default function LoginPage() {
   return (
     <main className="legal-page" data-component="LoginPage" data-source={DATA_SOURCE}>
       <div className="page-container py-16 md:py-24">
-        <div className="mx-auto max-w-[460px] account-auth-body">
+        <div className="mx-auto max-w-[1080px] account-auth-body">
           <a href="/" className="account-brand" aria-label="Corder home">
             <BrandMark />
             <span>Corder</span>
           </a>
-          <h1 className="account-auth-heading">Welcome back</h1>
-          <p className="account-auth-lead">
+          <h1 className="install-page__heading">Welcome back</h1>
+          <p className="install-page__sub">
             Enter the email you signed up with. We send a one-time link --
             click it and you're in. No password to remember.
           </p>

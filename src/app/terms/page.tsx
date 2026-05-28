@@ -26,10 +26,9 @@ export default function TermsPage() {
       className="legal-page"
     >
       <div className="page-container py-16 md:py-24">
-        <div className="mx-auto max-w-[720px]">
-          <p className="section-eyebrow">Legal</p>
-          <h1 className="section-heading">Terms</h1>
-          <p className="section-subhead">
+        <div className="mx-auto max-w-[1080px]">
+          <h1 className="install-page__heading">Terms</h1>
+          <p className="install-page__sub">
             Last updated: 25 May 2026. Working draft.
           </p>
 
@@ -104,9 +103,15 @@ export default function TermsPage() {
             </p>
           </div>
 
-          <p className="legal-footer">
-            <Link href="/">Back to corder.app</Link>
-          </p>
+          <div className="install-page__footer-actions">
+            <Link
+              href="/"
+              className="cta-pill cta-pill--primary inline-flex h-14 w-full md:w-auto md:min-w-[260px] items-center justify-center rounded-[var(--radius-pill)] px-7 md:px-9 text-[17px] font-medium"
+              data-track-event="terms_back_home_click"
+            >
+              Back to corder.app
+            </Link>
+          </div>
         </div>
       </div>
     </main>

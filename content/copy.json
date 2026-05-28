@@ -550,6 +550,7 @@
       "title": "Corder for teams",
       "subhead": "Tell the maker how many seats you need, what tools you live in, and anything else worth knowing. Reply lands the same day.",
       "emailLabel": "Work email",
+      "emailPlaceholder": "you@company.com",
       "subjectLabel": "Company",
       "messageLabel": "What are you looking for?",
       "subjectPlaceholder": "Acme Inc",
