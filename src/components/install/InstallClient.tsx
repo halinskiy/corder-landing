@@ -18,11 +18,11 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.11.0/Corder-0.11.0.dmg";
-const FALLBACK_NAME = "Corder-0.11.0.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.13.2/Corder-0.13.2.dmg";
+const FALLBACK_NAME = "Corder-0.13.2.dmg";
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
-// might upload. Version suffix (e.g. Corder-0.11.0.dmg) and naked names
+// might upload. Version suffix (e.g. Corder-0.13.2.dmg) and naked names
 // (Corder.zip, Corder.dmg) both match. The runtime scan below prefers a
 // .dmg over a .zip when both exist on the release -- DMG gives the user
 // a native mount + drag-to-Applications surface, whereas .zip is what
@@ -136,6 +136,14 @@ export function InstallClient() {
             Download Corder manually
           </a>
 
+          <p className="install-page__chip">
+            <ChipIcon />
+            <span>
+              Apple Silicon (M1 or newer) for on-device transcription. Intel
+              Macs run cloud Whisper on the Pro tier.
+            </span>
+          </p>
+
           <ol className="install-steps" aria-label="Install steps">
             <li className="install-step-card">
               <div className="install-step-card__badge" aria-hidden>
@@ -208,6 +216,34 @@ function StepArrow() {
         <path d="m13 6 6 6-6 6" />
       </svg>
     </span>
+  );
+}
+
+/* Inline glyph for the Apple Silicon chip note. Lucide "cpu". */
+function ChipIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="4" y="4" width="16" height="16" rx="2" />
+      <rect x="9" y="9" width="6" height="6" />
+      <path d="M9 1v3" />
+      <path d="M15 1v3" />
+      <path d="M9 20v3" />
+      <path d="M15 20v3" />
+      <path d="M20 9h3" />
+      <path d="M20 14h3" />
+      <path d="M1 9h3" />
+      <path d="M1 14h3" />
+    </svg>
   );
 }
 

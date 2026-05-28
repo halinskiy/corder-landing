@@ -4064,6 +4064,31 @@ button:focus:not(:focus-visible) {
   color: var(--color-text);
 }
 
+/* Pre/code block used on /docs/mcp and /docs/api for install snippets
+ * and JSON examples. Reuses the legal-page reading column, plain mono
+ * stack inside a hairline surface so it reads as a quiet block,
+ * not a CTA. */
+.legal-page .docs-code {
+  margin: 16px 0 20px;
+  padding: 14px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text);
+  overflow-x: auto;
+  white-space: pre;
+}
+.legal-page .docs-code code {
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
 .legal-page .legal-body h2 {
   margin: 36px 0 10px;
   font-family: var(--font-serif);
@@ -5250,6 +5275,31 @@ button:focus:not(:focus-visible) {
    * (maker request 2026-05-28). 48 px gap below stays so the step
    * cards keep their breathing. */
   margin: -4px 0 48px;
+}
+
+/* Apple Silicon chip note -- compact line below the manual-download
+ * link. Plain hairline pill with a CPU glyph; quiet, informational
+ * tone, not a CTA. Sits between the sub and the install step cards
+ * so the user reads it on the way down. */
+.install-page__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: -32px 0 32px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  max-width: 56ch;
+  text-align: left;
+}
+.install-page__chip svg {
+  flex-shrink: 0;
+  color: var(--color-text);
 }
 
 /* Bottom action stack -- primary CTA back to the landing, ghost CTA
