@@ -133,6 +133,85 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
+ *  Standalone-page back-arrow
+ *
+ *  Single back affordance shared across every standalone page (/contact,
+ *  /privacy-policy, /terms, /refunds, /not-found, /thanks, /account,
+ *  /signup, /login, /verify, /install). Replaces the per-page "Back to
+ *  corder.app" primary pills that used to live in the footer.
+ *
+ *  Layout: a wrapper sits inline-block at the heading's natural width,
+ *  so on left-aligned pages it pins to the column's left edge and on
+ *  centered pages it tracks the centered heading. The 40 px ghost
+ *  circle is absolute-positioned 16 px to the LEFT of that wrapper
+ *  (right: 100% + margin-right: 16px), which lets it sit in the
+ *  page-container gutter without nudging the heading horizontally.
+ * ---------------------------------------------------------------------- */
+
+.standalone-page-header {
+  position: relative;
+  display: inline-block;
+  /* Default heading-bottom gap consolidates the margin that used to
+   * live on .install-page__heading (12 px) plus the prior sub-line
+   * breathing in legal-page context. Heading margin is reset to 0
+   * because this wrapper now owns vertical spacing for the header
+   * block. */
+}
+
+.standalone-back {
+  /* Anchored 16 px left of the heading-wrapper. Heading is unaffected;
+   * the arrow occupies the left gutter of the page-container, same
+   * pattern across left-aligned legal pages and centered hub pages. */
+  position: absolute;
+  right: 100%;
+  margin-right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9999px;
+  border: 1px solid var(--color-border-strong);
+  background-color: transparent;
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.standalone-back:hover {
+  border-color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
+.standalone-back:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Narrow viewports have no gutter room for an absolute pill -- fall
+ * back to a stacked breadcrumb above the heading. Acceptable shift
+ * on mobile where the heading is already going to wrap. */
+@media (max-width: 767px) {
+  .standalone-page-header {
+    display: block;
+  }
+  .standalone-back {
+    position: static;
+    transform: none;
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  .standalone-back:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ----------------------------------------------------------------------
  *  Nav links — hover colour shift to full text
  * ---------------------------------------------------------------------- */
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AccountView } from "@/components/account/AccountView";
+import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -19,6 +20,12 @@ const DATA_SOURCE = "projects/corder-landing/src/app/account/page.tsx";
  * Phase 3 will gate the route on a JWT cookie + fetch the real
  * user via `GET https://api.getcorder.com/me` (credentials: include)
  * and redirect unauthenticated visits to /login.
+ *
+ * Same shell + heading typography as the rest of the standalone pages.
+ * Back-to-home affordance is the shared <BackToHomeBtn /> ghost arrow
+ * 16 px to the left of the heading; the brand wordmark previously above
+ * is dropped because the back arrow now carries the "you are on Corder"
+ * cue.
  *
  * Five sections, top to bottom:
  *   1. Profile: email (readonly), name (editable inline), Apple ID
@@ -44,29 +51,14 @@ export default function AccountPage() {
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px] account-body">
           <header className="account-header">
-            <a href="/" className="account-brand" aria-label="Corder home">
-              <BrandMark />
-              <span>Corder</span>
-            </a>
-            <h1 className="install-page__heading">Account</h1>
+            <div className="standalone-page-header">
+              <BackToHomeBtn />
+              <h1 className="install-page__heading">Account</h1>
+            </div>
           </header>
           <AccountView />
         </div>
       </div>
     </main>
-  );
-}
-
-function BrandMark() {
-  return (
-    <img
-      src="/brand-mark-128.png"
-      width={28}
-      height={28}
-      alt=""
-      aria-hidden="true"
-      decoding="async"
-      style={{ display: "block" }}
-    />
   );
 }
