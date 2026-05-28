@@ -13,13 +13,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * /contact -- hub page modelled on granola.ai/contact.
- *
- * Centred serif heading + two equal cards (Sales / Help) + a small
- * microcopy line below. Sales card routes to /contact/sales (form);
- * Help card opens a mailto. Shell matches the other standalone pages
- * (.legal-page + page-container + max-w wrapper) per the saved
- * feedback memory on Corder standalone offsets.
+ * /contact -- hub page modelled on granola.ai/contact, but wearing the
+ * same shell as /install: heading at the top, content in the middle,
+ * primary CTA (Back) pinned to the bottom via flex-grow. Cards switch
+ * from the cream-surface treatment to the white + hairline-border
+ * language used by .install-step-card so the visual family across
+ * standalone pages stays one system.
  */
 export default function ContactPage() {
   const { contact } = copy;
@@ -28,12 +27,12 @@ export default function ContactPage() {
     <main
       data-component="ContactPage"
       data-source={DATA_SOURCE}
-      data-tokens="color-bg,color-text,color-text-muted,color-border,color-accent,radius-window,font-serif,font-sans"
-      className="legal-page"
+      data-tokens="color-bg,color-text,color-text-muted,color-border,color-accent,radius-window,radius-pill,font-serif,font-sans"
+      className="install-page"
     >
       <div className="page-container py-16 md:py-24">
-        <div className="mx-auto max-w-[920px]">
-          <h1 className="contact-hub__heading">{contact.title}</h1>
+        <div className="install-page__inner mx-auto max-w-[920px]">
+          <h1 className="install-page__heading">{contact.title}</h1>
 
           <div className="contact-hub__cards">
             {contact.cards.map((card) => (
@@ -57,6 +56,16 @@ export default function ContactPage() {
             </a>
             .
           </p>
+
+          <div className="install-page__footer-actions">
+            <Link
+              href="/"
+              className="cta-pill cta-pill--primary inline-flex h-14 w-full md:w-auto md:min-w-[260px] items-center justify-center rounded-[var(--radius-pill)] px-7 md:px-9 text-[17px] font-medium"
+              data-track-event="contact_back_home_click"
+            >
+              Back
+            </Link>
+          </div>
         </div>
       </div>
     </main>
