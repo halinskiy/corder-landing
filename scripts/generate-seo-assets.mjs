@@ -2,16 +2,19 @@
 // generate-seo-assets.mjs
 //
 // Reads two masters:
-//   * `assets/seo-master.svg`        -- flat squircle, vector. Used for
-//                                       tiny favicons (16/32/48) where
-//                                       the 3D Tahoe-style render's
-//                                       drop-shadow + capsule depth get
-//                                       lost / muddied at 16 px.
+//   * `assets/seo-master.svg`        -- flat squircle, vector. Used ONLY
+//                                       as public/icon.svg (the SVG
+//                                       favicon some modern browsers
+//                                       prefer for tab icons -- vector
+//                                       scales crisp). All raster
+//                                       favicons + app icons come from
+//                                       the 3D PNG.
 //   * `assets/corder-mark-3d-2048.png` -- 2048x2048 Tahoe-style 3D
-//                                       render. Used for app icons
-//                                       (180/192/512), inline brand
-//                                       marks (Nav 64 px @ 2x, Footer
-//                                       80 px @ 2x) and the OG card.
+//                                       render. Used for ALL raster
+//                                       sizes (favicon-16/32/48,
+//                                       apple-icon 180, icon-192/512,
+//                                       brand-mark-128 inline, and the
+//                                       OG card composite).
 // And one composition master:
 //   * `assets/og-master.svg`         -- 1200x630 OG card. The brand
 //                                       tile inside is now composited
@@ -62,34 +65,22 @@ async function main() {
   );
   console.log("wrote public/icon.svg");
 
-  // 2) Tiny rasterised favicons (16/32/48) from the FLAT SVG. At <=
-  // 48 px the 3D drop-shadow + capsule highlights muddy the read;
-  // the flat squircle keeps sharper edges.
-  const tinySizes = [
+  // 2) All raster sizes (16 -> 512) downscaled from the 3D PNG. Maker
+  // wants consistent Tahoe-style depth EVERYWHERE -- earlier the tiny
+  // favicons (16/32/48) used the flat SVG because depth was supposed
+  // to "muddy" at small sizes, but at 32/48 the dark capsules + drop
+  // shadow actually still read fine and the brand identity stays
+  // consistent across browser tab / home screen / OG card.
+  const rasterSizes = [
     { name: "favicon-16.png", size: 16 },
     { name: "favicon-32.png", size: 32 },
     { name: "favicon-48.png", size: 48 },
-  ];
-  for (const { name, size } of tinySizes) {
-    await sharp(seoSvg, { density: 300 })
-      .resize(size, size, {
-        fit: "contain",
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      })
-      .png()
-      .toFile(path.join(PUBLIC, name));
-    console.log(`wrote public/${name} (${size}x${size}, flat)`);
-  }
-
-  // 3) App icons (180/192/512) + inline brand mark (128) from the 3D
-  // PNG. At these sizes the Tahoe-style depth lands properly.
-  const bigSizes = [
     { name: "apple-icon.png", size: 180 },
     { name: "icon-192.png", size: 192 },
     { name: "icon-512.png", size: 512 },
     { name: "brand-mark-128.png", size: 128 },
   ];
-  for (const { name, size } of bigSizes) {
+  for (const { name, size } of rasterSizes) {
     await sharp(brandPng)
       .resize(size, size, {
         fit: "contain",
