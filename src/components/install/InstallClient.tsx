@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
@@ -136,14 +137,6 @@ export function InstallClient() {
             Download Corder manually
           </a>
 
-          <p className="install-page__chip">
-            <ChipIcon />
-            <span>
-              Apple Silicon (M1 or newer) for on-device transcription. Intel
-              Macs run cloud Whisper on the Pro tier.
-            </span>
-          </p>
-
           <ol className="install-steps" aria-label="Install steps">
             <li className="install-step-card">
               <div className="install-step-card__badge" aria-hidden>
@@ -189,7 +182,22 @@ export function InstallClient() {
             </li>
           </ol>
 
+          <p className="install-page__chip">
+            <ChipIcon />
+            <span>
+              Apple Silicon (M1 or newer) for on-device transcription. Intel
+              Macs run cloud Whisper on the Pro tier.
+            </span>
+          </p>
+
           <div className="install-page__footer-actions">
+            <Link
+              href="/"
+              className="cta-pill cta-pill--primary inline-flex h-14 w-full md:w-auto md:min-w-[260px] items-center justify-center rounded-[var(--radius-pill)] px-7 md:px-9 text-[17px] font-medium"
+              data-track-event="install_back_home_click"
+            >
+              Back
+            </Link>
             <a
               href="mailto:hello@getcorder.com"
               className="install-page__ghost-cta cta-pill cta-pill--ghost inline-flex h-14 w-full md:w-auto md:min-w-[260px] items-center justify-center rounded-[var(--radius-pill)] px-7 md:px-9 text-[17px] font-medium"
