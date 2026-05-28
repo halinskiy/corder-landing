@@ -34,6 +34,17 @@ export default function ContactPage() {
         <div className="install-page__inner mx-auto max-w-[920px]">
           <h1 className="install-page__heading">{contact.title}</h1>
 
+          <p className="install-page__sub">
+            {contact.fallback}
+            <a
+              className="contact-hub__fallback-link"
+              href={`mailto:${contact.fallbackEmail}`}
+            >
+              {contact.fallbackEmail}
+            </a>
+            .
+          </p>
+
           <div className="contact-hub__cards">
             {contact.cards.map((card) => (
               <ContactCard
@@ -45,17 +56,6 @@ export default function ContactPage() {
               />
             ))}
           </div>
-
-          <p className="contact-hub__fallback">
-            {contact.fallback}
-            <a
-              className="contact-hub__fallback-link"
-              href={`mailto:${contact.fallbackEmail}`}
-            >
-              {contact.fallbackEmail}
-            </a>
-            .
-          </p>
 
           <div className="install-page__footer-actions">
             <Link
