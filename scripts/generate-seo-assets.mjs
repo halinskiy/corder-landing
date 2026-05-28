@@ -65,22 +65,41 @@ async function main() {
   );
   console.log("wrote public/icon.svg");
 
-  // 2) All raster sizes (16 -> 512) downscaled from the 3D PNG. Maker
-  // wants consistent Tahoe-style depth EVERYWHERE -- earlier the tiny
-  // favicons (16/32/48) used the flat SVG because depth was supposed
-  // to "muddy" at small sizes, but at 32/48 the dark capsules + drop
-  // shadow actually still read fine and the brand identity stays
-  // consistent across browser tab / home screen / OG card.
-  const rasterSizes = [
+  // 2) Raster sizes. The 3D PNG has a soft drop shadow that extends
+  // beyond the squircle and fills ~17 % of the canvas margin on each
+  // side. At big sizes (>= 128) that shadow reads as designed; at
+  // tiny sizes (16 / 32 / 48) the fade compresses into a visible grey
+  // halo around the squircle and looks like a coloured backing.
+  // Trim the source for favicons so the squircle fills the canvas,
+  // keep the full version for everything else so the drop shadow
+  // stays part of the visual.
+  const trimmedBuf = await sharp(brandPng)
+    .trim({ threshold: 10 })
+    .toBuffer();
+
+  const tightSizes = [
     { name: "favicon-16.png", size: 16 },
     { name: "favicon-32.png", size: 32 },
     { name: "favicon-48.png", size: 48 },
+  ];
+  for (const { name, size } of tightSizes) {
+    await sharp(trimmedBuf)
+      .resize(size, size, {
+        fit: "contain",
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      })
+      .png({ quality: 92 })
+      .toFile(path.join(PUBLIC, name));
+    console.log(`wrote public/${name} (${size}x${size}, 3D tight)`);
+  }
+
+  const fullSizes = [
     { name: "apple-icon.png", size: 180 },
     { name: "icon-192.png", size: 192 },
     { name: "icon-512.png", size: 512 },
     { name: "brand-mark-128.png", size: 128 },
   ];
-  for (const { name, size } of rasterSizes) {
+  for (const { name, size } of fullSizes) {
     await sharp(brandPng)
       .resize(size, size, {
         fit: "contain",
