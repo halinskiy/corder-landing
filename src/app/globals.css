@@ -5485,25 +5485,18 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
- *  /contact hub -- two-card layout mirroring granola.ai/contact
+ *  /contact hub -- two-card layout mirroring granola.ai/contact, on
+ *  the same shell as /install (.install-page + .install-page__inner
+ *  + .install-page__heading + .install-page__footer-actions). All
+ *  vertical rhythm and the bottom-pinned Back CTA come from there.
+ *  The rules below are the contact-specific pieces only.
  *
- *  Big centred serif heading, two equal cards side-by-side (stacked
- *  on mobile), each carrying icon + heading + an action link. Bottom
- *  microcopy row catches edge cases (press / privacy / legal).
+ *  Cards switched from cream-surface to white + hairline border so
+ *  they read as the same family as .install-step-card.
  * ---------------------------------------------------------------------- */
 
-.contact-hub__heading {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: clamp(40px, 6vw, 80px);
-  line-height: 1.05;
-  letter-spacing: -0.024em;
-  color: var(--color-text);
-  margin: 0 0 48px;
-  text-align: center;
-}
-
 .contact-hub__cards {
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
@@ -5520,11 +5513,11 @@ button:focus:not(:focus-visible) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  padding: 56px 32px;
+  gap: 18px;
+  padding: 48px 28px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-window);
-  background: var(--color-surface, #f7f7f6);
+  background: var(--color-bg);
   text-align: center;
 }
 
@@ -5535,15 +5528,18 @@ button:focus:not(:focus-visible) {
   justify-content: center;
 }
 
+/* Card heading capped to ~14ch so 'Want Corder for your team?' and
+ * 'Need help or have feedback?' both wrap to two lines. Earlier the
+ * first wrapped to 1 line and the second to 2 -- asymmetric. */
 .contact-hub__card-heading {
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: clamp(22px, 2.4vw, 28px);
+  font-size: clamp(22px, 2.2vw, 26px);
   line-height: 1.2;
   letter-spacing: -0.014em;
   color: var(--color-text);
   margin: 0;
-  max-width: 22ch;
+  max-width: 14ch;
 }
 
 .contact-hub__card-link {
@@ -5560,7 +5556,7 @@ button:focus:not(:focus-visible) {
 }
 
 .contact-hub__fallback {
-  margin-top: 40px;
+  margin-top: 28px;
   text-align: center;
   font-family: var(--font-sans);
   font-size: 14px;
