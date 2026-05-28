@@ -4,6 +4,7 @@ import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import { PauseOffscreen } from "@/components/providers/PauseOffscreen";
 import { CorderPresenceProvider } from "@/components/presence/CorderPresence";
+import { ConsentProvider } from "@/components/consent/ConsentProvider";
 
 import { copy } from "@/content/copy";
 import { PADDLE_ENV, PADDLE_TOKEN } from "@/lib/paddle";
@@ -222,22 +223,16 @@ const JSON_LD = {
 // before any React work so AudienceLine words never flash in their initial state.
 const MOTION_BOOTSTRAP_SCRIPT = `(function(){try{var s=new URLSearchParams(location.search).get('motion')==='0';var r=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(s||r){document.documentElement.dataset.motion='off';}}catch(e){}})();`;
 
-// Microsoft Clarity — heatmaps + session recordings. Project ID "wxvv66xnvb".
-// Injected as a static <script> in <head> so it survives `output: "export"`
-// (Next.js next/script doesn't fit static exports cleanly).
-const CLARITY_SCRIPT = `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "wxvv66xnvb");`;
-
-// Twitter / X pixel (twq). Loads only when NEXT_PUBLIC_TWQ_ID is set --
-// otherwise the snippet is omitted entirely so the page doesn't ship a
-// non-functional vendor script. Event ID mapping lives in src/lib/track.ts.
+// Analytics (Microsoft Clarity, X / Twitter conversion pixel, Plausible
+// Analytics) MOVED out of <head> on 2026-05-28. They now load only after
+// the user clicks Accept in the cookie consent banner; the consent state
+// is read from localStorage and the scripts are injected dynamically from
+// src/components/consent/ConsentProvider.tsx. This makes the site
+// GDPR-compliant for EU visitors out of the box.
+//
+// Preconnect hints below stay -- they're zero-cost and just save the TLS
+// handshake when the user later opts in.
 const TWQ_ID = process.env.NEXT_PUBLIC_TWQ_ID;
-const TWQ_SCRIPT = TWQ_ID
-  ? `!function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments)},s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');twq('config','${TWQ_ID}');`
-  : null;
-
-// Plausible analytics. Privacy-first, ~1KB, cookie-less. Loads only when
-// NEXT_PUBLIC_PLAUSIBLE_DOMAIN is set. The script exposes window.plausible
-// which src/lib/track.ts calls for every event.
 const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
 // Paddle.js v2 init. Wrapped in DOMContentLoaded so the deferred
@@ -288,34 +283,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP_SCRIPT }}
         />
-        <script
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: CLARITY_SCRIPT }}
-        />
-        {TWQ_SCRIPT && (
-          <script
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: TWQ_SCRIPT }}
-          />
-        )}
-        {PLAUSIBLE_DOMAIN && (
-          <>
-            <script
-              defer
-              data-domain={PLAUSIBLE_DOMAIN}
-              src="https://plausible.io/js/script.js"
-            />
-            {/* Manual API + pageview-only mode: lets src/lib/track.ts fire
-             * named events and prevents Plausible from double-counting the
-             * pageview we send from PauseOffscreen on mount. */}
-            <script
-              // eslint-disable-next-line react/no-danger
-              dangerouslySetInnerHTML={{
-                __html: "window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }",
-              }}
-            />
-          </>
-        )}
+        {/* Clarity / Twitter pixel / Plausible loaders MOVED to
+            ConsentProvider so they fire only after the user clicks
+            Accept in the cookie banner. The TWQ_ID / PLAUSIBLE_DOMAIN
+            env refs above are kept so the ConsentProvider can read
+            them at runtime via process.env. */}
         {/* Paddle.js v2 -- deferred so the external script stops
             blocking parse + first paint. Saves ~200-400 ms TBT on
             mobile per the 2026-05-27 SEO audit. The init script
@@ -334,6 +306,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MotionProvider>
           <CorderPresenceProvider>{children}</CorderPresenceProvider>
         </MotionProvider>
+        {/* GDPR consent banner. Renders only when no decision is
+            stored. On accept, dynamically injects Clarity / X pixel /
+            Plausible loaders. */}
+        <ConsentProvider />
       </body>
     </html>
   );

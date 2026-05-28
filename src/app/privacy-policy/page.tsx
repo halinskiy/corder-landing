@@ -140,9 +140,17 @@ export default function PrivacyPolicyPage() {
             <h2>Sub-processors</h2>
             <p>
               We use the following third-party services to operate
-              Corder. Each holds either a signed Data Processing
-              Agreement (DPA) with us or is covered by an off-the-shelf
-              DPA that the provider publishes.
+              Corder. Each is covered by the Data Processing Agreement
+              that the provider publishes under its standard terms
+              (for example,{" "}
+              <a
+                href="https://supabase.com/dpa"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Supabase DPA
+              </a>
+              ).
             </p>
             <table className="legal-table">
               <thead>
@@ -242,13 +250,18 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong>Account row, after you click Delete account:
-                </strong> 30-day grace period for accidental removal.
-                After that the row is permanently removed from our
-                database, cascade-deleting linked meetings + storage
-                objects, your email is unsubscribed from every list,
-                and the linked Paddle subscription is canceled. The
-                30-day grace mirrors the GDPR standard for account
-                erasure under Article 17.
+                </strong> deletion happens from inside the Mac app
+                (Profile menu &rarr; Delete account, confirmation
+                prompt). The app immediately removes every row tied
+                to your user id (meetings cascade to speakers,
+                segments, summaries, recording metadata) and lists +
+                deletes every Storage object stored under your user
+                id. The linked Paddle subscription is canceled and
+                your email is unsubscribed from every list. A residual
+                empty auth row may remain in our identity provider
+                (Supabase auth.users) until a scheduled cleanup
+                removes it; that row contains no personal data after
+                the deletion above.
               </li>
               <li>
                 <strong>Billing records (Paddle):</strong> retained by
@@ -307,10 +320,11 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong>Delete</strong> your data (right to be
-                forgotten). Click Delete account in{" "}
-                <a href="/account">/account</a> to start the 30-day
-                grace deletion described above. Individual meetings
-                can also be deleted from the Mac app.
+                forgotten). Open the Corder Mac app, click your
+                profile in the top-right, then Delete account. The
+                app removes every meeting + storage object tied to
+                your account immediately. Individual meetings can
+                also be deleted one-by-one from the Library.
               </li>
               <li>
                 <strong>Port</strong> your data to another service.
