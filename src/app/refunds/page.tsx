@@ -1,6 +1,6 @@
-import Link from "next/link";
-
 import type { Metadata } from "next";
+
+import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
@@ -28,7 +28,10 @@ export default function RefundsPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px]">
-          <h1 className="install-page__heading">Refund Policy</h1>
+          <div className="standalone-page-header">
+            <BackToHomeBtn />
+            <h1 className="install-page__heading">Refund Policy</h1>
+          </div>
           <p className="install-page__sub">Last updated: 22 May 2026.</p>
 
           <div className="legal-body">
@@ -100,16 +103,6 @@ export default function RefundsPage() {
               </a>
               . We read every message.
             </p>
-          </div>
-
-          <div className="install-page__footer-actions">
-            <Link
-              href="/"
-              className="cta-pill cta-pill--primary inline-flex h-14 w-full md:w-auto md:min-w-[260px] items-center justify-center rounded-[var(--radius-pill)] px-7 md:px-9 text-[17px] font-medium"
-              data-track-event="refunds_back_home_click"
-            >
-              Back to corder.app
-            </Link>
           </div>
         </div>
       </div>

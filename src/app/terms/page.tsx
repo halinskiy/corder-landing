@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import type { Metadata } from "next";
 
+import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
+
 export const metadata: Metadata = {
   title: "Terms",
   description:
@@ -27,7 +29,10 @@ export default function TermsPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px]">
-          <h1 className="install-page__heading">Terms</h1>
+          <div className="standalone-page-header">
+            <BackToHomeBtn />
+            <h1 className="install-page__heading">Terms</h1>
+          </div>
           <p className="install-page__sub">
             Last updated: 25 May 2026. Working draft.
           </p>
@@ -101,16 +106,6 @@ export default function TermsPage() {
             <p>
               We will date the next revision at the top of this page.
             </p>
-          </div>
-
-          <div className="install-page__footer-actions">
-            <Link
-              href="/"
-              className="cta-pill cta-pill--primary inline-flex h-14 w-full md:w-auto md:min-w-[260px] items-center justify-center rounded-[var(--radius-pill)] px-7 md:px-9 text-[17px] font-medium"
-              data-track-event="terms_back_home_click"
-            >
-              Back to corder.app
-            </Link>
           </div>
         </div>
       </div>
