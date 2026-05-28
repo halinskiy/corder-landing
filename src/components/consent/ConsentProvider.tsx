@@ -75,15 +75,12 @@ export function ConsentProvider() {
       aria-describedby="consent-body"
       data-component="ConsentBanner"
       data-source={DATA_SOURCE}
-      data-tokens="color-bg,color-border,color-text,color-text-muted,radius-window,radius-button,ease-out"
+      data-tokens="color-bg,color-border,color-text,color-text-muted,color-accent,radius-window,radius-pill,ease-out"
       className="consent-banner"
     >
-      <div className="consent-banner__head">
-        <span className="consent-banner__eyebrow">Cookies</span>
-        <h2 id="consent-title" className="consent-banner__title">
-          Help improve this site
-        </h2>
-      </div>
+      <h2 id="consent-title" className="consent-banner__title">
+        Help improve this site
+      </h2>
       <p id="consent-body" className="consent-banner__body">
         We use Microsoft Clarity and Plausible Analytics to understand
         how this site is used. Decline and they stay off, no questions
@@ -93,24 +90,21 @@ export function ConsentProvider() {
         <button
           type="button"
           onClick={() => persist("accepted")}
-          className="consent-banner__accept"
+          className="cta-pill cta-pill--primary consent-banner__cta"
         >
           Accept
         </button>
         <button
           type="button"
           onClick={() => persist("declined")}
-          className="consent-banner__decline"
+          className="cta-pill cta-pill--ghost consent-banner__cta consent-banner__cta--ghost"
         >
           Decline
         </button>
-        <a
-          href="/privacy-policy/"
-          className="consent-banner__policy"
-        >
-          Privacy
-        </a>
       </div>
+      <a href="/privacy-policy/" className="consent-banner__policy">
+        Read the Privacy Policy
+      </a>
     </div>
   );
 }
