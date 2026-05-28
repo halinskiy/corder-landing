@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/app/contact/page.tsx";
@@ -33,10 +32,7 @@ export default function ContactPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="install-page__inner mx-auto max-w-[1080px]">
-          <div className="standalone-page-header">
-            <BackToHomeBtn />
             <h1 className="install-page__heading">{contact.title}</h1>
-          </div>
 
           <p className="install-page__sub">
             {contact.fallback}

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { MagicLinkForm } from "@/components/account/MagicLinkForm";
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "Log in",
@@ -27,10 +26,7 @@ export default function LoginPage() {
     <main className="legal-page" data-component="LoginPage" data-source={DATA_SOURCE}>
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px] account-auth-body">
-          <div className="standalone-page-header">
-            <BackToHomeBtn />
             <h1 className="install-page__heading">Welcome back</h1>
-          </div>
           <p className="install-page__sub">
             Enter the email you signed up with. We send a one-time link --
             click it and you're in. No password to remember.

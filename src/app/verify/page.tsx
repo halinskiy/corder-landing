@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { VerifyClient } from "@/components/account/VerifyClient";
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "Verifying",
@@ -33,10 +32,7 @@ export default function VerifyPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px] account-verify-body">
-          <div className="standalone-page-header">
-            <BackToHomeBtn />
             <h1 className="install-page__heading">Verifying your link...</h1>
-          </div>
           <p className="install-page__sub">
             One second -- we're signing you in. You'll land in your
             account page automatically.

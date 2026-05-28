@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 import { trackEvent } from "@/lib/track";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/install/InstallClient.tsx";
@@ -120,10 +119,7 @@ export function InstallClient() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="install-page__inner mx-auto max-w-[1080px]">
-          <div className="standalone-page-header">
-            <BackToHomeBtn />
             <h1 className="install-page__heading">Thanks for downloading.</h1>
-          </div>
 
           <p className="install-page__sub">
             Your download will begin automatically. If it did not start.
