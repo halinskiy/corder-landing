@@ -57,26 +57,14 @@ export default function VerifyPage() {
 
 function BrandMark() {
   return (
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 1024 1024"
+    <img
+      src="/brand-mark-128.png"
+      width={28}
+      height={28}
+      alt=""
       aria-hidden="true"
-      role="img"
-    >
-      <rect
-        x="6"
-        y="6"
-        width="1012"
-        height="1012"
-        rx="227"
-        ry="227"
-        fill="#ffffff"
-        stroke="rgba(0, 0, 0, 0.12)"
-        strokeWidth="12"
-      />
-      <rect x="340" y="248" width="144" height="528" rx="72" ry="72" fill="#111111" />
-      <rect x="540" y="248" width="144" height="528" rx="72" ry="72" fill="#111111" />
-    </svg>
+      decoding="async"
+      style={{ display: "block" }}
+    />
   );
 }

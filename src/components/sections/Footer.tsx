@@ -134,34 +134,18 @@ function renderSloganWithRec(slogan: string) {
 }
 
 function FooterMark() {
+  // 3D Tahoe-style brand mark. Displayed at 40 px; the 128 source
+  // covers ~3x retina. Drop shadow is baked into the PNG's alpha.
   return (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 1024 1024"
+    <img
+      src="/brand-mark-128.png"
+      width={40}
+      height={40}
+      alt=""
       aria-hidden="true"
-      role="img"
-      style={{
-        filter:
-          "drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05))",
-      }}
-    >
-      {/* Canonical Corder mark (bordered variant). See Nav.tsx for
-       *  source-of-truth notes. */}
-      <rect
-        x="6"
-        y="6"
-        width="1012"
-        height="1012"
-        rx="227"
-        ry="227"
-        fill="#ffffff"
-        stroke="rgba(0, 0, 0, 0.12)"
-        strokeWidth="12"
-      />
-      <rect x="340" y="248" width="144" height="528" rx="72" ry="72" fill="#111111" />
-      <rect x="540" y="248" width="144" height="528" rx="72" ry="72" fill="#111111" />
-    </svg>
+      decoding="async"
+      style={{ display: "block" }}
+    />
   );
 }
 

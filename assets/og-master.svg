@@ -24,16 +24,12 @@
   <rect width="1200" height="630" fill="url(#dotgrid)"/>
   <rect width="1200" height="630" fill="url(#vignette)"/>
 
-  <!-- Brand mark tile + wordmark. Geometry follows the canonical mark
-       in /Users/3mpq/corder-brand/ (bordered variant), scaled from the
-       1024 reference to 96 px. Bars: 14 x 50 rx=7 at x=32/51. The
-       12 % hairline keeps the white squircle visible on the cream OG
-       background. -->
+  <!-- Wordmark only. The brand tile itself is composited on top of
+       this SVG as a 96x96 raster from corder-mark-3d-2048.png by the
+       generate-seo-assets script (step 5). Drawing the tile here as
+       flat shapes was the previous approach; the 3D Tahoe-style
+       render reads better in social previews. -->
   <g transform="translate(72, 72)">
-    <rect x="0.5" y="0.5" width="95" height="95" rx="21.5" ry="21.5"
-          fill="#ffffff" stroke="rgba(0,0,0,0.12)" stroke-width="1"/>
-    <rect x="32" y="23" width="13.5" height="50" rx="6.75" ry="6.75" fill="#111111"/>
-    <rect x="50.5" y="23" width="13.5" height="50" rx="6.75" ry="6.75" fill="#111111"/>
     <text x="120" y="74" font-family="Georgia, 'IBM Plex Serif', 'Times New Roman', serif"
           font-size="60" font-weight="500" fill="#111111" letter-spacing="-1">Corder</text>
   </g>
