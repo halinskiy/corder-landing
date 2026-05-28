@@ -3634,19 +3634,20 @@ button:focus:not(:focus-visible) {
 
 @media (min-width: 768px) {
   .site-footer__grid {
-    /* 3 columns at md+: brand (wide) + Product + Legal. Support was
-     * folded into Product (FAQ + Contact Us appended) 2026-05-26 so
-     * the link columns now stay clear of the floating newsletter card
-     * at lg+ without crowding. */
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 64px;
+    /* 4 columns at md+: brand (wide) + Product + Developers + Legal.
+     * Developers was added 2026-05-28 (/docs/mcp + /docs/api links)
+     * which is why the template moved from 3 to 4 cols. Gap dropped
+     * 64 -> 40 to keep all three link cols breathing without forcing
+     * the grid past the floating CorderPresenceForm card at lg+. */
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
   }
 }
 
 /* At lg+ reserve the right gutter for the floating CorderPresenceForm
  * (same 346px right margin used by .faq-list and .site-footer__divider).
- * Without it the rightmost link column (Legal) used to overlap the
- * floating newsletter card. */
+ * Without it the rightmost link column used to overlap the floating
+ * newsletter card. */
 @media (min-width: 1024px) {
   .site-footer__grid {
     margin-right: 346px;
