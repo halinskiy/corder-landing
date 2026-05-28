@@ -6,7 +6,22 @@ const STORAGE_KEY = "corder_consent";
 const CLARITY_ID = "wxvv66xnvb";
 const DATA_SOURCE = "projects/corder-landing/src/components/consent/ConsentProvider.tsx";
 
+// Custom event the footer "Cookie preferences" link dispatches to
+// re-show the banner. GDPR Article 7(3) requires withdrawal of consent
+// to be as easy as giving it -- this event makes that happen without a
+// page reload.
+const OPEN_EVENT = "corder:consent:open";
+
 type ConsentState = "unknown" | "accepted" | "declined";
+
+/**
+ * Programmatic API to reopen the banner from anywhere on the page.
+ * Used by the footer "Cookie preferences" link.
+ */
+export function openConsentBanner() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(OPEN_EVENT));
+}
 
 // Global declarations for clarity / twq / plausible live in
 // src/lib/track.ts -- the ConsentProvider only injects script tags
@@ -29,6 +44,11 @@ type ConsentState = "unknown" | "accepted" | "declined";
  */
 export function ConsentProvider() {
   const [state, setState] = useState<ConsentState>("unknown");
+  // Tracks the choice the user made before the banner was reopened
+  // via the footer link. If they swap from accepted -> declined we
+  // hard-reload so the already-loaded Clarity / Plausible / X scripts
+  // are evicted; same-session JS can't unload a vendor script cleanly.
+  const previousChoiceRef = useRef<ConsentState>("unknown");
   const injectedRef = useRef(false);
 
   useEffect(() => {
@@ -40,12 +60,25 @@ export function ConsentProvider() {
       /* localStorage blocked (private mode / corrupted) -- treat as unknown */
     }
     if (stored === "accepted") {
+      previousChoiceRef.current = "accepted";
       setState("accepted");
     } else if (stored === "declined") {
+      previousChoiceRef.current = "declined";
       setState("declined");
     } else {
       setState("unknown");
     }
+  }, []);
+
+  // Footer 'Cookie preferences' link dispatches this event. We flip
+  // state back to "unknown" so the banner mounts again -- the user
+  // can re-decide. Required by GDPR Article 7(3): withdrawal of
+  // consent must be as easy as giving it.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handler = () => setState("unknown");
+    window.addEventListener(OPEN_EVENT, handler);
+    return () => window.removeEventListener(OPEN_EVENT, handler);
   }, []);
 
   // Inject analytics ONCE when consent flips to accepted.
@@ -57,12 +90,22 @@ export function ConsentProvider() {
   }, [state]);
 
   function persist(value: "accepted" | "declined") {
+    const prev = previousChoiceRef.current;
     try {
       window.localStorage.setItem(STORAGE_KEY, value);
     } catch {
       /* no-op; banner will reappear next visit */
     }
+    previousChoiceRef.current = value;
     setState(value);
+    // If the user was accepted before and now declined, the vendor
+    // scripts are still alive in this page. Hard-reload so they're
+    // truly evicted -- otherwise Clarity / Plausible / X keep firing
+    // beacons until the next page load, which would violate the
+    // withdrawal.
+    if (prev === "accepted" && value === "declined") {
+      window.location.reload();
+    }
   }
 
   if (state !== "unknown") return null;
