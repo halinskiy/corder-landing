@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "You're in",
@@ -35,11 +34,7 @@ export default function ThanksPage() {
       <div className="page-container py-16 md:py-24">
         <div className="install-page__inner mx-auto max-w-[1080px]">
           <span className="thanks-page__status">Pro activated</span>
-
-          <div className="standalone-page-header">
-            <BackToHomeBtn />
             <h1 className="install-page__heading">You&apos;re in.</h1>
-          </div>
           <p className="install-page__sub install-page__sub--multi">
             Licence key is on its way to your inbox. Open Corder and paste
             it in. Should land within 1-2 minutes.

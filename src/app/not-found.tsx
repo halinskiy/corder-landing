@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: { absolute: "Not found  -  Corder" },
@@ -27,12 +26,9 @@ export default function NotFound() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px]">
-          <div className="standalone-page-header">
-            <BackToHomeBtn />
-            <h1 className="install-page__heading">
-              This page took a detour.
-            </h1>
-          </div>
+          <h1 className="install-page__heading">
+            This page took a detour.
+          </h1>
           <p className="install-page__sub">
             The path you followed moved, was renamed, or never existed.
             Nothing is wrong with the app  -  just this URL.

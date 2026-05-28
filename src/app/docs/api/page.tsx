@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import type { Metadata } from "next";
 
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 const DATA_SOURCE = "projects/corder-landing/src/app/docs/api/page.tsx";
 
@@ -29,10 +28,7 @@ export default function DocsApiPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px]">
-          <div className="standalone-page-header">
-            <BackToHomeBtn />
             <h1 className="install-page__heading">REST API</h1>
-          </div>
           <p className="install-page__sub">
             The HTTP REST surface is under design. If you need programmatic
             access today, use the MCP server.

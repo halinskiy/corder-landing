@@ -6,6 +6,7 @@ import { PauseOffscreen } from "@/components/providers/PauseOffscreen";
 import { CorderPresenceProvider } from "@/components/presence/CorderPresence";
 import { ConsentProvider } from "@/components/consent/ConsentProvider";
 import { CookieConsentButton } from "@/components/consent/CookieConsentButton";
+import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 import { copy } from "@/content/copy";
 import { PADDLE_ENV, PADDLE_TOKEN } from "@/lib/paddle";
@@ -315,6 +316,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             on every page so the user can re-decide at any time;
             hidden while the banner itself is on screen. */}
         <CookieConsentButton />
+        {/* Persistent top-left back-to-home affordance. Mirror of the
+            cookie trigger -- same ghost circle, opposite corner.
+            Renders on every page except home (the component decides). */}
+        <BackToHomeBtn />
       </body>
     </html>
   );

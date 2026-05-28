@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { AccountView } from "@/components/account/AccountView";
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -51,10 +50,7 @@ export default function AccountPage() {
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px] account-body">
           <header className="account-header">
-            <div className="standalone-page-header">
-              <BackToHomeBtn />
-              <h1 className="install-page__heading">Account</h1>
-            </div>
+            <h1 className="install-page__heading">Account</h1>
           </header>
           <AccountView />
         </div>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
@@ -28,10 +27,7 @@ export default function RefundsPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px]">
-          <div className="standalone-page-header">
-            <BackToHomeBtn />
             <h1 className="install-page__heading">Refund Policy</h1>
-          </div>
           <p className="install-page__sub">Last updated: 22 May 2026.</p>
 
           <div className="legal-body">
