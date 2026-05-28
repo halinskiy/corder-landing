@@ -75,13 +75,23 @@ export function Footer() {
               <div key={column.heading}>
                 <p className="site-footer__col-heading">{column.heading}</p>
                 <ul className="site-footer__list">
-                  {column.links.map((link) => (
-                    <li key={link.label}>
-                      <a className="site-footer__link" href={link.href}>
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
+                  {column.links.map((link) => {
+                    const external = /^https?:\/\//.test(link.href);
+                    return (
+                      <li key={link.label}>
+                        <a
+                          className="site-footer__link"
+                          href={link.href}
+                          {...(external && {
+                            target: "_blank",
+                            rel: "noopener noreferrer",
+                          })}
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))}
