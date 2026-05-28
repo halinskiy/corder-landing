@@ -5257,32 +5257,6 @@ button:focus:not(:focus-visible) {
   margin: -4px 0 48px;
 }
 
-/* Apple Silicon chip note -- compact line that sits BELOW the install
- * step cards and ABOVE the footer-actions. Plain hairline pill with a
- * CPU glyph; quiet, informational, not a CTA. Tells the reader the
- * one hardware caveat (M-series for local Whisper, Intel falls back to
- * the cloud tier) without interrupting the install flow above. */
-.install-page__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 32px 0 0;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-bg);
-  color: var(--color-text-muted);
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.45;
-  max-width: 56ch;
-  text-align: left;
-}
-.install-page__chip svg {
-  flex-shrink: 0;
-  color: var(--color-text);
-}
-
 /* Bottom action stack -- primary CTA back to the landing, ghost CTA
  * for the help mailto BELOW it. margin-top: auto pushes the stack
  * to the bottom of the .install-page__inner column so the bottom
