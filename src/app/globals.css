@@ -5278,15 +5278,16 @@ button:focus:not(:focus-visible) {
   margin: -4px 0 48px;
 }
 
-/* Apple Silicon chip note -- compact line below the manual-download
- * link. Plain hairline pill with a CPU glyph; quiet, informational
- * tone, not a CTA. Sits between the sub and the install step cards
- * so the user reads it on the way down. */
+/* Apple Silicon chip note -- compact line that sits BELOW the install
+ * step cards and ABOVE the footer-actions. Plain hairline pill with a
+ * CPU glyph; quiet, informational, not a CTA. Tells the reader the
+ * one hardware caveat (M-series for local Whisper, Intel falls back to
+ * the cloud tier) without interrupting the install flow above. */
 .install-page__chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin: -32px 0 32px;
+  margin: 32px 0 0;
   padding: 6px 12px;
   border-radius: 9999px;
   border: 1px solid var(--color-border-strong);
