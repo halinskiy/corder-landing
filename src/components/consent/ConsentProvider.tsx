@@ -12,7 +12,16 @@ const DATA_SOURCE = "projects/corder-landing/src/components/consent/ConsentProvi
 // page reload.
 const OPEN_EVENT = "corder:consent:open";
 
-type ConsentState = "unknown" | "accepted" | "declined";
+/**
+ * `null` -- localStorage has not been checked yet (first render before
+ * the post-mount effect fires). Treated as "not decided" for *display*
+ * purposes: we render nothing until we know which way to go, which
+ * prevents the banner from flashing on every visit for users who have
+ * already declined or accepted (the storage read happens after mount,
+ * so without this guard the banner SSR/hydrates as visible and then
+ * disappears one tick later).
+ */
+type ConsentState = null | "unknown" | "accepted" | "declined";
 
 /**
  * Programmatic API to reopen the banner from anywhere on the page.
@@ -43,12 +52,16 @@ export function openConsentBanner() {
  * The banner re-appears if the user clears site data.
  */
 export function ConsentProvider() {
-  const [state, setState] = useState<ConsentState>("unknown");
+  // Starts as null so the banner does NOT render during SSR or before
+  // the post-mount localStorage check completes. The first useEffect
+  // sets it to "unknown" (no prior decision -> show banner) or to the
+  // stored "accepted" / "declined" (already decided -> stay null-ish).
+  const [state, setState] = useState<ConsentState>(null);
   // Tracks the choice the user made before the banner was reopened
   // via the footer link. If they swap from accepted -> declined we
   // hard-reload so the already-loaded Clarity / Plausible / X scripts
   // are evicted; same-session JS can't unload a vendor script cleanly.
-  const previousChoiceRef = useRef<ConsentState>("unknown");
+  const previousChoiceRef = useRef<ConsentState>(null);
   const injectedRef = useRef(false);
 
   useEffect(() => {
