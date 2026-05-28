@@ -4090,6 +4090,57 @@ button:focus:not(:focus-visible) {
   text-underline-offset: 3px;
 }
 
+/* h3 / h4 inside legal body -- used by the privacy policy to break
+ * the long body into sub-sections (per-tier app behaviour,
+ * sub-section under What data + Account data). Smaller weight ramp
+ * than h2 so the section hierarchy still reads as a single thought. */
+.legal-page .legal-body h3 {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  color: var(--color-text);
+  margin: 24px 0 10px;
+}
+.legal-page .legal-body h4 {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--color-text);
+  margin: 18px 0 8px;
+}
+
+/* Sub-processors table in the privacy policy. Hairline grid,
+ * generous row padding, smaller body so the columns fit at the
+ * 720 px max-width of the legal shell. */
+.legal-page .legal-body .legal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 18px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+}
+.legal-page .legal-body .legal-table th,
+.legal-page .legal-body .legal-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.legal-page .legal-body .legal-table th {
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+.legal-page .legal-body .legal-table td:first-child {
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
 .legal-footer {
   margin-top: 48px;
   font-family: var(--font-sans);
