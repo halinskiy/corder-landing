@@ -120,6 +120,18 @@ button:focus:not(:focus-visible) {
   transform: scale(0.98);
 }
 
+/* Ghost back-button sits to the left of the form submit in the
+ * .contact-form__submit-row. Same hairline border + transparent bg as
+ * .install-page__ghost-cta / .consent-banner__cta--ghost so it reads
+ * as the same family of ghost CTAs across the site. The .cta-pill +
+ * .cta-pill--ghost classes supply the transitions + hover language. */
+.contact-form__back {
+  border: 1px solid var(--color-border-strong);
+  background-color: transparent;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
 /* ----------------------------------------------------------------------
  *  Nav links — hover colour shift to full text
  * ---------------------------------------------------------------------- */
@@ -3774,51 +3786,16 @@ button:focus:not(:focus-visible) {
  *  marketing page.
  * -------------------------------------------------------------------- */
 
-.thanks-page {
-  min-height: 100vh;
-  background: var(--color-bg);
-  padding-block: 28px 32px;
-  display: flex;
-}
-
-.thanks-page__inner {
-  max-width: 1040px;
-  width: 100%;
-  margin-inline: auto;
-  padding-inline: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-@media (min-width: 768px) {
-  .thanks-page__inner { padding-inline: 48px; gap: 36px; }
-}
-
-/* Top bar: brand left, status right. Sits flat with no big margin. */
-.thanks-page__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.thanks-page__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: 17px;
-  letter-spacing: -0.01em;
-  color: var(--color-text);
-  text-decoration: none;
-}
-
+/* "Pro activated" status pill above the heading. Same accent-wash chip
+ * vocabulary as the hero ::ready dot etc. Sits as the first child of
+ * .install-page__inner with its own bottom margin so the heading drops
+ * cleanly under it. */
 .thanks-page__status {
   display: inline-flex;
   align-items: center;
   height: 24px;
   padding-inline: 10px;
+  margin-bottom: 16px;
   border-radius: var(--radius-pill);
   background: rgba(33, 122, 80, 0.10);
   color: var(--color-accent);
@@ -3829,36 +3806,17 @@ button:focus:not(:focus-visible) {
   text-transform: uppercase;
 }
 
-/* Hero: tight single-line serif heading + short lead. */
-.thanks-page__hero {
-  max-width: 60ch;
-}
-
-.thanks-page__heading {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: clamp(32px, 4.2vw, 56px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-}
-
-.thanks-page__lead {
-  margin: 14px 0 0;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.55;
-  color: var(--color-text-muted);
-  max-width: 50ch;
-}
-
 /* Two action cards. Heading row with inline arrow; one-line body below.
- * Primary card is accent-filled, secondary stays on hairline border. */
+ * Primary card is accent-filled, secondary stays on hairline border.
+ * Sits below the centered heading + sub inside .install-page__inner;
+ * width fills the inner container so the grid spans the page column. */
 .thanks-page__cards {
   display: grid;
   grid-template-columns: 1fr;
   gap: 14px;
+  width: 100%;
+  margin-top: 36px;
+  text-align: left;
 }
 
 @media (min-width: 768px) {
@@ -3967,15 +3925,32 @@ button:focus:not(:focus-visible) {
   color: #ffffff;
 }
 
-/* Quiet status row, no heavy top border. */
+/* Quiet status row at the page bottom -- "14-day refund . Cancel
+ * anytime . Back to corder.app". Dot separators are CSS-painted
+ * circles (no unicode middle-dot characters in the markup, per the
+ * ASCII-only copy rule). */
 .thanks-page__status-row {
+  margin-top: 36px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 14px;
   font-family: var(--font-sans);
   font-size: 13px;
   color: var(--color-text-subtle);
+}
+
+.thanks-page__status-row > *:not(:first-child)::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin-right: 14px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  vertical-align: middle;
 }
 
 .thanks-page__status-row a {
@@ -3990,71 +3965,6 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
- *  404 — Not found page
- *
- *  Quiet centred page. No nav, no footer; the only action is the primary
- *  CTA back to /. Matches the editorial register of /privacy-policy and
- *  /terms but tighter -- this is a momentary stop, not a document.
- * ---------------------------------------------------------------------- */
-
-/* /404 — reuses the legal-page shell for consistent top offsets
- * (same as /privacy-policy / /terms / /refunds). No fixed brand mark,
- * no "Error 404" eyebrow, no secondary FAQ link. Heading is forced
- * onto a single line. */
-.not-found-page__heading {
-  margin: 0 0 16px;
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: clamp(32px, 4.6vw, 52px);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-  white-space: nowrap;
-}
-
-.not-found-page__body {
-  margin: 0 0 28px;
-  font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 1.55;
-  color: var(--color-text-muted);
-  max-width: 56ch;
-}
-
-.not-found-page__actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.not-found-page__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 52px;
-  padding-inline: 32px;
-  border-radius: var(--radius-pill);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@media (max-width: 480px) {
-  /* Allow the heading to wrap on a narrow phone where nowrap would
-   * push it off-screen. The page-container padding still caps the
-   * line width below the viewport. */
-  .not-found-page__heading {
-    white-space: normal;
-  }
-}
-
-/* ----------------------------------------------------------------------
  *  Legal pages (/privacy-policy/, /terms/)
  *
  *  Quiet text-only pages. Plain serif H2s, sans body, no decoration. Same
@@ -4064,6 +3974,11 @@ button:focus:not(:focus-visible) {
 
 .legal-page .legal-body {
   margin-top: 32px;
+  /* Cap the reading column so the outer 1080 px page shell does not
+   * stretch lines past a comfortable ~65 character width. The legal
+   * body stays left-anchored to the page-container left edge; empty
+   * space to the right is intentional. */
+  max-width: 65ch;
   font-family: var(--font-sans);
   font-size: 17px;
   line-height: 1.65;
@@ -4160,19 +4075,6 @@ button:focus:not(:focus-visible) {
   font-weight: 500;
   color: var(--color-text);
   white-space: nowrap;
-}
-
-.legal-footer {
-  margin-top: 48px;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--color-text-subtle);
-}
-
-.legal-footer a {
-  color: var(--color-text);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 /* ----------------------------------------------------------------------
@@ -4663,24 +4565,6 @@ button:focus:not(:focus-visible) {
   max-width: 460px;
 }
 
-.account-auth-heading {
-  margin: 0 0 12px;
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: 36px;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-}
-
-.account-auth-lead {
-  margin: 0 0 28px;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.55;
-  color: var(--color-text-muted);
-}
-
 .account-auth-form {
   display: flex;
   flex-direction: column;
@@ -4809,15 +4693,6 @@ button:focus:not(:focus-visible) {
 /* ---- /account page layout ---- */
 .account-page .account-body { max-width: 760px; }
 .account-header { margin-bottom: 32px; }
-.account-title {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: 36px;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-}
 
 .account-sections {
   display: flex;
@@ -5252,6 +5127,35 @@ button:focus:not(:focus-visible) {
   }
 }
 
+/* Left-aligned variant for .legal-page contexts (long-form documents,
+ * 404, account, auth pages where centered single-line headings would
+ * either truncate or break the reading rhythm). Same font / size /
+ * letter-spacing as the centered install-page heading -- only the
+ * alignment and wrap behaviour differ. Consolidates what used to live
+ * under .section-heading + .section-subhead + bespoke heading classes
+ * across not-found / account / auth pages. */
+.legal-page .install-page__heading {
+  white-space: normal;
+  text-align: left;
+  margin: 0 0 12px;
+}
+.legal-page .install-page__sub {
+  white-space: normal;
+  text-align: left;
+  max-width: 56ch;
+  margin: 0 0 32px;
+}
+
+/* Multi-line variant for the centered install-page__sub when the
+ * subhead is a sentence or two rather than a single tagline (e.g.
+ * /contact/sales). Removes the nowrap clamp and caps width to a
+ * comfortable reading column. */
+.install-page__sub--multi {
+  white-space: normal;
+  max-width: 56ch;
+  margin-inline: auto;
+}
+
 .install-page__manual-link {
   color: var(--color-accent);
   text-decoration: underline;
@@ -5282,6 +5186,15 @@ button:focus:not(:focus-visible) {
   flex-direction: column;
   align-items: center;
   gap: 12px;
+}
+
+/* Tighter padding in .legal-page context (long-form documents): with
+ * the page-container's py-24 bottom on top of the actions' own
+ * padding-top, 64 px leaves a yawning gap between the last paragraph
+ * and the Back CTA. Reader perceives the page as over before the
+ * button is in view; 32 px keeps the CTA close to content end. */
+.legal-page .install-page__footer-actions {
+  padding-top: 32px;
 }
 
 /* Three install step CARDS (2026-05-27 v3). Each step lives in its
@@ -5410,34 +5323,6 @@ button:focus:not(:focus-visible) {
  *  inputs feel native to the rest of the site, not bolted on.
  * ---------------------------------------------------------------------- */
 
-.contact-page__heading {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: clamp(32px, 4vw, 48px);
-  line-height: 1.12;
-  letter-spacing: -0.022em;
-  color: var(--color-text);
-  margin: 0 0 14px;
-}
-
-.contact-page__sub {
-  font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 1.55;
-  color: var(--color-text-muted);
-  margin: 0 0 36px;
-  max-width: 56ch;
-}
-
-.contact-page__direct-line {
-  margin-top: 32px;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--color-text-subtle);
-  text-align: center;
-}
-
 /* Contact form -- pill-shape email + subject inputs (999 px radius,
  * matches the old .presence-form-input that lived inside the
  * newsletter card before it was swapped for the Download CTA). The
@@ -5448,6 +5333,16 @@ button:focus:not(:focus-visible) {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  width: 100%;
+  /* Breathing between the centered heading + sub above and the first
+   * label below; matches the 32 px gap pattern used elsewhere on
+   * install-page-shelled pages between sub and content block. */
+  margin-top: 32px;
+  /* Reset inherited text-align when the form lives inside the centered
+   * install-page__inner shell (used by /contact/sales). Labels above
+   * inputs must read left-aligned regardless of the page's hub-style
+   * heading centering. */
+  text-align: left;
 }
 
 .contact-form__field {
@@ -5541,6 +5436,32 @@ button:focus:not(:focus-visible) {
   border-radius: var(--radius-button);
 }
 
+/* Submit row -- on mobile, secondary back-link sits below the primary
+ * Send (stacks vertically). On desktop, secondary moves to the left
+ * and Send takes the remaining horizontal space. Mirrors the standard
+ * "secondary | primary" desktop pattern with mobile stacking, where
+ * the primary action always sits on top for thumb-reach. */
+.contact-form__submit-row {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 12px;
+  margin-top: 4px;
+}
+.contact-form__submit-row > .contact-form__submit {
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .contact-form__submit-row {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .contact-form__submit-row > .contact-form__submit {
+    flex: 1 1 auto;
+    width: auto;
+  }
+}
+
 /* ----------------------------------------------------------------------
  *  /contact hub -- two-card layout mirroring granola.ai/contact, on
  *  the same shell as /install (.install-page + .install-page__inner
@@ -5626,22 +5547,6 @@ button:focus:not(:focus-visible) {
 }
 .contact-hub__fallback-link:hover {
   color: var(--color-accent-deep, #0e3d28);
-}
-
-/* Back link on /contact/sales -- small underlined accent link above
- * the heading so the user can pop back to the hub without using the
- * browser back button. */
-.contact-page__back-link {
-  display: inline-block;
-  margin-bottom: 24px;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--color-text-muted);
-  text-decoration: none;
-  transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.contact-page__back-link:hover {
-  color: var(--color-text);
 }
 
 /* ----------------------------------------------------------------------

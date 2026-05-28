@@ -15,11 +15,12 @@ const DATA_SOURCE = "projects/corder-landing/src/app/thanks/page.tsx";
 /**
  * /thanks -- post-checkout welcome page.
  *
- * Compact one-screen layout: brand bar at top, single serif heading,
- * short lead, two side-by-side action cards, light status row. The
- * page is the *quietest* surface on the site -- a buyer just paid,
- * they want a clear next-step, not another marketing page. Fits in a
- * standard 800px-tall laptop viewport without scrolling.
+ * Shares the same shell as /install and /contact (.install-page +
+ * .install-page__inner) so the three hub-style standalone pages read
+ * as one family. The two action cards (corder:// deep link primary,
+ * mailto secondary) are kept because they are functional, not just
+ * decorative -- one launches the Mac app, the other opens a help
+ * message draft for the missing-email case.
  *
  * Linked from Paddle Checkout's `settings.successUrl`. Tagged
  * noindex so search engines never see it.
@@ -29,85 +30,61 @@ export default function ThanksPage() {
     <main
       data-component="ThanksPage"
       data-source={DATA_SOURCE}
-      className="thanks-page"
+      className="install-page"
     >
-      <div className="thanks-page__inner">
-        <header className="thanks-page__top">
-          <Link href="/" className="thanks-page__brand" aria-label="Corder home">
-            <BrandMark />
-            <span>Corder</span>
-          </Link>
+      <div className="page-container py-16 md:py-24">
+        <div className="install-page__inner mx-auto max-w-[1080px]">
           <span className="thanks-page__status">Pro activated</span>
-        </header>
 
-        <section className="thanks-page__hero">
-          <h1 className="thanks-page__heading">You&apos;re in.</h1>
-          <p className="thanks-page__lead">
-            Licence key is on its way to your inbox. Open Corder and paste it
-            in. Should land within 1-2 minutes.
+          <h1 className="install-page__heading">You&apos;re in.</h1>
+          <p className="install-page__sub install-page__sub--multi">
+            Licence key is on its way to your inbox. Open Corder and paste
+            it in. Should land within 1-2 minutes.
           </p>
-        </section>
 
-        <section className="thanks-page__cards">
-          <a
-            href="corder://activate"
-            className="thanks-card thanks-card--primary"
-            data-track-event="thanks_open_corder"
-          >
-            <div className="thanks-card__row">
-              <h2 className="thanks-card__heading">Open Corder</h2>
-              <ArrowRight />
-            </div>
-            <p className="thanks-card__body">
-              Launch the Mac app. Pro activates as soon as it sees the licence.
-            </p>
-          </a>
+          <section className="thanks-page__cards">
+            <a
+              href="corder://activate"
+              className="thanks-card thanks-card--primary"
+              data-track-event="thanks_open_corder"
+            >
+              <div className="thanks-card__row">
+                <h2 className="thanks-card__heading">Open Corder</h2>
+                <ArrowRight />
+              </div>
+              <p className="thanks-card__body">
+                Launch the Mac app. Pro activates as soon as it sees the
+                licence.
+              </p>
+            </a>
 
-          <a
-            href="mailto:support@corder.app?subject=Cannot%20find%20my%20licence%20email"
-            className="thanks-card thanks-card--secondary"
-            data-track-event="thanks_no_email"
-          >
-            <div className="thanks-card__row">
-              <h2 className="thanks-card__heading">No email?</h2>
-              <ArrowRight />
-            </div>
-            <p className="thanks-card__body">
-              Check spam (sender <code>noreply@paddle.com</code>). Still
-              nothing, email us and we resend.
-            </p>
-          </a>
-        </section>
+            <a
+              href="mailto:support@corder.app?subject=Cannot%20find%20my%20licence%20email"
+              className="thanks-card thanks-card--secondary"
+              data-track-event="thanks_no_email"
+            >
+              <div className="thanks-card__row">
+                <h2 className="thanks-card__heading">No email?</h2>
+                <ArrowRight />
+              </div>
+              <p className="thanks-card__body">
+                Check spam (sender <code>noreply@paddle.com</code>). Still
+                nothing, email us and we resend.
+              </p>
+            </a>
+          </section>
 
-        <footer className="thanks-page__status-row">
-          <span>14-day refund</span>
-          <span aria-hidden>·</span>
-          <span>Cancel anytime</span>
-          <span aria-hidden>·</span>
-          <Link href="/">Back to corder.app</Link>
-        </footer>
+          <footer className="thanks-page__status-row">
+            <span>14-day refund</span>
+            <span>Cancel anytime</span>
+            <Link href="/">Back to corder.app</Link>
+          </footer>
+        </div>
       </div>
     </main>
   );
 }
 
-/* Brand wordmark glyph -- two rounded black bars on a white tile, same
- * geometry as the Nav / Footer mark and the favicon. */
-function BrandMark() {
-  return (
-    <img
-      src="/brand-mark-128.png"
-      width={28}
-      height={28}
-      alt=""
-      aria-hidden="true"
-      decoding="async"
-      style={{ display: "block" }}
-    />
-  );
-}
-
-/* Inline arrow glyph -- sits inline with each card's heading. */
 function ArrowRight() {
   return (
     <svg
