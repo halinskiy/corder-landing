@@ -603,6 +603,27 @@
         ]
       },
       {
+        "heading": "Developers",
+        "links": [
+          {
+            "label": "MCP server",
+            "href": "/docs/mcp/"
+          },
+          {
+            "label": "REST API",
+            "href": "/docs/api/"
+          },
+          {
+            "label": "corder-mcp on npm",
+            "href": "https://www.npmjs.com/package/corder-mcp"
+          },
+          {
+            "label": "Source on GitHub",
+            "href": "https://github.com/halinskiy/corder-mcp"
+          }
+        ]
+      },
+      {
         "heading": "Legal",
         "links": [
           {
