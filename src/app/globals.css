@@ -5201,7 +5201,9 @@ button:focus:not(:focus-visible) {
   line-height: 1.12;
   letter-spacing: -0.022em;
   color: var(--color-text);
-  margin: 0 0 16px;
+  /* Tightened heading->sub gap (was 16, now 4) so the sub line
+   * reads as a continuation of the title, per maker 2026-05-28. */
+  margin: 0 0 4px;
   max-width: none;
   white-space: nowrap;
 }
@@ -5642,8 +5644,11 @@ button:focus:not(:focus-visible) {
 }
 
 .consent-banner__actions {
+  /* Two CTAs in one row: Accept left, Decline right. Each takes
+   * equal share of the row via flex:1. Stacks vertically only on a
+   * narrow viewport where the side-by-side would crowd. */
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: stretch;
   gap: 10px;
   margin-bottom: 14px;
@@ -5664,7 +5669,9 @@ button:focus:not(:focus-visible) {
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  width: 100%;
+  /* Equal-share row layout (see .consent-banner__actions). */
+  flex: 1;
+  min-width: 0;
 }
 .consent-banner__cta--ghost {
   border: 1px solid var(--color-border-strong);
