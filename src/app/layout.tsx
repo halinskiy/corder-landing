@@ -5,6 +5,7 @@ import { MotionProvider } from "@/components/providers/MotionProvider";
 import { PauseOffscreen } from "@/components/providers/PauseOffscreen";
 import { CorderPresenceProvider } from "@/components/presence/CorderPresence";
 import { ConsentProvider } from "@/components/consent/ConsentProvider";
+import { CookieConsentButton } from "@/components/consent/CookieConsentButton";
 
 import { copy } from "@/content/copy";
 import { PADDLE_ENV, PADDLE_TOKEN } from "@/lib/paddle";
@@ -310,6 +311,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             stored. On accept, dynamically injects Clarity / X pixel /
             Plausible loaders. */}
         <ConsentProvider />
+        {/* Persistent bottom-left cookie-preferences trigger. Visible
+            on every page so the user can re-decide at any time;
+            hidden while the banner itself is on screen. */}
+        <CookieConsentButton />
       </body>
     </html>
   );
