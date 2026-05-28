@@ -1,6 +1,6 @@
-import Link from "next/link";
-
 import type { Metadata } from "next";
+
+import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "You're in",
@@ -36,7 +36,10 @@ export default function ThanksPage() {
         <div className="install-page__inner mx-auto max-w-[1080px]">
           <span className="thanks-page__status">Pro activated</span>
 
-          <h1 className="install-page__heading">You&apos;re in.</h1>
+          <div className="standalone-page-header">
+            <BackToHomeBtn />
+            <h1 className="install-page__heading">You&apos;re in.</h1>
+          </div>
           <p className="install-page__sub install-page__sub--multi">
             Licence key is on its way to your inbox. Open Corder and paste
             it in. Should land within 1-2 minutes.
@@ -77,7 +80,6 @@ export default function ThanksPage() {
           <footer className="thanks-page__status-row">
             <span>14-day refund</span>
             <span>Cancel anytime</span>
-            <Link href="/">Back to corder.app</Link>
           </footer>
         </div>
       </div>

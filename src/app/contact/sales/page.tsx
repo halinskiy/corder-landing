@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { ContactForm } from "@/components/contact/ContactForm";
+import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 import { copy } from "@/content/copy";
 
 const DATA_SOURCE = "projects/corder-landing/src/app/contact/sales/page.tsx";
@@ -35,7 +36,10 @@ export default function SalesContactPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="install-page__inner mx-auto max-w-[1080px]">
-          <h1 className="install-page__heading">{sales.title}</h1>
+          <div className="standalone-page-header">
+            <BackToHomeBtn />
+            <h1 className="install-page__heading">{sales.title}</h1>
+          </div>
           <p className="install-page__sub install-page__sub--multi">
             {sales.subhead}
           </p>

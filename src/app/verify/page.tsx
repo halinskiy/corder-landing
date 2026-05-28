@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { VerifyClient } from "@/components/account/VerifyClient";
+import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
 
 export const metadata: Metadata = {
   title: "Verifying",
@@ -16,14 +17,12 @@ const DATA_SOURCE = "projects/corder-landing/src/app/verify/page.tsx";
  * /verify?token=... -- the user lands here from the email magic link.
  *
  * Phase 1: client component shows a loading spinner for ~800 ms then
- * redirects to /account. No real verification happens; the page just
- * paints the UX for the flow.
- *
- * Phase 3: the client component will hit
+ * redirects to /account. Phase 3: hits
  *   GET https://api.getcorder.com/auth/verify?token=...
- * which sets the JWT cookie + 302-redirects to /account. If the
- * token is invalid or expired the Worker redirects to /login with
- * an inline error flag.
+ * which sets the JWT cookie + 302-redirects to /account.
+ *
+ * Same standalone-page header pattern as the rest of the project:
+ * ghost arrow back to home 16 px to the left of the heading.
  */
 export default function VerifyPage() {
   return (
@@ -34,11 +33,10 @@ export default function VerifyPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px] account-verify-body">
-          <a href="/" className="account-brand" aria-label="Corder home">
-            <BrandMark />
-            <span>Corder</span>
-          </a>
-          <h1 className="install-page__heading">Verifying your link...</h1>
+          <div className="standalone-page-header">
+            <BackToHomeBtn />
+            <h1 className="install-page__heading">Verifying your link...</h1>
+          </div>
           <p className="install-page__sub">
             One second -- we're signing you in. You'll land in your
             account page automatically.
@@ -52,19 +50,5 @@ export default function VerifyPage() {
         </div>
       </div>
     </main>
-  );
-}
-
-function BrandMark() {
-  return (
-    <img
-      src="/brand-mark-128.png"
-      width={28}
-      height={28}
-      alt=""
-      aria-hidden="true"
-      decoding="async"
-      style={{ display: "block" }}
-    />
   );
 }
