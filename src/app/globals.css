@@ -5629,11 +5629,64 @@ button:focus:not(:focus-visible) {
 }
 
 /* ----------------------------------------------------------------------
- *  Cookie consent banner -- GDPR-compliant gate for analytics scripts.
- *  Bottom-left fixed card. Appears only when localStorage carries no
- *  decision; once Accept or Decline is clicked the banner unmounts for
- *  the lifetime of that browser profile.
+ *  Cookie consent -- GDPR gate.
+ *
+ *  Two surfaces:
+ *    .consent-banner   -- bottom-left card with Accept / Decline / link.
+ *                         Mounts only when no decision is stored OR the
+ *                         user re-opens it via the persistent trigger.
+ *    .cookie-trigger   -- bottom-left ghost circle (56 px / 48 px on
+ *                         mobile), mirror of the bottom-right
+ *                         CorderPresence orb. Always visible except
+ *                         while the banner is on screen, lets the user
+ *                         re-decide at any moment (GDPR Article 7(3)).
  * ---------------------------------------------------------------------- */
+
+.cookie-trigger {
+  position: fixed;
+  left: 32px;
+  bottom: max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px));
+  width: 56px;
+  height: 56px;
+  z-index: 30;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  border-radius: 9999px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+
+  transition:
+    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cookie-trigger:hover {
+  border-color: var(--color-text);
+  background: var(--color-surface);
+  transform: scale(1.06);
+}
+.cookie-trigger:active {
+  transform: scale(0.96);
+}
+.cookie-trigger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .cookie-trigger {
+    width: 48px;
+    height: 48px;
+    left: 28px;
+    bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px));
+  }
+}
 
 .consent-banner {
   position: fixed;

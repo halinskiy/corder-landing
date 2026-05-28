@@ -102,6 +102,21 @@ export function ConsentProvider() {
     injectAnalytics();
   }, [state]);
 
+  // Broadcast banner visibility so the persistent <CookieConsentButton />
+  // can hide/show itself in sync. The two share the bottom-left corner
+  // and must not stack. null (initial check pending) deliberately does
+  // not dispatch -- the button stays unmounted until something
+  // definitive lands.
+  useEffect(() => {
+    if (state === null) return;
+    const event = new Event(
+      state === "unknown"
+        ? "corder:consent:banner-shown"
+        : "corder:consent:banner-hidden"
+    );
+    window.dispatchEvent(event);
+  }, [state]);
+
   function persist(value: "accepted" | "declined") {
     const prev = previousChoiceRef.current;
     try {
