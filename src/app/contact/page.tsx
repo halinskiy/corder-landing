@@ -31,7 +31,7 @@ export default function ContactPage() {
       className="install-page"
     >
       <div className="page-container py-16 md:py-24">
-        <div className="install-page__inner mx-auto max-w-[920px]">
+        <div className="install-page__inner mx-auto max-w-[1080px]">
           <h1 className="install-page__heading">{contact.title}</h1>
 
           <p className="install-page__sub">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 
 import { trackEvent } from "@/lib/track";
 
@@ -10,6 +10,7 @@ const ENDPOINT = process.env.NEXT_PUBLIC_CONTACT_ENDPOINT;
 
 type ContactCopy = {
   emailLabel: string;
+  emailPlaceholder?: string;
   subjectLabel: string;
   messageLabel: string;
   subjectPlaceholder: string;
@@ -31,7 +32,13 @@ type Status = "idle" | "submitting" | "sent" | "error";
  * gracefully falls back to a mailto: trigger so the page still has a
  * usable contact channel.
  */
-export function ContactForm({ copy }: { copy: ContactCopy }) {
+export function ContactForm({
+  copy,
+  secondaryAction,
+}: {
+  copy: ContactCopy;
+  secondaryAction?: ReactNode;
+}) {
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
@@ -148,6 +155,7 @@ export function ContactForm({ copy }: { copy: ContactCopy }) {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder={copy.emailPlaceholder}
           disabled={status === "submitting"}
           className="contact-form__input"
         />
@@ -178,14 +186,17 @@ export function ContactForm({ copy }: { copy: ContactCopy }) {
         />
       </label>
 
-      <button
-        type="submit"
-        disabled={status === "submitting"}
-        data-track-event="contact_submit"
-        className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] px-6 text-[16px] font-medium disabled:cursor-progress disabled:opacity-70"
-      >
-        {status === "submitting" ? "Sending..." : ENDPOINT ? "Send message" : copy.submitCta}
-      </button>
+      <div className="contact-form__submit-row">
+        {secondaryAction}
+        <button
+          type="submit"
+          disabled={status === "submitting"}
+          data-track-event="contact_submit"
+          className="contact-form__submit cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] px-6 text-[16px] font-medium disabled:cursor-progress disabled:opacity-70"
+        >
+          {status === "submitting" ? "Sending..." : ENDPOINT ? "Send message" : copy.submitCta}
+        </button>
+      </div>
 
       {errorText && (
         <p className="contact-form__error" role="alert">
