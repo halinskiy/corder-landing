@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 
+import { ActivationStatus } from "@/components/thanks/ActivationStatus";
 
 export const metadata: Metadata = {
   title: "You're in",
   description:
-    "Welcome to Corder Pro. Your licence is in your inbox. Open the Mac app to activate.",
+    "Your Corder subscription is active. Your licence is in your inbox. Open the Mac app to activate.",
   alternates: { canonical: "/thanks/" },
   robots: { index: false, follow: false },
 };
@@ -33,7 +34,7 @@ export default function ThanksPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="install-page__inner mx-auto max-w-[1080px]">
-          <span className="thanks-page__status">Pro activated</span>
+          <ActivationStatus />
             <h1 className="install-page__heading">You&apos;re in.</h1>
           <p className="install-page__sub install-page__sub--multi">
             Licence key is on its way to your inbox. Open Corder and paste
