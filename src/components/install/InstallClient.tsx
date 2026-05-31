@@ -18,8 +18,8 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.13.13/Corder-0.13.13.dmg";
-const FALLBACK_NAME = "Corder-0.13.13.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.13.14/Corder-0.13.14.dmg";
+const FALLBACK_NAME = "Corder-0.13.14.dmg";
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
 // might upload. Version suffix (e.g. Corder-0.13.2.dmg) and naked names
