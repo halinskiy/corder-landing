@@ -6,8 +6,10 @@ import { Check, Plus } from "lucide-react";
 
 import { copy } from "@/content/copy";
 import {
-  PADDLE_PRICE_BY_BILLING,
   PADDLE_SUCCESS_URL,
+  isLaunchTier,
+  resolvePriceId,
+  resolveTier,
 } from "@/lib/paddle";
 import {
   PricingBillingToggle,
@@ -167,17 +169,26 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: PricingBilling })
         onClick={(e) => {
           // Free tier: let the anchor navigate to /install.
           if (!tier.trackBilling) return;
-          // Pro / Max: open Paddle if the SDK has loaded. Annual vs
-          // monthly maps to two distinct Paddle priceIds; the key is
-          // built from trackBilling + the active billing toggle.
-          const priceId =
-            PADDLE_PRICE_BY_BILLING[`${tier.trackBilling}_${billing}`] ??
-            PADDLE_PRICE_BY_BILLING[tier.trackBilling];
+          // Pro / Max: open Paddle checkout when the SDK has loaded.
+          // resolvePriceId maps (trackBilling, billing) -> one of six
+          // production priceIds via the catalogue in src/lib/paddle.ts.
+          // The webhook side receives `customData` here AND the same
+          // {tier, billing, launch} embedded on the price itself in
+          // Paddle dashboard -- two independent paths to the same
+          // labels so an outage on one does not strand the other.
+          const priceId = resolvePriceId(tier.trackBilling, billing);
           if (priceId && typeof window !== "undefined" && window.Paddle) {
             e.preventDefault();
+            const tierName = resolveTier(tier.trackBilling);
+            const launch = isLaunchTier(tier.trackBilling) && billing === "monthly";
             window.Paddle.Checkout.open({
               items: [{ priceId, quantity: 1 }],
               settings: { successUrl: PADDLE_SUCCESS_URL },
+              customData: {
+                tier: tierName ?? "unknown",
+                billing,
+                launch,
+              },
             });
           }
         }}
