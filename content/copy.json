@@ -308,7 +308,7 @@
         "ctaStyle": "secondary",
         "highlight": false,
         "trackEvent": "cta_max_click",
-        "trackBilling": "max"
+        "trackBilling": "max_launch"
       }
     ],
     "microcopy": "Prices in USD. No credit card to download. macOS 14 or later"
@@ -616,10 +616,6 @@
           {
             "label": "corder-mcp on npm",
             "href": "https://www.npmjs.com/package/corder-mcp"
-          },
-          {
-            "label": "Source on GitHub",
-            "href": "https://github.com/halinskiy/corder-mcp"
           }
         ]
       },

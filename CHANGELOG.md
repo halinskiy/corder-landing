@@ -12,6 +12,68 @@ Format:
 
 ---
 
+## 2026-06-01 — Paddle production wiring (six priceIds, helper, /thanks)
+
+KYB approved earlier than expected. Production Paddle account now has
+two products (Corder Pro, Corder Max) with six priceIds:
+
+- `pri_01kszshrfje0safhq8e2yfe8rh` — Pro monthly $14
+- `pri_01kszsmvs5qvch2mkgcmdaqqk1` — Pro launch monthly $10
+- `pri_01kszsr83e2y84jyxg1bj8qnyq` — Pro annual $99
+- `pri_01kt01msttrfnj80r9gx6beb4b` — Max monthly $29
+- `pri_01kt01r6bx872y0s6zamg719k3` — Max launch monthly $24
+- `pri_01kt025kjhgrbj1nxhz9bsz9mn` — Max annual $239
+
+Production client-side token `live_5b954efa46f5dcfab151b3e66a3` swaps
+in for the sandbox `test_...` default. Approved Domains list contains
+`getcorder.com`. PayPal + Apple Pay + Google Pay enabled at checkout.
+
+### What landed
+
+- `src/lib/paddle.ts` rewritten. Six `process.env.NEXT_PUBLIC_PADDLE_PRICE_*`
+  overrides + production defaults. New helpers `resolvePriceId`,
+  `resolveTier`, `isLaunchTier`. CATALOGUE keyed by
+  `${trackBilling}_${billing}` -- replaces the old broken
+  `PADDLE_PRICE_BY_BILLING` lookup that fell through every key.
+- `src/components/sections/Pricing.tsx` onClick handler now calls
+  `resolvePriceId(tier.trackBilling, billing)` and passes
+  `customData: { tier, billing, launch }` to Paddle.Checkout.open.
+  Each priceId also carries the same custom data on the Paddle side
+  (set in dashboard) so the webhook receives the same labels twice
+  -- redundancy in case one path goes wrong.
+- `content/copy.json` Max `trackBilling` changed from `"max"` to
+  `"max_launch"` for symmetry with `"pro_launch"`. Both tiers are
+  in launch right now (badge "Launch offer", priceOriginal shown).
+  When launch ends, flip both back to `"pro"` / `"max"` and new
+  purchases route to the regular monthly priceIds.
+- `src/components/thanks/ActivationStatus.tsx` (new client
+  component). Reads `?_ptxn=<txn_id>` from the success-URL flow,
+  shows "Confirming" -> "Order confirmed". Phase 3 will swap the
+  synchronous confirm for a POST against the activation Worker.
+- `src/app/thanks/page.tsx` swaps the hardcoded "Pro activated"
+  badge for `<ActivationStatus />`. Metadata description is now
+  tier-agnostic ("Your Corder subscription is active") since the
+  same page handles Pro AND Max post-checkout.
+
+### What was broken before this session
+
+The old `PADDLE_PRICE_BY_BILLING` map contained keys `monthly`,
+`monthly_launch`, `annual` but `Pricing.tsx` built keys like
+`pro_launch_monthly`, `pro_launch_annual`, `max_monthly` -- not a
+single match. All Pro/Max CTAs silently fell through to the
+`#download` anchor. Paddle was never opened in production.
+
+### What's next
+
+- Test purchase $10 (Pro launch monthly) with the maker's real card
+  plus immediate full refund through Paddle dashboard.
+- Phase 3: `apps/activation-worker/` Cloudflare Worker. Receives
+  Paddle webhooks (`transaction.completed`, `subscription.activated`,
+  `subscription.cancelled`), verifies signature, writes to DB. Plus
+  `GET /api/activate?txn=...` endpoint that `/thanks/` calls.
+
+---
+
 ## 2026-05-25 — Phase 1 account infrastructure (frontend scaffold)
 
 Strategic pivot: even if Pro doesn't take off, accounts give us an
