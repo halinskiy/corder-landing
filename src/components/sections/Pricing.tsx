@@ -6,12 +6,6 @@ import { Check, Plus } from "lucide-react";
 
 import { copy } from "@/content/copy";
 import {
-  PADDLE_SUCCESS_URL,
-  isLaunchTier,
-  resolvePriceId,
-  resolveTier,
-} from "@/lib/paddle";
-import {
   PricingBillingToggle,
   type PricingBilling,
 } from "@/components/sections/PricingBillingToggle";
@@ -119,7 +113,13 @@ type Tier = {
 function PricingCard({ tier, billing }: { tier: Tier; billing: PricingBilling }) {
   const ctaPrimary = tier.ctaStyle === "primary";
   const priceBlock = billing === "annual" ? tier.annual : tier.monthly;
-  const ctaHref = tier.ctaHref ?? "#download";
+  // Free tier keeps its own ctaHref (/install/). Paid tiers route to
+  // the /checkout/ shell where the Paddle inline embed mounts. The
+  // checkout page reads ?tier and ?billing off the query string and
+  // hands them to resolvePriceId on the client.
+  const ctaHref = tier.trackBilling
+    ? `/checkout/?tier=${encodeURIComponent(tier.trackBilling)}&billing=${billing}`
+    : (tier.ctaHref ?? "#download");
 
   return (
     <article
@@ -166,32 +166,10 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: PricingBilling })
         data-track-event={tier.trackEvent}
         data-track-tier={tier.name}
         data-track-billing={tier.trackBilling ?? billing}
-        onClick={(e) => {
-          // Free tier: let the anchor navigate to /install.
-          if (!tier.trackBilling) return;
-          // Pro / Max: open Paddle checkout when the SDK has loaded.
-          // resolvePriceId maps (trackBilling, billing) -> one of six
-          // production priceIds via the catalogue in src/lib/paddle.ts.
-          // The webhook side receives `customData` here AND the same
-          // {tier, billing, launch} embedded on the price itself in
-          // Paddle dashboard -- two independent paths to the same
-          // labels so an outage on one does not strand the other.
-          const priceId = resolvePriceId(tier.trackBilling, billing);
-          if (priceId && typeof window !== "undefined" && window.Paddle) {
-            e.preventDefault();
-            const tierName = resolveTier(tier.trackBilling);
-            const launch = isLaunchTier(tier.trackBilling) && billing === "monthly";
-            window.Paddle.Checkout.open({
-              items: [{ priceId, quantity: 1 }],
-              settings: { successUrl: PADDLE_SUCCESS_URL },
-              customData: {
-                tier: tierName ?? "unknown",
-                billing,
-                launch,
-              },
-            });
-          }
-        }}
+        // Free tier still resolves via its own ctaHref to /install/;
+        // Paid tiers route the anchor to /checkout/?tier=...&billing=...
+        // where the dedicated CheckoutClient mounts Paddle inline.
+        // No JS onClick is needed -- the href carries the routing.
         style={
           ctaPrimary
             ? undefined
