@@ -5826,6 +5826,12 @@ button:focus:not(:focus-visible) {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* Override the centered text-alignment cascading down from
+   * `.install-page__inner` (which centers /install/ and /thanks/).
+   * The order summary reads as a left-aligned card -- price below
+   * heading below eyebrow, each starting from the same left edge. */
+  text-align: left;
+  align-items: stretch;
 }
 @media (min-width: 768px) {
   .checkout-page__summary {
@@ -5948,6 +5954,10 @@ button:focus:not(:focus-visible) {
   padding: 20px;
   min-height: 520px;
   position: relative;
+  /* Same cascade override as the summary -- loading and error
+   * placeholders inside read left-aligned. The Paddle iframe lives
+   * in its own document so its content is unaffected either way. */
+  text-align: left;
 }
 @media (min-width: 768px) {
   .checkout-page__paddle {
