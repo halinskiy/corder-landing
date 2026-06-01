@@ -214,8 +214,14 @@ export function CheckoutClient() {
             before clicking the CTA. */}
 
         <p className="checkout-page__trust">
-          14-day refund. Cancel anytime. Paddle is the merchant of record
-          and handles tax and invoicing.
+          <Link className="checkout-page__trust-link" href="/refunds/">
+            14-day refund
+          </Link>
+          . Cancel anytime.{" "}
+          <Link className="checkout-page__trust-link" href="/privacy-policy/">
+            Our privacy policy
+          </Link>
+          . Paddle is the merchant of record and handles tax and invoicing.
         </p>
       </aside>
 
