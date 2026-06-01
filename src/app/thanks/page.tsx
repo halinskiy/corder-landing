@@ -5,7 +5,7 @@ import { ActivationStatus } from "@/components/thanks/ActivationStatus";
 export const metadata: Metadata = {
   title: "You're in",
   description:
-    "Your Corder subscription is active. Your licence is in your inbox. Open the Mac app to activate.",
+    "Your Corder subscription is active. A receipt from Paddle is on its way. Open the Mac app to start.",
   alternates: { canonical: "/thanks/" },
   robots: { index: false, follow: false },
 };
@@ -37,8 +37,8 @@ export default function ThanksPage() {
           <ActivationStatus />
             <h1 className="install-page__heading">You&apos;re in.</h1>
           <p className="install-page__sub install-page__sub--multi">
-            Licence key is on its way to your inbox. Open Corder and paste
-            it in. Should land within 1-2 minutes.
+            A receipt from Paddle is on its way to your inbox. Open
+            Corder on your Mac to start using your subscription.
           </p>
 
           <section className="thanks-page__cards">
@@ -52,8 +52,8 @@ export default function ThanksPage() {
                 <ArrowRight />
               </div>
               <p className="thanks-card__body">
-                Launch the Mac app. Pro activates as soon as it sees the
-                licence.
+                Launch the Mac app and sign in with the email you used
+                at checkout.
               </p>
             </a>
 
@@ -67,8 +67,9 @@ export default function ThanksPage() {
                 <ArrowRight />
               </div>
               <p className="thanks-card__body">
-                Check spam (sender <code>noreply@paddle.com</code>). Still
-                nothing, email us and we resend.
+                Check spam first (Paddle sends from{" "}
+                <code>noreply@paddle.com</code>). Still nothing, email us
+                and we sort it.
               </p>
             </a>
           </section>
