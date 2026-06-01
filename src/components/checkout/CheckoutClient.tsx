@@ -171,7 +171,6 @@ export function CheckoutClient() {
     billNote?: string;
     priceOriginal?: string;
   };
-  const tierName = resolveTier(trackBilling);
 
   return (
     <div
@@ -208,42 +207,11 @@ export function CheckoutClient() {
           <p className="checkout-page__bill-note">{price.billNote}</p>
         )}
 
-        <ul className="checkout-page__features" aria-label="What is included">
-          {tierData.features.map((feature, i) => {
-            const isHeader = /^Everything in /i.test(feature);
-            return (
-              <li
-                key={`${tierName}-${i}`}
-                className={`checkout-page__feature${
-                  isHeader ? " checkout-page__feature--header" : ""
-                }`}
-              >
-                <span aria-hidden className="checkout-page__feature-tick">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    {isHeader ? (
-                      <>
-                        <path d="M8 3v10" />
-                        <path d="M3 8h10" />
-                      </>
-                    ) : (
-                      <path d="m3.5 8.5 3 3 6-7" />
-                    )}
-                  </svg>
-                </span>
-                <span className="checkout-page__feature-text">{feature}</span>
-              </li>
-            );
-          })}
-        </ul>
+        {/* Feature list removed 2026-06-01 per maker -- the order
+            summary keeps eyebrow + plan name + price + bill note,
+            then jumps straight to the trust line. The features
+            still live on /#pricing where the visitor saw them
+            before clicking the CTA. */}
 
         <p className="checkout-page__trust">
           14-day refund. Cancel anytime. Paddle is the merchant of record
