@@ -76,6 +76,11 @@
    * RADIUS — rounded corners
    * ===================================================================== */
   --radius-window: 12px;
+  /* Buttons, code blocks, small cards, calendar day cells. Was never
+     defined, so every `var(--radius-button)` consumer resolved to 0 and
+     rendered square; defining it at the doctrine 8px fixes them all in
+     one place. Text inputs and buttons are pill (radius-pill), not this. */
+  --radius-button: 8px;
   --radius-pill: 999px;
 }
 
