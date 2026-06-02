@@ -6016,3 +6016,431 @@ button:focus:not(:focus-visible) {
   font-size: 15px;
   color: var(--color-text-muted, #666666);
 }
+
+/* ======================================================================
+ *  ADMIN PANEL  (/admin, /admin/news, /admin/news/new, /admin/news/edit)
+ *
+ *  Operator-only surface. Sits inside the shared .legal-page shell so
+ *  the back-arrow, page padding and serif heading match the rest of the
+ *  site. Inputs / selects / textareas mirror .account-auth-input exactly
+ *  (same border, radius token and accent focus ring) so the panel reads
+ *  as one family. No chips, no sub-15px text: status is a dot + word,
+ *  every control is full size.
+ * ====================================================================== */
+
+.admin-page .admin-body { max-width: 1080px; }
+
+/* ---- Header: title left, operator + sign out right ---- */
+.admin-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.admin-header__title { margin: 0; }
+.admin-header__operator {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.admin-header__email {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+.admin-header__signout {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-accent);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-header__signout:hover { color: var(--color-accent-hover); }
+
+/* ---- Section tabs ---- */
+.admin-tabs {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 32px;
+}
+.admin-tab {
+  position: relative;
+  padding: 0 0 14px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-tab:hover { color: var(--color-text); }
+.admin-tab--active { color: var(--color-text); }
+.admin-tab--active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-accent);
+}
+
+/* ---- Panel + toolbar ---- */
+.admin-panel { display: block; }
+.admin-toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.admin-toolbar--end { justify-content: flex-end; }
+.admin-toolbar__search { flex: 1; min-width: 200px; }
+.admin-toolbar__filter { min-width: 150px; }
+
+/* ---- Shared form controls (mirror .account-auth-input) ---- */
+.admin-input,
+.admin-select,
+.admin-textarea {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  height: 48px;
+  padding-inline: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-bg);
+  color: var(--color-text);
+  width: 100%;
+  transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-textarea {
+  height: auto;
+  padding-block: 12px;
+  line-height: 1.55;
+  resize: vertical;
+}
+.admin-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+  /* hairline chevron, accent-neutral so no second colour enters */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b6b68' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+.admin-input:hover,
+.admin-select:hover,
+.admin-textarea:hover { border-color: var(--color-border-strong); }
+.admin-input:focus-visible,
+.admin-select:focus-visible,
+.admin-textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(33, 122, 80, 0.15);
+}
+.admin-input::placeholder { color: var(--color-text-subtle); }
+
+/* ---- Users table ---- */
+.admin-table-wrap { width: 100%; overflow-x: auto; }
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+}
+.admin-table th {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.admin-table td {
+  font-size: 15px;
+  color: var(--color-text);
+  padding: 16px 16px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+.admin-table tbody tr:last-child td { border-bottom: 0; }
+.admin-table__email {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-weight: 500;
+}
+.admin-role-mark { color: var(--color-accent); font-weight: 500; }
+.admin-table__muted { color: var(--color-text-muted); white-space: nowrap; }
+.admin-table__actions { text-align: right; white-space: nowrap; }
+.admin-tier-select {
+  height: 40px;
+  width: auto;
+  min-width: 110px;
+  font-size: 15px;
+}
+.admin-row-error {
+  display: block;
+  font-size: 13px;
+  color: #b7443d;
+  margin-top: 4px;
+}
+
+/* ---- Inline link-style actions + confirm ---- */
+.admin-link {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-text-muted);
+  background: none;
+  border: 0;
+  padding: 0;
+  margin-left: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-link:first-child { margin-left: 0; }
+.admin-link:hover { color: var(--color-text); }
+.admin-link--danger { color: var(--rec); }
+.admin-link--danger:hover { color: #8f322d; }
+.admin-link:disabled { opacity: 0.5; cursor: default; }
+.admin-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.admin-confirm__q { font-size: 15px; color: var(--color-text); }
+
+/* ---- News list ---- */
+.admin-new-btn { height: 44px; display: inline-flex; align-items: center; padding-inline: 22px; }
+.admin-news-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-window);
+  overflow: hidden;
+}
+.admin-news-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+.admin-news-row:last-child { border-bottom: 0; }
+.admin-news-row__main {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+  min-width: 0;
+}
+.admin-news-row__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.admin-news-row__title {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-news-row__sub {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-news-row__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  white-space: nowrap;
+}
+.admin-news-row__audience { font-size: 15px; color: var(--color-text); }
+.admin-news-row__dates { font-size: 14px; color: var(--color-text-subtle); }
+.admin-news-row__actions {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* ---- Status: dot + word, single accent, no chip background ---- */
+.admin-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 92px;
+}
+.admin-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  flex: none;
+}
+.admin-status--active { color: var(--color-accent); }
+.admin-status--active .admin-status__dot { background: var(--color-accent); }
+.admin-status--scheduled { color: var(--color-text); }
+.admin-status--scheduled .admin-status__dot {
+  background: transparent;
+  border: 1.5px solid var(--color-accent);
+}
+.admin-status--draft { color: var(--color-text-muted); }
+.admin-status--draft .admin-status__dot { background: var(--color-border-strong); }
+.admin-status--ended { color: var(--color-text-subtle); }
+.admin-status--ended .admin-status__dot { background: var(--color-text-faint); }
+
+/* ---- News form ---- */
+.admin-form {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-window);
+  padding: 28px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 720px;
+}
+.admin-form__heading {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.012em;
+  color: var(--color-text);
+}
+.admin-fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.admin-legend {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  padding: 0;
+  margin-bottom: 2px;
+}
+.admin-field { display: flex; flex-direction: column; gap: 8px; }
+.admin-field-row {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 16px;
+}
+.admin-label {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+.admin-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.admin-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+.admin-cancel-btn,
+.admin-save-btn {
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 26px;
+}
+.admin-save-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* ---- Loading / empty / error states ---- */
+.admin-empty {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--color-text-muted);
+  padding: 24px 0;
+}
+.admin-error {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: #b7443d;
+  margin: 0 0 16px;
+}
+.admin-gate__loading {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--color-text-muted);
+}
+.admin-gate__actions { margin-top: 24px; }
+.admin-gate__signout { height: 48px; display: inline-flex; align-items: center; padding-inline: 24px; }
+
+/* ---- react-day-picker, themed to the Corder palette ---- */
+/* Compound .admin-rdp.rdp-root selector (0,2,0) is required: the library
+ * defines every --rdp-* var on .rdp-root (0,1,0) and its stylesheet loads
+ * after globals.css, so a plain .admin-rdp would tie on specificity and
+ * lose on source order (selected days rendered blue). The selected day
+ * circle background comes from --rdp-range_{start,end}-date-background-color
+ * (defaults to --rdp-accent-color). Cell gradients are left at their
+ * defaults; they reference --rdp-accent-background-color = accent-subtle. */
+.admin-rdp.rdp-root {
+  --rdp-accent-color: var(--color-accent);
+  --rdp-accent-background-color: var(--color-accent-subtle);
+  --rdp-today-color: var(--color-accent);
+  --rdp-range_start-color: #ffffff;
+  --rdp-range_end-color: #ffffff;
+  --rdp-range_start-date-background-color: var(--color-accent);
+  --rdp-range_end-date-background-color: var(--color-accent);
+  --rdp-range_middle-color: var(--color-accent);
+  --rdp-outside-opacity: 0.4;
+  --rdp-day_button-border-radius: var(--radius-button);
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-text);
+}
+.admin-rdp .rdp-month_caption {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 16px;
+}
+.admin-rdp .rdp-weekday {
+  color: var(--color-text-subtle);
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 640px) {
+  .admin-header { align-items: flex-start; }
+  .admin-field-row { grid-template-columns: 1fr; }
+  .admin-news-row { flex-wrap: wrap; gap: 12px; }
+  .admin-news-row__meta { align-items: flex-start; }
+  .admin-news-row__actions { width: 100%; }
+  .admin-form { padding: 22px 18px; }
+}
