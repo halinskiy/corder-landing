@@ -12,6 +12,40 @@ Format:
 
 ---
 
+## 2026-06-02 — Admin panel (/admin, /admin/news)
+
+Operator-only admin surface added inside the existing static-export app
+(maker chose "same app, GitHub Pages, no Vercel"), so it ships to
+getcorder.com/admin with the normal deploy.
+
+- New deps: `@supabase/supabase-js` v2, `react-day-picker` v9, `date-fns` v4.
+- `src/lib/supabase.ts` — browser client (anon key public, baked default
+  + NEXT_PUBLIC override; PKCE, persistSession, detectSessionInUrl).
+  Anon key default is still empty — paste from Supabase dashboard.
+- `src/lib/admin-api.ts` — typed bearer-fetch layer to
+  `corder-api.empqwork.workers.dev` (/admin/users, /admin/users/:id/tier,
+  /admin/news CRUD). `newsStatus()` derives draft/scheduled/active/ended.
+- Routes: `/admin` (users table), `/admin/news` (list),
+  `/admin/news/new`, `/admin/news/edit/?id=` (query-param edit route, not
+  `[id]`, so static export needs no per-id prerender — same trick as
+  /checkout). All four prerender as static.
+- Auth: no Next middleware possible under `output: export`, so
+  `AdminGuard` gates client-side (Supabase session + `app_metadata.role
+  === "admin"`). Inline magic-link sign-in (signInWithOtp) because /login
+  is a Phase-1 mock with no real Supabase session. Worker re-verifies the
+  admin JWT on every request — the client gate is UX only.
+- Styling reuses the site vocabulary: `.legal-page` shell,
+  `.account-auth-*` for the sign-in (pixel-match with /login),
+  `.account-toggle` switches, accent #217a50. No chips: news status is a
+  coloured dot + word. react-day-picker themed to accent via a compound
+  `.admin-rdp.rdp-root` selector (needed to beat the library's own
+  `.rdp-root` vars on source order — default selected days were blue).
+- Verified: tsc clean, `next build` exports all routes, sign-in + news
+  form (incl. date range picker) screenshotted on-brand.
+- Next (maker): set NEXT_PUBLIC_SUPABASE_ANON_KEY, run the
+  `20260601_admin_news.sql` migration, grant your account the admin role,
+  then deploy.
+
 ## 2026-06-01 — Paddle production wiring (six priceIds, helper, /thanks)
 
 KYB approved earlier than expected. Production Paddle account now has

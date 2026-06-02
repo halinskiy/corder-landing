@@ -23,6 +23,19 @@
 | `CorderPresenceFormSentinel` | `src/components/presence/CorderPresence.tsx` | local | `page.tsx`, between Faq and Footer | Zero-height scroll anchor at the place where the old Newsletter section used to sit. Flips `pastFormZone` true when it enters the upper 40% of the viewport, triggering the orb-to-form morph. |
 | `CorderPresenceStaticSection` | `src/components/presence/CorderPresence.tsx` | local | `page.tsx`, between Faq and Footer | Reduced-motion fallback: when `motionDisabled === true`, this section renders the subscribe form inline in normal page flow (`.presence-static`). Returns null when motion is enabled. |
 
+## Admin panel components (operator-only, /admin/**)
+
+| Component | Path | Source | When used | Notes |
+|---|---|---|---|---|
+| `AdminGuard` | `src/components/admin/AdminGuard.tsx` | local | wraps all /admin/** via `app/admin/layout.tsx` | Client gate. Reads Supabase session, checks `app_metadata.role === "admin"`. States: loading / signin (inline magic-link, reuses `.account-auth-*`) / denied / ok / unconfigured. UX gate only — Worker re-verifies the JWT. |
+| `AdminShell` | `src/components/admin/AdminShell.tsx` | local | inside AdminGuard | Chrome: serif "Admin" title, operator email + sign out, Users/News tabs (`usePathname`). `.legal-page` shell. |
+| `UsersTable` | `src/components/admin/UsersTable.tsx` | local | /admin | Search + tier filter, inline tier `<select>` (optimistic POST /admin/users/:id/tier), inline-confirm delete, Usage column placeholder "—". |
+| `NewsList` | `src/components/admin/NewsList.tsx` | local | /admin/news | Rows sorted created_at desc, status = dot + word (`newsStatus()`), edit / duplicate (POST copy as draft) / inline-confirm delete. No chips. |
+| `NewsForm` | `src/components/admin/NewsForm.tsx` | local | /admin/news/new + /admin/news/edit | Shared create/edit. Title/subtitle/body, primary+secondary CTA (label+action+url, url shown only for open_url), audience, dismissible + draft `.account-toggle` switches, react-day-picker `mode="range"` (2 months, accent-themed `.admin-rdp`). |
+| `NewsEditLoader` | `src/components/admin/NewsEditLoader.tsx` | local | /admin/news/edit (Suspense) | Reads `?id=` (static-export-safe), loads row via list endpoint, renders NewsForm in edit mode. |
+
+Lib: `src/lib/supabase.ts` (browser client), `src/lib/admin-api.ts` (typed bearer fetch + `newsStatus`). Both new this session.
+
 ## Kit components imported from `@aisoldier/ui-kit`
 
 | Kit component | Where used | Why |

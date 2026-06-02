@@ -778,3 +778,15 @@ False-alarm verification занял ~12 минут (CDP setup, probe sweep, 4 pi
 - **Раннее обнаружение Inspector overlay через synthesized Cmd+click** через `MouseEvent({ metaKey: true })`. Чище чем dispatching pointer events.
 
 ---
+
+## 2026-06-02 — soldier — Admin panel (/admin, /admin/news)
+
+### What took longer than it should have?
+react-day-picker v9 selected days rendered **blue** despite my `.admin-rdp { --rdp-accent-color: var(--color-accent) }` override. Burned one screenshot cycle before diagnosing: the library defines every `--rdp-*` var on `.rdp-root` (specificity 0,1,0), and its stylesheet loads AFTER globals.css (admin layout imports it after the root layout's globals). My `.admin-rdp` was the SAME element and SAME specificity, so it lost on source order. Fix: compound `.admin-rdp.rdp-root` (0,2,0). Also learned the selected-day circle bg comes from `--rdp-range_{start,end}-date-background-color` (default = accent-color), NOT `--rdp-range_{start,end}-background` (that's the cell gradient). Next time: when theming a 3rd-party component via CSS vars, default to a compound `.mine.theirs` selector from the start — never assume a single class beats the library's root vars.
+
+### What did I miss that the user/judge caught?
+Nothing external — caught the blue calendar myself via Playwright before showing the user. The genuine near-miss: I almost relied on the doctrine's `--radius-button: 8px` for input radii, but that token is **undefined in this project** (tokens.css only defines `--radius-window` + `--radius-pill`). Existing `.account-auth-input` uses `var(--radius-button)` → resolves to 0 → square. I matched it exactly so the admin sign-in is pixel-consistent with /login. Lesson: verify a token is actually defined before trusting the doctrine value; consistency with the rendered reality beats consistency with the spec.
+
+### What will I do differently next time?
+1. Static export (`output: export`) = NO Next middleware. For any gated route, plan a client-side guard from the start, don't reach for `middleware.ts`. Dynamic segments (`[id]`) also need `generateStaticParams`; use a `?id=` query route + Suspense instead (the /checkout pattern) when ids are unbounded.
+2. When a route is auth-gated, build a throwaway preview route (deleted after) to screenshot the gated components — don't ship visual-consistency-critical UI unverified just because it's behind a login.
