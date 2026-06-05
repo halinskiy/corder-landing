@@ -196,3 +196,45 @@ export function newsStatus(row: NewsItemRow, now: number): NewsStatus {
   if (Number.isFinite(end) && now > end) return "ended";
   return "active";
 }
+
+// --- logs (bug reports + AI triage summary) ------------------------------
+
+export type Severity = "low" | "medium" | "high" | "critical";
+
+export type BugReportRow = {
+  id: string;
+  created_at: string;
+  email: string;
+  app_version: string | null;
+  macos_version: string | null;
+  /** Raw log. Only present on GET /admin/logs/:id (the list omits it
+   *  because rows can be ~200 KB). */
+  log_tail?: string;
+  /** AI headline, null until the async Gemini summary lands. */
+  title: string | null;
+  summary: string | null;
+  /** Model guess — render as a coloured chip, not a hard truth. */
+  severity: Severity | null;
+  summary_model: string | null;
+  summarized_at: string | null;
+};
+
+export async function listLogs(limit = 100): Promise<BugReportRow[]> {
+  const data = await adminFetch<{ items: BugReportRow[] }>(
+    `/admin/logs?limit=${limit}`,
+  );
+  return data.items ?? [];
+}
+
+export async function getLog(id: string): Promise<BugReportRow> {
+  const data = await adminFetch<{ item: BugReportRow }>(`/admin/logs/${id}`);
+  return data.item;
+}
+
+export async function summarizeLog(id: string): Promise<BugReportRow> {
+  const data = await adminFetch<{ ok: boolean; item: BugReportRow }>(
+    `/admin/logs/${id}/summarize`,
+    { method: "POST" },
+  );
+  return data.item;
+}

@@ -10,8 +10,9 @@ const DATA_SOURCE =
   "projects/corder-landing/src/components/admin/AdminShell.tsx";
 
 const TABS = [
-  { href: "/admin/", label: "Users" },
-  { href: "/admin/news/", label: "News" },
+  { href: "/admin/", label: "Users", match: (p: string) => p === "/admin" || p === "/admin/" },
+  { href: "/admin/news/", label: "News", match: (p: string) => p.startsWith("/admin/news") },
+  { href: "/admin/logs/", label: "Logs", match: (p: string) => p.startsWith("/admin/logs") },
 ] as const;
 
 /**
@@ -31,11 +32,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       .then(({ data }) => setOperator(data.session?.user?.email ?? ""));
   }, []);
 
-  // News tab stays active across /admin/news, /admin/news/new,
-  // /admin/news/edit. Users tab matches only the /admin root.
-  function isActive(href: string): boolean {
-    if (href === "/admin/") return pathname === "/admin" || pathname === "/admin/";
-    return pathname.startsWith("/admin/news");
+  // Each tab carries its own matcher: News/Logs stay active across their
+  // sub-routes (new / edit / detail), Users matches only the /admin root.
+  function isActive(tab: (typeof TABS)[number]): boolean {
+    return tab.match(pathname);
   }
 
   return (
@@ -63,16 +63,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </header>
 
           <nav className="admin-tabs" aria-label="Admin sections">
-            {TABS.map((tab) => (
-              <Link
-                key={tab.href}
-                href={tab.href}
-                className={`admin-tab${isActive(tab.href) ? " admin-tab--active" : ""}`}
-                aria-current={isActive(tab.href) ? "page" : undefined}
-              >
-                {tab.label}
-              </Link>
-            ))}
+            {TABS.map((tab) => {
+              const active = isActive(tab);
+              return (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  className={`admin-tab${active ? " admin-tab--active" : ""}`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {children}

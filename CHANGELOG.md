@@ -12,6 +12,29 @@ Format:
 
 ---
 
+## 2026-06-06 — Admin Logs tab (/admin/logs)
+
+Third admin tab, after News: bug reports + AI triage summaries from the
+`bug_reports` table via the corder-api Worker (same admin Bearer JWT).
+
+- `admin-api.ts`: `BugReportRow` / `Severity` types + `listLogs()`,
+  `getLog(id)`, `summarizeLog(id)` (GET /admin/logs, GET /admin/logs/:id,
+  POST /admin/logs/:id/summarize).
+- `LogsList`: horizontal cards (title bold + summary 2-line muted + meta)
+  newest first; severity chip; "Summarizing…" shimmer while `title` is
+  null; the list re-polls every 5s until every row is triaged.
+- `LogDetailModal`: full monospace scrollable `log_tail`, Copy log,
+  Re-summarize. Esc / backdrop close, body-scroll lock.
+- `SeverityChip`: low grey / medium amber / high orange / critical red
+  (status colours, not brand accents — same exception as REC red).
+- Meta separators are CSS-drawn dots, not the banned middle-dot
+  character (ASCII-only rule).
+- Verified: tsc clean, build exports /admin/logs static, all card
+  states + chips + modal screenshotted on-brand.
+- Note: needs the Worker's /admin/logs endpoints + `bug_reports`
+  migration (20260606) live for data to appear; the tab degrades to a
+  graceful error otherwise.
+
 ## 2026-06-02 — Admin panel (/admin, /admin/news)
 
 Operator-only admin surface added inside the existing static-export app
