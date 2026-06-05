@@ -33,8 +33,11 @@
 | `NewsList` | `src/components/admin/NewsList.tsx` | local | /admin/news | Rows sorted created_at desc, status = dot + word (`newsStatus()`), edit / duplicate (POST copy as draft) / inline-confirm delete. No chips. |
 | `NewsForm` | `src/components/admin/NewsForm.tsx` | local | /admin/news/new + /admin/news/edit | Shared create/edit. Title/subtitle/body, primary+secondary CTA (label+action+url, url shown only for open_url), audience, dismissible + draft `.account-toggle` switches, react-day-picker `mode="range"` (2 months, accent-themed `.admin-rdp`). |
 | `NewsEditLoader` | `src/components/admin/NewsEditLoader.tsx` | local | /admin/news/edit (Suspense) | Reads `?id=` (static-export-safe), loads row via list endpoint, renders NewsForm in edit mode. |
+| `LogsList` | `src/components/admin/LogsList.tsx` | local | /admin/logs | Bug reports as horizontal cards (title + summary + meta + severity chip), newest first. `title === null` rows show a "Summarizing…" shimmer; the list re-polls every 5s while any row is un-triaged. Click → LogDetailModal. |
+| `LogDetailModal` | `src/components/admin/LogDetailModal.tsx` | local | from LogsList | Full report: header + summary + monospace scrollable `log_tail` (fetched from GET /admin/logs/:id), Copy log (raw) + Re-summarize (POST /admin/logs/:id/summarize). Esc / backdrop close, body-scroll lock. |
+| `SeverityChip` | `src/components/admin/SeverityChip.tsx` | local | LogsList + modal | Severity pill (low grey / medium amber / high orange / critical red) + `relativeTime()` helper. Status colours, not brand accents. |
 
-Lib: `src/lib/supabase.ts` (browser client), `src/lib/admin-api.ts` (typed bearer fetch + `newsStatus`). Both new this session.
+Lib: `src/lib/supabase.ts` (browser client), `src/lib/admin-api.ts` (typed bearer fetch + `newsStatus`, `listLogs`/`getLog`/`summarizeLog`).
 
 ## Kit components imported from `@aisoldier/ui-kit`
 
