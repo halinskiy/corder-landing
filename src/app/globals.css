@@ -6461,3 +6461,260 @@ button:focus:not(:focus-visible) {
   .admin-news-row__actions { width: 100%; }
   .admin-form { padding: 22px 18px; }
 }
+
+/* ======================================================================
+ *  ADMIN — Logs tab (bug reports + AI triage summary)
+ * ====================================================================== */
+
+/* ---- List of report cards ---- */
+.admin-log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-window);
+  overflow: hidden;
+}
+.admin-log-list > li { border-bottom: 1px solid var(--color-border); }
+.admin-log-list > li:last-child { border-bottom: 0; }
+.admin-log-list .admin-empty { padding: 24px; }
+
+.admin-log-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  text-align: left;
+  padding: 18px 24px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-log-card:hover { background: var(--color-surface); }
+.admin-log-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+.admin-log-card__title {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+.admin-log-card__summary {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---- Meta row (reporter / version / time) with CSS dot separators.
+ *  Dots are drawn elements, not the banned middle-dot character. ---- */
+.admin-log-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-subtle);
+}
+.admin-log-meta__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
+/* ---- Severity chip: four semantic status colours. Not brand accents
+ *  (same exception as REC red). Mirrors .account-plan-badge shape. ---- */
+.admin-sev {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding-inline: 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex: none;
+}
+.admin-sev--low {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-strong);
+}
+.admin-sev--medium {
+  background: rgba(176, 123, 26, 0.12);
+  color: #8a5e10;
+}
+.admin-sev--high {
+  background: rgba(194, 65, 12, 0.12);
+  color: #c2410c;
+}
+.admin-sev--critical {
+  background: rgba(183, 68, 61, 0.14);
+  color: #b7443d;
+}
+
+/* ---- "Summarizing…" shimmer for un-triaged rows ---- */
+.admin-log-shimmer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.admin-log-shimmer__bar {
+  display: block;
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-3) 37%,
+    var(--color-surface) 63%
+  );
+  background-size: 400% 100%;
+  animation: admin-shimmer 1.4s ease-in-out infinite;
+}
+.admin-log-shimmer__bar--title { width: 56%; }
+.admin-log-shimmer__bar--line { width: 82%; height: 12px; }
+.admin-log-shimmer__label {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-subtle);
+  margin-top: 2px;
+}
+@keyframes admin-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-log-shimmer__bar { animation: none; }
+}
+
+/* ---- Detail modal ---- */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(14, 14, 13, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.admin-modal {
+  width: 100%;
+  max-width: 760px;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-window);
+  box-shadow: 0 24px 64px rgba(14, 14, 13, 0.18);
+  padding: 24px;
+}
+.admin-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.admin-modal__head-main { min-width: 0; }
+.admin-modal__title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.admin-modal__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.012em;
+  color: var(--color-text);
+}
+.admin-modal__close {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-modal__close:hover {
+  border-color: var(--color-text);
+  color: var(--color-text);
+}
+.admin-modal__summary {
+  margin: 16px 0 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-text);
+}
+.admin-modal__logwrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  margin-top: 20px;
+}
+.admin-log-tail {
+  flex: 1;
+  margin: 0;
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-window);
+  padding: 16px;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+.admin-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+.admin-modal__btn {
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 22px;
+}
+.admin-modal__btn:disabled { opacity: 0.6; cursor: default; }
+
+@media (max-width: 640px) {
+  .admin-modal { padding: 18px; max-height: 92vh; }
+  .admin-log-card { padding: 16px 18px; }
+}
