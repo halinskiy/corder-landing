@@ -6,10 +6,14 @@ import {
   AdminApiError,
   deleteUser,
   listUsers,
+  setUserRole,
   setUserTier,
   type AdminUser,
   type Tier,
 } from "@/lib/admin-api";
+
+/** What a Plan dropdown can hold: the three tiers plus the admin role. */
+type PlanValue = Tier | "admin";
 
 const DATA_SOURCE =
   "projects/corder-landing/src/components/admin/UsersTable.tsx";
@@ -24,6 +28,10 @@ const TIER_LABEL: Record<Tier, string> = {
 function userTier(u: AdminUser): Tier {
   const t = u.app_metadata?.tier;
   return t === "pro" || t === "max" ? t : "free";
+}
+
+function isAdminUser(u: AdminUser): boolean {
+  return u.app_metadata?.role === "admin";
 }
 
 function formatDate(iso: string | null): string {
@@ -53,6 +61,12 @@ export function UsersTable() {
 
   const [savingId, setSavingId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  // A pending admin grant/revoke awaiting inline confirmation (privileged,
+  // so it isn't applied on the raw <select> change like a tier swap).
+  const [pendingPlan, setPendingPlan] = useState<{
+    id: string;
+    value: PlanValue;
+  } | null>(null);
   const [rowError, setRowError] = useState<{ id: string; msg: string } | null>(
     null,
   );
@@ -108,6 +122,65 @@ export function UsersTable() {
       setRowError({
         id: u.id,
         msg: e instanceof AdminApiError ? e.message : "Tier change failed.",
+      });
+    } finally {
+      setSavingId(null);
+    }
+  }
+
+  // Routes a Plan dropdown change. Plain tier swaps apply immediately;
+  // anything that grants or revokes the admin role is gated behind an
+  // inline confirm because it's a privileged, easy-to-misclick action.
+  function changePlan(u: AdminUser, value: PlanValue) {
+    const wasAdmin = isAdminUser(u);
+    const current: PlanValue = wasAdmin ? "admin" : userTier(u);
+    if (value === current) return;
+    setRowError(null);
+    if (value === "admin" || wasAdmin) {
+      setPendingPlan({ id: u.id, value });
+    } else {
+      changeTier(u, value as Tier);
+    }
+  }
+
+  async function applyPlan(u: AdminUser, value: PlanValue) {
+    setSavingId(u.id);
+    setRowError(null);
+    try {
+      if (value === "admin") {
+        await setUserRole(u.id, "admin");
+        setUsers((list) =>
+          list.map((row) =>
+            row.id === u.id
+              ? { ...row, app_metadata: { ...row.app_metadata, role: "admin" } }
+              : row,
+          ),
+        );
+      } else {
+        // Set the tier; if the user was admin, also revoke the role so the
+        // demotion is real (and visible) rather than masked by admin.
+        await setUserTier(u.id, value);
+        if (isAdminUser(u)) await setUserRole(u.id, null);
+        setUsers((list) =>
+          list.map((row) =>
+            row.id === u.id
+              ? {
+                  ...row,
+                  app_metadata: {
+                    ...row.app_metadata,
+                    tier: value,
+                    role: undefined,
+                  },
+                }
+              : row,
+          ),
+        );
+      }
+      setPendingPlan(null);
+    } catch (e) {
+      setRowError({
+        id: u.id,
+        msg: e instanceof AdminApiError ? e.message : "Plan change failed.",
       });
     } finally {
       setSavingId(null);
@@ -208,27 +281,47 @@ export function UsersTable() {
                       <select
                         className={`admin-select admin-tier-select${isAdmin ? " admin-tier-select--admin" : ""}`}
                         value={isAdmin ? "admin" : userTier(u)}
-                        disabled={busy}
+                        disabled={busy || pendingPlan?.id === u.id}
                         onChange={(e) =>
-                          changeTier(u, e.target.value as Tier)
+                          changePlan(u, e.target.value as PlanValue)
                         }
                         aria-label={`Plan for ${u.email}`}
                       >
-                        {/* Admin is a role, not a tier — shown as the
-                            selected value for admin accounts and disabled
-                            so it can't be assigned here (no role endpoint).
-                            The tier options stay selectable. */}
-                        {isAdmin && (
-                          <option value="admin" disabled>
-                            Admin
-                          </option>
-                        )}
+                        {/* Free/Pro/Max set the tier; Admin grants the role.
+                            Tier swaps apply on change; admin grant/revoke is
+                            confirmed inline below (privileged action). */}
                         {TIERS.map((t) => (
                           <option key={t} value={t}>
                             {TIER_LABEL[t]}
                           </option>
                         ))}
+                        <option value="admin">Admin</option>
                       </select>
+                      {pendingPlan?.id === u.id && (
+                        <span className="admin-confirm admin-plan-confirm">
+                          <span className="admin-confirm__q">
+                            {pendingPlan.value === "admin"
+                              ? "Grant admin?"
+                              : "Remove admin?"}
+                          </span>
+                          <button
+                            type="button"
+                            className="admin-link admin-link--danger"
+                            disabled={busy}
+                            onClick={() => applyPlan(u, pendingPlan.value)}
+                          >
+                            {busy ? "Saving…" : "Yes"}
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-link"
+                            disabled={busy}
+                            onClick={() => setPendingPlan(null)}
+                          >
+                            No
+                          </button>
+                        </span>
+                      )}
                     </td>
                     <td className="admin-table__muted">—</td>
                     <td className="admin-table__actions">

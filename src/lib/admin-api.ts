@@ -135,6 +135,20 @@ export async function setUserTier(
   return data.user;
 }
 
+/** Grant ("admin") or revoke (null) the admin role. Orthogonal to tier:
+ *  the Worker toggles app_metadata.role without touching the tier. The
+ *  Worker refuses to revoke the caller's own role (self-lockout guard). */
+export async function setUserRole(
+  id: string,
+  role: "admin" | null,
+): Promise<AdminUser> {
+  const data = await adminFetch<{ ok: boolean; user: AdminUser }>(
+    `/admin/users/${id}/role`,
+    { method: "POST", body: JSON.stringify({ role }) },
+  );
+  return data.user;
+}
+
 export async function deleteUser(id: string): Promise<void> {
   await adminFetch<{ ok: boolean }>(`/admin/users/${id}`, {
     method: "DELETE",
@@ -217,13 +231,32 @@ export type BugReportRow = {
   severity: Severity | null;
   summary_model: string | null;
   summarized_at: string | null;
+  /** null = active; a timestamp = soft-archived (hidden from the default
+   *  active list, shown only under ?archived=true). */
+  archived_at: string | null;
 };
 
-export async function listLogs(limit = 100): Promise<BugReportRow[]> {
+export async function listLogs(
+  limit = 100,
+  archived = false,
+): Promise<BugReportRow[]> {
   const data = await adminFetch<{ items: BugReportRow[] }>(
-    `/admin/logs?limit=${limit}`,
+    `/admin/logs?limit=${limit}${archived ? "&archived=true" : ""}`,
   );
   return data.items ?? [];
+}
+
+/** Soft-archive a report (or restore it with `undo`). The row stays in
+ *  the table; it just leaves / rejoins the active list. */
+export async function archiveLog(
+  id: string,
+  undo = false,
+): Promise<BugReportRow | null> {
+  const data = await adminFetch<{ ok: boolean; item: BugReportRow | null }>(
+    `/admin/logs/${id}/archive${undo ? "?undo=true" : ""}`,
+    { method: "POST" },
+  );
+  return data.item;
 }
 
 export async function getLog(id: string): Promise<BugReportRow> {
