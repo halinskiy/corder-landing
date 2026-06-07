@@ -6207,6 +6207,13 @@ button:focus:not(:focus-visible) {
   color: var(--color-accent);
   border-color: var(--color-accent-soft);
 }
+/* Inline confirm shown under the Plan dropdown for admin grant/revoke.
+   display:flex (overriding .admin-confirm's inline-flex) keeps it on its
+   own line below the select even in the narrow Plan column. */
+.admin-plan-confirm {
+  display: flex;
+  margin-top: 8px;
+}
 .admin-row-error {
   display: block;
   font-size: 13px;
@@ -6727,4 +6734,78 @@ button:focus:not(:focus-visible) {
 @media (max-width: 640px) {
   .admin-modal { padding: 18px; max-height: 92vh; }
   .admin-log-card { padding: 16px 18px; }
+}
+
+/* ---- Logs: Active / Archived segmented toggle ---- */
+.admin-segment {
+  display: inline-flex;
+  padding: 4px;
+  gap: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+}
+.admin-segment__btn {
+  height: 36px;
+  padding-inline: 18px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-segment__btn:hover { color: var(--color-text); }
+.admin-segment__btn--on {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+.admin-segment__btn--on:hover { color: var(--color-bg); }
+
+/* ---- Logs: card right cluster + hover-reveal Archive pill ---- */
+.admin-log-item { position: relative; }
+.admin-log-card__right {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+}
+/* Cookie-banner ghost pill. Hidden until the row is hovered / focused so
+   it doesn't compete with the summary at rest. */
+.admin-log-archive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding-inline: 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-log-item:hover .admin-log-archive,
+.admin-log-card:focus-within .admin-log-archive,
+.admin-log-archive:focus-visible { opacity: 1; }
+.admin-log-archive:hover {
+  border-color: var(--color-text);
+  background-color: rgba(0, 0, 0, 0.03);
+}
+.admin-log-archive:disabled { opacity: 0.5; cursor: default; }
+/* Touch devices have no hover — keep the action reachable. */
+@media (hover: none) {
+  .admin-log-archive { opacity: 1; }
 }

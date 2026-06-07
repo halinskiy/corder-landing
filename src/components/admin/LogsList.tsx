@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import {
   AdminApiError,
+  archiveLog,
   listLogs,
   type BugReportRow,
 } from "@/lib/admin-api";
@@ -13,26 +14,35 @@ import { LogDetailModal } from "@/components/admin/LogDetailModal";
 const DATA_SOURCE =
   "projects/corder-landing/src/components/admin/LogsList.tsx";
 
+type View = "active" | "archived";
+
 /**
  * Logs tab. Bug reports as horizontal cards, newest first. Each card is
  * title + summary + meta (reporter / version / relative time) + severity
- * chip. A just-submitted report has title === null until the async Gemini
- * summary lands, so those rows show a "Summarizing…" shimmer and the list
- * quietly re-polls until every row is summarized. Clicking a card opens
- * the full log (LogDetailModal).
+ * chip, with an Archive pill that fades in on hover. A just-submitted
+ * report has title === null until the async Gemini summary lands, so those
+ * rows show a "Summarizing…" shimmer and the list quietly re-polls until
+ * every row is summarized. An Active / Archived toggle switches between the
+ * live queue and the soft-archived rows. Clicking a card opens the full log.
  */
 export function LogsList() {
   const [items, setItems] = useState<BugReportRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openRow, setOpenRow] = useState<BugReportRow | null>(null);
+  const [view, setView] = useState<View>("active");
+  const [busyId, setBusyId] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const pollRef = useRef<number | null>(null);
+  // Latest view, read inside the silent poll so it never queries the
+  // wrong list after a toggle.
+  const viewRef = useRef<View>(view);
+  viewRef.current = view;
 
   async function load(silent = false) {
     if (!silent) setLoading(true);
     try {
-      const rows = await listLogs();
+      const rows = await listLogs(100, viewRef.current === "archived");
       setItems(rows);
       setNow(Date.now());
       setError(null);
@@ -46,15 +56,16 @@ export function LogsList() {
     }
   }
 
+  // Reload whenever the view flips.
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [view]);
 
   // While any row is still being summarized (title === null), re-poll
-  // every 5 s so the shimmer resolves into a real card without a manual
-  // refresh. Stop polling once every row has a title.
-  const pending = items.some((r) => r.title === null);
+  // every 5 s so the shimmer resolves without a manual refresh. Only the
+  // active view can hold un-summarized rows.
+  const pending = view === "active" && items.some((r) => r.title === null);
   useEffect(() => {
     if (!pending) {
       if (pollRef.current) {
@@ -83,12 +94,62 @@ export function LogsList() {
     );
   }
 
+  async function toggleArchive(row: BugReportRow) {
+    const undo = view === "archived"; // archived view → restore
+    setBusyId(row.id);
+    setError(null);
+    const prev = items;
+    // Optimistic: the row leaves whichever list we're viewing.
+    setItems((list) => list.filter((r) => r.id !== row.id));
+    try {
+      await archiveLog(row.id, undo);
+    } catch (e) {
+      setItems(prev);
+      setError(
+        e instanceof AdminApiError
+          ? e.message
+          : undo
+            ? "Restore failed."
+            : "Archive failed.",
+      );
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   return (
     <section
       className="admin-panel"
       data-component="LogsList"
       data-source={DATA_SOURCE}
     >
+      <div className="admin-toolbar">
+        <div
+          className="admin-segment"
+          role="tablist"
+          aria-label="Log view"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === "active"}
+            className={`admin-segment__btn${view === "active" ? " admin-segment__btn--on" : ""}`}
+            onClick={() => setView("active")}
+          >
+            Active
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === "archived"}
+            className={`admin-segment__btn${view === "archived" ? " admin-segment__btn--on" : ""}`}
+            onClick={() => setView("archived")}
+          >
+            Archived
+          </button>
+        </div>
+      </div>
+
       {loading && <p className="admin-empty">Loading logs</p>}
       {error && (
         <p className="admin-error" role="alert">
@@ -100,12 +161,20 @@ export function LogsList() {
         <ul className="admin-log-list">
           {items.map((row) => {
             const summarizing = row.title === null;
+            const busy = busyId === row.id;
             return (
-              <li key={row.id}>
-                <button
-                  type="button"
+              <li key={row.id} className="admin-log-item">
+                <div
                   className="admin-log-card"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setOpenRow(row)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setOpenRow(row);
+                    }
+                  }}
                 >
                   <span className="admin-log-card__body">
                     {summarizing ? (
@@ -140,13 +209,33 @@ export function LogsList() {
                       <span>{relativeTime(row.created_at, now)}</span>
                     </span>
                   </span>
-                  <SeverityChip severity={row.severity} />
-                </button>
+
+                  <span className="admin-log-card__right">
+                    <button
+                      type="button"
+                      className="admin-log-archive"
+                      disabled={busy}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleArchive(row);
+                      }}
+                    >
+                      {busy
+                        ? "…"
+                        : view === "archived"
+                          ? "Restore"
+                          : "Archive"}
+                    </button>
+                    <SeverityChip severity={row.severity} />
+                  </span>
+                </div>
               </li>
             );
           })}
           {items.length === 0 && (
-            <li className="admin-empty admin-empty--card">No reports yet.</li>
+            <li className="admin-empty">
+              {view === "archived" ? "No archived reports." : "No reports yet."}
+            </li>
           )}
         </ul>
       )}
