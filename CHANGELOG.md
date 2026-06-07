@@ -12,6 +12,28 @@ Format:
 
 ---
 
+## 2026-06-07 — Admin: assign admin role + archive logs
+
+Two admin-panel additions (both needed a Worker endpoint, deployed
+alongside).
+
+- **Grant/revoke admin from the Users tab.** The "· admin" side label is
+  gone; admin now shows as a fourth value, "Admin", in the per-row Plan
+  dropdown. Picking it (or picking a tier on an admin row) is gated by an
+  inline confirm. Wired to a new `POST /admin/users/:id/role`
+  (`{role:"admin"|null}`); the Worker merges app_metadata (role stays
+  orthogonal to tier) and blocks self-lockout. `setUserRole` in admin-api.
+- **Archive logs.** `/admin/logs` cards get an Archive pill (cookie-banner
+  ghost style) that fades in on hover; click soft-archives optimistically.
+  An Active / Archived segmented toggle switches lists. Restore from the
+  Archived view. `archiveLog` + `archived_at` on BugReportRow; the Worker
+  already filters `?archived=` and exposes `/admin/logs/:id/archive`.
+- Also fixed the Users email column: the cell was `display:flex`, which
+  pulled the td out of the table layout and drew a short row divider — now
+  a real table-cell with an inner wrapper, dividers align.
+- Verified: tsc clean, build exports all admin routes, dropdown + confirm
+  + archive hover/toggle screenshotted on-brand. Worker deployed.
+
 ## 2026-06-06 — Admin Logs tab (/admin/logs)
 
 Third admin tab, after News: bug reports + AI triage summaries from the
