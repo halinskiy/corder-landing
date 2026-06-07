@@ -185,18 +185,18 @@ export function UsersTable() {
               {filtered.map((u) => {
                 const isConfirming = confirmId === u.id;
                 const busy = savingId === u.id;
+                const isAdmin = u.app_metadata?.role === "admin";
                 return (
                   <tr key={u.id}>
                     <td className="admin-table__email">
-                      {u.email}
-                      {u.app_metadata?.role === "admin" && (
-                        <span className="admin-role-mark"> · admin</span>
-                      )}
-                      {rowError?.id === u.id && (
-                        <span className="admin-row-error">
-                          {rowError.msg}
-                        </span>
-                      )}
+                      <div className="admin-table__email-inner">
+                        <span>{u.email}</span>
+                        {rowError?.id === u.id && (
+                          <span className="admin-row-error">
+                            {rowError.msg}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="admin-table__muted">
                       {formatDate(u.created_at)}
@@ -206,14 +206,23 @@ export function UsersTable() {
                     </td>
                     <td>
                       <select
-                        className="admin-select admin-tier-select"
-                        value={userTier(u)}
+                        className={`admin-select admin-tier-select${isAdmin ? " admin-tier-select--admin" : ""}`}
+                        value={isAdmin ? "admin" : userTier(u)}
                         disabled={busy}
                         onChange={(e) =>
                           changeTier(u, e.target.value as Tier)
                         }
-                        aria-label={`Tier for ${u.email}`}
+                        aria-label={`Plan for ${u.email}`}
                       >
+                        {/* Admin is a role, not a tier — shown as the
+                            selected value for admin accounts and disabled
+                            so it can't be assigned here (no role endpoint).
+                            The tier options stay selectable. */}
+                        {isAdmin && (
+                          <option value="admin" disabled>
+                            Admin
+                          </option>
+                        )}
                         {TIERS.map((t) => (
                           <option key={t} value={t}>
                             {TIER_LABEL[t]}

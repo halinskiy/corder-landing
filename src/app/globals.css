@@ -6182,13 +6182,16 @@ button:focus:not(:focus-visible) {
   vertical-align: middle;
 }
 .admin-table tbody tr:last-child td { border-bottom: 0; }
-.admin-table__email {
+/* The cell stays a real table-cell (no flex) so its border-bottom lines
+   up with every other column; the email + inline error stack in an inner
+   wrapper instead. Making the td itself `display:flex` pulled it out of
+   the table layout and drew a short / misaligned row divider. */
+.admin-table__email { font-weight: 500; }
+.admin-table__email-inner {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-weight: 500;
 }
-.admin-role-mark { color: var(--color-accent); font-weight: 500; }
 .admin-table__muted { color: var(--color-text-muted); white-space: nowrap; }
 .admin-table__actions { text-align: right; white-space: nowrap; }
 .admin-tier-select {
@@ -6196,6 +6199,13 @@ button:focus:not(:focus-visible) {
   width: auto;
   min-width: 110px;
   font-size: 15px;
+}
+/* Admin accounts show "Admin" as the plan value, tinted accent + an
+   accent-soft border so the role still reads as special inside the
+   dropdown (replacing the old "· admin" side label). */
+.admin-tier-select--admin {
+  color: var(--color-accent);
+  border-color: var(--color-accent-soft);
 }
 .admin-row-error {
   display: block;
