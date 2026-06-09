@@ -5,16 +5,48 @@
 | Service | What for | Where wired |
 |---|---|---|
 | Google Fonts (IBM Plex Sans / Serif / Mono) | Typography, all three weights/styles | `app/layout.tsx` via `next/font/google` |
-| GitHub Releases | Notarized Mac app `.zip` download | Direct link `github.com/halinskiy/corder-updates/releases/latest/download/Corder.zip` on Hero CTA + both Nav CTAs |
-| Paddle (sandbox) | Pro Monthly + Pro Annual checkout via overlay | `src/lib/paddle.ts`, init in `src/app/layout.tsx`, fired by Pricing CTAs |
+| GitHub Releases | Notarized Mac app DMG download | `/install` page (`InstallClient.tsx`) resolves `releases/latest` at runtime (prefers `.dmg` over `.zip`); hardcoded fallback `…/v0.13.37/Corder-0.13.37.dmg`. Structured-data `softwareVersion` in `layout.tsx`. |
+| Paddle (**production**) | Pro + Max checkout (monthly / annual / launch), inline embed | `src/lib/paddle.ts` (live `live_` token + 6 price IDs), init in `layout.tsx`, mounted on `/checkout` by `CheckoutClient.tsx`. `customData.tier` carries the tier to the activation webhook. |
 | Microsoft Clarity | Heatmaps + session replay | Static script in `layout.tsx` |
 | Plausible | Privacy-first analytics + custom events | Static script + manual API in `layout.tsx`; events via `src/lib/track.ts` |
 | Twitter Pixel | Ad attribution | Static script in `layout.tsx` when `NEXT_PUBLIC_TWQ_ID` is set |
 | Google Search Console | Indexing + Performance | Verification file `public/google6657f24bde52d2b3.html`, sitemap submitted |
 | **Supabase Auth** (admin panel) | Operator sign-in (magic link) + admin JWT for /admin/** | `src/lib/supabase.ts`, browser client, `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` (both public) |
-| **corder-api Worker** (admin panel) | `/admin/users`, `/admin/users/:id/tier`, `/admin/news` CRUD + public `/news` | `src/lib/admin-api.ts`, live at `corder-api.empqwork.workers.dev` (override via `NEXT_PUBLIC_CORDER_API`). Verifies admin JWT server-side. |
+| **corder-api Worker** (admin panel) | `/admin/users`, `/admin/users/:id/tier`, `/admin/users/:id/role`, `/admin/news` CRUD, `/admin/logs` + public `/news`. Also Mac-app endpoints (transcribe proxies, /telemetry, /submit-logs). | `src/lib/admin-api.ts`, live at `corder-api.empqwork.workers.dev` (override via `NEXT_PUBLIC_CORDER_API`). Verifies admin JWT server-side. `/admin/*` CORS preflight pinned to an origin allowlist (2026-06-09). |
+| **corder-contact Worker** | `/contact` form → Resend email | `src/components/contact/ContactForm.tsx` POSTs to `corder-contact.empqwork.workers.dev` via `NEXT_PUBLIC_CONTACT_ENDPOINT`. CORS pinned to `ALLOWED_ORIGIN`. |
+| **corder-activation Worker** | Paddle webhook → grant/revoke Supabase tier | `corder-activation.empqwork.workers.dev/paddle-webhook`. Verifies HMAC, resolves tier + buyer email, sets `app_metadata.tier`. See "Backend workers" below. |
 
-## External services planned but not wired yet (Account infrastructure)
+## Backend workers (live — separate repos, deployed via `wrangler`)
+
+Source: `apps/contact-worker`, `apps/activation-worker` (in the Aisoldier
+monorepo); `corder-api` is a standalone non-git folder at
+`/Users/3mpq/corder-api`, deploy-only.
+
+**corder-activation** (`apps/activation-worker`) — Paddle webhook → tier grant.
+- Destination URL to register in Paddle → Notifications:
+  `https://corder-activation.empqwork.workers.dev/paddle-webhook`
+- Events handled: activate on `subscription.activated/created/resumed`,
+  `transaction.completed/paid`; downgrade to free on
+  `subscription.canceled/paused`.
+- Tier source: checkout `custom_data.tier`, else the price-id catalogue
+  (mirrors `src/lib/paddle.ts`). Buyer email resolved from `customer_id`
+  via the Paddle API, then matched to a Supabase user by email.
+- **Buyer-email caveat:** if the Paddle email ≠ the app sign-up email, no
+  match — the worker logs it; set the tier manually via the admin Users
+  panel.
+- **Secrets (set via `wrangler secret put`):**
+  `PADDLE_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE`, `PADDLE_API_KEY`.
+  `SUPABASE_URL` is a `[vars]` entry (public). **Until the two latter
+  secrets are set the worker verifies + logs + returns 200 but writes
+  nothing** (safe degradation — cannot grant a wrong tier).
+
+**corder-contact** (`apps/contact-worker`) — `POST /` → Resend. Secrets:
+`RESEND_API_KEY`, `TO_ADDRESS`, `FROM_ADDRESS`, `ALLOWED_ORIGIN`.
+
+**corder-api** — main API (admin + Mac-app). Service-role-backed; admin
+JWT gate on `/admin/*`; CORS preflight pinned 2026-06-09.
+
+## Historical: account infrastructure plan (superseded where noted)
 
 | Service | What for | Required env var | Phase |
 |---|---|---|---|
@@ -30,8 +62,7 @@
 |---|---|---|
 | `NEXT_PUBLIC_PADDLE_ENV` | `src/lib/paddle.ts` | yes |
 | `NEXT_PUBLIC_PADDLE_TOKEN` | `src/lib/paddle.ts` | yes (sandbox public token) |
-| `NEXT_PUBLIC_PADDLE_PRICE_MONTHLY` | `src/lib/paddle.ts` | yes |
-| `NEXT_PUBLIC_PADDLE_PRICE_ANNUAL` | `src/lib/paddle.ts` | yes |
+| `NEXT_PUBLIC_PADDLE_PRICE_{PRO,MAX}_{MONTHLY,LAUNCH_MONTHLY,ANNUAL}` (6) | `src/lib/paddle.ts` | yes (all baked defaults; public price IDs) |
 | `NEXT_PUBLIC_TWQ_ID` | `src/app/layout.tsx` (Twitter pixel) | yes |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | `src/app/layout.tsx` | yes |
 | `NEXT_PUBLIC_SUPABASE_URL` (admin) | `src/lib/supabase.ts` | yes (has baked default) |

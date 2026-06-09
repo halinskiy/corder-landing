@@ -4,6 +4,66 @@
 
 ---
 
+## 2026-06-09 — Refactor + backend hardening decisions
+
+**Dropped lucide-react, inlined the two icons.**
+Only `Check` + `Plus` were used (Pricing feature list). Inlined them as
+SVG with lucide's exact geometry; removed the dep (~10 KB off the home
+bundle). Alternative (keep the dep, tree-shaken) rejected: two SVG paths
+don't justify a dependency on the critical path.
+
+**Dropped date-fns from direct deps.** Zero direct imports. Kept
+transitively for `react-day-picker` (admin-only). Not a bundle win on
+the public pages (already absent there), pure dependency hygiene.
+
+**Kept framer-motion on the critical path.** Home First Load JS (~140 KB
+gzip) is over the 80 KB budget, framer-motion is ~45 KB of it. Doctrine
+(project CLAUDE.md) explicitly authorises it for entry animation + the
+HowItWorks scroll morph + CorderPresence morph; no pure-CSS replacement
+at that fidelity. Left as-is.
+
+**Back arrow = `router.back()` not `<Link href="/">`.**
+The old fresh-navigation-home always landed at the top. Switched to a
+real history back (guarded by `history.length > 1`, else fall through to
+the `<a href="/">` default for deep links). Rejected the
+`document.referrer` same-origin check: under Next soft-nav the referrer
+reflects the original document's external referrer (e.g. an ad), which
+would break the common ad → home → checkout → back flow. `history.length`
+is the reliable in-tab signal.
+
+**Paddle activation: build it, but safe-degrade until secrets exist.**
+Built the real tier-grant in `corder-activation` (verified webhook →
+tier → email → Supabase `app_metadata.tier`). It writes nothing unless
+`SUPABASE_SERVICE_ROLE` + `PADDLE_API_KEY` are provisioned — verifies +
+logs + 200 otherwise. Rationale: a money-critical flow I can't end-to-end
+test (no live Paddle events, no service-role test write) must not flip
+real grants blind; gating on operator-provisioned secrets is the safe
+boundary. Buyer matched by email; mismatched emails are logged for manual
+reconcile via the admin Users panel.
+
+**Kept `/billing/test-set-tier` (did NOT remove).**
+`/admin/users/:id/tier` (admin panel) grants the identical capability, so
+removing only test-set-tier closes nothing — while it WOULD 404 the
+shipped Mac app's Settings upgrade/downgrade button. Correct sequence:
+activation live → next Mac app release removes the button → then retire
+the endpoint. Deferred until then.
+
+**CORS: pinned the preflight, not every response.**
+`/admin/*` calls carry an `Authorization` header → forced preflight;
+pinning the `OPTIONS` response's `Allow-Origin` to an allowlist
+(getcorder.com + www + localhost) gates the privileged surface. Rejected
+a full per-response origin rewrite: auth is header-based (not cookies) so
+`ACAO: *` was never an actual cross-origin leak (an attacker page can't
+attach the victim's token), and rebuilding every response risked the
+streaming `/transcribe/*` proxies on a live API I can't fully test.
+Public simple GETs (`/news`, `/assets`) stay open — they carry no creds.
+
+**Deferred wrangler 3 → 4 on contact + activation workers.** A major CLI
+bump right before deploying live workers adds risk for marginal benefit;
+v3.95 deploys fine. corder-api is already on v4. Revisit standalone.
+
+---
+
 ## 2026-05-25 — Account infrastructure: magic-link auth, Supabase + Resend + Cloudflare Worker
 
 **Decision.** Add a full account layer to the landing: `/signup`,

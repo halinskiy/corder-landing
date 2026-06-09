@@ -9,6 +9,15 @@
 - **IBM Plex Sans / Serif / Mono** from Google Fonts via `next/font/google`.
 - **`@aisoldier/ui-kit`** linked from the repo root via `file:../../ui-kit` and resolved with `transpilePackages` + `experimental.externalDir` per the booquarium pattern.
 
+**Dependencies (2026-06-09 dead-code pass):** removed `lucide-react` (the
+two icons used in Pricing are now inlined SVG) and dropped `date-fns`
+from direct deps (still transitive via the admin-only `react-day-picker`).
+`clsx` + `tailwind-merge` remain (used by `lib/ui-vendor/cn.ts`). The
+build script `scripts/generate-seo-assets.mjs` (`sharp` + `png-to-ico`)
+is exposed as the `seo:assets` npm script. Deleted dead files: `HeroBeams`,
+`AudienceLine`, `How`, `Privacy`, `FinalCta`, `lib/newsletter.ts`,
+`lib/cn.ts`, `lib/motion.ts`.
+
 ## Folder layout
 
 ```
