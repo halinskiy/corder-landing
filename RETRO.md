@@ -6,6 +6,45 @@ Read this file at the START of every session before building anything.
 
 ---
 
+## 2026-06-09 — 3mpq-soldier — refactor, back-button, backend workers, doc catch-up
+
+### What took longer than it should have?
+The CORS task. I spent several turns weighing a full per-response origin
+rewrite (116 `json()` call sites) before realising the privileged surface
+is gated by the *preflight* alone — `/admin/*` always sends an
+`Authorization` header, so pinning the single `OPTIONS` response is
+enough and avoids touching streaming responses. Lesson: for CORS on a
+token-authed API, reason about which requests are *simple* vs
+*preflighted* before planning any response-wrapping; the preflight is
+usually the only choke point that matters.
+
+### What did I miss that the user/judge caught?
+The user caught that I had NOT been updating the doc dossier
+(CHANGELOG/DECISIONS/INTEGRATIONS/COMPONENTS) across a whole run of
+tasks — download bumps, FAQ cursor, back-button, the refactor, the
+workers. Doctrine §4 says update as you go, not at the end. I batched it
+to the end (worse: only when asked). Also found COMPONENTS.md still
+documented `AudienceLine/How/Privacy` as live months after they were
+superseded by `HowItWorks/YoursPrivacy` — doc rot nobody had caught.
+
+### What will I do differently next time?
+1. **Update CHANGELOG + the affected doc in the SAME commit as the change**,
+   especially for deletes (a deleted file that's still in COMPONENTS.md is
+   a lie). One line per change beats a giant catch-up.
+2. **Public-repo reflex:** before committing any audit/security doc, check
+   `gh repo view --json visibility`. `TECH_AUDIT.md` held sensitive
+   backend findings; it had to be gitignored, not committed. Security
+   detail for a public repo goes in chat or a private location, never the
+   tree (this RETRO included — keep it generic).
+3. **Money-critical + untestable = build with safe degradation, hand off
+   the secrets.** The Paddle activation flow grants paid tiers and I can't
+   test it live; gating real writes behind operator-provisioned secrets
+   (log-only until then) was the right boundary even under a blanket "OK".
+4. **`document.referrer` is unreliable under Next soft-nav** (it reflects
+   the original document's referrer, e.g. an ad domain, not the previous
+   route). For "did the user come from within the app" use
+   `history.length`, not referrer.
+
 ## 2026-05-22 -- 3mpq-soldier -- Popover SVG fidelity, form padding, Lenis removal
 
 ### What took longer than it should have?

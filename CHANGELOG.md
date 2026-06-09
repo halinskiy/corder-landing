@@ -12,6 +12,62 @@ Format:
 
 ---
 
+## 2026-06-09 — Deep audit + refactor, back-button fix, backend hardening
+
+A diagnostic + cleanup pass (4 parallel agents + knip + tsc). Full
+report kept local in `TECH_AUDIT.md` (gitignored — repo is public and
+the report names backend security items).
+
+**Landing refactor (deployed):**
+- Removed 8 dead files: `hero/HeroBeams.{tsx,css}`, the superseded
+  sections `AudienceLine` / `How` / `Privacy` / `FinalCta`,
+  `lib/newsletter.ts` (dead hook, referenced a worker that never
+  shipped), and orphans `lib/cn.ts` + `lib/motion.ts` (live copies live
+  in `lib/ui-vendor/`).
+- Dropped `lucide-react`: the only two icons used (`Check`, `Plus` in
+  Pricing) are now inlined as SVG with identical geometry. ~10 KB off
+  the home critical-path bundle.
+- Dropped `date-fns` from direct deps (zero direct usage; still present
+  transitively for the admin-only `react-day-picker`).
+- Un-exported internal-only symbols, trimmed `ui-vendor/motion.ts` to
+  the one consumed token, removed `copy.ts` default export, added a
+  `seo:assets` npm script for `scripts/generate-seo-assets.mjs`.
+- No route/behaviour change; static export still 26 pages; `tsc` clean.
+
+**Fixes (deployed):**
+- Back arrow (`BackToHomeBtn`) now does `router.back()` when the tab has
+  in-app history, so returning from `/checkout` restores the `#pricing`
+  scroll position instead of jumping to the top. Verified in-browser.
+- FAQ accordion triggers get `cursor: pointer` (native `<button>` +
+  Tailwind v4 Preflight don't set it). Mirrored to the kit.
+- `Download for Mac` bumped 0.13.33 → 0.13.34 → 0.13.36 → 0.13.37
+  (install-page fallback + structured-data `softwareVersion`).
+- CI: GitHub Actions bumped to Node 24 runtimes (checkout@v6,
+  setup-node@v6, upload-pages-artifact@v5, deploy-pages@v5; build Node
+  20 → 22).
+
+**Backend (separate repos, deployed via wrangler):**
+- `corder-activation`: implemented the real Paddle tier grant (was
+  log-only). Verified webhook → resolve tier (custom_data / price-id
+  catalogue) → resolve buyer email (Paddle API) → set Supabase
+  `app_metadata.tier`. Cancel/pause → free. Safe degradation: writes
+  nothing until `SUPABASE_SERVICE_ROLE` + `PADDLE_API_KEY` secrets are
+  set. See INTEGRATIONS.md.
+- `corder-api`: pinned the `/admin/*` CORS preflight to an origin
+  allowlist (getcorder.com + localhost). Public GETs unchanged.
+- Worker hygiene: removed the unnecessary `nodejs_compat` flag from
+  contact + activation workers; removed the unused `ALLOWED_ORIGIN`
+  binding; added `SUPABASE_URL` as an activation `[vars]` entry.
+
+**Decided (see DECISIONS.md):** kept `/billing/test-set-tier` for now
+(removing it would 404 the shipped Mac app button for no net security
+gain); deferred wrangler 3→4; kept framer-motion on the critical path
+(doctrine-approved). Also flipped the Mac app's telemetry default to
+OFF (separate repo) to honour the landing's "no telemetry" claim.
+
+**Next:** provision the activation secrets to go live; later, remove the
+Mac app's in-app upgrade button + then the test-set-tier endpoint.
+
 ## 2026-06-07 — Admin: assign admin role + archive logs
 
 Two admin-panel additions (both needed a Worker endpoint, deployed
