@@ -1,67 +1,91 @@
 # corder-landing — Components Inventory
 
-> **2026-06-09 — refactor + known staleness.** The dead-code pass deleted
-> `HeroBeams`, `AudienceLine`, `How`, `Privacy`, `FinalCta` (superseded;
-> rows removed below). The live home flow now uses `HowItWorks` +
-> `HowItWorksMockups`, `YoursPrivacy`, `CorderPresence` — these are NOT
-> yet fully catalogued here (table predates that rebuild); treat the code
-> as source of truth until reconciled. Recent component changes:
-> - **`Pricing`** — `Check`/`Plus` icons are now inlined SVG
->   (`CheckIcon`/`PlusIcon`); `lucide-react` removed.
-> - **`BackToHomeBtn`** — uses `router.back()` when in-app history exists
->   (restores scroll / `#pricing`), falls back to `<a href="/">`.
-> - **`FAQAccordion`** (kit) — trigger now has `cursor-pointer`.
+> Reconciled with code 2026-06-09. Tables below match `src/components/**`
+> and the live `app/page.tsx` render order. Deleted in the dead-code pass
+> (removed everywhere): `HeroBeams`, `AudienceLine`, `How`, `Privacy`,
+> `FinalCta`, `LenisProvider`.
 
-| Component | Path | Source | When used | Notes |
-|---|---|---|---|---|
-| `MagicLinkForm` | `src/components/account/MagicLinkForm.tsx` | local | /signup + /login | Shared form. Phase 1 mock submit -> "Check your inbox" state. Phase 3 will fire `POST api.getcorder.com/auth/magic-link`. |
-| `VerifyClient` | `src/components/account/VerifyClient.tsx` | local | /verify?token=… | Phase 1 stub: spinner + 800ms `window.location.replace("/account")`. Phase 3 hits `GET /auth/verify` + lands on /account. |
-| `AccountView` | `src/components/account/AccountView.tsx` | local | /account | Five sections client-side: Profile, Subscription, Notifications, Referrals, Danger zone (DELETE-typed confirm). Seeded from `src/lib/account-mock.ts` (Phase 1). |
-| `Nav` | `src/components/sections/Nav.tsx` | local | Section 0 (sticky header) | Bespoke. `data-scrolled="true"` after scrollY > 8 → backdrop-blur(12px) + 1px hairline. SVG brand mark inlined. Mobile collapses links to a single Download CTA (full nav reappears at `md:`). New `/account` link added 2026-05-25. |
-| `Hero` | `src/components/sections/Hero.tsx` | local | Section 1 | Editorial copy (eyebrow → display-lg headline → body-lg subhead → two CTAs → qualifier) over a faded dot-grid surface, with `HeroLibraryDemo` below. Framer Motion 12 entry animation — opacity + y + blur staggered 0–320ms. |
-| `HeroLibraryDemo` | `src/components/hero/HeroLibraryDemo.tsx` + `.css` | local | Inside Hero | Port of the macOS Library window to React. **Updated to v0.9.0 on 2026-05-20** (`feat/hero-v090`). Renders traffic lights, auto-titled meeting list (Gemini-style), header strip of 4 icon-only buttons (moon / globe / archive / profile-K), transcript pane with 2 icon-only toolbar buttons (people-filter + copy-all), 2-tab right column (`Recording` + `Settings`), Recording-tab body = video preview card + audio scrubber + download icon + Timeline section label + per-speaker bars. Self-speaker entry labelled `I` with amber single-letter avatar (`--hl-speaker-self: #a16207`). Pointer-driven 3D tilt (`MAX_X=3°, MAX_Y=4°, LIFT=4px`) via vanilla rAF. Click Play toggles `data-playing="true"` → CSS scrub + cursor animation. |
-| `Features` | `src/components/sections/Features.tsx` | local | Section 5 | 6-cell hairline-bordered grid (3 cols at lg, 2 at sm, 1 at base). External 12px radius, internal 1px hairlines, no shadows. **Updated 2026-05-21 on `feat/hero-v090`:** each cell now renders an inline-SVG mock per `visualHint` in copy.json (style ported from `HeroLibraryDemo.GoogleMeetMock`): `mini-timeline-fragment` (two speaker rows + accent playhead), `screen-video-frame` (dark 16:9 frame + accent play button), `menu-bar-capsule` (macOS notification + accent `Record` pill), `drag-out-gesture` (transcript card + accent dashed curve to Notion target), `audio-sound-row` (Sound preferences list + accent selected row), `version-sequence` (mono chips + accent middle chip). ASCII text only, project tokens via CSS variables. One accent-green role per illustration. Hover bg-shift on cells. |
-| `Pricing` | `src/components/sections/Pricing.tsx` | local | Section 6 | 3-tier card grid (Free / Pro / Max), monthly/annual `useState` toggle (+ launch pricing). Pro/Max CTAs route to `/checkout/?tier=&billing=`; Free → `/install`. Feature-list markers are **inlined SVG** `CheckIcon` / `PlusIcon` (lucide-react removed 2026-06-09). |
-| `Faq` | `src/components/sections/Faq.tsx` | local (uses kit) | Section 7 | Wraps kit `FAQAccordion` with `mode="multi"`. Maps `copy.faq.items` from `{q,a}` → `{question,answer}`. Section header (eyebrow + H2) above accordion. |
-| `Footer` | `src/components/sections/Footer.tsx` | local | Section 9 | 3-col grid at md+: oversized Plex Serif brand wordmark, Product + Resources columns. Hairline divider above © + back-to-top baseline row. Bespoke (kit's FooterEditorial is the studio's editorial closing — different shape). |
-| ~~`LenisProvider`~~ | ~~`src/components/providers/LenisProvider.tsx`~~ | **DELETED 2026-05-22** | n/a | Removed on user-reported scroll lag. Native `scroll-behavior: smooth` on `<html>` + `scroll-padding-top: 88px` handle anchor jumps. No JS smoothing means the macOS hardware momentum is no longer competing with a 1s lerp. |
-| `MotionProvider` | `src/components/providers/MotionProvider.tsx` | local | Root layout | IntersectionObserver-driven blur-reveal trigger. Reads `?motion=0` and `prefers-reduced-motion`. Sets `data-motion-state` on every `[data-motion="blur-reveal"]` element. Also writes `<html data-motion="off">` redundantly (the pre-hydration script in `layout.tsx` is the primary writer). |
-| `CorderPresenceProvider` | `src/components/presence/CorderPresence.tsx` | local | Root layout | Wraps the app in a framer `LayoutGroup` so the in-section window, orb and form share `layoutId="corder-presence"`. Owns the `pastHowItWorks` + `pastFormZone` scroll flags and the `motionDisabled` flag. Mounts the corner orb/form switch at the page root via `CorderPresenceCorner` (internal). |
-| `CorderPresenceSentinel` | `src/components/presence/CorderPresence.tsx` | local | Inside `HowItWorks` | 1px scroll anchor. rAF-throttled `getBoundingClientRect`; flips `pastHowItWorks` true when the sentinel enters the upper 40% of the viewport. |
-| `CorderPresenceFormSentinel` | `src/components/presence/CorderPresence.tsx` | local | `page.tsx`, between Faq and Footer | Zero-height scroll anchor at the place where the old Newsletter section used to sit. Flips `pastFormZone` true when it enters the upper 40% of the viewport, triggering the orb-to-form morph. |
-| `CorderPresenceStaticSection` | `src/components/presence/CorderPresence.tsx` | local | `page.tsx`, between Faq and Footer | Reduced-motion fallback: when `motionDisabled === true`, this section renders the subscribe form inline in normal page flow (`.presence-static`). Returns null when motion is enabled. |
+## Home page sections (in `app/page.tsx` render order)
+
+| # | Component | Path | Notes |
+|---|---|---|---|
+| 0 | `Nav` | `sections/Nav.tsx` | Sticky header. `data-scrolled="true"` after scrollY > 8 → backdrop-blur(12px) + 1px hairline. Inlined SVG brand mark. Mobile collapses to a single Download CTA (full nav at `md:`). "Contact Us" scrolls to `#site-footer-bottom`. |
+| 1 | `Hero` | `sections/Hero.tsx` | Editorial copy (eyebrow → display headline → subhead → two CTAs → qualifier) over a faded dot-grid, with `HeroLibraryDemo` below. Framer Motion entry: opacity + y + blur staggered 0–320ms. CTAs use `AppleIcon`. |
+| 1 | `HeroLibraryDemo` | `hero/HeroLibraryDemo.tsx` + `.css` | React port of the macOS Library window (v0.9.0, `feat/hero-v090`): traffic lights, auto-titled meeting list, 4 header icon buttons, transcript pane, 2-tab right column (Recording/Settings), video preview + scrubber + per-speaker bars (self = amber `I` avatar). Pointer 3D tilt via vanilla rAF; Play toggles `data-playing` CSS scrub. CSS is a manual port of the app's `styles.css` (no auto-sync). |
+| 1 | `HeroRecordingProvider` / `useHeroRecording` | `hero/HeroRecordingContext.tsx` | Shared recording state so the headline "Record" widget + the demo banner stay in lockstep. One auto-cycle (5s warm → 3s record → 7s rest → loop); click anywhere calls `toggle()`. |
+| 2 | `HowItWorks` | `sections/HowItWorks.tsx` | Three rows with one shared window block that snaps between slots on scroll. Target top/left are step functions of `scrollYProgress` fed through `useSpring` (lift-glide-land, no overshoot). Hosts `CorderPresenceSentinel`. |
+| 2 | `HowItWorksMockups` (`ChapterMockup`) | `sections/HowItWorksMockups.tsx` | Three full-fidelity Corder UI mockups swapped inside the sticky window per chapter. `ChapterMockup({chapter:1\|2\|3})` → internal `DashboardMock` / `LibraryMeetingMock` / `SettingsMock` (not exported; reuse the `.hl-*` tokens from HeroLibraryDemo.css). |
+| 3 | `YoursPrivacy` | `sections/YoursPrivacy.tsx` | "Your meetings stay yours" — three trust cards, each with a coloured shape (organic blob = accent green, star = speaker purple `#5a3aa6`, diamond = amber `#a16207`). Replaced the old 2-card `Privacy`. |
+| 4 | `Fit` | `sections/Fit.tsx` | "Is Corder for you?" — two-card yes/no with hairline rows; leading accent check (yes) / neutral minus (no). Reuses the Privacy card visual language. |
+| 5 | `WorksWith` | `sections/WorksWith.tsx` | Three marquee rows of brand pills (rows 1/3 →, row 2 ←). Logos served from `public/logos/*.svg`. Granola/Cursor "wall of integrations" pattern. |
+| 6 | `Features` | `sections/Features.tsx` | 6-cell hairline grid (3/2/1 cols). Each cell renders an inline-SVG mock per `visualHint` in copy.json (`mini-timeline-fragment`, `screen-video-frame`, `menu-bar-capsule`, `drag-out-gesture`, `audio-sound-row`, `version-sequence`). One accent role per illustration; hover bg-shift. |
+| 7 | `Pricing` | `sections/Pricing.tsx` | 3-tier grid (Free / Pro / Max), monthly/annual `useState` toggle (+ launch pricing). Pro/Max CTAs → `/checkout/?tier=&billing=`; Free → `/install`. Feature markers are **inlined SVG** `CheckIcon` / `PlusIcon` (lucide-react removed 2026-06-09). |
+| 7 | `PricingBillingToggle` | `sections/PricingBillingToggle.tsx` | Monthly/Yearly pill switch beside the Pricing heading; active segment accent fill. Split out so the heading row stays a clean flex container. |
+| 8 | `Faq` | `sections/Faq.tsx` | Wraps kit `FAQAccordion` (`mode="multi"`), maps `copy.faq.items` `{q,a}` → `{question,answer}`, fires `faq_open` analytics via `onItemToggle`. |
+| 9 | `Footer` | `sections/Footer.tsx` | 3-col grid at md+: oversized Plex Serif wordmark, Product + Resources columns. Hairline divider above © + back-to-top baseline row (`#site-footer-bottom`). |
+
+## Global / layout-level (mounted in `app/layout.tsx`, not a section)
+
+| Component | Path | Notes |
+|---|---|---|
+| `CorderPresenceProvider` | `presence/CorderPresence.tsx` | Wraps the app in a framer `LayoutGroup` (`layoutId="corder-presence"`) so the in-section window, corner orb and form morph share layout. Owns `pastHowItWorks` / `pastFormZone` / `motionDisabled` flags; mounts the corner orb/form switch (`CorderPresenceCorner`, internal). |
+| `CorderPresenceSentinel` | `presence/CorderPresence.tsx` | 1px scroll anchor inside `HowItWorks`; rAF-throttled rect check flips `pastHowItWorks` at the upper-40% line. |
+| `CorderPresenceFormSentinel` | `presence/CorderPresence.tsx` | Zero-height anchor in `page.tsx` between Faq and Footer; flips `pastFormZone` → triggers the orb-to-form morph. |
+| `CorderPresenceStaticSection` | `presence/CorderPresence.tsx` | Reduced-motion fallback: when `motionDisabled`, renders the subscribe form inline; else null. |
+| `MotionProvider` | `providers/MotionProvider.tsx` | IO-driven blur-reveal trigger. Reads `?motion=0` + `prefers-reduced-motion`; sets `data-motion-state` on `[data-motion="blur-reveal"]`. |
+| `PauseOffscreen` | `providers/PauseOffscreen.tsx` | Single global IO that sets `data-anim-paused` on `[data-pauseable]` roots offscreen; CSS pauses all animations in that subtree. |
+| `ConsentProvider` | `consent/ConsentProvider.tsx` | GDPR banner; injects Clarity/Plausible/X pixel only after Accept. `openConsentBanner()` re-shows it (footer "Cookie preferences"). Renders nothing until the post-mount storage read resolves (no flash). |
+| `CookieConsentButton` | `consent/CookieConsentButton.tsx` | Persistent bottom-left ghost trigger (56/48px), mirrors the CorderPresence orb footprint; hidden while the banner is on screen. |
+| `BackToHomeBtn` | `ui/BackToHomeBtn.tsx` | Top-left back arrow on every non-home page (HIDE_ON list opts some out). `router.back()` when `history.length > 1` (restores scroll / `#pricing`), else falls back to `<a href="/">`. |
+
+## Standalone-page components
+
+| Component | Path | Page | Notes |
+|---|---|---|---|
+| `MagicLinkForm` | `account/MagicLinkForm.tsx` | /signup, /login | Shared magic-link form. Phase-1 mock submit → "Check your inbox". |
+| `VerifyClient` | `account/VerifyClient.tsx` | /verify | Phase-1 stub: spinner + 800ms `replace("/account")`. |
+| `AccountView` | `account/AccountView.tsx` | /account | Profile / Subscription / Notifications / Referrals / Danger zone. Seeded from `lib/account-mock.ts` (Phase 1). |
+| `CheckoutClient` | `checkout/CheckoutClient.tsx` | /checkout | Inline Paddle embed. Reads `?tier=&billing=`, resolves priceId, opens `Paddle.Checkout` with `customData.tier` (consumed by the activation webhook). |
+| `InstallClient` | `install/InstallClient.tsx` | /install | Resolves `releases/latest` at runtime (prefers `.dmg`), hardcoded fallback DMG (currently 0.13.37). |
+| `ActivationStatus` | `thanks/ActivationStatus.tsx` | /thanks | Status pill reading Paddle's `?_ptxn`. loading / confirmed / no-token. (Client-only; no server call today.) |
+| `ContactForm` | `contact/ContactForm.tsx` | /contact | POSTs to the contact Worker (`NEXT_PUBLIC_CONTACT_ENDPOINT`); `mailto:` fallback when unset. |
+| `AppleIcon` | `icons/AppleIcon.tsx` | Nav, Hero, Pricing/Install CTAs | Apple silhouette, `currentColor`, 14px default. |
 
 ## Admin panel components (operator-only, /admin/**)
 
-| Component | Path | Source | When used | Notes |
-|---|---|---|---|---|
-| `AdminGuard` | `src/components/admin/AdminGuard.tsx` | local | wraps all /admin/** via `app/admin/layout.tsx` | Client gate. Reads Supabase session, checks `app_metadata.role === "admin"`. States: loading / signin (inline magic-link, reuses `.account-auth-*`) / denied / ok / unconfigured. UX gate only — Worker re-verifies the JWT. |
-| `AdminShell` | `src/components/admin/AdminShell.tsx` | local | inside AdminGuard | Chrome: serif "Admin" title, operator email + sign out, Users/News tabs (`usePathname`). `.legal-page` shell. |
-| `UsersTable` | `src/components/admin/UsersTable.tsx` | local | /admin | Search + tier filter, inline tier `<select>` (optimistic POST /admin/users/:id/tier), inline-confirm delete, Usage column placeholder "—". |
-| `NewsList` | `src/components/admin/NewsList.tsx` | local | /admin/news | Rows sorted created_at desc, status = dot + word (`newsStatus()`), edit / duplicate (POST copy as draft) / inline-confirm delete. No chips. |
-| `NewsForm` | `src/components/admin/NewsForm.tsx` | local | /admin/news/new + /admin/news/edit | Shared create/edit. Title/subtitle/body, primary+secondary CTA (label+action+url, url shown only for open_url), audience, dismissible + draft `.account-toggle` switches, react-day-picker `mode="range"` (2 months, accent-themed `.admin-rdp`). |
-| `NewsEditLoader` | `src/components/admin/NewsEditLoader.tsx` | local | /admin/news/edit (Suspense) | Reads `?id=` (static-export-safe), loads row via list endpoint, renders NewsForm in edit mode. |
-| `LogsList` | `src/components/admin/LogsList.tsx` | local | /admin/logs | Bug reports as horizontal cards (title + summary + meta + severity chip), newest first. `title === null` rows show a "Summarizing…" shimmer; the list re-polls every 5s while any row is un-triaged. Active/Archived segmented toggle; each card has a hover-reveal Archive pill (cookie-banner ghost style) → `archiveLog`, optimistic remove. Card is `role="button"` (not `<button>`) so the Archive button can nest. Click → LogDetailModal. |
-| `LogDetailModal` | `src/components/admin/LogDetailModal.tsx` | local | from LogsList | Full report: header + summary + monospace scrollable `log_tail` (fetched from GET /admin/logs/:id), Copy log (raw) + Re-summarize (POST /admin/logs/:id/summarize). Esc / backdrop close, body-scroll lock. |
-| `SeverityChip` | `src/components/admin/SeverityChip.tsx` | local | LogsList + modal | Severity pill (low grey / medium amber / high orange / critical red) + `relativeTime()` helper. Status colours, not brand accents. |
+| Component | Path | When used | Notes |
+|---|---|---|---|
+| `AdminGuard` | `admin/AdminGuard.tsx` | wraps all /admin/** via `app/admin/layout.tsx` | Client gate. Reads Supabase session, checks `app_metadata.role === "admin"`. States: loading / signin (inline magic-link, reuses `.account-auth-*`) / denied / ok / unconfigured. UX gate only — Worker re-verifies the JWT. |
+| `AdminShell` | `admin/AdminShell.tsx` | inside AdminGuard | Chrome: serif "Admin" title, operator email + sign out, Users/News/Logs tabs (`usePathname`). `.legal-page` shell. |
+| `UsersTable` | `admin/UsersTable.tsx` | /admin | Search + tier filter, inline Plan `<select>` (Free/Pro/Max + **Admin**), tier change = optimistic `POST /admin/users/:id/tier`; Admin grant/revoke via `POST /admin/users/:id/role` behind an inline confirm; inline-confirm delete. |
+| `NewsList` | `admin/NewsList.tsx` | /admin/news | Rows sorted created_at desc, status = dot + word (`newsStatus()`), edit / duplicate / inline-confirm delete. |
+| `NewsForm` | `admin/NewsForm.tsx` | /admin/news/new + /edit | Shared create/edit. Title/subtitle/body, primary+secondary CTA, audience, dismissible + draft toggles, react-day-picker `mode="range"` (accent-themed `.admin-rdp`). |
+| `NewsEditLoader` | `admin/NewsEditLoader.tsx` | /admin/news/edit (Suspense) | Reads `?id=` (static-export-safe), loads the row, renders NewsForm in edit mode. |
+| `LogsList` | `admin/LogsList.tsx` | /admin/logs | Bug reports as cards (title + summary + meta + severity), newest first. `title === null` → "Summarizing…" shimmer; re-polls every 5s while any row is un-triaged. Active/Archived toggle; hover-reveal Archive pill → `archiveLog` (optimistic). Card is `role="button"` so the pill can nest. Click → LogDetailModal. |
+| `LogDetailModal` | `admin/LogDetailModal.tsx` | from LogsList | Full report + monospace scrollable `log_tail` (GET /admin/logs/:id), Copy log + Re-summarize. Esc/backdrop close, body-scroll lock. |
+| `SeverityChip` | `admin/SeverityChip.tsx` | LogsList + modal | Severity pill (low grey / medium amber / high orange / critical red) + `relativeTime()`. Status colours, not brand accents. |
 
-Lib: `src/lib/supabase.ts` (browser client), `src/lib/admin-api.ts` (typed bearer fetch + `newsStatus`, `listLogs`/`getLog`/`summarizeLog`).
+Lib: `lib/supabase.ts` (browser client), `lib/admin-api.ts` (typed bearer fetch + `newsStatus`, `listLogs`/`getLog`/`summarizeLog`, `setUserTier`/`setUserRole`, `archiveLog`).
 
 ## Kit components imported from `@aisoldier/ui-kit`
 
 | Kit component | Where used | Why |
 |---|---|---|
-| `Inspector` | `app/layout.tsx` | Dev-only Cmd+click overlay for handoff inspection. |
-| `FAQAccordion` | `src/components/sections/Faq.tsx` | Section 7. Multi-open accordion. Mapped 10 FAQ items from `copy.faq.items`. Edit landed in this session: kit FAQItem now carries `data-tokens` so the Inspector overlay sees the token list — required `rm -rf .next` + dev restart per RETRO. |
+| `Inspector` | `app/layout.tsx` (dev only) | Cmd+click overlay for handoff inspection. |
+| `FAQAccordion` | `sections/Faq.tsx` | Multi-open accordion (10 items from `copy.faq.items`). 2026-06-09: kit trigger gained `cursor-pointer` (native `<button>` + Tailwind v4 Preflight don't set it). NOTE: the project uses a vendored copy at `lib/ui-vendor/FAQAccordion.tsx` (carries the extra `onItemToggle` analytics prop the kit version lacks); promote that prop to the kit before consolidating. |
 
-After this session, candidates for kit promotion (rule: 2+ uses across projects before promoting):
+## Kit-promotion candidates (rule: 2+ uses across projects before promoting)
 
-1. **`AppWindowDemo`** — generic browser/macOS app frame that takes children. The `BrowserFrame` kit component covers the browser-chrome flavour; a macOS variant with traffic lights + sidebar slot is a clear delta. Used in Hero (`HeroLibraryDemo`) and now in How (`HowWindow` mini reproduction). Two uses already in Corder — but they're scoped to one project. Wait for a second project before promoting.
-2. **`AudienceLine` (kit pattern)** — editorial scroll-driven word-fill. One use, wait for second project.
-3. **`StickyScrollNarrative`** — left-sticky-visual + right-scroll-chapters with IntersectionObserver-driven state on the visual. The `How` section's mechanism (rootMargin -35% top/bottom band + closest-to-centre tiebreak) is reusable. Promote after a second project uses it. (Distinct from kit's `StickyFeatureList`, which is sticky-visual + IO-fade — `StickyScrollNarrative` is sticky-state-machine + IO-active-class.)
-4. **`PricingCardGrid` + `PricingTierCard`** — 3-tier + lifetime plank pattern with annual toggle. Probably premature to promote before validating per-project price-shape variance.
-5. **`PrivacyTrustCardPair`** — two-card asymmetric trust block with mono spec-list. Wait for second project.
+1. **`AppWindowDemo`** — macOS app frame with traffic lights + sidebar slot (the `BrowserFrame` kit covers only the browser flavour). Two uses in Corder (`HeroLibraryDemo`, `HowItWorksMockups`) but single-project; wait for a second project.
+2. **`StickyScrollNarrative`** — left-sticky-visual + right-scroll-chapters with a spring-snapped shared window. `HowItWorks`'s `scrollYProgress` step-function + `useSpring` mechanism is reusable. Promote after a second project uses it.
+3. **`PricingCardGrid` + `PricingTierCard` + billing toggle** — 3-tier + launch/annual pattern. Validate per-project price-shape variance first.
+4. **`TrustCardTrio`** — `YoursPrivacy`'s three-card block with per-card coloured shapes. Wait for a second project.
+5. **`MarqueeLogoWall`** — `WorksWith`'s bidirectional brand-pill marquee. Wait for a second project.
 
-## Local-only components
+## Local-only note
 
-All section files (Nav, Hero, HeroLibraryDemo, AudienceLine, Privacy, How, Features, Pricing, Faq, FinalCta, Footer) are project-local. None are reusable in their current form because they all reference `copy.json` directly via the typed wrapper `@/content/copy`. Promotion candidates are listed above.
+Every section + page component above is project-local: they reference
+`copy.json` directly via the typed wrapper `@/content/copy`, so none are
+reusable as-is. Reusable *patterns* are the promotion candidates above.
+The only genuinely shared primitive is `lib/ui-vendor/cn.ts`
+(`clsx` + `tailwind-merge`).
