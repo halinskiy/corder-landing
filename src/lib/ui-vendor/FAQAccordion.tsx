@@ -130,7 +130,7 @@ export function FAQItem({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-6 py-5 text-left transition-opacity duration-150 hover:opacity-70 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
+        className="flex w-full cursor-pointer items-center justify-between gap-6 py-5 text-left transition-opacity duration-150 hover:opacity-70 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
         aria-expanded={open}
       >
         <span
