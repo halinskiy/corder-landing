@@ -477,6 +477,14 @@ html[data-motion="off"] .hero-library-demo *::after {
 .hl-icon-pill:active {
   background: var(--hl-bg-active);
 }
+/* Active/pressed icon (Settings gear when its pane is open, Moon in dark
+ * mode) -- the app fills its toolbar glyphs when the matching pane/state
+ * is active. */
+.hl-icon-pill[aria-pressed="true"] {
+  background: var(--hl-bg-active);
+  border-color: var(--hl-fg-dim);
+  color: var(--hl-fg);
+}
 .hl-icon-pill svg {
   display: block;
   width: 14px;
@@ -1427,7 +1435,7 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
     background: none;
   }
   /* On the tablet tier, drop the archive button so the header still
-   * fits without crowding the breadcrumb. Profile + theme + language
+   * fits without crowding the breadcrumb. Profile + theme + settings
    * remain. */
   .hl-icon-pill:nth-of-type(3) {
     display: none;
