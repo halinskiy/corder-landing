@@ -16,7 +16,7 @@
  */
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-export const SUPABASE_URL =
+const SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL ??
   "https://cfsajlsctzxgixjwslni.supabase.co";
 
@@ -25,7 +25,7 @@ export const SUPABASE_URL =
 // static bundle: it is browser-scoped and gated by RLS. The secret key
 // (sb_secret_*) must NEVER appear client-side. Override per build via
 // NEXT_PUBLIC_SUPABASE_ANON_KEY.
-export const SUPABASE_ANON_KEY =
+const SUPABASE_ANON_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
   "sb_publishable_sqnQntW3VL3Qqh5YGzYFeA_G70fFq2N";
 

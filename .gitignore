@@ -12,3 +12,6 @@ dist/
 .turbo
 out/
 screenshots/
+
+# Local-only internal audit (names backend security items; repo is public)
+TECH_AUDIT.md

@@ -270,7 +270,7 @@ function MeetingItem({
  *  01 -- Dashboard mock
  * ════════════════════════════════════════════════════════════════════ */
 
-export function DashboardMock() {
+function DashboardMock() {
   return (
     <MockShell
       variant="dashboard"
@@ -444,7 +444,7 @@ function RecentCard({
  *  02 -- Library + Transcript mock
  * ════════════════════════════════════════════════════════════════════ */
 
-export function LibraryMeetingMock() {
+function LibraryMeetingMock() {
   return (
     <MockShell
       variant="library"
@@ -747,7 +747,7 @@ function TimelineRow({
  *  03 -- Settings mock
  * ════════════════════════════════════════════════════════════════════ */
 
-export function SettingsMock() {
+function SettingsMock() {
   return (
     <MockShell
       variant="settings"
