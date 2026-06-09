@@ -15,6 +15,7 @@ const TILT_LIFT = 4;
 const TRANSCRIBING_DURATION_MS = 1200;
 
 type DemoMode = "recording" | "transcribing" | "transcript";
+type LeftTab = "transcript" | "summary" | "chapters";
 type RightTab = "recording" | "settings";
 type Theme = "light" | "dark";
 
@@ -39,6 +40,9 @@ export function HeroLibraryDemo() {
   // Right-panel tab — Recording (default) shows the audio scrubber +
   // Timeline; Settings shows a stack of decorative setting cards.
   const [rightTab, setRightTab] = useState<RightTab>("recording");
+  // Left-pane tab — Transcript (default) / Summary / Chapters, mirroring
+  // the app's three detail tabs. Each renders real (decorative) content.
+  const [leftTab, setLeftTab] = useState<LeftTab>("transcript");
   // Demo-scoped theme. Flips on moon-icon click; never touches the
   // landing's global theme. Applied as `data-theme` on the demo root;
   // the theme transition is a circular radial reveal originating from
@@ -297,6 +301,8 @@ export function HeroLibraryDemo() {
             onStopRecording={handleStopRecording}
             rightTab={rightTab}
             onRightTabChange={setRightTab}
+            leftTab={leftTab}
+            onLeftTabChange={setLeftTab}
             theme={theme}
             onToggleTheme={toggleTheme}
           />
@@ -421,6 +427,8 @@ function Main({
   onStopRecording,
   rightTab,
   onRightTabChange,
+  leftTab,
+  onLeftTabChange,
   theme,
   onToggleTheme,
 }: {
@@ -431,6 +439,8 @@ function Main({
   onStopRecording: () => void;
   rightTab: RightTab;
   onRightTabChange: (next: RightTab) => void;
+  leftTab: LeftTab;
+  onLeftTabChange: (next: LeftTab) => void;
   theme: Theme;
   onToggleTheme: (e?: React.MouseEvent<HTMLElement>) => void;
 }) {
@@ -500,9 +510,9 @@ function Main({
             aria-label="Profile"
             data-component="HeroLibraryDemo.ProfileAvatar"
             data-source={DATA_SOURCE}
-            data-tokens="hl-border-strong,hl-fg"
+            data-tokens="hl-avatar-admin"
           >
-            K
+            <AvatarAdmin />
           </span>
         </div>
       </div>
@@ -510,9 +520,19 @@ function Main({
       <div className="hl-detail">
         <div className="hl-detail-tabs">
           <div className="hl-detail-tab-col hl-detail-tab-col-left">
-            <span className="hl-tab active">Transcript</span>
-            <span className="hl-tab">Summary</span>
-            <span className="hl-tab">Chapters</span>
+            {(["transcript", "summary", "chapters"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                className={`hl-tab${leftTab === t ? " active" : ""}`}
+                onClick={() => onLeftTabChange(t)}
+                aria-pressed={leftTab === t}
+                data-component={`HeroLibraryDemo.LeftTab.${t}`}
+                data-source={DATA_SOURCE}
+              >
+                {t === "transcript" ? "Transcript" : t === "summary" ? "Summary" : "Chapters"}
+              </button>
+            ))}
           </div>
           <div className="hl-detail-tab-col hl-detail-tab-col-right">
             <button
@@ -541,11 +561,17 @@ function Main({
         </div>
 
         <div className="hl-detail-body">
-          <Transcript
-            mode={mode}
-            elapsedSeconds={elapsedSeconds}
-            onStopRecording={onStopRecording}
-          />
+          {leftTab === "transcript" ? (
+            <Transcript
+              mode={mode}
+              elapsedSeconds={elapsedSeconds}
+              onStopRecording={onStopRecording}
+            />
+          ) : leftTab === "summary" ? (
+            <SummaryPane />
+          ) : (
+            <ChaptersPane />
+          )}
           {rightTab === "recording" ? (
             <RightPanel
               playing={playing}
@@ -770,6 +796,105 @@ function SegmentGroup({
         <div className="hl-speaker-name">{name}</div>
       </div>
       <div className="hl-segment-paragraph">{children}</div>
+    </div>
+  );
+}
+
+/* Summary tab — Granola-style markdown (headings + bullet lists). Mirrors
+ * the app's SummaryPane (`.md-*` classes, search + Copy + Regenerate
+ * toolbar). Decorative content keyed to the demo's Investor-sync meeting. */
+function SummaryPane() {
+  return (
+    <div className="hl-transcript-wrap">
+      <PaneToolbar placeholder="Search the summary" copyLabel="Copy summary" regenerate />
+      <div className="hl-summary-content">
+        <h3 className="hl-md-h3">Overview</h3>
+        <p className="hl-md-p">
+          The team walked through the pricing draft and agreed to ship the
+          launch tiers before Thursday. Scope stays tight; design loops in
+          before the walkthrough.
+        </p>
+        <h3 className="hl-md-h3">Key points</h3>
+        <ul className="hl-md-ul">
+          <li className="hl-md-li">
+            Pro lands at <strong>$8.25/mo</strong> billed yearly, Max at $19.92
+          </li>
+          <li className="hl-md-li">Launch discount stays monthly-only by design</li>
+          <li className="hl-md-li">Free tier keeps the full on-device transcript</li>
+        </ul>
+        <h3 className="hl-md-h3">Action items</h3>
+        <ul className="hl-md-ul">
+          <li className="hl-md-li">Paul to share the pricing draft after the call</li>
+          <li className="hl-md-li">David to re-scope the timeline and follow up Thursday</li>
+          <li className="hl-md-li">Send design a heads-up tomorrow morning</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+const DEMO_CHAPTERS: ReadonlyArray<{ time: string; title: string; active?: boolean }> = [
+  { time: "0:00", title: "Intro and agenda" },
+  { time: "1:32", title: "Pricing draft walk-through", active: true },
+  { time: "5:18", title: "Launch discount and tiers" },
+  { time: "9:00", title: "Timeline and scope" },
+  { time: "14:05", title: "Action items and owners" },
+];
+
+/* Chapters tab — list of green timecode pills + titles, the active pill
+ * carrying a progress fill. Mirrors the app's ChaptersPane (0.13.17+,
+ * progress-fill added 0.13.33). */
+function ChaptersPane() {
+  return (
+    <div className="hl-transcript-wrap">
+      <PaneToolbar placeholder="Search chapters" copyLabel="Copy chapters" regenerate />
+      <div className="hl-chapters">
+        {DEMO_CHAPTERS.map((c, i) => (
+          <div
+            key={i}
+            className={`hl-chapter-block${c.active ? " is-active" : ""}`}
+            data-component="HeroLibraryDemo.ChapterBlock"
+            data-source={DATA_SOURCE}
+          >
+            <span className="hl-chapter-time">
+              {c.active && (
+                <span className="hl-chapter-time-fill" style={{ width: "42%" }} aria-hidden />
+              )}
+              <span className="hl-chapter-time-text">{c.time}</span>
+            </span>
+            <span className="hl-chapter-title">{c.title}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* Shared Summary/Chapters toolbar: search field + Copy + Regenerate,
+ * matching the transcript toolbar shape. */
+function PaneToolbar({
+  placeholder,
+  copyLabel,
+  regenerate,
+}: {
+  placeholder: string;
+  copyLabel: string;
+  regenerate?: boolean;
+}) {
+  return (
+    <div className="hl-transcript-toolbar">
+      <div className="hl-search-field">
+        <SearchIcon />
+        <input type="search" placeholder={placeholder} readOnly tabIndex={-1} />
+      </div>
+      <button className="hl-toolbar-icon-btn" type="button" aria-label={copyLabel} tabIndex={-1}>
+        <CopyAllIcon />
+      </button>
+      {regenerate && (
+        <button className="hl-toolbar-icon-btn" type="button" aria-label="Regenerate" tabIndex={-1}>
+          <RefreshIcon />
+        </button>
+      )}
     </div>
   );
 }
@@ -1279,6 +1404,30 @@ function RecBlobCanvas({ isSpeaking }: { isSpeaking: boolean }) {
   return <canvas ref={canvasRef} className="hl-rec-blob__canvas" aria-hidden="true" />;
 }
 
+/* Profile avatar — the macOS app's admin avatar: a blue disc
+ * (--avatar-admin) with a white abstract "half-moon" glyph (the app's
+ * glyph variant 2) and a 1px ring. No initials. Mirrors
+ * Corder/Web/src/components/ProfileMenu.tsx. */
+function AvatarAdmin() {
+  return (
+    <svg viewBox="0 0 40 40" className="hl-avatar-svg" aria-hidden="true">
+      <circle cx="20" cy="20" r="20" fill="var(--hl-avatar-admin)" />
+      <g fill="#fff">
+        <circle cx="20" cy="20" r="11" />
+        <rect x="20" y="9" width="13" height="22" fill="var(--hl-avatar-admin)" />
+      </g>
+      <circle
+        cx="20"
+        cy="20"
+        r="19.5"
+        fill="none"
+        stroke="var(--hl-avatar-admin)"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
 /* ── Icons ─────────────────────────────────────────────────── */
 
 function SearchIcon() {
@@ -1396,6 +1545,26 @@ function CopyAllIcon() {
     >
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+// Regenerate (lucide RefreshCw) — Summary / Chapters toolbar.
+function RefreshIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+      <path d="M3 21v-5h5" />
     </svg>
   );
 }
