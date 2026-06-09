@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/ui/BackToHomeBtn.tsx";
 
@@ -44,11 +44,34 @@ const HIDE_ON = new Set([
  */
 export function BackToHomeBtn() {
   const pathname = usePathname();
+  const router = useRouter();
   if (pathname === null || HIDE_ON.has(pathname)) return null;
+
+  /**
+   * Prefer a real history "back" so the browser restores the previous
+   * scroll position (e.g. the user clicked "Get Pro" on /#pricing ->
+   * /checkout; back should land them exactly where they were, not at
+   * the top of the home page). Only fall back to a fresh navigation to
+   * "/" when there is no in-app history to return to -- a direct deep
+   * link, a fresh tab, or an arrival from an external referrer.
+   */
+  const handleBack = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (typeof window === "undefined") return;
+    // history.length > 1 means this tab has a previous entry to return
+    // to -- the normal /#pricing -> /checkout flow. router.back() lets
+    // the browser + Next restore the prior scroll position (and the
+    // #pricing anchor). A fresh tab / direct deep link has length 1, so
+    // we let the <a href="/"> default fire and just go home.
+    if (window.history.length > 1) {
+      e.preventDefault();
+      router.back();
+    }
+  };
 
   return (
     <Link
       href="/"
+      onClick={handleBack}
       className="standalone-back"
       aria-label="Back to Corder"
       title="Back to Corder"
