@@ -22,7 +22,7 @@
 import raw from "@content/copy.json";
 
 /** Identifier for which sticky live-UI panel a How-step renders. */
-export type HowLiveDemo = "no-bot" | "transcript" | "clarify" | "byok";
+type HowLiveDemo = "no-bot" | "transcript" | "clarify" | "byok";
 
 export type Copy = typeof raw & {
   audienceLine: {
@@ -39,4 +39,3 @@ export type Copy = typeof raw & {
 };
 
 export const copy = raw as Copy;
-export default copy;

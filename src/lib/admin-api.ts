@@ -12,7 +12,7 @@
  */
 import { getSupabase } from "@/lib/supabase";
 
-export const CORDER_API =
+const CORDER_API =
   process.env.NEXT_PUBLIC_CORDER_API ??
   "https://corder-api.empqwork.workers.dev";
 
