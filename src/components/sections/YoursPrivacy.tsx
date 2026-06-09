@@ -182,7 +182,7 @@ function StarShape() {
         fill="url(#yp-grad-star)"
         strokeLinejoin="round"
         stroke="url(#yp-grad-star)"
-        strokeWidth="2"
+        strokeWidth="4"
       />
     </svg>
   );
