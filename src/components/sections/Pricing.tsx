@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-import { Check, Plus } from "lucide-react";
-
 import { copy } from "@/content/copy";
 import {
   PricingBillingToggle,
@@ -11,6 +9,46 @@ import {
 } from "@/components/sections/PricingBillingToggle";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Pricing.tsx";
+
+/* Inlined lucide icons (Check, Plus) -- the only two icons used on the
+ * site. Inlining drops the lucide-react dependency (~10 KB gzip) from the
+ * critical-path bundle. Geometry/stroke match lucide's defaults exactly. */
+function CheckIcon({ size = 14, strokeWidth = 2.4 }: { size?: number; strokeWidth?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
+function PlusIcon({ size = 14, strokeWidth = 2.4 }: { size?: number; strokeWidth?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M5 12h14" />
+      <path d="M12 5v14" />
+    </svg>
+  );
+}
 
 /**
  * Section 6 -- Pricing.
@@ -193,9 +231,9 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: PricingBilling })
             >
               <span className="pricing-card__feature-icon" aria-hidden>
                 {isHeader ? (
-                  <Plus size={14} strokeWidth={2.4} />
+                  <PlusIcon size={14} strokeWidth={2.4} />
                 ) : (
-                  <Check size={14} strokeWidth={2.4} />
+                  <CheckIcon size={14} strokeWidth={2.4} />
                 )}
               </span>
               <span className="pricing-card__feature-text">{feature}</span>

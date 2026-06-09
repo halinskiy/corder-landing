@@ -91,7 +91,7 @@ const CorderPresenceContext = createContext<CorderPresenceContextValue | null>(
   null,
 );
 
-export function useCorderPresence(): CorderPresenceContextValue {
+function useCorderPresence(): CorderPresenceContextValue {
   const ctx = useContext(CorderPresenceContext);
   if (!ctx) {
     // Soft fallback rather than a throw — the hook is consumed by sections
