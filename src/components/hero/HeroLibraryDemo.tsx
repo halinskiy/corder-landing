@@ -8,9 +8,9 @@ import "./HeroLibraryDemo.css";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/hero/HeroLibraryDemo.tsx";
 
-const TILT_MAX_X = 3;
-const TILT_MAX_Y = 4;
-const TILT_LIFT = 4;
+const TILT_MAX_X = 1.6;
+const TILT_MAX_Y = 2.2;
+const TILT_LIFT = 3;
 
 const TRANSCRIBING_DURATION_MS = 1200;
 
@@ -286,9 +286,22 @@ export function HeroLibraryDemo() {
         aria-label="Corder Library window with transcript and per-speaker timeline"
       >
         <div className="hl-titlebar" aria-hidden="true">
-          <span className="hl-traffic close" />
-          <span className="hl-traffic minimize" />
-          <span className="hl-traffic maximize" />
+          <span className="hl-traffic close">
+            <svg viewBox="0 0 12 12">
+              <path d="M3.7 3.7 8.3 8.3M8.3 3.7 3.7 8.3" />
+            </svg>
+          </span>
+          <span className="hl-traffic minimize">
+            <svg viewBox="0 0 12 12">
+              <path d="M3.2 6h5.6" />
+            </svg>
+          </span>
+          <span className="hl-traffic maximize">
+            <svg viewBox="0 0 12 12">
+              <path d="M3 3 3 6.4 6.4 3Z" />
+              <path d="M9 9 9 5.6 5.6 9Z" />
+            </svg>
+          </span>
         </div>
 
         <div className="hl-app">

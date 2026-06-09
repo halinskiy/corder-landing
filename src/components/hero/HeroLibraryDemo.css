@@ -227,6 +227,9 @@ html[data-motion="off"] .hero-library-demo *::after {
   height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .hl-traffic.close {
   background: #ff5f57;
@@ -236,6 +239,28 @@ html[data-motion="off"] .hero-library-demo *::after {
 }
 .hl-traffic.maximize {
   background: #28c840;
+}
+/* macOS-style glyphs revealed on window hover: × / − / fullscreen. */
+.hl-traffic svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+  color: rgba(0, 0, 0, 0.52);
+  transition: opacity 120ms ease;
+}
+.hl-traffic.close svg path,
+.hl-traffic.minimize svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.hl-traffic.maximize svg path {
+  fill: currentColor;
+  stroke: none;
+}
+.hero-library-demo:hover .hl-traffic svg {
+  opacity: 1;
 }
 
 /* App grid */
@@ -1021,7 +1046,11 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
 
 .hl-right-panel {
   overflow: hidden;
-  padding: 0 0 24px;
+  /* Top padding gives the FIRST child (video card, or the audio player
+   * when there's no video) breathing room from the Recording tab strip.
+   * The video->player gap itself stays tight via the small flex gap +
+   * audio padding-top below. */
+  padding: 16px 0 24px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1032,7 +1061,7 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
  * tab when a recording has a video file. v0.9.0: 16:9 thumbnail with a
  * centred play overlay; pure decorative for the landing. */
 .hl-video-card {
-  margin: 16px 20px 0;
+  margin: 0 20px;
 }
 .hl-video-frame {
   position: relative;
