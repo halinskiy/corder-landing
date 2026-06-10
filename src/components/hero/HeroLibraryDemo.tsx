@@ -43,6 +43,18 @@ export function HeroLibraryDemo() {
   // Left-pane tab — Transcript (default) / Summary / Chapters, mirroring
   // the app's three detail tabs. Each renders real (decorative) content.
   const [leftTab, setLeftTab] = useState<LeftTab>("transcript");
+  // Main-pane view: the meeting detail (default) or the Dashboard, toggled
+  // by the breadcrumb. `archiveOpen` swaps the SIDEBAR to the archive list
+  // (independent of the main view), toggled by the header archive button --
+  // mirroring the app, where archive is a sidebar mode.
+  const [view, setView] = useState<"meeting" | "dashboard">("meeting");
+  const [archiveOpen, setArchiveOpen] = useState(false);
+  // Open the (single) meeting detail from a sidebar item or a dashboard
+  // recent card -- the demo's way back from Dashboard / Archive.
+  const openMeeting = useCallback(() => {
+    setView("meeting");
+    setArchiveOpen(false);
+  }, []);
   // Demo-scoped theme. Flips on moon-icon click; never touches the
   // landing's global theme. Applied as `data-theme` on the demo root;
   // the theme transition is a circular radial reveal originating from
@@ -305,7 +317,7 @@ export function HeroLibraryDemo() {
         </div>
 
         <div className="hl-app">
-          <Sidebar />
+          <Sidebar archiveOpen={archiveOpen} onOpenMeeting={openMeeting} />
           <Main
             playing={playing}
             onTogglePlay={() => setPlaying((p) => !p)}
@@ -316,6 +328,11 @@ export function HeroLibraryDemo() {
             onRightTabChange={setRightTab}
             leftTab={leftTab}
             onLeftTabChange={setLeftTab}
+            view={view}
+            onViewChange={setView}
+            onOpenMeeting={openMeeting}
+            archiveOpen={archiveOpen}
+            onToggleArchive={() => setArchiveOpen((a) => !a)}
             theme={theme}
             onToggleTheme={toggleTheme}
           />
@@ -328,7 +345,7 @@ export function HeroLibraryDemo() {
           * outside recording auto-kills the canvas requestAnimationFrame
           * loop, which was a permanent 60fps cost even when the hero
           * was scrolled off-screen. */}
-        {mode === "recording" && (
+        {mode === "recording" && view === "meeting" && (
           <button
             type="button"
             className="hl-rec-blob"
@@ -344,7 +361,13 @@ export function HeroLibraryDemo() {
   );
 }
 
-function Sidebar() {
+function Sidebar({
+  archiveOpen,
+  onOpenMeeting,
+}: {
+  archiveOpen: boolean;
+  onOpenMeeting: () => void;
+}) {
   return (
     <aside className="hl-sidebar" aria-hidden="true">
       <div className="hl-sidebar-titlebar-pad" />
@@ -352,51 +375,80 @@ function Sidebar() {
       <div className="hl-sidebar-search">
         <div className="hl-search-field">
           <SearchIcon />
-          <input type="search" placeholder="Search recordings" readOnly tabIndex={-1} />
+          <input
+            type="search"
+            placeholder={archiveOpen ? "Search archive" : "Search recordings"}
+            readOnly
+            tabIndex={-1}
+          />
         </div>
       </div>
 
-      <div className="hl-sidebar-list">
-        <div className="hl-sidebar-section-label">Today</div>
+      {archiveOpen ? (
+        <div className="hl-sidebar-list" onClick={onOpenMeeting}>
+          <div className="hl-sidebar-section-label">Archive</div>
+          <MeetingItem
+            title="Standup, March sprint"
+            people={4}
+            duration="9m 12s"
+            preview="Carried over the two API tickets to next week."
+          />
+          <MeetingItem
+            title="Onboarding call: Lena"
+            people={2}
+            duration="21m 47s"
+            preview="Walked through setup and the menu-bar flow."
+          />
+          <MeetingItem
+            title="Old pricing draft"
+            people={1}
+            duration="3m 02s"
+            preview="Scratch notes before the launch tiers landed."
+          />
+        </div>
+      ) : (
+        <div className="hl-sidebar-list" onClick={onOpenMeeting}>
+          <div className="hl-sidebar-section-label">Today</div>
 
-        <MeetingItem
-          title="Investor sync - Mike + Paul"
-          people={3}
-          duration="28s"
-          preview="He says it is almost there, just a few days left."
-          active
-        />
-        <MeetingItem
-          title="Pricing strategy review"
-          people={3}
-          duration="12m 04s"
-          preview="Right, so the next step is to validate it."
-        />
+          <MeetingItem
+            title="Investor sync - Mike + Paul"
+            people={3}
+            duration="28s"
+            preview="He says it is almost there, just a few days left."
+            active
+          />
+          <MeetingItem
+            title="Pricing strategy review"
+            people={3}
+            duration="12m 04s"
+            preview="Right, so the next step is to validate it."
+          />
 
-        <div className="hl-sidebar-section-label">Yesterday</div>
+          <div className="hl-sidebar-section-label">Yesterday</div>
 
-        <MeetingItem
-          title="Customer call: Ana W."
-          people={2}
-          duration="23s"
-          preview="You start recording, say something."
-        />
-        <MeetingItem
-          title="Yesterday, 15:28"
-          people={1}
-          duration="11s"
-          preview="The only problem is that, well, like."
-        />
+          <MeetingItem
+            title="Customer call: Ana W."
+            people={2}
+            duration="23s"
+            preview="You start recording, say something."
+          />
+          <MeetingItem
+            title="Yesterday, 15:28"
+            people={1}
+            duration="11s"
+            preview="The only problem is that, well, like."
+          />
 
-        <div className="hl-sidebar-section-label">This week</div>
+          <div className="hl-sidebar-section-label">This week</div>
 
-        <MeetingItem
-          title="Q3 roadmap, eng all-hands"
-          people={3}
-          duration="40m 00s"
-          preview="Right, so the next step is to validate it."
-        />
-      </div>
+          <MeetingItem
+            title="Q3 roadmap, eng all-hands"
+            people={3}
+            duration="40m 00s"
+            preview="Right, so the next step is to validate it."
+          />
+        </div>
+      )}
     </aside>
   );
 }
@@ -442,6 +494,11 @@ function Main({
   onRightTabChange,
   leftTab,
   onLeftTabChange,
+  view,
+  onViewChange,
+  onOpenMeeting,
+  archiveOpen,
+  onToggleArchive,
   theme,
   onToggleTheme,
 }: {
@@ -454,6 +511,11 @@ function Main({
   onRightTabChange: (next: RightTab) => void;
   leftTab: LeftTab;
   onLeftTabChange: (next: LeftTab) => void;
+  view: "meeting" | "dashboard";
+  onViewChange: (next: "meeting" | "dashboard") => void;
+  onOpenMeeting: () => void;
+  archiveOpen: boolean;
+  onToggleArchive: () => void;
   theme: Theme;
   onToggleTheme: (e?: React.MouseEvent<HTMLElement>) => void;
 }) {
@@ -461,9 +523,23 @@ function Main({
     <div className="hl-main">
       <div className="hl-main-header">
         <div className="hl-breadcrumb">
-          <span>Dashboard</span>
-          <span aria-hidden>›</span>
-          <span className="hl-breadcrumb-current">Investor sync - Mike + Paul</span>
+          {view === "dashboard" ? (
+            <span className="hl-breadcrumb-current">Dashboard</span>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="hl-breadcrumb-root"
+                onClick={() => onViewChange("dashboard")}
+                data-component="HeroLibraryDemo.BreadcrumbDashboard"
+                data-source={DATA_SOURCE}
+              >
+                Dashboard
+              </button>
+              <span aria-hidden>›</span>
+              <span className="hl-breadcrumb-current">Investor sync - Mike + Paul</span>
+            </>
+          )}
         </div>
 
         <div className="hl-spacer" />
@@ -490,7 +566,7 @@ function Main({
           </button>
           <button
             type="button"
-            className="hl-icon-pill"
+            className="hl-icon-pill hl-icon-pill--toggle"
             aria-label="Settings"
             aria-pressed={rightTab === "settings"}
             onClick={() => onRightTabChange("settings")}
@@ -502,9 +578,10 @@ function Main({
           </button>
           <button
             type="button"
-            className="hl-icon-pill"
-            aria-label="Archive"
-            tabIndex={-1}
+            className="hl-icon-pill hl-icon-pill--toggle"
+            aria-label={archiveOpen ? "Close archive" : "Open archive"}
+            aria-pressed={archiveOpen}
+            onClick={onToggleArchive}
             data-component="HeroLibraryDemo.ArchiveButton"
             data-source={DATA_SOURCE}
             data-tokens="hl-border-strong,hl-fg-muted"
@@ -530,6 +607,9 @@ function Main({
         </div>
       </div>
 
+      {view === "dashboard" ? (
+        <DashboardView onOpenMeeting={onOpenMeeting} />
+      ) : (
       <div className="hl-detail">
         <div className="hl-detail-tabs">
           <div className="hl-detail-tab-col hl-detail-tab-col-left">
@@ -596,7 +676,124 @@ function Main({
           )}
         </div>
       </div>
+      )}
     </div>
+  );
+}
+
+/* Dashboard view — shown when the breadcrumb "Dashboard" is clicked.
+ * Mirrors the app's Dashboard: left column with Stats / Upcoming tabs and
+ * a "Longest" sort on the right, over a recent-recordings list. */
+function DashboardView({ onOpenMeeting }: { onOpenMeeting: () => void }) {
+  const [dashTab, setDashTab] = useState<"stats" | "upcoming">("upcoming");
+  return (
+    <div className="hl-detail">
+      <div className="hl-detail-tabs">
+        <div className="hl-detail-tab-col hl-detail-tab-col-left">
+          {(["stats", "upcoming"] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              className={`hl-tab${dashTab === t ? " active" : ""}`}
+              onClick={() => setDashTab(t)}
+              aria-pressed={dashTab === t}
+              data-component={`HeroLibraryDemo.DashTab.${t}`}
+              data-source={DATA_SOURCE}
+            >
+              {t === "stats" ? "Stats" : "Upcoming"}
+            </button>
+          ))}
+        </div>
+        <div className="hl-detail-tab-col hl-detail-tab-col-right">
+          <span className="hl-dash-sort" aria-hidden="true">
+            Longest
+            <ChevronDownIcon />
+          </span>
+        </div>
+      </div>
+
+      <div className="hl-detail-body">
+        <div className="hl-dash-left">
+          {dashTab === "upcoming" ? (
+            <>
+              <div className="hl-dash-section-label">Up next</div>
+              <DashUpcoming title="Investor sync — Mike + Paul" meta="Today, 15:00" />
+              <div className="hl-dash-section-label">This week</div>
+              <DashUpcoming title="Product weekly" meta="Jun 10, 17:30" />
+              <DashUpcoming title="1:1 with Dima" meta="Jun 12, 10:00" />
+              <DashUpcoming title="Design review — Corder landing" meta="Jun 14, 14:00" />
+            </>
+          ) : (
+            <>
+              <div className="hl-dash-banner">
+                <div className="hl-dash-banner-title">Ready when you are.</div>
+                <div className="hl-dash-banner-sub">
+                  For the most accurate transcript, wear headphones during calls.
+                </div>
+              </div>
+              <div className="hl-dash-stats-card">
+                <div className="hl-dash-stat-row">
+                  <span className="hl-dash-stat-label">Recordings</span>
+                  <span className="hl-dash-stat-value">128</span>
+                </div>
+                <div className="hl-dash-stat-row">
+                  <span className="hl-dash-stat-label">Total recorded</span>
+                  <span className="hl-dash-stat-value">42h 12m</span>
+                </div>
+                <div className="hl-dash-stat-row">
+                  <span className="hl-dash-stat-label">This week</span>
+                  <span className="hl-dash-stat-value">9</span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="hl-dash-recent">
+          <DashRecent title="Q3 roadmap, eng all-hands" meta="40m 00s · Jun 5" people={3} onOpen={onOpenMeeting} />
+          <DashRecent title="Pricing strategy review" meta="12m 04s · Jun 5" people={3} onOpen={onOpenMeeting} />
+          <DashRecent title="Tested Stripe and booking flow" meta="6m 11s · Jun 5" people={2} onOpen={onOpenMeeting} />
+          <DashRecent title="Cats expo and games" meta="1m 40s · Jun 6" people={4} onOpen={onOpenMeeting} />
+          <DashRecent title="Blob reacting to sound" meta="56s · Jun 7" people={1} onOpen={onOpenMeeting} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashUpcoming({ title, meta }: { title: string; meta: string }) {
+  return (
+    <div className="hl-dash-up-card">
+      <div className="hl-dash-up-title">{title}</div>
+      <div className="hl-dash-up-meta">{meta}</div>
+    </div>
+  );
+}
+
+function DashRecent({
+  title,
+  meta,
+  people,
+  onOpen,
+}: {
+  title: string;
+  meta: string;
+  people: number;
+  onOpen: () => void;
+}) {
+  return (
+    <button type="button" className="hl-dash-recent-card" onClick={onOpen}>
+      <div className="hl-dash-recent-row">
+        <div className="hl-dash-recent-title-row">
+          <span className="hl-dash-recent-title">{title}</span>
+          <span className="hl-meeting-people">
+            <span>{people}</span>
+            <PeopleIcon />
+          </span>
+        </div>
+        <div className="hl-dash-recent-meta">{meta}</div>
+      </div>
+    </button>
   );
 }
 
@@ -1578,6 +1775,23 @@ function RefreshIcon() {
       <path d="M21 3v5h-5" />
       <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
       <path d="M3 21v-5h5" />
+    </svg>
+  );
+}
+
+// Chevron-down — the Dashboard "Longest" sort trigger.
+function ChevronDownIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m6 9 6 6 6-6" />
     </svg>
   );
 }
