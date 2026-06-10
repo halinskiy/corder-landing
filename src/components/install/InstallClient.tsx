@@ -18,8 +18,39 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.13.37/Corder-0.13.37.dmg";
-const FALLBACK_NAME = "Corder-0.13.37.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.14.0/Corder-0.14.0.dmg";
+const FALLBACK_NAME = "Corder-0.14.0.dmg";
+
+const VERSION = "0.14.0";
+
+// Release notes shown under the install steps. Our style: short lead,
+// plain supporting line, ASCII only (no typographic dashes or bullets).
+const WHATS_NEW: ReadonlyArray<{ title: string; body: string }> = [
+  {
+    title: "Accurate speech attribution",
+    body: "Without headphones, Corder no longer credits you with the whole room. Your share of the transcript reflects what you actually said.",
+  },
+  {
+    title: "Edit the transcript",
+    body: "Right click any line to fix the text.",
+  },
+  {
+    title: "Upcoming meetings on the dashboard",
+    body: "See what is next, pulled from your calendar. Connecting Google Calendar is optional.",
+  },
+  {
+    title: "Terms and Privacy on sign in",
+    body: "Review and agree right on the sign in screen.",
+  },
+  {
+    title: "Steadier video preview",
+    body: "The preview keeps a fixed size, and the player resets when you switch recordings.",
+  },
+  {
+    title: "Subscriptions apply on their own",
+    body: "A paid plan takes effect without a restart.",
+  },
+];
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
 // might upload. Version suffix (e.g. Corder-0.13.2.dmg) and naked names
@@ -177,6 +208,23 @@ export function InstallClient() {
               </p>
             </li>
           </ol>
+
+          <section
+            className="install-whatsnew"
+            aria-label={`What is new in Corder ${VERSION}`}
+            data-component="InstallWhatsNew"
+            data-source={DATA_SOURCE}
+          >
+            <h2 className="install-whatsnew__heading">What is new in {VERSION}</h2>
+            <ul className="install-whatsnew__list">
+              {WHATS_NEW.map((f) => (
+                <li key={f.title} className="install-whatsnew__item">
+                  <span className="install-whatsnew__title">{f.title}</span>
+                  <span className="install-whatsnew__body">{f.body}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
 
           <div className="install-page__footer-actions">
             <Link
