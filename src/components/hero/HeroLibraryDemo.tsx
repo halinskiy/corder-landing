@@ -600,9 +600,9 @@ function Main({
             aria-label="Profile"
             data-component="HeroLibraryDemo.ProfileAvatar"
             data-source={DATA_SOURCE}
-            data-tokens="hl-avatar-admin"
+            data-tokens="hl-accent"
           >
-            <AvatarAdmin />
+            <Avatar />
           </span>
         </div>
       </div>
@@ -1614,24 +1614,25 @@ function RecBlobCanvas({ isSpeaking }: { isSpeaking: boolean }) {
   return <canvas ref={canvasRef} className="hl-rec-blob__canvas" aria-hidden="true" />;
 }
 
-/* Profile avatar — the macOS app's admin avatar: a blue disc
- * (--avatar-admin) with a white abstract "half-moon" glyph (the app's
- * glyph variant 2) and a 1px ring. No initials. Mirrors
+/* Profile avatar — the macOS app's default user avatar: an accent-GREEN
+ * disc with a white abstract "half-moon" glyph (the app's glyph variant
+ * 2) and a 1px ring. No initials. Blue (--avatar-admin) is reserved for
+ * admins ONLY; the demo shows a normal user, so it is green. Mirrors
  * Corder/Web/src/components/ProfileMenu.tsx. */
-function AvatarAdmin() {
+function Avatar() {
   return (
     <svg viewBox="0 0 40 40" className="hl-avatar-svg" aria-hidden="true">
-      <circle cx="20" cy="20" r="20" fill="var(--hl-avatar-admin)" />
+      <circle cx="20" cy="20" r="20" fill="var(--hl-accent)" />
       <g fill="#fff">
         <circle cx="20" cy="20" r="11" />
-        <rect x="20" y="9" width="13" height="22" fill="var(--hl-avatar-admin)" />
+        <rect x="20" y="9" width="13" height="22" fill="var(--hl-accent)" />
       </g>
       <circle
         cx="20"
         cy="20"
         r="19.5"
         fill="none"
-        stroke="var(--hl-avatar-admin)"
+        stroke="var(--hl-accent)"
         strokeWidth="1"
       />
     </svg>
