@@ -18,37 +18,29 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.14.7/Corder-0.14.7.dmg";
-const FALLBACK_NAME = "Corder-0.14.7.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.14.17/Corder-0.14.17.dmg";
+const FALLBACK_NAME = "Corder-0.14.17.dmg";
 
-const VERSION = "0.14.0";
+const VERSION = "0.14.17";
 
 // Release notes shown under the install steps. Our style: short lead,
 // plain supporting line, ASCII only (no typographic dashes or bullets).
 const WHATS_NEW: ReadonlyArray<{ title: string; body: string }> = [
   {
-    title: "Accurate speech attribution",
-    body: "Without headphones, Corder no longer credits you with the whole room. Your share of the transcript reflects what you actually said.",
+    title: "Summary and Chapters on the free plan",
+    body: "Both now work without a paid tier.",
   },
   {
-    title: "Edit the transcript",
-    body: "Right click any line to fix the text.",
+    title: "Update pill on every screen",
+    body: "The Update available pill shows the moment a release lands, wherever you are in the app.",
   },
   {
-    title: "Upcoming meetings on the dashboard",
-    body: "See what is next, pulled from your calendar. Connecting Google Calendar is optional.",
+    title: "Your transcript survives a failed re-transcribe",
+    body: "If re-transcription crashes or you cancel it, the transcript is kept.",
   },
   {
-    title: "Terms and Privacy on sign in",
-    body: "Review and agree right on the sign in screen.",
-  },
-  {
-    title: "Steadier video preview",
-    body: "The preview keeps a fixed size, and the player resets when you switch recordings.",
-  },
-  {
-    title: "Subscriptions apply on their own",
-    body: "A paid plan takes effect without a restart.",
+    title: "Refined update and packages flow",
+    body: "A packages modal, a redesigned update modal, a statistics toggle, and smaller fixes.",
   },
 ];
 
