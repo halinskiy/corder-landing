@@ -369,21 +369,6 @@ function DashboardMock() {
                   <span className="hl-dash-kbd">{"⇧⌘F"}</span>
                 </div>
               </div>
-
-              <div className="hl-dash-stats-card">
-                <div className="hl-dash-stat-row">
-                  <span className="hl-dash-stat-label">Recordings</span>
-                  <span className="hl-dash-stat-value">66</span>
-                </div>
-                <div className="hl-dash-stat-row">
-                  <span className="hl-dash-stat-label">Total recorded</span>
-                  <span className="hl-dash-stat-value">3h 21m</span>
-                </div>
-                <div className="hl-dash-stat-row">
-                  <span className="hl-dash-stat-label">This week</span>
-                  <span className="hl-dash-stat-value">14</span>
-                </div>
-              </div>
             </div>
 
             {/* Right column: Recent rail */}
