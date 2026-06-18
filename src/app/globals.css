@@ -13,17 +13,21 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  /* Native smooth scroll for anchor links (Nav: How it works, Features,
-   * Pricing, FAQ + footer "Back to top"). Replaces the Lenis JS smoothing
-   * that piled extra ~1s of lerp on top of macOS hardware momentum. With
-   * native CSS, anchor clicks animate; wheel/trackpad scroll is instant
-   * and matches the OS. Honoured automatically when the user has
-   * prefers-reduced-motion. */
-  scroll-behavior: smooth;
   /* Nav is fixed at ~88px; anchor targets should land below it. Native
    * scroll-margin-top on section roots handles that without offset math
    * in JS. */
   scroll-padding-top: 88px;
+}
+
+/* Native smooth scroll for anchor links (Nav: How it works, Features,
+ * Pricing, FAQ + footer "Back to top"), SCOPED to :focus-within. Smooth only
+ * kicks in once a user clicks an anchor (the anchor/target takes focus). On a
+ * back/forward navigation nothing is focused yet, so the browser restores the
+ * previous scroll position INSTANTLY instead of being hijacked into a smooth
+ * scroll that lands at the top. Replaces the old global `html` smooth which
+ * broke scroll restoration (back from /contact/ went to top). */
+html:focus-within {
+  scroll-behavior: smooth;
 }
 
 /* Pause-off-screen contract.
@@ -43,7 +47,7 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html, html:focus-within { scroll-behavior: auto; }
 }
 
 body {

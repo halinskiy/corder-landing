@@ -225,6 +225,14 @@ const JSON_LD = {
 // before any React work so AudienceLine words never flash in their initial state.
 const MOTION_BOOTSTRAP_SCRIPT = `(function(){try{var s=new URLSearchParams(location.search).get('motion')==='0';var r=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(s||r){document.documentElement.dataset.motion='off';}}catch(e){}})();`;
 
+// Keep the browser's native back/forward scroll restoration ON. The footer
+// links (Contact, legal) are full-page navigations on this static export; the
+// browser remembers the scroll position and restores it on Back. The Next
+// runtime can flip history.scrollRestoration to 'manual'; this forces it back
+// to 'auto' on every load and on bfcache restore so Back returns you to where
+// you were, not the top of the page.
+const SCROLL_RESTORATION_SCRIPT = `(function(){try{if('scrollRestoration' in history){history.scrollRestoration='auto';addEventListener('pageshow',function(){history.scrollRestoration='auto';});}}catch(e){}})();`;
+
 // Analytics (Microsoft Clarity, X / Twitter conversion pixel, Plausible
 // Analytics) MOVED out of <head> on 2026-05-28. They now load only after
 // the user clicks Accept in the cookie consent banner; the consent state
@@ -284,6 +292,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP_SCRIPT }}
+        />
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: SCROLL_RESTORATION_SCRIPT }}
         />
         {/* Clarity / Twitter pixel / Plausible loaders MOVED to
             ConsentProvider so they fire only after the user clicks
