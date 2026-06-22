@@ -271,12 +271,20 @@ export default function PrivacyPolicyPage() {
               </li>
             </ul>
 
-            <h2>What we do not do</h2>
+            <h2>Diagnostics</h2>
             <ul>
               <li>
-                No telemetry from inside the app beyond what is listed
-                above.
+                Corder sends anonymous reliability diagnostics: counts of
+                recordings, whether a recording lost the other side on
+                Bluetooth, app and macOS version, and similar aggregate
+                numbers. No recordings, transcripts, titles, speaker names,
+                or audio are ever included, and your email is sent only as a
+                one-way hash. You can turn diagnostics off in Settings.
               </li>
+            </ul>
+
+            <h2>What we do not do</h2>
+            <ul>
               <li>
                 No selling, sharing, or licensing your audio,
                 transcripts, summaries, or any derived data.
