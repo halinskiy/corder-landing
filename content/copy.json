@@ -656,8 +656,8 @@
       },
       {
         "icon": "eye-off",
-        "heading": "No telemetry",
-        "body": "No analytics, no pings. Only Gemini for transcription, Sparkle for updates."
+        "heading": "Private by default",
+        "body": "Recordings and transcripts stay on your Mac. Diagnostics are anonymous counts only, never your content, and you can turn them off."
       }
     ]
   },
