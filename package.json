@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "sync-version": "node scripts/sync-corder-version.mjs",
+    "prebuild": "node scripts/sync-corder-version.mjs || true",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",

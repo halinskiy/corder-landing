@@ -12,6 +12,20 @@ Format:
 
 ---
 
+## 2026-06-25 Corder 0.14.62 + auto version sync
+- Bumped the install page to Corder 0.14.62: `FALLBACK_URL`, `FALLBACK_NAME`,
+  `VERSION` in `InstallClient.tsx` and `softwareVersion` in `layout.tsx`.
+  Refreshed the "What's new" notes to current highlights (on-device
+  transcription, echo cleanup, Summary/Chapters free, fewer hallucinations).
+- New `scripts/sync-corder-version.mjs` resolves the latest corder-updates
+  release from the GitHub API and rewrites those four constants. Wired as a
+  fail-soft `prebuild` hook, so every deploy auto-fills the latest version and
+  the constants never need hand-editing again. Run `npm run sync-version` to
+  refresh + commit manually, or pass `--version=x.y.z` to pin. The download
+  CTA itself was already dynamic (resolves `/releases/latest` at runtime);
+  this keeps the static fallback, the visible version label and the JSON-LD in
+  step.
+
 ## 2026-06-09 — Deep audit + refactor, back-button fix, backend hardening
 
 A diagnostic + cleanup pass (4 parallel agents + knip + tsc). Full
