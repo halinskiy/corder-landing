@@ -276,8 +276,8 @@
         ],
         "cta": "Download for Mac",
         "ctaHref": "/install/",
-        "ctaStyle": "primary",
-        "highlight": true,
+        "ctaStyle": "secondary",
+        "highlight": false,
         "trackEvent": "cta_pro_click",
         "trackBilling": null
       },
