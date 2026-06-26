@@ -2068,8 +2068,12 @@ button:focus:not(:focus-visible) {
   height: 22px;
   padding-inline: 8px;
   border-radius: var(--radius-pill);
-  background: var(--color-accent);
-  color: var(--color-bg);
+  /* Neutral grey chip (was accent green). Signals "Soon" rather than a
+   * live launch offer; hairline border keeps it in the bordered-surface
+   * language. */
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 600;
@@ -5281,12 +5285,28 @@ button:focus:not(:focus-visible) {
   gap: 12px;
 }
 
+/* Back pill pinned to the bottom of the viewport. It floats 24px above
+ * the fold while the user scrolls the release-notes list, then docks at
+ * its natural position at the very end of the column and goes no
+ * further. Rendered as the last child of the inner column so the tall
+ * column is its sticky containing block. Need help stays static in the
+ * footer-actions group above it. */
+.install-page__back-sticky {
+  position: sticky;
+  bottom: 24px;
+  margin-top: 16px;
+  align-self: center;
+  z-index: 5;
+}
+
 /* "What is new in x.y.z" release-notes block under the install steps.
  * Same hairline-card language as the rest of the page; left-aligned rows
  * inside a single bordered container, centered heading. */
 .install-whatsnew {
   width: 100%;
-  max-width: 720px;
+  /* Widened to fill the inner column so the list lines up edge-to-edge
+   * with the three step cards above it (was 720px, read too narrow). */
+  max-width: none;
   margin: 56px auto 0;
   text-align: left;
 }

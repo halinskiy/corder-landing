@@ -255,7 +255,7 @@
       {
         "name": "Pro",
         "tagline": "Great for regular meetings, customer calls and design reviews.",
-        "badge": "Launch offer",
+        "badge": "Soon",
         "monthly": {
           "price": "$10",
           "priceOriginal": "$14",
@@ -274,17 +274,17 @@
           "Custom summary templates for your call type",
           "Priority support, direct line to the maker"
         ],
-        "cta": "Get Pro",
-        "ctaHref": "#download",
+        "cta": "Download for Mac",
+        "ctaHref": "/install/",
         "ctaStyle": "primary",
         "highlight": true,
         "trackEvent": "cta_pro_click",
-        "trackBilling": "pro_launch"
+        "trackBilling": null
       },
       {
         "name": "Max",
         "tagline": "Great for people who record daily and want the sharpest summaries.",
-        "badge": "Launch offer",
+        "badge": "Soon",
         "monthly": {
           "price": "$24",
           "priceOriginal": "$29",
@@ -303,12 +303,12 @@
           "Early builds before public release",
           "Dedicated support, same-day reply"
         ],
-        "cta": "Get Max",
-        "ctaHref": "#download",
+        "cta": "Download for Mac",
+        "ctaHref": "/install/",
         "ctaStyle": "secondary",
         "highlight": false,
         "trackEvent": "cta_max_click",
-        "trackBilling": "max_launch"
+        "trackBilling": null
       }
     ],
     "microcopy": "Prices in USD. No credit card to download. macOS 14 or later"
@@ -657,7 +657,7 @@
       {
         "icon": "eye-off",
         "heading": "Private by default",
-        "body": "Recordings and transcripts stay on your Mac. Diagnostics are anonymous counts only, never your content, and you can turn them off."
+        "body": "Recordings and transcripts stay on your Mac. Diagnostics are anonymous."
       }
     ]
   },
