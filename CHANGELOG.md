@@ -12,6 +12,14 @@ Format:
 
 ---
 
+## 2026-06-26 Install sticky Back, pricing CTAs, local-first copy
+- Install page: widened `.install-whatsnew` to the inner-column width so the release-notes list lines up with the step cards; pinned Back with `position: sticky; bottom: 24px` (`.install-page__back-sticky`, rendered as the last child of the inner column) so it floats while scrolling and docks at its natural spot at the end. Need help stays static in `.install-page__footer-actions` above it. Verified via CDP: at top Back bottom = vh-24 (floating), at end it docks (no further travel).
+- Pricing: all three tier CTAs now read "Download for Mac" and route to `/install/` (Pro/Max no longer open checkout: `trackBilling` set to `null`, `ctaHref` to `/install/`). The "Launch offer" badge is now a neutral grey "Soon" chip (`.pricing-card__badge` background `--color-surface-2`, text `--color-text-muted`, hairline border).
+- YoursPrivacy cards: trimmed the "Private by default" body so every card body is at most two lines.
+- Copy repositioned to local-first per the maker: transcription is on-device by default on Apple Silicon (audio never leaves the Mac); cloud is optional on a paid plan; offline always falls back to local. Updated meta + OG descriptions, the `gemini transcription` keyword, the Free tier feature line ("Unlimited on-device transcription"), and the FAQ (cloud, offline, and the former "Flash vs Pro models" question, now "local vs cloud transcription"). No transcription model name appears on the rendered page anymore.
+- Note: `copy.privacy` (the technical "what happens to your audio" cards), the BYO-key feature, the `finalCta` "Pay Google" calculator, and the `comparison` table are NOT imported in `src/app/page.tsx`, so they are unrendered dead copy. They were updated for source honesty (and the BYO/calculator kept per the maker), but they do not affect the live page. Worth deciding later whether to render or prune them.
+- Deployed to getcorder.com (GitHub Pages), verified live.
+
 ## 2026-06-25 Corder 0.14.62 + auto version sync
 - Bumped the install page to Corder 0.14.62: `FALLBACK_URL`, `FALLBACK_NAME`,
   `VERSION` in `InstallClient.tsx` and `softwareVersion` in `layout.tsx`.
