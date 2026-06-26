@@ -2,9 +2,9 @@
   "meta": {
     "lang": "en",
     "title": "Corder: Record what was said",
-    "description": "Corder records system audio and transcribes your meetings with Gemini 2.5 Flash. Speaker labels, searchable transcript, no bot in the call. Free to download for macOS 14+",
+    "description": "Corder records system audio and transcribes your meetings on your Mac. Speaker labels, searchable transcript, no bot in the call. Free to download for macOS 14+",
     "ogTitle": "Corder. The Mac recorder with no bot in the call",
-    "ogDescription": "Record any meeting on macOS. Speakers labelled, transcript searchable. Google transcribes the audio and deletes it. No third participant ever joins your call"
+    "ogDescription": "Record any meeting on macOS. Speakers labelled, transcript searchable. Transcription runs on your Mac, so your audio stays local. No third participant ever joins your call"
   },
   "nav": {
     "links": [
@@ -63,36 +63,36 @@
   },
   "privacy": {
     "eyebrow": "What happens to your audio",
-    "heading": "Your audio goes to Google. Then it is gone",
-    "subhead": "Audio leaves your Mac once, for the transcription step. Google discards it when the call finishes. The transcript and the local audio file stay on your Mac until you delete them",
+    "heading": "Your audio stays on your Mac",
+    "subhead": "By default, transcription runs on your Mac and your audio never leaves it. The transcript and the audio file stay on your Mac until you delete them",
     "cards": [
       {
         "tag": "Default",
         "heading": "Fast, accurate, free",
-        "body": "Audio uploads to Google's Gemini 2.5 Flash over HTTPS. Gemini transcribes it, returns a labelled transcript, and discards the audio. No retention. No training on your data. The endpoint is public: generativelanguage.googleapis.com",
+        "body": "On Apple Silicon, transcription runs on your Mac. Your audio never leaves the machine, so there is nothing to retain and nothing to train on. You get a labelled transcript in seconds, with no monthly cap",
         "specList": [
           {
             "key": "Engine",
-            "value": "Gemini 2.5 Flash"
+            "value": "On-device, Apple Silicon"
           },
           {
             "key": "Transit",
-            "value": "HTTPS to generativelanguage.googleapis.com"
+            "value": "Nothing leaves your Mac"
           },
           {
             "key": "Audio retention",
-            "value": "Discarded after transcription completes"
+            "value": "Stays on your Mac until you delete it"
           },
           {
             "key": "Cost",
-            "value": "Included in all tiers"
+            "value": "Free, no monthly cap"
           }
         ]
       },
       {
         "tag": "Local storage",
         "heading": "Your files, your Mac",
-        "body": "The transcript and the original audio live in ~/Library/Application Support/Corder/ until you delete them. Optional Dropbox archive uploads a copy to your own Dropbox app folder. It is off by default. Corder never uploads to any server other than Gemini for the transcription step",
+        "body": "The transcript and the original audio live in ~/Library/Application Support/Corder/ until you delete them. Optional Dropbox archive uploads a copy to your own Dropbox app folder, off by default. On a paid plan you can switch to cloud transcription for tougher audio, and even then the audio is discarded once the transcript is back",
         "specList": [
           {
             "key": "Transcript",
@@ -127,7 +127,7 @@
       {
         "number": "02",
         "heading": "Studio-grade transcript, with playback",
-        "body": "Microphone and system audio go to Gemini as two parallel tracks, merged by timestamp. You get speaker columns and the original audio to scrub through later",
+        "body": "Microphone and system audio are kept as two parallel tracks, merged by timestamp. You get speaker columns and the original audio to scrub through later",
         "liveDemo": "transcript"
       },
       {
@@ -239,7 +239,7 @@
           "billNote": "No credit card"
         },
         "features": [
-          "5 hours of transcription a month",
+          "Unlimited on-device transcription",
           "Speakers labelled on every call",
           "Searchable transcript, drag out to Notion",
           "Screen video captured alongside the audio",
@@ -319,7 +319,7 @@
     "items": [
       {
         "q": "Does Corder send my audio to the cloud?",
-        "a": "For transcription, audio chunks are sent to the Google Gemini API and discarded after processing. Gemini does not train on this data per their API terms. The raw recording, the transcript, and the database stay only on your Mac. Speaker separation runs entirely on-device."
+        "a": "By default, no. On Apple Silicon, transcription runs entirely on your Mac and your audio never leaves it. On a paid plan you can switch to cloud transcription for tougher audio; those chunks are sent for processing, discarded right after, and never used for training. The raw recording, the transcript, and the database always stay on your Mac. When you are offline, Corder transcribes locally."
       },
       {
         "q": "Does the other side know I am recording?",
@@ -339,7 +339,7 @@
       },
       {
         "q": "Does it need an internet connection?",
-        "a": "Recording works fully offline. Your meeting is saved locally regardless. Transcription requires internet for the Gemini API call. If you are offline when you stop a recording, Corder queues the meeting and transcribes it when the connection returns."
+        "a": "Recording works fully offline, and so does transcription on Apple Silicon. Your meeting is saved locally regardless. If a recording is set to cloud transcription and you are offline, Corder transcribes it on your Mac instead, so you are never left waiting."
       },
       {
         "q": "Which version of macOS does it require?",
@@ -350,11 +350,11 @@
         "a": "Yes. Plain text, Markdown, JSON, or one ZIP with audio plus video plus transcript. Or drag any meeting straight into Notion, Apple Notes, or Obsidian and the formatting is preserved."
       },
       {
-        "q": "What is the difference between Flash and Pro models?",
-        "a": "Flash (default in Free) is fast and accurate for everyday meetings. The Pro model on the Pro tier is slower but catches harder accents, technical jargon, and crosstalk better. Useful for sales calls, interviews, and technical syncs."
+        "q": "What is the difference between local and cloud transcription?",
+        "a": "Local runs on your Mac, free and unlimited, and your audio never leaves the machine. It is fast and accurate for everyday meetings. Cloud transcription, on a paid plan, catches harder accents, technical jargon, and crosstalk better. Useful for sales calls, interviews, and technical syncs."
       },
       {
-        "q": "Is there a free trial for the Pro model?",
+        "q": "Is there a free trial for Pro?",
         "a": "Yes. The first 3 recordings on the Pro tier are free when you upgrade. Cancel before billing if it does not earn its keep."
       }
     ]
@@ -403,9 +403,9 @@
           "Yes",
           "No",
           "No",
-          "—",
+          "n/a",
           "No",
-          "—",
+          "n/a",
           "No"
         ],
         "highlight": [
