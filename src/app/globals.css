@@ -2068,12 +2068,11 @@ button:focus:not(:focus-visible) {
   height: 22px;
   padding-inline: 8px;
   border-radius: var(--radius-pill);
-  /* Neutral grey chip (was accent green). Signals "Soon" rather than a
-   * live launch offer; hairline border keeps it in the bordered-surface
-   * language. */
-  background: var(--color-surface-2);
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
+  /* Accent-green chip in the same shade as the "Everything in ..., plus:"
+   * plus capsule, so "Soon" reads as a brand-coloured, noticeable marker
+   * (maker request 2026-06-27). */
+  background: var(--color-accent);
+  color: #ffffff;
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 600;
