@@ -18,8 +18,8 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.14.64/Corder-0.14.64.dmg";
-const FALLBACK_NAME = "Corder-0.14.64.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.14.94/Corder-0.14.94.dmg";
+const FALLBACK_NAME = "Corder-0.14.94.dmg";
 
 const VERSION = "0.14.64";
 
