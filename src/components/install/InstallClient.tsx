@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { trackEvent } from "@/lib/track";
+import { parseWhatsNew, type WhatsNewGroup } from "@/lib/release-notes";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/install/InstallClient.tsx";
 
@@ -18,31 +19,18 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.14.94/Corder-0.14.94.dmg";
-const FALLBACK_NAME = "Corder-0.14.94.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.14.96/Corder-0.14.96.dmg";
+const FALLBACK_NAME = "Corder-0.14.96.dmg";
 
-const VERSION = "0.14.64";
+const VERSION = "0.14.96";
 
-// Release notes shown under the install steps. Our style: short lead,
-// plain supporting line, ASCII only (no typographic dashes or bullets).
-const WHATS_NEW: ReadonlyArray<{ title: string; body: string }> = [
-  {
-    title: "On-device transcription",
-    body: "Transcribe locally on Apple Silicon, with no audio leaving your Mac.",
-  },
-  {
-    title: "Cleaner transcripts",
-    body: "Sound from your speakers is removed before transcription, so it is not mistaken for your voice.",
-  },
-  {
-    title: "Summary and Chapters on the free plan",
-    body: "Both work without a paid tier.",
-  },
-  {
-    title: "Fewer invented lines",
-    body: "Phantom sign-offs over silent gaps are filtered out, so you see only what was said.",
-  },
-];
+// Fallback "What is new" notes, shown ONLY when the GitHub release API is
+// unreachable (rate-limit / CORS / offline). It is the raw Keep-a-Changelog
+// body, parsed by the SAME parser as the live notes so the two render
+// identically. Kept fresh automatically at build by sync-corder-version.mjs,
+// so it stays a recent snapshot, not a hand-maintained list.
+const FALLBACK_NOTES_RAW =
+  "### Fixed\n- The recording HUD equalizer no longer flickers / disappears repeatedly during\n  a recording. A burst of window-occlusion events (Space switches, a full-screen\n  call app coming forward) was momentarily pausing the animation and freezing the\n  bars; those events are now smoothed so the equalizer stays steady. This\n  completes the flicker fix started in 0.14.95.";
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
 // might upload. Version suffix (e.g. Corder-0.13.2.dmg) and naked names
@@ -56,6 +44,13 @@ const ZIP_RE = /^Corder[-.\w]*\.zip$/i;
 export function InstallClient() {
   const [resolvedUrl, setResolvedUrl] = useState<string>(FALLBACK_URL);
   const [resolvedName, setResolvedName] = useState<string>(FALLBACK_NAME);
+  // Version label + "What is new" notes. Seeded from the build-time
+  // fallback for the static render, then replaced with the live release
+  // (tag + notes) once the GitHub API call resolves.
+  const [version, setVersion] = useState<string>(VERSION);
+  const [notes, setNotes] = useState<WhatsNewGroup[]>(() =>
+    parseWhatsNew(FALLBACK_NOTES_RAW),
+  );
   const triggeredRef = useRef(false);
 
   // Resolve the actual asset URL via the GitHub API, then trigger the
@@ -82,8 +77,18 @@ export function InstallClient() {
         const res = await fetch(RELEASES_API);
         if (res.ok) {
           const release = (await res.json()) as {
+            tag_name?: string;
+            body?: string;
             assets?: Array<{ name: string; browser_download_url: string }>;
           };
+          // Pull the version label + "what is new" notes from the SAME
+          // response, so the install page always reflects the live release
+          // with no hand-editing. Both fall back to the build-time snapshot
+          // if the field is missing or unparseable.
+          const tag = String(release.tag_name ?? "").replace(/^v/, "").trim();
+          if (tag) setVersion(tag);
+          const liveNotes = parseWhatsNew(String(release.body ?? ""));
+          if (liveNotes.length) setNotes(liveNotes);
           // Prefer .dmg over .zip when both exist (cleaner UX for the
           // user). Fall back to .zip if the release only ships zip.
           const dmg = release.assets?.find((a) => DMG_RE.test(a.name));
@@ -203,16 +208,28 @@ export function InstallClient() {
 
           <section
             className="install-whatsnew"
-            aria-label={`What is new in Corder ${VERSION}`}
+            aria-label={`What is new in Corder ${version}`}
             data-component="InstallWhatsNew"
             data-source={DATA_SOURCE}
           >
-            <h2 className="install-whatsnew__heading">What is new in {VERSION}</h2>
+            <h2 className="install-whatsnew__heading">What is new in {version}</h2>
             <ul className="install-whatsnew__list">
-              {WHATS_NEW.map((f) => (
-                <li key={f.title} className="install-whatsnew__item">
-                  <span className="install-whatsnew__title">{f.title}</span>
-                  <span className="install-whatsnew__body">{f.body}</span>
+              {notes.map((group, gi) => (
+                <li
+                  key={group.label ?? `group-${gi}`}
+                  className="install-whatsnew__item"
+                >
+                  {group.label && (
+                    <span className="install-whatsnew__title">{group.label}</span>
+                  )}
+                  {group.items.map((item, ii) => (
+                    <span
+                      key={`${gi}-${ii}`}
+                      className="install-whatsnew__body"
+                    >
+                      {item}
+                    </span>
+                  ))}
                 </li>
               ))}
             </ul>
