@@ -7,11 +7,16 @@
 // These four constants are the static layer the resolver can't reach:
 //
 //   src/components/install/InstallClient.tsx
-//     FALLBACK_URL   offline / rate-limit / CORS safety-net DMG
-//     FALLBACK_NAME  download filename for that fallback
-//     VERSION        visible "What is new in <version>" label
+//     FALLBACK_URL       offline / rate-limit / CORS safety-net DMG
+//     FALLBACK_NAME      download filename for that fallback
+//     VERSION            visible "What is new in <version>" label
+//     FALLBACK_NOTES_RAW "what is new" notes, shown when the live API is down
 //   src/app/layout.tsx
 //     softwareVersion  JSON-LD SoftwareApplication (SEO)
+//
+// The install page also fetches the release at RUNTIME and shows the live
+// version + notes; these constants are only the fail-soft snapshot, which
+// this script keeps fresh so even the offline path is recent.
 //
 // Run with no args to resolve the LATEST corder-updates release, or
 // `--version=0.14.62` to pin a specific one. Idempotent: a no-op when the
@@ -46,6 +51,9 @@ async function resolveTarget() {
       version: v,
       url: `https://github.com/halinskiy/corder-updates/releases/download/v${v}/Corder-${v}.dmg`,
       name: `Corder-${v}.dmg`,
+      // A pinned version is constructed without fetching the release, so
+      // there are no notes to snapshot; leave the committed fallback as is.
+      notes: null,
     };
   }
   const res = await fetch(RELEASES_API, {
@@ -60,7 +68,28 @@ async function resolveTarget() {
   if (!SEMVER_RE.test(version)) throw new Error(`unexpected tag "${rel.tag_name}"`);
   const asset = (rel.assets || []).find((a) => DMG_RE.test(a.name));
   if (!asset) throw new Error(`no Corder DMG asset on ${rel.tag_name}`);
-  return { version, url: asset.browser_download_url, name: asset.name };
+  return {
+    version,
+    url: asset.browser_download_url,
+    name: asset.name,
+    notes: cleanBody(rel.body),
+  };
+}
+
+// Normalise the release body before it is snapshotted into the install
+// page's FALLBACK_NOTES_RAW: drop the "## [x] - date" release-title line
+// (the version is shown separately) and convert typographic dashes to
+// ASCII, so the committed fallback stays clean even though it is machine
+// generated. The runtime parser does the same normalisation on live notes.
+function cleanBody(body) {
+  if (!body) return null;
+  const cleaned = String(body)
+    .replace(/\r\n/g, "\n")
+    .replace(/^[ \t]*#{1,2}[ \t]+\[.*$/m, "")
+    .replace(new RegExp("\\s*[" + String.fromCharCode(0x2014, 0x2013) + "]\\s*", "g"), ", ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  return cleaned || null;
 }
 
 // Replace exactly one occurrence captured by `re` (which must expose the
@@ -84,7 +113,7 @@ async function main() {
     warn(`${e.message}; leaving constants unchanged`);
     return; // exit 0 — never break a build
   }
-  const { version, url, name } = target;
+  const { version, url, name, notes } = target;
   const changed = [];
 
   const installBefore = readFileSync(INSTALL, "utf8");
@@ -92,6 +121,21 @@ async function main() {
   install = patch(install, /(const FALLBACK_URL =\s*\n\s*")[^"]*(";)/, url, "FALLBACK_URL", changed);
   install = patch(install, /(const FALLBACK_NAME = ")[^"]*(";)/, name, "FALLBACK_NAME", changed);
   install = patch(install, /(const VERSION = ")[^"]*(";)/, version, "VERSION", changed);
+  // Snapshot the live release notes into FALLBACK_NOTES_RAW. The value is a
+  // JSON-escaped string literal (newlines as \n), so it stays one logical
+  // line and is matched even when it contains escaped quotes. A function
+  // replacer is used so any `$` in the notes is inserted literally.
+  if (notes) {
+    const inner = JSON.stringify(notes).slice(1, -1);
+    const notesRe = /(const FALLBACK_NOTES_RAW =\s*\n\s*")(?:[^"\\]|\\.)*(";)/;
+    if (notesRe.test(install)) {
+      const before = install;
+      install = install.replace(notesRe, (_m, p1, p2) => p1 + inner + p2);
+      if (install !== before) changed.push("FALLBACK_NOTES_RAW");
+    } else {
+      warn("pattern not found: FALLBACK_NOTES_RAW (file layout changed?)");
+    }
+  }
   if (install !== installBefore) writeFileSync(INSTALL, install);
 
   const layoutBefore = readFileSync(LAYOUT, "utf8");
