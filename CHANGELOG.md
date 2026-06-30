@@ -12,6 +12,14 @@ Format:
 
 ---
 
+## 2026-06-30 Dynamic "What is new" + version bump
+- The install page now pulls the version label AND the "What is new" notes from the GitHub release it already fetches for the DMG, so the notes are always current with no hand-editing. New `src/lib/release-notes.ts` parses a Keep-a-Changelog body into grouped bullets (drops the `## [x]` title line, re-joins wrapped lines, normalises typographic dashes to ASCII via char codes so the parser source stays glyph-free). InstallClient holds version + notes as state, seeded from a build-time fallback snapshot for the static render and replaced with the live release once the API resolves; the hardcoded WHATS_NEW array is gone.
+- `scripts/sync-corder-version.mjs` now also snapshots the release body into `FALLBACK_NOTES_RAW` (title line stripped, dashes normalised), so even the offline/rate-limited fallback path stays fresh. The script already patched FALLBACK_URL/NAME, VERSION and softwareVersion.
+- Constants synced to the current latest 0.14.96 (was 0.14.94 last session; a newer release shipped). Verified live on getcorder.com/install/: heading "What is new in 0.14.96", a "Fixed" group, the parsed bullet, fallback DMG Corder-0.14.96.dmg.
+- Known stale item left for later: the JSON-LD `offers` in layout.tsx still say "5 hours of transcription a month" for Free, which no longer matches the "Unlimited on-device" pricing copy.
+
+---
+
 ## 2026-06-26 Install sticky Back, pricing CTAs, local-first copy
 - Install page: widened `.install-whatsnew` to the inner-column width so the release-notes list lines up with the step cards; pinned Back with `position: sticky; bottom: 24px` (`.install-page__back-sticky`, rendered as the last child of the inner column) so it floats while scrolling and docks at its natural spot at the end. Need help stays static in `.install-page__footer-actions` above it. Verified via CDP: at top Back bottom = vh-24 (floating), at end it docks (no further travel).
 - Pricing: all three tier CTAs now read "Download for Mac" and route to `/install/` (Pro/Max no longer open checkout: `trackBilling` set to `null`, `ctaHref` to `/install/`). The "Launch offer" badge is now a neutral grey "Soon" chip (`.pricing-card__badge` background `--color-surface-2`, text `--color-text-muted`, hairline border).
