@@ -2223,6 +2223,18 @@ button:focus:not(:focus-visible) {
   font-weight: 500;
   text-decoration: none;
 }
+/* Announced, not on sale. Reads as unavailable at a glance: muted
+ * border and text, no hover, no pointer. It is a real disabled
+ * <button>, so it is also skipped by the keyboard. */
+.pricing-card__cta--soon,
+.pricing-card__cta--soon:hover {
+  width: 100%;
+  border: 1px dashed var(--color-border-strong);
+  background-color: transparent;
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+  transform: none;
+}
 
 .pricing-lifetime {
   margin-top: 16px;
@@ -2862,15 +2874,14 @@ button:focus:not(:focus-visible) {
 .hl-mock-shell .hl-header-actions { gap: 6px; flex-shrink: 0; }
 .hl-mock-shell .hl-icon-pill { width: 24px; height: 24px; border: 1px solid var(--hl-border-strong); }
 .hl-mock-shell .hl-icon-pill svg { width: 11px; height: 11px; }
-/* The mock-shell pill is 24×24 with an 11×11 SVG. The default
- * .hl-theme-icon-wrap is still 14×14, and its SVG carries `inset:0`,
- * which pins an 11×11 SVG to the top-left of a 14×14 wrap — moon ends
- * up offset upper-left of the pill centre (Globe / Archive are direct
- * children of the pill so they centre cleanly). Shrink the wrap to
- * match the SVG so the moon centres just like its siblings. */
-.hl-mock-shell .hl-theme-icon-wrap { width: 11px; height: 11px; }
-.hl-mock-shell .hl-theme-icon-wrap svg { width: 11px; height: 11px; }
-.hl-mock-shell .hl-profile-avatar { width: 22px; height: 22px; font-size: 10px; }
+/* Filled accent state, same as the app's active toolbar button. The mock
+ * pills are inert spans, so they carry `.active` instead of aria-pressed. */
+.hl-mock-shell .hl-icon-pill.active {
+  background: var(--hl-accent);
+  border-color: var(--hl-accent);
+  color: #fff;
+}
+.hl-mock-shell .hl-profile-avatar { width: 22px; height: 22px; }
 .hl-mock-shell .hl-header-divider { height: 14px; }
 
 /* Failed meeting state — red datestamp + red status dot.
@@ -2879,34 +2890,13 @@ button:focus:not(:focus-visible) {
 .hl-meeting-item--failed .hl-meeting-title { color: #c4423a; }
 .hl-meeting-failed-label { color: var(--hl-fg-muted); }
 
-/* Static green recording orb in the bottom-right corner of the mocks.
- * No animation, no canvas — just a soft glowy circle so the mockup
- * acknowledges the inline-blob slot without burning CPU on three
- * canvases at once. */
-.hl-mock-blob {
-  position: absolute;
-  right: 12px;
-  bottom: 10px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 36% 34%,
-    #2ea366 0%,
-    var(--hl-accent) 60%,
-    #0a5e34 100%
-  );
-  box-shadow:
-    0 0 0 1px rgba(33, 122, 80, 0.18),
-    0 0 18px rgba(33, 122, 80, 0.45);
-  z-index: 4;
-  pointer-events: none;
-}
+/* Placeholder row the app paints while the library is still empty. */
+.hl-meeting-item--ghost { opacity: 0.55; }
 
-/* ── Dashboard mock ─────────────────────────────────────────────────
- * Inside .hl-main, render a Dashboard tab strip (Stats | Recent) and
- * a body split into a 1.25fr / 1fr layout: the start card + stats sit
- * on the left, the Recent rail on the right. */
+/* ── Welcome mock ───────────────────────────────────────────────────
+ * Inside .hl-main, one Home tab and a body split into the same two
+ * columns the app uses: the start card on the left, the ghost
+ * recording preview on the right. */
 .hl-dash-detail {
   display: flex;
   flex-direction: column;
@@ -3000,44 +2990,25 @@ button:focus:not(:focus-visible) {
   cursor: default;
   text-align: center;
 }
-.hl-dash-stats-card {
-  border: 1px solid var(--hl-border);
-  border-radius: 8px;
-  background: var(--hl-bg);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.hl-dash-stat-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 7px 12px;
-  gap: 10px;
-}
-.hl-dash-stat-row + .hl-dash-stat-row {
-  border-top: 1px solid var(--hl-border);
-}
-.hl-dash-stat-label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--hl-fg-muted);
-}
-.hl-dash-stat-value {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--hl-fg);
-}
 
 /* Ghost recording preview, right grid cell on Home. Same cell the
  * RightPanel occupies during a session, so the window keeps its
- * two-column shape in every view. */
+ * two-column shape in every view: a dashed screen-video card, then the
+ * greyed-out player and speaker timeline. */
 .hl-dash-ghost {
   padding: 12px 12px 0;
   min-width: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hl-dash-ghost-card {
+  border: 1px dashed var(--hl-border-strong);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: var(--hl-bg-elev);
+  flex-shrink: 0;
 }
 .hl-dash-ghost-title {
   font-family: var(--font-sans);
@@ -3050,6 +3021,63 @@ button:focus:not(:focus-visible) {
   font-size: 10.5px;
   line-height: 1.4;
   color: var(--hl-fg-muted);
+}
+.hl-dash-ghost-audio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.45;
+  flex-shrink: 0;
+}
+.hl-dash-ghost-play {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--hl-border-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--hl-fg-muted);
+}
+.hl-dash-ghost-play svg { width: 9px; height: 9px; }
+.hl-dash-ghost-time {
+  font-size: 10px;
+  color: var(--hl-fg-muted);
+  flex-shrink: 0;
+}
+.hl-dash-ghost-track {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--hl-border);
+}
+.hl-dash-ghost-timeline {
+  border: 1px solid var(--hl-border);
+  border-radius: 8px;
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0.55;
+  min-height: 0;
+  overflow: hidden;
+}
+.hl-dash-ghost-tl-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.hl-dash-ghost-tl-name {
+  width: 54px;
+  height: 7px;
+  border-radius: 3px;
+  background: var(--hl-border);
+}
+.hl-dash-ghost-tl-bar {
+  height: 12px;
+  border-radius: 4px;
+  background: var(--hl-border);
 }
 
 /* ── Library / Transcript mock & Settings mock ──────────────────────
@@ -3179,75 +3207,43 @@ button:focus:not(:focus-visible) {
  * grid (replacing the right panel). Stacked SoloCards, same shape as
  * the hero's SettingsPane but tightened for the smaller box. */
 .hl-set-rail {
-  padding: 10px 10px 12px;
-  gap: 6px;
+  padding: 8px 10px 12px;
+  gap: 5px;
 }
 .hl-set-rail .hl-settings-card { border-radius: 6px; }
 /* Tighter card paddings + smaller gap-to-toggle so the description
  * paragraph ("Notify on recording start, transcript ready, and network
  * loss.") gets noticeably more horizontal room and reads in fewer
- * lines. */
-.hl-set-rail .hl-settings-row { padding: 8px 8px 8px 10px; gap: 6px; }
+ * lines. Tight enough that the General section reaches the microphone
+ * picker before the rail clips, the same way the real pane scrolls. */
+.hl-set-rail .hl-settings-row { padding: 7px 8px 7px 10px; gap: 6px; }
 .hl-set-rail .hl-settings-row-label { font-size: 11.5px; }
 .hl-set-rail .hl-settings-row-desc {
   font-size: 10px;
   margin-top: 2px;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 .hl-set-rail .hl-set-switch { width: 26px; height: 14px; }
 .hl-set-rail .hl-set-switch-thumb { width: 10px; height: 10px; }
 .hl-set-rail .hl-set-switch.on .hl-set-switch-thumb { transform: translateX(12px); }
 
-/* v0.11 unified Settings dropdown block. Matches real Corder
- * `.hk-block` / `.mic-block` in Web/src/components/SettingsPane.tsx:
- * label on top, description below, full-width trigger underneath.
- * Decorative in the mock; in the real app the trigger opens a
- * portal popover with options. */
-.hl-settings-dropdown-block {
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.hl-settings-dropdown-block .hl-settings-row-label {
-  margin-bottom: 0;
-}
-.hl-settings-dropdown-block .hl-settings-row-desc {
-  margin-bottom: 6px;
-}
-.hl-set-dropdown {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* Microphone picker, re-scaled for the smaller mock rail. The base
+ * block lives in HeroLibraryDemo.css; these only shrink it. */
+.hl-set-rail .hl-settings-dropdown-block { padding: 8px 10px; }
+.hl-set-rail .hl-settings-dropdown-block .hl-settings-row-desc { margin-bottom: 6px; }
+.hl-set-rail .hl-set-dropdown {
   gap: 6px;
-  width: 100%;
   padding: 4px 8px;
-  border: 1px solid var(--hl-border-strong);
   border-radius: 5px;
-  background: var(--hl-bg);
   font-size: 10px;
-  color: var(--hl-fg);
-  box-sizing: border-box;
 }
-.hl-set-dropdown svg {
-  width: 10px;
-  height: 10px;
-  flex-shrink: 0;
-  color: var(--hl-fg-muted);
-}
-.hl-set-dropdown-value {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-}
+.hl-set-rail .hl-set-dropdown svg { width: 10px; height: 10px; }
 .hl-set-rail .hl-settings-applist { padding: 8px 10px; gap: 3px; }
-/* Last card peeks out the bottom — only the header + a hint of body
- * is visible, mirroring the partially-scrolled v0.9.0 settings rail
- * in the user reference screenshot. */
-.hl-set-card--clipped {
-  max-height: 36px;
-  overflow: hidden;
+.hl-set-rail .hl-settings-applist-add {
+  margin-top: 6px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 10px;
 }
 
 /* Static mockup inside reduced-motion fallback. No absolute positioning

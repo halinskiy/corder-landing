@@ -470,25 +470,6 @@ html[data-motion="off"] .hero-library-demo *::after {
   color: var(--hl-fg);
   font-weight: 600;
 }
-/* Clickable root crumb ("Dashboard" in the meeting view) — hover lift,
- * matching the app's .breadcrumb-root. */
-.hl-breadcrumb-root {
-  appearance: none;
-  background: none;
-  border: 0;
-  font: inherit;
-  font-size: 15px;
-  color: var(--hl-fg-muted);
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 2px 6px;
-  margin: -2px -6px;
-  transition: background 80ms ease, color 80ms ease;
-}
-.hl-breadcrumb-root:hover {
-  background: var(--hl-bg-hover);
-  color: var(--hl-fg);
-}
 .hl-spacer {
   flex: 1;
 }
@@ -584,6 +565,7 @@ html[data-motion="off"] .hero-library-demo *::after {
   padding: 18px 20px 0;
   display: flex;
   gap: 24px;
+  min-width: 0;
 }
 .hl-detail-tab-col-left {
   background: linear-gradient(
@@ -629,6 +611,26 @@ html[data-motion="off"] .hero-library-demo *::after {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+}
+
+/* The right column is a fixed 380px, so between the tablet breakpoint and a
+ * roomy desktop the left column got squeezed and the three left tabs ran
+ * under the Recording tab. Narrow the right column and tighten the strip in
+ * that band instead of clipping the tabs. Must sit AFTER both grid
+ * declarations above: a media query adds no specificity, only source order. */
+@media (min-width: 880px) and (max-width: 1119px) {
+  .hl-detail-tabs,
+  .hl-detail-body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 290px);
+  }
+  .hl-detail-tab-col {
+    padding: 18px 14px 0;
+    gap: 14px;
+  }
+  .hl-tab,
+  .hl-tab-btn {
+    font-size: 13px;
+  }
 }
 
 /* Transcript pane */
@@ -1071,91 +1073,6 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   font-size: 14px;
 }
 
-/* ── Dashboard view ─────────────────────────────────────────── */
-.hl-dash-left {
-  padding: 18px 20px 40px;
-  overflow: hidden;
-  min-width: 0;
-}
-.hl-dash-banner {
-  border: 1px solid var(--hl-border);
-  border-radius: 12px;
-  padding: 18px;
-  background: var(--hl-bg-elev);
-  margin-bottom: 16px;
-}
-.hl-dash-banner-title {
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--hl-fg);
-}
-.hl-dash-banner-sub {
-  font-size: 13.5px;
-  color: var(--hl-fg-muted);
-  margin-top: 6px;
-  line-height: 1.5;
-}
-/* Primary Start button inside the Home card. Same geometry as
- * .hl-rec-stop (its Stop counterpart) so the card does not change
- * height when the demo flips between idle and recording. */
-.hl-dash-start {
-  margin-top: 14px;
-  background: var(--hl-accent);
-  color: #fff;
-  border: 1px solid var(--hl-accent);
-  border-radius: 8px;
-  padding: 13px 16px;
-  width: 100%;
-  font-size: 14px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: default;
-}
-.hl-dash-stats-card {
-  border: 1px solid var(--hl-border);
-  border-radius: 12px;
-  overflow: hidden;
-}
-.hl-dash-stat-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-}
-.hl-dash-stat-row + .hl-dash-stat-row {
-  border-top: 1px solid var(--hl-border);
-}
-.hl-dash-stat-label {
-  font-size: 16px;
-  font-weight: 300;
-  color: var(--hl-fg);
-}
-.hl-dash-stat-value {
-  font-size: 16px;
-  font-weight: 300;
-  color: var(--hl-fg);
-  font-variant-numeric: tabular-nums;
-}
-/* Ghost recording preview. Occupies the right grid cell on Home, the
- * same cell the RightPanel fills during a session, so the window keeps
- * its two-column shape whichever view the demo is showing. */
-.hl-dash-ghost {
-  padding: 18px 20px 40px;
-  min-width: 0;
-  overflow: hidden;
-}
-.hl-dash-ghost-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--hl-fg);
-}
-.hl-dash-ghost-sub {
-  margin-top: 6px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--hl-fg-muted);
-}
-
 .hl-right-panel {
   overflow: hidden;
   /* Top padding gives the FIRST child (video card, or the audio player
@@ -1575,6 +1492,53 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   cursor: default;
 }
 
+/* Device-picker block — label, description, then a full-width trigger.
+ * Same vertical stack the app's `.hk-block` uses for the microphone
+ * selector. The mock rail re-scales these under .hl-set-rail. */
+.hl-settings-dropdown-block {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hl-settings-dropdown-block .hl-settings-row-desc {
+  margin-bottom: 10px;
+}
+.hl-set-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--hl-border-strong);
+  border-radius: 8px;
+  background: var(--hl-bg);
+  font-size: 13px;
+  color: var(--hl-fg);
+  box-sizing: border-box;
+}
+.hl-set-dropdown svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: var(--hl-fg-muted);
+}
+.hl-set-dropdown-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* The Dark theme row is the one row wired to a real handler. */
+.hl-settings-row--live {
+  cursor: pointer;
+}
+.hl-settings-row--live:hover {
+  background: var(--hl-bg-hover);
+}
+
 /* Active tab — clickable button in the right-tab column. Previously
  * the tabs were inert spans. Now they switch the right-panel content
  * between Recording and Settings. */
@@ -1601,38 +1565,6 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   outline-offset: 2px;
   border-radius: 4px;
 }
-
-/* Sun icon — appears in dark mode, crossfades with the moon. Both
- * icons are wrapped in a positioned span and animated by opacity. The
- * wrap is `inline-flex` so it stays as a positioned 14×14 box inside
- * the flex .hl-icon-pill — earlier the implicit `display: inline`
- * collapsed the wrap on Safari and pushed the moon icon to the top-
- * left corner of the pill instead of the centre. */
-.hl-theme-icon-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-}
-.hl-theme-icon-wrap svg {
-  position: absolute;
-  inset: 0;
-  width: 14px;
-  height: 14px;
-  /* Optical centring nudge. The Lucide crescent is geometrically
-   * centred inside its 24×24 viewBox (bbox spans ~3 to ~21 on both
-   * axes), but the visual mass sits on the LEFT — the outer 9-radius
-   * arc is the thick lune, the right edge is a thin slip eaten by
-   * the inner 7-radius arc. Without this nudge the icon reads as
-   * "shifted to the left of the pill" next to the geometrically
-   * symmetric Globe / Archive icons. 1px is enough; 2px overshoots. */
-  transform: translateX(1px);
-}
-/* Moon icon stays visible in both themes — it's the affordance for
- * "open theme settings", not a preview of the next state. */
 
 /* Mobile collapse — sidebar hides, main pane stretches.
  * Breakpoint at 879px (one below 880, an 8px-grid value) so 880-and-up keeps
@@ -1666,12 +1598,6 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   }
   .hl-transcript-wrap {
     background: none;
-  }
-  /* On the tablet tier, drop the archive button so the header still
-   * fits without crowding the breadcrumb. Profile + theme + settings
-   * remain. */
-  .hl-icon-pill:nth-of-type(3) {
-    display: none;
   }
 }
 

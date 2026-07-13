@@ -5,7 +5,7 @@
  * inside the desktop `.hiw-window-wrap` sticky window as the user
  * scrolls through HowItWorks chapters.
  *
- *  01 Record from anywhere   → <DashboardMock />
+ *  01 Record from anywhere   → <WelcomeMock />
  *  02 Have your meeting      → <LibraryMeetingMock />
  *  03 Tune it to your workflow → <SettingsMock />
  *
@@ -14,7 +14,7 @@
  * shell from globals.css. Each mockup adds a narrow set of additional
  * class names under the `.hl-*` prefix:
  *
- *  .hl-dash-*       -- Dashboard column shells + stats card
+ *  .hl-dash-*       -- Welcome column shells + ghost recording panel
  *  .hl-set-*        -- Settings right-rail toggle / hotkey rows
  *
  * Every component carries the inspector triple (data-component /
@@ -94,7 +94,7 @@ function PeopleIcon() {
   );
 }
 
-function GlobeIcon() {
+function SettingsGearIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -105,25 +105,8 @@ function GlobeIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M2 12h20" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
     </svg>
   );
 }
@@ -198,29 +181,44 @@ function DownloadIcon() {
   );
 }
 
-/* Header strip -- 4 monochrome circular icon pills + hairline + profile
- * avatar. Identical pattern to the hero demo. */
-function HeaderActions({ initial }: { initial: string }) {
+/* Header strip -- the app's toolbar is Settings + Archive, a hairline,
+ * then the profile avatar. There is no theme button and no interface
+ * language picker in the header: the theme lives in Settings as a real
+ * toggle row, and the language picker was removed from the app. */
+function HeaderActions({ settingsActive = false }: { settingsActive?: boolean }) {
   return (
     <div className="hl-header-actions" aria-hidden="true">
-      <span className="hl-icon-pill">
-        <span className="hl-theme-icon-wrap">
-          <MoonIcon />
-        </span>
-      </span>
-      <span className="hl-icon-pill">
-        <GlobeIcon />
+      <span className={`hl-icon-pill${settingsActive ? " active" : ""}`}>
+        <SettingsGearIcon />
       </span>
       <span className="hl-icon-pill">
         <ArchiveIcon />
       </span>
       <span className="hl-header-divider" />
-      <span className="hl-profile-avatar">{initial}</span>
+      <span className="hl-profile-avatar">
+        <Avatar />
+      </span>
     </div>
   );
 }
 
-/* Sidebar meeting card -- keyboard-inert decorative row. */
+/* Profile avatar glyph -- the app renders one of nine SVG primitives on
+ * the brand accent, never a letter. Same half-moon shape the hero demo
+ * paints. */
+function Avatar() {
+  return (
+    <svg viewBox="0 0 40 40" className="hl-avatar-svg" aria-hidden="true">
+      <circle cx="20" cy="20" r="20" fill="var(--hl-accent)" />
+      <g fill="#fff">
+        <circle cx="20" cy="20" r="11" />
+        <rect x="20" y="9" width="13" height="22" fill="var(--hl-accent)" />
+      </g>
+    </svg>
+  );
+}
+
+/* Sidebar meeting card -- keyboard-inert decorative row. `ghost` is the
+ * placeholder row the app paints when the library is still empty. */
 function MeetingItem({
   title,
   duration,
@@ -228,6 +226,7 @@ function MeetingItem({
   people,
   active = false,
   failed = false,
+  ghost = false,
 }: {
   title: string;
   duration: string;
@@ -235,10 +234,12 @@ function MeetingItem({
   people?: number;
   active?: boolean;
   failed?: boolean;
+  ghost?: boolean;
 }) {
   const cls = ["hl-meeting-item"];
   if (active) cls.push("active");
   if (failed) cls.push("hl-meeting-item--failed");
+  if (ghost) cls.push("hl-meeting-item--ghost");
   return (
     <div className={cls.join(" ")}>
       <div className="hl-meeting-row">
@@ -267,16 +268,23 @@ function MeetingItem({
  * mockups stay quieter without the green idle orb. */
 
 /* ════════════════════════════════════════════════════════════════════
- *  01 -- Dashboard mock
+ *  01 -- Welcome mock
  * ════════════════════════════════════════════════════════════════════ */
 
-function DashboardMock() {
+/* The app prints an em dash as the placeholder duration (i18n
+ * `ghost_duration`). Written as an escape so the glyph never lands in
+ * source prose. */
+const GHOST_DURATION = "\u2014";
+
+function WelcomeMock() {
   return (
     <MockShell
       variant="dashboard"
-      ariaLabel="Corder Dashboard. Sidebar with recent meetings, a Ready when you are start card, recording totals, and the screen video preview."
+      ariaLabel="The Corder Welcome screen on a fresh install: an empty sidebar, a Ready when you are start card, and the screen video preview."
     >
-      {/* Sidebar */}
+      {/* Sidebar. The Welcome screen only exists while the library is
+          empty (the app opens the newest recording the moment one exists),
+          so the sidebar here is the placeholder row, not a list. */}
       <aside className="hl-sidebar hl-dash-sidebar" aria-hidden="true">
         <div className="hl-sidebar-titlebar-pad" />
         <div className="hl-sidebar-search">
@@ -284,7 +292,7 @@ function DashboardMock() {
             <SearchIcon />
             <input
               type="search"
-              placeholder="Search recordings"
+              placeholder="Search recordings…"
               readOnly
               tabIndex={-1}
             />
@@ -292,40 +300,23 @@ function DashboardMock() {
         </div>
         <div className="hl-sidebar-list">
           <div className="hl-sidebar-section-label">Today</div>
-          <MeetingItem title="Today, 19:46" duration="16s" active />
-          <MeetingItem title="Today, 13:58" duration="5s" />
           <MeetingItem
-            title="Testing Corder X100"
-            duration="42s"
-            people={2}
-            preview="Thanks."
-          />
-          <div className="hl-sidebar-section-label">This week</div>
-          <MeetingItem title="May 19, 15:28" duration="30s" />
-          <MeetingItem
-            title="Postmodernism discussion"
-            duration="56s"
-            people={2}
-            preview="Let us check how it holds up."
-          />
-          <MeetingItem title="May 19, 14:34" duration="46s" />
-          <MeetingItem
-            title="Outreach system optimisation"
-            duration="6m 31s"
-            people={1}
-            preview="Right, the question is whether we sell Bosch or"
+            title="Your first recording"
+            duration={GHOST_DURATION}
+            preview="Hit Start to begin."
+            ghost
           />
         </div>
       </aside>
 
-      {/* Main pane -- Dashboard breadcrumb + Stats tab + start card + stats rows */}
+      {/* Main pane -- Welcome breadcrumb, Home tab, start card, ghost panel */}
       <div className="hl-main hl-dash-main">
         <div className="hl-main-header">
           <div className="hl-breadcrumb">
-            <span className="hl-breadcrumb-current">Dashboard</span>
+            <span className="hl-breadcrumb-current">Welcome</span>
           </div>
           <div className="hl-spacer" />
-          <HeaderActions initial="K" />
+          <HeaderActions />
         </div>
 
         <div className="hl-dash-detail">
@@ -341,7 +332,6 @@ function DashboardMock() {
           </div>
 
           <div className="hl-dash-body">
-            {/* Left column: start card + stats */}
             <div className="hl-dash-left">
               <div className="hl-dash-start-card">
                 <div className="hl-dash-start-text">
@@ -359,35 +349,42 @@ function DashboardMock() {
                   Start recording
                 </button>
               </div>
-
-              <div className="hl-dash-stats-card">
-                <StatRow label="Recordings" value="66" />
-                <StatRow label="Total recorded" value="3h 12m" />
-                <StatRow label="This week" value="8" />
-              </div>
             </div>
 
             {/* Right column: the ghost recording preview, the cell the
                 RightPanel fills during a session. */}
             <div className="hl-dash-ghost">
-              <div className="hl-dash-ghost-title">Screen video</div>
-              <div className="hl-dash-ghost-sub">
-                Your screen video appears here after you finish recording.
+              <div className="hl-dash-ghost-card">
+                <div className="hl-dash-ghost-title">Screen video</div>
+                <div className="hl-dash-ghost-sub">
+                  Your screen video appears here after you finish recording.
+                </div>
+              </div>
+              <div className="hl-dash-ghost-audio">
+                <span className="hl-dash-ghost-play">
+                  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M4 2.5v11c0 .6.7 1 1.2.6l8.4-5.5a.7.7 0 0 0 0-1.2L5.2 1.9C4.7 1.5 4 1.9 4 2.5z" />
+                  </svg>
+                </span>
+                <span className="hl-dash-ghost-time">0:00 / 0:00</span>
+                <span className="hl-dash-ghost-track" />
+              </div>
+              <div className="hl-dash-ghost-timeline">
+                <div className="hl-timeline-section-label">Timeline</div>
+                <div className="hl-dash-ghost-tl-row">
+                  <span className="hl-dash-ghost-tl-name" />
+                  <span className="hl-dash-ghost-tl-bar" />
+                </div>
+                <div className="hl-dash-ghost-tl-row">
+                  <span className="hl-dash-ghost-tl-name" />
+                  <span className="hl-dash-ghost-tl-bar" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </MockShell>
-  );
-}
-
-function StatRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="hl-dash-stat-row">
-      <div className="hl-dash-stat-label">{label}</div>
-      <div className="hl-dash-stat-value">{value}</div>
-    </div>
   );
 }
 
@@ -409,7 +406,7 @@ function LibraryMeetingMock() {
             <SearchIcon />
             <input
               type="search"
-              placeholder="Search recordings"
+              placeholder="Search recordings…"
               readOnly
               tabIndex={-1}
             />
@@ -452,15 +449,16 @@ function LibraryMeetingMock() {
 
       <div className="hl-main">
         <div className="hl-main-header">
+          {/* The breadcrumb is the meeting title alone. There is no
+              parent crumb in the app: the Welcome screen is unreachable
+              once a recording exists, so nothing sits above a meeting. */}
           <div className="hl-breadcrumb">
-            <span>Dashboard</span>
-            <span aria-hidden>{"›"}</span>
             <span className="hl-breadcrumb-current">
               Quarterly review with Sarah and Mark
             </span>
           </div>
           <div className="hl-spacer" />
-          <HeaderActions initial="K" />
+          <HeaderActions />
         </div>
 
         <div className="hl-detail">
@@ -468,10 +466,12 @@ function LibraryMeetingMock() {
             <div className="hl-detail-tab-col hl-detail-tab-col-left">
               <span className="hl-tab active">Transcript</span>
               <span className="hl-tab">Summary</span>
+              <span className="hl-tab">Chapters</span>
             </div>
             <div className="hl-detail-tab-col hl-detail-tab-col-right">
+              {/* One tab while a recording is open. Settings replaces it
+                  with General / Advanced, it is not a sibling of it. */}
               <span className="hl-tab active">Recording</span>
-              <span className="hl-tab">Settings</span>
             </div>
           </div>
 
@@ -482,7 +482,7 @@ function LibraryMeetingMock() {
                   <SearchIcon />
                   <input
                     type="search"
-                    placeholder="Search the transcript"
+                    placeholder="Search the transcript…"
                     readOnly
                     tabIndex={-1}
                   />
@@ -702,7 +702,7 @@ function SettingsMock() {
   return (
     <MockShell
       variant="settings"
-      ariaLabel="Corder transcript with the Settings tab open. System notifications, microphone, screen video, auto-transcribe, auto-summary, launch at login, and Always offer to record."
+      ariaLabel="Corder transcript with General settings open: recording equalizer, screen video, dark theme, system notifications, launch at login, diagnostics, microphone, and the recordings folder."
     >
       {/* Sidebar */}
       <aside className="hl-sidebar hl-set-sidebar" aria-hidden="true">
@@ -712,7 +712,7 @@ function SettingsMock() {
             <SearchIcon />
             <input
               type="search"
-              placeholder="Search recordings"
+              placeholder="Search recordings…"
               readOnly
               tabIndex={-1}
             />
@@ -729,7 +729,7 @@ function SettingsMock() {
           <MeetingItem
             title="Transcription tuning notes"
             duration="38s"
-            preview="Auto-transcribe is off by default."
+            preview="Let us go over the defaults one more time."
           />
           <MeetingItem
             title="Screen video and call recording"
@@ -754,14 +754,12 @@ function SettingsMock() {
       <div className="hl-main">
         <div className="hl-main-header">
           <div className="hl-breadcrumb">
-            <span>Dashboard</span>
-            <span aria-hidden>{"›"}</span>
             <span className="hl-breadcrumb-current">
               Screen video and call recording
             </span>
           </div>
           <div className="hl-spacer" />
-          <HeaderActions initial="K" />
+          <HeaderActions settingsActive />
         </div>
 
         <div className="hl-detail">
@@ -769,10 +767,13 @@ function SettingsMock() {
             <div className="hl-detail-tab-col hl-detail-tab-col-left">
               <span className="hl-tab active">Transcript</span>
               <span className="hl-tab">Summary</span>
+              <span className="hl-tab">Chapters</span>
             </div>
             <div className="hl-detail-tab-col hl-detail-tab-col-right">
-              <span className="hl-tab">Recording</span>
-              <span className="hl-tab active">Settings</span>
+              {/* Opening Settings swaps the Recording tab for the two
+                  settings sections, exactly as the app does. */}
+              <span className="hl-tab active">General</span>
+              <span className="hl-tab">Advanced</span>
             </div>
           </div>
 
@@ -783,7 +784,7 @@ function SettingsMock() {
                   <SearchIcon />
                   <input
                     type="search"
-                    placeholder="Search the transcript"
+                    placeholder="Search the transcript…"
                     readOnly
                     tabIndex={-1}
                   />
@@ -832,28 +833,17 @@ function SettingsMock() {
               </div>
             </div>
 
-            {/* Settings rail */}
+            {/* Settings rail -- the General section, in the app's order.
+                Every row and every string below is lifted from
+                Web/src/components/SettingsPane.tsx + i18n.ts. The
+                transcription-model picker is deliberately absent: it is
+                admin-only, so a downloader never sees it. */}
             <div className="hl-settings-pane hl-set-rail">
-              {/* New in v0.11: Microphone / Transcription model / Language
-                  unified popover dropdowns (auto-flip up when there is no
-                  room below). Sits at the top of the rail so the headline
-                  visual of v0.11 reads first. */}
               <div className="hl-settings-card">
-                <SettingsDropdownRow
-                  label="Microphone"
-                  desc="Audio source Corder captures while recording."
-                  value="MacBook Pro Microphone"
-                />
-              </div>
-              {/* Every row here must exist in the shipped app, or the mockup
-                  promises a setting the downloader will hunt for and never
-                  find. Corder has no language picker, no title toggle, no
-                  global shortcut, and exactly one on-device model. */}
-              <div className="hl-settings-card">
-                <SettingsDropdownRow
-                  label="Transcription model"
-                  desc="Which model the next recording is transcribed with."
-                  value="Whisper large-v3-turbo"
+                <SettingsToggleRow
+                  label="Recording equalizer"
+                  desc="Show the floating equalizer pill that hovers over your screen while recording."
+                  on={true}
                 />
               </div>
               <div className="hl-settings-card">
@@ -865,32 +855,46 @@ function SettingsMock() {
               </div>
               <div className="hl-settings-card">
                 <SettingsToggleRow
-                  label="Auto-transcribe"
-                  desc="Transcribe the recording automatically after you stop."
+                  label="Dark theme"
+                  desc="Dark interface."
                   on={false}
                 />
               </div>
               <div className="hl-settings-card">
                 <SettingsToggleRow
-                  label="Auto-summary"
-                  desc="Write a summary with action items once the transcript is ready."
-                  on={true}
+                  label="System notifications"
+                  desc="Notify on recording start, transcript ready, and network loss."
+                  on={false}
                 />
               </div>
               <div className="hl-settings-card">
                 <SettingsToggleRow
                   label="Launch at login"
-                  desc="Start Corder automatically when you log in."
+                  desc="Open Corder automatically when your Mac starts."
                   on={true}
                 />
               </div>
-              <div className="hl-settings-card hl-set-card--clipped">
+              <div className="hl-settings-card">
+                <SettingsToggleRow
+                  label="Help improve Corder"
+                  desc="Send anonymous diagnostic counts to the maintainer once a day."
+                  on={false}
+                />
+              </div>
+              <div className="hl-settings-card">
+                <SettingsDropdownRow
+                  label="Microphone"
+                  desc="Select input device which records your voice"
+                  value="MacBook Pro Microphone"
+                />
+              </div>
+              <div className="hl-settings-card">
                 <div className="hl-settings-applist">
-                  <div className="hl-settings-row-label">Always offer to record</div>
+                  <div className="hl-settings-row-label">Recordings folder</div>
                   <div className="hl-settings-row-desc">
-                    Apps Corder always offers to record when they take the
-                    microphone.
+                    Open the folder with all your recordings in Finder.
                   </div>
+                  <span className="hl-settings-applist-add">Open</span>
                 </div>
               </div>
             </div>
@@ -1079,7 +1083,7 @@ function ZoomCallMock() {
 
 /* Dispatcher -- render the correct mockup for a 1-indexed chapter. */
 export function ChapterMockup({ chapter }: { chapter: 1 | 2 | 3 }) {
-  if (chapter === 1) return <DashboardMock />;
+  if (chapter === 1) return <WelcomeMock />;
   if (chapter === 2) return <LibraryMeetingMock />;
   return <SettingsMock />;
 }
