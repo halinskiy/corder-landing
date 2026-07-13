@@ -140,6 +140,9 @@ type Tier = {
   features: readonly string[];
   cta: string;
   ctaHref?: string;
+  /// Tier is announced but not on sale. Renders a disabled button
+  /// instead of a link, so nobody clicks a plan they cannot buy.
+  comingSoon?: boolean;
   ctaStyle: "primary" | "secondary";
   highlight: boolean;
   trackEvent: string;
@@ -198,28 +201,39 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: PricingBilling })
         )}
       </div>
 
-      <a
-        href={ctaHref}
-        className={`pricing-card__cta cta-pill ${ctaPrimary ? "cta-pill--primary" : "cta-pill--ghost"}`}
-        data-track-event={tier.trackEvent}
-        data-track-tier={tier.name}
-        data-track-billing={tier.trackBilling ?? billing}
-        // Free tier still resolves via its own ctaHref to /install/;
-        // Paid tiers route the anchor to /checkout/?tier=...&billing=...
-        // where the dedicated CheckoutClient mounts Paddle inline.
-        // No JS onClick is needed -- the href carries the routing.
-        style={
-          ctaPrimary
-            ? undefined
-            : {
-                border: "1px solid var(--color-border-strong)",
-                color: "var(--color-text)",
-                backgroundColor: "transparent",
-              }
-        }
-      >
-        <span className="cta-text">{tier.cta}</span>
-      </a>
+      {tier.comingSoon ? (
+        // Pro and Max are announced, not sold. A live link here would
+        // send someone to a checkout that does not exist, so the CTA is
+        // a genuinely disabled button: no href, not focusable, and it
+        // says what it is rather than dangling a Download the tier does
+        // not gate anyway.
+        <button
+          type="button"
+          disabled
+          className="pricing-card__cta pricing-card__cta--soon cta-pill cta-pill--ghost"
+        >
+          <span className="cta-text">{tier.cta}</span>
+        </button>
+      ) : (
+        <a
+          href={ctaHref}
+          className={`pricing-card__cta cta-pill ${ctaPrimary ? "cta-pill--primary" : "cta-pill--ghost"}`}
+          data-track-event={tier.trackEvent}
+          data-track-tier={tier.name}
+          data-track-billing={tier.trackBilling ?? billing}
+          style={
+            ctaPrimary
+              ? undefined
+              : {
+                  border: "1px solid var(--color-border-strong)",
+                  color: "var(--color-text)",
+                  backgroundColor: "transparent",
+                }
+          }
+        >
+          <span className="cta-text">{tier.cta}</span>
+        </a>
+      )}
 
       <ul className="pricing-card__features">
         {tier.features.map((feature, i) => {

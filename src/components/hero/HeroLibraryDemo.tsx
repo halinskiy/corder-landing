@@ -16,7 +16,10 @@ const TRANSCRIBING_DURATION_MS = 1200;
 
 type DemoMode = "recording" | "transcribing" | "transcript";
 type LeftTab = "transcript" | "summary" | "chapters";
-type RightTab = "recording" | "settings";
+/// The right column is EITHER the Recording panel OR one of the two
+/// Settings sections. General and Advanced are not siblings of Recording,
+/// they replace it, which is exactly how the app's tab strip behaves.
+type RightTab = "recording" | "settings-general" | "settings-advanced";
 type Theme = "light" | "dark";
 
 export function HeroLibraryDemo() {
@@ -38,21 +41,17 @@ export function HeroLibraryDemo() {
   const [mode, setMode] = useState<DemoMode>("transcript");
   const [elapsed, setElapsed] = useState(0);
   // Right-panel tab — Recording (default) shows the audio scrubber +
-  // Timeline; Settings shows a stack of decorative setting cards.
+  // Timeline; the two Settings sections show a stack of setting cards.
   const [rightTab, setRightTab] = useState<RightTab>("recording");
   // Left-pane tab — Transcript (default) / Summary / Chapters, mirroring
   // the app's three detail tabs. Each renders real (decorative) content.
   const [leftTab, setLeftTab] = useState<LeftTab>("transcript");
-  // Main-pane view: the meeting detail (default) or the Dashboard, toggled
-  // by the breadcrumb. `archiveOpen` swaps the SIDEBAR to the archive list
-  // (independent of the main view), toggled by the header archive button --
-  // mirroring the app, where archive is a sidebar mode.
-  const [view, setView] = useState<"meeting" | "dashboard">("meeting");
+  // `archiveOpen` swaps the SIDEBAR to the archive list, toggled by the
+  // header archive button -- mirroring the app, where archive is a
+  // sidebar mode.
   const [archiveOpen, setArchiveOpen] = useState(false);
-  // Open the (single) meeting detail from a sidebar item or a dashboard
-  // recent card -- the demo's way back from Dashboard / Archive.
+  // Back out of the archive by clicking any row, the demo's way back.
   const openMeeting = useCallback(() => {
-    setView("meeting");
     setArchiveOpen(false);
   }, []);
   // Demo-scoped theme. Flips on moon-icon click; never touches the
@@ -328,9 +327,6 @@ export function HeroLibraryDemo() {
             onRightTabChange={setRightTab}
             leftTab={leftTab}
             onLeftTabChange={setLeftTab}
-            view={view}
-            onViewChange={setView}
-            onOpenMeeting={openMeeting}
             archiveOpen={archiveOpen}
             onToggleArchive={() => setArchiveOpen((a) => !a)}
             theme={theme}
@@ -345,7 +341,7 @@ export function HeroLibraryDemo() {
           * outside recording auto-kills the canvas requestAnimationFrame
           * loop, which was a permanent 60fps cost even when the hero
           * was scrolled off-screen. */}
-        {mode === "recording" && view === "meeting" && (
+        {mode === "recording" && (
           <button
             type="button"
             className="hl-rec-blob"
@@ -377,7 +373,7 @@ function Sidebar({
           <SearchIcon />
           <input
             type="search"
-            placeholder={archiveOpen ? "Search archive" : "Search recordings"}
+            placeholder="Search recordings…"
             readOnly
             tabIndex={-1}
           />
@@ -494,9 +490,6 @@ function Main({
   onRightTabChange,
   leftTab,
   onLeftTabChange,
-  view,
-  onViewChange,
-  onOpenMeeting,
   archiveOpen,
   onToggleArchive,
   theme,
@@ -511,35 +504,20 @@ function Main({
   onRightTabChange: (next: RightTab) => void;
   leftTab: LeftTab;
   onLeftTabChange: (next: LeftTab) => void;
-  view: "meeting" | "dashboard";
-  onViewChange: (next: "meeting" | "dashboard") => void;
-  onOpenMeeting: () => void;
   archiveOpen: boolean;
   onToggleArchive: () => void;
   theme: Theme;
   onToggleTheme: (e?: React.MouseEvent<HTMLElement>) => void;
 }) {
+  const inSettings = rightTab !== "recording";
   return (
     <div className="hl-main">
       <div className="hl-main-header">
+        {/* The breadcrumb is the meeting title alone. The app has no root
+            crumb above a recording: the Welcome screen only exists while
+            the library is empty, so there is nowhere to navigate up to. */}
         <div className="hl-breadcrumb">
-          {view === "dashboard" ? (
-            <span className="hl-breadcrumb-current">Dashboard</span>
-          ) : (
-            <>
-              <button
-                type="button"
-                className="hl-breadcrumb-root"
-                onClick={() => onViewChange("dashboard")}
-                data-component="HeroLibraryDemo.BreadcrumbDashboard"
-                data-source={DATA_SOURCE}
-              >
-                Dashboard
-              </button>
-              <span aria-hidden>›</span>
-              <span className="hl-breadcrumb-current">Investor sync - Mike + Paul</span>
-            </>
-          )}
+          <span className="hl-breadcrumb-current">Investor sync - Mike + Paul</span>
         </div>
 
         <div className="hl-spacer" />
@@ -550,26 +528,15 @@ function Main({
           data-source={DATA_SOURCE}
           data-tokens="hl-border-strong,hl-fg-muted,radius-pill"
         >
-          <button
-            type="button"
-            className="hl-icon-pill"
-            aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-            aria-pressed={theme === "dark"}
-            onClick={onToggleTheme}
-            data-component="HeroLibraryDemo.ThemeToggle"
-            data-source={DATA_SOURCE}
-            data-tokens="hl-border-strong,hl-fg-muted"
-          >
-            <span className="hl-theme-icon-wrap" aria-hidden="true">
-              <MoonIcon />
-            </span>
-          </button>
+          {/* Settings + Archive are the only two icon buttons in the app's
+              toolbar. The theme lives inside Settings as a real toggle row,
+              and the interface-language picker no longer exists. */}
           <button
             type="button"
             className="hl-icon-pill hl-icon-pill--toggle"
             aria-label="Settings"
-            aria-pressed={rightTab === "settings"}
-            onClick={() => onRightTabChange("settings")}
+            aria-pressed={inSettings}
+            onClick={() => onRightTabChange(inSettings ? "recording" : "settings-general")}
             data-component="HeroLibraryDemo.SettingsButton"
             data-source={DATA_SOURCE}
             data-tokens="hl-border-strong,hl-fg-muted"
@@ -607,9 +574,6 @@ function Main({
         </div>
       </div>
 
-      {view === "dashboard" ? (
-        <DashboardView />
-      ) : (
       <div className="hl-detail">
         <div className="hl-detail-tabs">
           <div className="hl-detail-tab-col hl-detail-tab-col-left">
@@ -628,28 +592,49 @@ function Main({
             ))}
           </div>
           <div className="hl-detail-tab-col hl-detail-tab-col-right">
-            <button
-              type="button"
-              className={`hl-tab-btn${rightTab === "recording" ? " active" : ""}`}
-              onClick={() => onRightTabChange("recording")}
-              aria-pressed={rightTab === "recording"}
-              data-component="HeroLibraryDemo.RecordingTab"
-              data-source={DATA_SOURCE}
-              data-tokens="hl-fg,hl-fg-muted"
-            >
-              Recording
-            </button>
-            <button
-              type="button"
-              className={`hl-tab-btn${rightTab === "settings" ? " active" : ""}`}
-              onClick={() => onRightTabChange("settings")}
-              aria-pressed={rightTab === "settings"}
-              data-component="HeroLibraryDemo.SettingsTab"
-              data-source={DATA_SOURCE}
-              data-tokens="hl-fg,hl-fg-muted"
-            >
-              Settings
-            </button>
+            {inSettings ? (
+              // Clicking General while General is already open backs out to
+              // the Recording panel, the same affordance the app gives.
+              <>
+                <button
+                  type="button"
+                  className={`hl-tab-btn${rightTab === "settings-general" ? " active" : ""}`}
+                  onClick={() =>
+                    onRightTabChange(
+                      rightTab === "settings-general" ? "recording" : "settings-general",
+                    )
+                  }
+                  aria-pressed={rightTab === "settings-general"}
+                  data-component="HeroLibraryDemo.SettingsGeneralTab"
+                  data-source={DATA_SOURCE}
+                  data-tokens="hl-fg,hl-fg-muted"
+                >
+                  General
+                </button>
+                <button
+                  type="button"
+                  className={`hl-tab-btn${rightTab === "settings-advanced" ? " active" : ""}`}
+                  onClick={() => onRightTabChange("settings-advanced")}
+                  aria-pressed={rightTab === "settings-advanced"}
+                  data-component="HeroLibraryDemo.SettingsAdvancedTab"
+                  data-source={DATA_SOURCE}
+                  data-tokens="hl-fg,hl-fg-muted"
+                >
+                  Advanced
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                className="hl-tab-btn active"
+                aria-pressed
+                data-component="HeroLibraryDemo.RecordingTab"
+                data-source={DATA_SOURCE}
+                data-tokens="hl-fg,hl-fg-muted"
+              >
+                Recording
+              </button>
+            )}
           </div>
         </div>
 
@@ -672,70 +657,14 @@ function Main({
               mode={mode}
             />
           ) : (
-            <SettingsPane />
+            <SettingsPane
+              section={rightTab === "settings-advanced" ? "advanced" : "general"}
+              theme={theme}
+              onToggleTheme={onToggleTheme}
+            />
           )}
         </div>
       </div>
-      )}
-    </div>
-  );
-}
-
-/* Dashboard view — shown when the breadcrumb "Dashboard" is clicked.
- *
- * Mirrors Web/src/components/Dashboard.tsx as shipped. It used to show
- * Stats / Upcoming tabs, a "Longest" sort and a recent-recordings column,
- * none of which exist any more: the calendar tab is hidden until Google
- * verifies the readonly scope, the session list moved to the left sidebar,
- * and the right column now hosts the ghost recording preview. One tab,
- * Home. Copy is lifted verbatim from the app's i18n strings. */
-function DashboardView() {
-  return (
-    <div className="hl-detail">
-      <div className="hl-detail-tabs">
-        <div className="hl-detail-tab-col hl-detail-tab-col-left">
-          <span className="hl-tab active">Home</span>
-        </div>
-        <div className="hl-detail-tab-col hl-detail-tab-col-right" />
-      </div>
-
-      <div className="hl-detail-body">
-        <div className="hl-dash-left">
-          <div className="hl-dash-banner">
-            <div className="hl-dash-banner-title">Ready when you are.</div>
-            <div className="hl-dash-banner-sub">
-              For the most accurate transcript, wear headphones during calls.
-            </div>
-            <button type="button" className="hl-dash-start" tabIndex={-1}>
-              Start recording
-            </button>
-          </div>
-
-          <div className="hl-dash-stats-card">
-            <DashStat label="Recordings" value="66" />
-            <DashStat label="Total recorded" value="3h 12m" />
-            <DashStat label="This week" value="8" />
-          </div>
-        </div>
-
-        {/* Right column: the ghost recording preview, exactly where the
-            real RightPanel sits during a session. */}
-        <div className="hl-dash-ghost">
-          <div className="hl-dash-ghost-title">Screen video</div>
-          <div className="hl-dash-ghost-sub">
-            Your screen video appears here after you finish recording.
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DashStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="hl-dash-stat-row">
-      <div className="hl-dash-stat-label">{label}</div>
-      <div className="hl-dash-stat-value">{value}</div>
     </div>
   );
 }
@@ -759,7 +688,7 @@ function Transcript({
       <div className="hl-transcript-toolbar">
         <div className="hl-search-field">
           <SearchIcon />
-          <input type="search" placeholder="Search the transcript" readOnly tabIndex={-1} />
+          <input type="search" placeholder="Search the transcript…" readOnly tabIndex={-1} />
         </div>
         <button
           className="hl-toolbar-icon-btn"
@@ -959,7 +888,7 @@ function SegmentGroup({
 function SummaryPane() {
   return (
     <div className="hl-transcript-wrap">
-      <PaneToolbar placeholder="Search the summary" copyLabel="Copy summary" regenerate />
+      <PaneToolbar placeholder="Search the summary…" copyLabel="Copy summary" regenerate />
       <div className="hl-summary-content">
         <h3 className="hl-md-h3">Overview</h3>
         <p className="hl-md-p">
@@ -1000,7 +929,7 @@ const DEMO_CHAPTERS: ReadonlyArray<{ time: string; title: string; active?: boole
 function ChaptersPane() {
   return (
     <div className="hl-transcript-wrap">
-      <PaneToolbar placeholder="Search chapters" copyLabel="Copy chapters" regenerate />
+      <PaneToolbar placeholder="Search chapters…" copyLabel="Copy chapters" regenerate />
       <div className="hl-chapters">
         {DEMO_CHAPTERS.map((c, i) => (
           <div
@@ -1209,14 +1138,26 @@ function RightPanel({
   );
 }
 
-/* ── Settings pane — right-panel content when the Settings tab is
- * active. Every row must exist in the shipped app, otherwise the demo
- * promises a setting a downloader will go looking for and never find.
- * Mirrors Web/src/components/SettingsPane.tsx: Notifications, Screen
- * video, Auto-transcribe, Auto-summary, Launch at login, Always offer
- * to record. All toggles are decorative: tabIndex={-1}, no real
- * handler, the visible on/off state is hard-coded. */
-function SettingsPane() {
+/* ── Settings pane — right-panel content when Settings is open. Every
+ * row must exist in the shipped app, otherwise the demo promises a
+ * setting a downloader will go looking for and never find. Row order and
+ * every string come from Web/src/components/SettingsPane.tsx + i18n.ts.
+ * Notably absent, because the app does not have them: an interface
+ * language picker, an auto-title toggle, a global record shortcut, and a
+ * transcription-model picker (that one is admin-only).
+ *
+ * The Dark theme row is the one LIVE control: it drives the demo's own
+ * theme, which is also where the real app puts it. The rest are
+ * decorative (tabIndex -1, hard-coded state). */
+function SettingsPane({
+  section,
+  theme,
+  onToggleTheme,
+}: {
+  section: "general" | "advanced";
+  theme: Theme;
+  onToggleTheme: (e?: React.MouseEvent<HTMLElement>) => void;
+}) {
   return (
     <div
       className="hl-settings-pane"
@@ -1224,54 +1165,106 @@ function SettingsPane() {
       data-source={DATA_SOURCE}
       data-tokens="hl-bg,hl-border,hl-accent,hl-fg,hl-fg-muted"
     >
-      <SettingsCard>
-        <SettingsToggle
-          label="System notifications"
-          desc="Notify on recording start, transcript ready, and network loss."
-          on={false}
-        />
-      </SettingsCard>
-      <SettingsCard>
-        <SettingsToggle
-          label="Screen video recording"
-          desc="Save a video of what was on screen during the meeting."
-          on={true}
-        />
-      </SettingsCard>
-      <SettingsCard>
-        <SettingsToggle
-          label="Auto-transcribe"
-          desc="Transcribe the recording automatically after you stop."
-          on={false}
-        />
-      </SettingsCard>
-      <SettingsCard>
-        <SettingsToggle
-          label="Auto-summary"
-          desc="Write a short summary once the transcript is ready."
-          on={true}
-        />
-      </SettingsCard>
+      {section === "general" ? (
+        <>
+          <SettingsCard>
+            <SettingsToggle
+              label="Recording equalizer"
+              desc="Show the floating equalizer pill that hovers over your screen while recording."
+              on={true}
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <SettingsToggle
+              label="Screen video recording"
+              desc="Save a video of what was on screen during the meeting."
+              on={true}
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <SettingsToggle
+              label="Dark theme"
+              desc="Dark interface."
+              on={theme === "dark"}
+              onToggle={onToggleTheme}
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <SettingsToggle
+              label="System notifications"
+              desc="Notify on recording start, transcript ready, and network loss."
+              on={false}
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <SettingsToggle
+              label="Launch at login"
+              desc="Open Corder automatically when your Mac starts."
+              on={true}
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <SettingsToggle
+              label="Help improve Corder"
+              desc="Send anonymous diagnostic counts to the maintainer once a day."
+              on={false}
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <SettingsDropdown
+              label="Microphone"
+              desc="Select input device which records your voice"
+              value="MacBook Pro Microphone"
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <div className="hl-settings-applist">
+              <div className="hl-settings-row-label">Recordings folder</div>
+              <div className="hl-settings-row-desc">
+                Open the folder with all your recordings in Finder.
+              </div>
+              <span className="hl-settings-applist-add">Open</span>
+            </div>
+          </SettingsCard>
+        </>
+      ) : (
+        <>
+          <SettingsCard>
+            <SettingsToggle
+              label="Auto-transcribe"
+              desc="Transcribe the recording automatically after you stop."
+              on={true}
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <SettingsToggle
+              label="Auto-summary"
+              desc="Generate a structured recap as soon as the transcript is ready."
+              on={true}
+            />
+          </SettingsCard>
+          <SettingsCard>
+            <SettingsToggle
+              label="Auto-chapters"
+              desc="Split a finished transcript."
+              on={true}
+            />
+          </SettingsCard>
 
-      <div className="hl-settings-divider" aria-hidden="true" />
+          <div className="hl-settings-divider" aria-hidden="true" />
 
-      <SettingsCard>
-        <SettingsToggle
-          label="Launch at login"
-          desc="Start Corder in the menu bar when you sign in."
-          on={true}
-        />
-      </SettingsCard>
-
-      <SettingsCard>
-        <div className="hl-settings-applist">
-          <div className="hl-settings-row-label">Always offer to record</div>
-          <div className="hl-settings-row-desc">
-            Apps Corder always offers to record when they take the microphone.
-          </div>
-          <span className="hl-settings-applist-add">Add</span>
-        </div>
-      </SettingsCard>
+          <SettingsCard>
+            <div className="hl-settings-applist">
+              <div className="hl-settings-row-label">Never offer to record</div>
+              <div className="hl-settings-row-desc">
+                Apps Corder ignores even when they hold the microphone (e.g. Loom,
+                OBS, Terminal).
+              </div>
+              <span className="hl-settings-applist-add">Add</span>
+            </div>
+          </SettingsCard>
+        </>
+      )}
     </div>
   );
 }
@@ -1284,18 +1277,32 @@ function SettingsToggle({
   label,
   desc,
   on,
+  onToggle,
 }: {
   label: string;
   desc: string;
   on: boolean;
+  onToggle?: (e: React.MouseEvent<HTMLElement>) => void;
 }) {
+  const live = onToggle !== undefined;
   return (
     <div
-      className="hl-settings-row"
+      className={`hl-settings-row${live ? " hl-settings-row--live" : ""}`}
       role="switch"
       aria-checked={on}
       aria-label={label}
-      tabIndex={-1}
+      tabIndex={live ? 0 : -1}
+      onClick={onToggle}
+      onKeyDown={
+        live
+          ? (e) => {
+              if (e.key === " " || e.key === "Enter") {
+                e.preventDefault();
+                onToggle(e as unknown as React.MouseEvent<HTMLElement>);
+              }
+            }
+          : undefined
+      }
     >
       <div className="hl-settings-row-text">
         <div className="hl-settings-row-label">{label}</div>
@@ -1303,6 +1310,41 @@ function SettingsToggle({
       </div>
       <span className={`hl-set-switch${on ? " on" : ""}`} aria-hidden="true">
         <span className="hl-set-switch-thumb" />
+      </span>
+    </div>
+  );
+}
+
+/* Vertical label / description / full-width trigger stack, matching the
+ * app's `.hk-block` device picker. Decorative: the real trigger opens a
+ * portal popover with the input-device list. */
+function SettingsDropdown({
+  label,
+  desc,
+  value,
+}: {
+  label: string;
+  desc: string;
+  value: string;
+}) {
+  return (
+    <div className="hl-settings-dropdown-block" aria-label={label}>
+      <div className="hl-settings-row-label">{label}</div>
+      <div className="hl-settings-row-desc">{desc}</div>
+      <span className="hl-set-dropdown" aria-hidden="true">
+        <span className="hl-set-dropdown-value">{value}</span>
+        <svg
+          viewBox="0 0 12 12"
+          width="12"
+          height="12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 4.5l3 3 3-3" />
+        </svg>
       </span>
     </div>
   );
@@ -1626,22 +1668,6 @@ function SettingsGearIcon() {
     >
       <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
       <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
 }

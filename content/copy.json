@@ -276,12 +276,12 @@
           "Custom summary templates for your call type",
           "Priority support, direct line to the maker"
         ],
-        "cta": "Download for Mac",
-        "ctaHref": "/install/",
+        "cta": "Coming soon",
         "ctaStyle": "secondary",
         "highlight": false,
         "trackEvent": "cta_pro_click",
-        "trackBilling": null
+        "trackBilling": null,
+        "comingSoon": true
       },
       {
         "name": "Max",
@@ -305,12 +305,12 @@
           "Early builds before public release",
           "Dedicated support, same-day reply"
         ],
-        "cta": "Download for Mac",
-        "ctaHref": "/install/",
+        "cta": "Coming soon",
         "ctaStyle": "secondary",
         "highlight": false,
         "trackEvent": "cta_max_click",
-        "trackBilling": null
+        "trackBilling": null,
+        "comingSoon": true
       }
     ],
     "microcopy": "Prices in USD. No credit card to download. macOS 14 or later"
@@ -321,43 +321,51 @@
     "items": [
       {
         "q": "Does Corder send my audio to the cloud?",
-        "a": "By default, no. On Apple Silicon, transcription runs entirely on your Mac and your audio never leaves it. On a paid plan you can switch to cloud transcription for tougher audio; those chunks are sent for processing, discarded right after, and never used for training. The raw recording, the transcript, and the database always stay on your Mac. When you are offline, Corder transcribes locally."
+        "a": "Your audio never leaves your Mac. Not signed in, which is how Corder starts, nothing leaves at all: transcription runs on your Mac with a local Whisper model, and the recording, the transcript and the database sit in your own folder. Sign in and the text of your transcripts syncs to your account so your library opens on another Mac. The audio still stays local. The code is open, so you can check this rather than take our word for it."
+      },
+      {
+        "q": "Is it legal to record a call?",
+        "a": "That depends on where you and the other people are. Some places let one participant record, others require everyone to agree first. Corder does not decide this for you and does not ask anyone on your behalf, so the responsibility is yours. If you are unsure, say you are recording. Most people say yes."
       },
       {
         "q": "Does the other side know I am recording?",
-        "a": "No. Corder records the audio that already plays through your Mac. No bot joins the meeting and no notification is sent to participants. You are responsible for telling them where local law requires it, for example California or Germany."
+        "a": "Nothing appears on their end. Corder records the audio already playing through your Mac, so no bot joins the call and no participant tile shows up. That is a statement about how it works, not advice to keep it to yourself: see the question above."
+      },
+      {
+        "q": "Is Corder open source?",
+        "a": "Yes, under the GPL-3.0. The capture and transcription code is on GitHub, so if you want to verify that your audio stays on your Mac, you can read the part that would have to send it away. Anyone can build it from source."
       },
       {
         "q": "Where does my audio live?",
-        "a": "~/Library/Application Support/Corder/recordings/. You can browse, copy, or delete files directly in Finder. An optional Dropbox archive offloads originals to your own Dropbox if you set it up."
+        "a": "In ~/Library/Application Support/Corder/recordings/, in a folder named after the meeting. Browse, copy or delete them in Finder like any other file. Delete a recording in Corder and the files go with it."
       },
       {
         "q": "Does it record Zoom, Meet, Discord?",
-        "a": "Yes, anything that plays through your Mac. Zoom, Google Meet, Microsoft Teams, FaceTime, Discord, Slack huddles, browser-based calls, even Notion or Obsidian voice notes."
+        "a": "Anything that plays through your Mac. Zoom, Google Meet, Microsoft Teams, FaceTime, Discord, Slack huddles, a browser tab, a phone call on speaker. Corder captures your microphone and the system audio as two separate tracks, which is also how it tells you apart from everyone else."
       },
       {
         "q": "Which languages does it support?",
-        "a": "Transcription works in 40+ languages including English, Spanish, French, German, Portuguese, Italian, Polish, Dutch, Swedish, Czech, Turkish, Japanese, Korean, Chinese, Hindi, Arabic, Vietnamese, Indonesian, Ukrainian, and Russian. The interface is available in 20 of them."
+        "a": "Transcription covers forty plus languages and picks the language up on its own, including when a call switches between them. The app interface itself is English only for now."
       },
       {
         "q": "Does it need an internet connection?",
-        "a": "Recording works fully offline, and so does transcription on Apple Silicon. Your meeting is saved locally regardless. If a recording is set to cloud transcription and you are offline, Corder transcribes it on your Mac instead, so you are never left waiting."
+        "a": "No. Recording and transcription both run offline on your Mac. A meeting recorded on a plane transcribes on the plane."
       },
       {
         "q": "Which version of macOS does it require?",
-        "a": "macOS 14 (Sonoma) or later. macOS 15+ is recommended for the best performance."
+        "a": "macOS 14 (Sonoma) or later. Apple Silicon gets on-device transcription through the Neural Engine."
       },
       {
         "q": "Can I export the transcript?",
-        "a": "Yes. Plain text, Markdown, JSON, or one ZIP with audio plus video plus transcript. Or drag any meeting straight into Notion, Apple Notes, or Obsidian and the formatting is preserved."
+        "a": "Yes. Transcript as Markdown or JSON, the audio, the screen video, or everything as one archive. The files are yours, in ordinary formats, and nothing is locked to Corder."
       },
       {
-        "q": "What is the difference between local and cloud transcription?",
-        "a": "Local runs on your Mac, free and unlimited, and your audio never leaves the machine. It is fast and accurate for everyday meetings. Cloud transcription, on a paid plan, catches harder accents, technical jargon, and crosstalk better. Useful for sales calls, interviews, and technical syncs."
+        "q": "Is there a Windows version?",
+        "a": "Not today. Corder is built on macOS audio capture, so a Windows version means writing that part again. If enough people want it, it gets written."
       },
       {
-        "q": "Is there a free trial for Pro?",
-        "a": "Yes. The first 3 recordings on the Pro tier are free when you upgrade. Cancel before billing if it does not earn its keep."
+        "q": "What do Pro and Max cost?",
+        "a": "Nothing yet, because they are not on sale. The prices on this page are what they are meant to be. Everything you can use today is the free tier, and the free tier is not a trial: it does not expire and it does not cap how much you record."
       }
     ]
   },
@@ -672,7 +680,7 @@
         "number": "01",
         "side": "right",
         "heading": "Record from anywhere",
-        "body": "One Dashboard. Hit Start from the menu bar, or let Corder catch the meeting on its own. Sixty-six recordings, three hours, one click away"
+        "body": "One window. Hit Start from the menu bar, or let Corder catch the meeting on its own. Every recording lands in the sidebar, one click away"
       },
       {
         "number": "02",
