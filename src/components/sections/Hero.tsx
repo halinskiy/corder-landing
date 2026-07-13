@@ -17,6 +17,7 @@ import {
 
 import { copy } from "@/content/copy";
 import { AppleIcon } from "@/components/icons/AppleIcon";
+import { GithubIcon } from "@/components/icons/GithubIcon";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Hero.tsx";
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -114,15 +115,35 @@ export function Hero() {
             data-source={DATA_SOURCE}
             data-tokens="radius-pill,color-accent,color-bg,ease-out"
           >
-            <a
-              href="/install/"
-              className="cta-pill cta-pill--primary inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[17px] font-medium md:w-auto md:min-w-[260px] md:px-9"
-              data-track-event="cta_download_click"
-              data-track-source="hero"
-            >
-              <AppleIcon size={28} />
-              {hero.ctaPrimary}
-            </a>
+            {/* Download + "Star on GitHub" sit side by side on desktop and
+                stack on mobile. The repo link is not decoration: the whole
+                privacy claim is "your audio stays on your Mac", and the only
+                way a stranger can check that is by reading the capture and
+                transcription code. Giving them the door is the argument. */}
+            <div className="flex w-full flex-col items-center gap-3 md:w-auto md:flex-row md:gap-4">
+              <a
+                href="/install/"
+                className="cta-pill cta-pill--primary inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[17px] font-medium md:w-auto md:min-w-[260px] md:px-9"
+                data-track-event="cta_download_click"
+                data-track-source="hero"
+              >
+                <AppleIcon size={28} />
+                {hero.ctaPrimary}
+              </a>
+              {hero.ctaGithub && hero.githubUrl && (
+                <a
+                  href={hero.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cta-pill cta-pill--ghost inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-border)] px-6 text-[17px] font-medium text-[var(--color-text)] md:w-auto md:min-w-[220px] md:px-9"
+                  data-track-event="cta_github_click"
+                  data-track-source="hero"
+                >
+                  <GithubIcon size={22} />
+                  {hero.ctaGithub}
+                </a>
+              )}
+            </div>
             {hero.ctaHint && (
               <p
                 className="hero-cta-hint"

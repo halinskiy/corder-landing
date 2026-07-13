@@ -19,10 +19,10 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.14.96/Corder-0.14.96.dmg";
-const FALLBACK_NAME = "Corder-0.14.96.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.15.43/Corder-0.15.43.dmg";
+const FALLBACK_NAME = "Corder-0.15.43.dmg";
 
-const VERSION = "0.14.96";
+const VERSION = "0.15.43";
 
 // Fallback "What is new" notes, shown ONLY when the GitHub release API is
 // unreachable (rate-limit / CORS / offline). It is the raw Keep-a-Changelog
@@ -30,7 +30,7 @@ const VERSION = "0.14.96";
 // identically. Kept fresh automatically at build by sync-corder-version.mjs,
 // so it stays a recent snapshot, not a hand-maintained list.
 const FALLBACK_NOTES_RAW =
-  "### Fixed\n- The recording HUD equalizer no longer flickers / disappears repeatedly during\n  a recording. A burst of window-occlusion events (Space switches, a full-screen\n  call app coming forward) was momentarily pausing the animation and freezing the\n  bars; those events are now smoothed so the equalizer stays steady. This\n  completes the flicker fix started in 0.14.95.";
+  "### Fixed\n- A silent or near-silent track no longer produces a phantom speaker saying \"자막:\" (Korean for \"subtitles\"). Whisper emits bare caption words over silence and they were slipping past the hallucination filter, showing up in transcripts as an extra participant. Segments made of nothing but caption words are now dropped, while genuine speech containing the word is kept.";
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
 // might upload. Version suffix (e.g. Corder-0.13.2.dmg) and naked names

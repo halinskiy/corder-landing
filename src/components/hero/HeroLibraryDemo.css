@@ -1610,29 +1610,6 @@ html[data-motion="off"] .hl-transcript[data-revealing="true"] .hl-segment-group 
   margin: 4px 0;
   flex-shrink: 0;
 }
-/* Hotkey row — full-width clickable label inside a settings card. The
- * pill at the bottom shows the keyboard combo. Keyboard glyphs (sft,
- * cmd) are unicode symbols per the user-facing labels exception. */
-.hl-settings-hotkey {
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.hl-settings-hotkey-pill {
-  margin-top: 10px;
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  border: 1px solid var(--hl-border-strong);
-  border-radius: 8px;
-  background: var(--hl-bg-elev);
-  font-size: 13px;
-  color: var(--hl-fg);
-  font-variant-numeric: tabular-nums;
-}
 .hl-settings-applist {
   padding: 14px 16px;
   display: flex;

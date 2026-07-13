@@ -3019,22 +3019,6 @@ button:focus:not(:focus-visible) {
   cursor: default;
   text-align: center;
 }
-.hl-dash-start-hint {
-  font-size: 9.5px;
-  color: var(--hl-fg-muted);
-  text-align: center;
-}
-.hl-dash-kbd {
-  display: inline-block;
-  margin-left: 2px;
-  padding: 1px 5px;
-  border-radius: 4px;
-  background: var(--hl-bg-elev);
-  border: 1px solid var(--hl-border);
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  color: var(--hl-fg);
-}
 .hl-dash-stats-card {
   border: 1px solid var(--hl-border);
   border-radius: 8px;
@@ -3294,13 +3278,6 @@ button:focus:not(:focus-visible) {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 500;
-}
-.hl-set-rail .hl-settings-hotkey { padding: 8px 10px; gap: 3px; }
-.hl-set-rail .hl-settings-hotkey-pill {
-  margin-top: 6px;
-  padding: 5px 9px;
-  font-size: 11px;
-  border-radius: 6px;
 }
 .hl-set-rail .hl-settings-applist { padding: 8px 10px; gap: 3px; }
 /* Last card peeks out the bottom — only the header + a hint of body

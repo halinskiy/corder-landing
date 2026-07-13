@@ -352,9 +352,10 @@ function DashboardMock() {
               <div className="hl-dash-start-card">
                 <div className="hl-dash-start-text">
                   <div className="hl-dash-start-title">Ready when you are.</div>
+                  {/* Corder has no global shortcut. Do not offer one here. */}
                   <div className="hl-dash-start-sub">
-                    Hit Start in the menu bar, the shortcut, or let Corder catch
-                    the call automatically.
+                    Hit Start in the menu bar, or let Corder catch the call
+                    automatically.
                   </div>
                 </div>
                 <button
@@ -364,10 +365,6 @@ function DashboardMock() {
                 >
                   Start recording
                 </button>
-                <div className="hl-dash-start-hint">
-                  or press{" "}
-                  <span className="hl-dash-kbd">{"⇧⌘F"}</span>
-                </div>
               </div>
             </div>
 
@@ -736,7 +733,7 @@ function SettingsMock() {
   return (
     <MockShell
       variant="settings"
-      ariaLabel="Corder transcript with the Settings tab open. System notifications, screen video, auto-transcribe, auto-title, the global hotkey, and Always offer to record."
+      ariaLabel="Corder transcript with the Settings tab open. System notifications, microphone, screen video, auto-transcribe, auto-summary, launch at login, and Always offer to record."
     >
       {/* Sidebar */}
       <aside className="hl-sidebar hl-set-sidebar" aria-hidden="true">
@@ -879,18 +876,15 @@ function SettingsMock() {
                   value="MacBook Pro Microphone"
                 />
               </div>
+              {/* Every row here must exist in the shipped app, or the mockup
+                  promises a setting the downloader will hunt for and never
+                  find. Corder has no language picker, no title toggle, no
+                  global shortcut, and exactly one on-device model. */}
               <div className="hl-settings-card">
                 <SettingsDropdownRow
                   label="Transcription model"
-                  desc="On-device Whisper Small. Larger models give sharper accuracy at the cost of disk."
-                  value="Whisper Small · 480 MB"
-                />
-              </div>
-              <div className="hl-settings-card">
-                <SettingsDropdownRow
-                  label="Language"
-                  desc="Primary language of your meetings. Picker moved here from the header."
-                  value="English"
+                  desc="Which model the next recording is transcribed with."
+                  value="Whisper large-v3-turbo"
                 />
               </div>
               <div className="hl-settings-card">
@@ -909,24 +903,17 @@ function SettingsMock() {
               </div>
               <div className="hl-settings-card">
                 <SettingsToggleRow
-                  label="Auto-title"
-                  desc="Generate a short meeting title from the transcript."
+                  label="Auto-summary"
+                  desc="Write a summary with action items once the transcript is ready."
                   on={true}
                 />
               </div>
               <div className="hl-settings-card">
-                <div className="hl-settings-hotkey">
-                  <div className="hl-settings-row-label">Start/stop recording</div>
-                  <div className="hl-settings-row-desc">
-                    A global shortcut to quickly start Corder.
-                  </div>
-                  <span
-                    className="hl-settings-hotkey-pill"
-                    aria-label="Shortcut: Shift Command F"
-                  >
-                    {"⇧⌘F"}
-                  </span>
-                </div>
+                <SettingsToggleRow
+                  label="Launch at login"
+                  desc="Start Corder automatically when you log in."
+                  on={true}
+                />
               </div>
               <div className="hl-settings-card hl-set-card--clipped">
                 <div className="hl-settings-applist">
