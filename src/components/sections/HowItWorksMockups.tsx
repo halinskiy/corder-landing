@@ -274,7 +274,7 @@ function DashboardMock() {
   return (
     <MockShell
       variant="dashboard"
-      ariaLabel="Corder Dashboard. Sidebar with recent meetings, Stats with a Ready when you are start card and recording totals, and a Recent rail."
+      ariaLabel="Corder Dashboard. Sidebar with recent meetings, a Ready when you are start card, recording totals, and the screen video preview."
     >
       {/* Sidebar */}
       <aside className="hl-sidebar hl-dash-sidebar" aria-hidden="true">
@@ -329,21 +329,15 @@ function DashboardMock() {
         </div>
 
         <div className="hl-dash-detail">
-          {/* Tab strip -- Stats active (left), Longest active (right)
-             with a small dropdown selector for the sort mode. */}
+          {/* One tab, Home. The Stats / Longest / Upcoming strip and the
+              Recent rail are gone from the app: the calendar tab waits on
+              Google verifying the readonly scope, and the session list
+              lives in the left sidebar. Copy matches the app's i18n. */}
           <div className="hl-dash-tabs">
             <div className="hl-dash-tab-col hl-dash-tab-col-left">
-              <span className="hl-tab active">Stats</span>
+              <span className="hl-tab active">Home</span>
             </div>
-            <div className="hl-dash-tab-col hl-dash-tab-col-right">
-              <span className="hl-tab active">Longest</span>
-              <span className="hl-dash-tab-picker" aria-hidden="true">
-                <span>All time</span>
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 4.5l3 3 3-3" />
-                </svg>
-              </span>
-            </div>
+            <div className="hl-dash-tab-col hl-dash-tab-col-right" />
           </div>
 
           <div className="hl-dash-body">
@@ -352,10 +346,9 @@ function DashboardMock() {
               <div className="hl-dash-start-card">
                 <div className="hl-dash-start-text">
                   <div className="hl-dash-start-title">Ready when you are.</div>
-                  {/* Corder has no global shortcut. Do not offer one here. */}
                   <div className="hl-dash-start-sub">
-                    Hit Start in the menu bar, or let Corder catch the call
-                    automatically.
+                    For the most accurate transcript, wear headphones during
+                    calls.
                   </div>
                 </div>
                 <button
@@ -366,29 +359,21 @@ function DashboardMock() {
                   Start recording
                 </button>
               </div>
+
+              <div className="hl-dash-stats-card">
+                <StatRow label="Recordings" value="66" />
+                <StatRow label="Total recorded" value="3h 12m" />
+                <StatRow label="This week" value="8" />
+              </div>
             </div>
 
-            {/* Right column: Recent rail */}
-            <div className="hl-dash-recent">
-              <RecentCard title="Today, 19:46" duration="16s" />
-              <RecentCard title="Today, 13:58" duration="5s" />
-              <RecentCard
-                title="Testing Corder X100"
-                duration="42s, Today, 12:50"
-                people={2}
-              />
-              <RecentCard title="May 19, 15:28" duration="30s" />
-              <RecentCard
-                title="Postmodernism discussion"
-                duration="56s, May 19, 15:14"
-                people={2}
-              />
-              <RecentCard title="May 19, 14:34" duration="46s" />
-              <RecentCard
-                title="Outreach system optimisation"
-                duration="6m 31s, May 15, 14:09"
-                people={1}
-              />
+            {/* Right column: the ghost recording preview, the cell the
+                RightPanel fills during a session. */}
+            <div className="hl-dash-ghost">
+              <div className="hl-dash-ghost-title">Screen video</div>
+              <div className="hl-dash-ghost-sub">
+                Your screen video appears here after you finish recording.
+              </div>
             </div>
           </div>
         </div>
@@ -397,27 +382,11 @@ function DashboardMock() {
   );
 }
 
-function RecentCard({
-  title,
-  duration,
-  people,
-}: {
-  title: string;
-  duration: string;
-  people?: number;
-}) {
+function StatRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="hl-dash-recent-card">
-      <div className="hl-dash-recent-title-row">
-        <div className="hl-dash-recent-title">{title}</div>
-        {people !== undefined && people > 0 && (
-          <span className="hl-meeting-people">
-            <span>{people}</span>
-            <PeopleIcon />
-          </span>
-        )}
-      </div>
-      <div className="hl-dash-recent-meta">{duration}</div>
+    <div className="hl-dash-stat-row">
+      <div className="hl-dash-stat-label">{label}</div>
+      <div className="hl-dash-stat-value">{value}</div>
     </div>
   );
 }

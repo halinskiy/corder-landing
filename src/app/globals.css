@@ -2941,25 +2941,6 @@ button:focus:not(:focus-visible) {
 }
 .hl-dash-tab-col .hl-tab { font-size: 11px; padding: 2px 0 7px; }
 
-/* "Longest" selector in the right tab column - small chevron picker
- * showing the current sort mode. */
-.hl-dash-tab-picker {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 1px 6px 1px 8px;
-  border: 1px solid var(--hl-border);
-  border-radius: 999px;
-  font-size: 10px;
-  color: var(--hl-fg-muted);
-  font-family: var(--font-sans);
-}
-.hl-dash-tab-picker svg {
-  width: 9px;
-  height: 9px;
-  color: var(--hl-fg-dim);
-}
-
 .hl-dash-body {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.95fr);
@@ -3050,44 +3031,25 @@ button:focus:not(:focus-visible) {
   color: var(--hl-fg);
 }
 
-.hl-dash-recent {
-  padding: 10px 10px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-height: 0;
+/* Ghost recording preview, right grid cell on Home. Same cell the
+ * RightPanel occupies during a session, so the window keeps its
+ * two-column shape in every view. */
+.hl-dash-ghost {
+  padding: 12px 12px 0;
+  min-width: 0;
   overflow: hidden;
 }
-.hl-dash-recent-card {
-  border: 1px solid var(--hl-border);
-  border-radius: 6px;
-  padding: 6px 8px 7px;
-  background: var(--hl-bg);
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  flex-shrink: 0;
-}
-.hl-dash-recent-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-width: 0;
-}
-.hl-dash-recent-title {
-  font-size: 10.5px;
-  font-weight: 500;
+.hl-dash-ghost-title {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 600;
   color: var(--hl-fg);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
 }
-.hl-dash-recent-meta {
-  font-size: 9.5px;
+.hl-dash-ghost-sub {
+  margin-top: 4px;
+  font-size: 10.5px;
+  line-height: 1.4;
   color: var(--hl-fg-muted);
-  font-variant-numeric: tabular-nums;
 }
 
 /* ── Library / Transcript mock & Settings mock ──────────────────────
