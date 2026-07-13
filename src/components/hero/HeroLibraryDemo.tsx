@@ -1253,10 +1253,12 @@ function RightPanel({
 }
 
 /* ── Settings pane — right-panel content when the Settings tab is
- * active. Mirrors the real macOS app's SettingsPane (Notifications,
- * Screen video, Auto-transcribe, Auto-title, hotkey, Always offer to
- * record). All toggles are decorative: tabIndex={-1}, no real handler,
- * the visible on/off state is hard-coded per the inventory dossier. */
+ * active. Every row must exist in the shipped app, otherwise the demo
+ * promises a setting a downloader will go looking for and never find.
+ * Mirrors Web/src/components/SettingsPane.tsx: Notifications, Screen
+ * video, Auto-transcribe, Auto-summary, Launch at login, Always offer
+ * to record. All toggles are decorative: tabIndex={-1}, no real
+ * handler, the visible on/off state is hard-coded. */
 function SettingsPane() {
   return (
     <div
@@ -1288,8 +1290,8 @@ function SettingsPane() {
       </SettingsCard>
       <SettingsCard>
         <SettingsToggle
-          label="Auto-title"
-          desc="Generate a short meeting title from the transcript."
+          label="Auto-summary"
+          desc="Write a short summary once the transcript is ready."
           on={true}
         />
       </SettingsCard>
@@ -1297,18 +1299,11 @@ function SettingsPane() {
       <div className="hl-settings-divider" aria-hidden="true" />
 
       <SettingsCard>
-        <div className="hl-settings-hotkey">
-          <div className="hl-settings-row-label">Start/stop recording</div>
-          <div className="hl-settings-row-desc">
-            A global shortcut to quickly start Corder.
-          </div>
-          <span
-            className="hl-settings-hotkey-pill"
-            aria-label="Shortcut: Shift Command F"
-          >
-            {"⇧⌘F"}
-          </span>
-        </div>
+        <SettingsToggle
+          label="Launch at login"
+          desc="Start Corder in the menu bar when you sign in."
+          on={true}
+        />
       </SettingsCard>
 
       <SettingsCard>

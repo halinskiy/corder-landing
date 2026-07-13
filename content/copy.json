@@ -41,7 +41,9 @@
     "subhead": "Keeps the {{Transcript}} on your Mac. No bot joins the call",
     "ctaPrimary": "Download for Mac",
     "ctaSecondary": "How it works",
-    "ctaHint": "Requires macOS 14 (Sonoma) or later"
+    "ctaHint": "Requires macOS 14 (Sonoma) or later",
+    "ctaGithub": "Star on GitHub",
+    "githubUrl": "https://github.com/halinskiy/Corder"
   },
   "audienceLine": {
     "text": "For founders taking investor calls, consultants on client kickoffs, and anyone who thinks out loud and needs it written down",
@@ -210,7 +212,7 @@
       {
         "eyebrow": "LANGUAGES",
         "heading": "Speaks your language",
-        "body": "Interface in yours. Transcription in forty plus.",
+        "body": "Transcription in forty plus languages, detected automatically, even when a call switches between them.",
         "visualHint": "language-mock"
       }
     ]
@@ -670,7 +672,7 @@
         "number": "01",
         "side": "right",
         "heading": "Record from anywhere",
-        "body": "One Dashboard. Hit Start from the menu bar, the global hotkey, or let Corder catch the meeting on its own. Sixty-six recordings, three hours, one keystroke away"
+        "body": "One Dashboard. Hit Start from the menu bar, or let Corder catch the meeting on its own. Sixty-six recordings, three hours, one click away"
       },
       {
         "number": "02",
@@ -682,7 +684,7 @@
         "number": "03",
         "side": "right",
         "heading": "Tune it to your workflow",
-        "body": "Toggle screen video, auto-transcribe, auto-title, the global hotkey. Switch theme or language with a click. Defaults you can change anytime, not preferences buried five menus deep"
+        "body": "Toggle screen video, its resolution, auto-transcribe, and meeting auto-detect. Switch between light and dark with a click. Defaults you can change anytime, not preferences buried five menus deep"
       }
     ]
   }
