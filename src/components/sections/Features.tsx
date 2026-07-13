@@ -780,22 +780,22 @@ function TranscriptFragment() {
 }
 
 /**
- * 06 -- Language mock. Vertical stack of language rows in their native
- * scripts. The "English" row carries the accent green check + tint as
- * the active UI language; the other rows are present but muted to
- * read as "available". The accent check is the spotlight.
+ * 06 -- Language mock. Three transcript lines from one call, each in a
+ * different language, each tagged with the language Corder detected on
+ * its own. This used to be an INTERFACE picker with a green check on
+ * English, which promised a UI-language setting Corder does not have:
+ * the interface is English only. What it actually does is detect the
+ * spoken language per chunk, including when a call switches mid-way,
+ * which is what the accent tags show here.
  *
  * Native scripts are NOT punctuation, so they pass the ASCII audit
  * (which only catches em-dash family + curly quotes + bullet etc.).
  */
 function LanguageMock() {
-  const rows: Array<{ label: string; native: string; active?: boolean }> = [
-    { label: "English", native: "English", active: true },
-    { label: "Ukrainian", native: "Українська" },
-    { label: "German", native: "Deutsch" },
-    { label: "Japanese", native: "日本語" },
-    { label: "Spanish", native: "Español" },
-    { label: "Chinese", native: "中文" },
+  const rows: Array<{ line: string; lang: string; tagWidth: number }> = [
+    { line: "We can ship the cache by Friday.", lang: "English", tagWidth: 54 },
+    { line: "Добре, я підготую реліз.", lang: "Ukrainian", tagWidth: 62 },
+    { line: "了解しました。", lang: "Japanese", tagWidth: 58 },
   ];
   return (
     <svg
@@ -803,72 +803,60 @@ function LanguageMock() {
       viewBox="0 0 320 220"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label="Language picker showing English active and several other languages available"
+      aria-label="Transcript lines in English, Ukrainian and Japanese, each tagged with the language Corder detected"
     >
       {/* Card background */}
       <rect x="0" y="0" width="320" height="220" rx="10" fill="var(--color-bg)" stroke="var(--color-border)" strokeWidth="1" />
 
       {/* Header */}
       <text
-        x="16" y="22"
+        x="16" y="26"
         fontFamily="var(--font-sans), system-ui, sans-serif"
         fontSize="10"
         fontWeight="600"
         letterSpacing="0.6"
         fill="var(--color-text-subtle)"
       >
-        INTERFACE
+        DETECTED
       </text>
 
-      {/* Rows */}
       {rows.map((row, i) => {
-        const y = 38 + i * 28;
-        const isActive = row.active === true;
+        const top = 46 + i * 56;
+        const tagX = 304 - row.tagWidth;
         return (
-          <g key={row.label}>
-            {/* Row background - subtle accent tint for active */}
-            {isActive && (
-              <rect x="8" y={y} width="304" height="22" rx="6"
-                fill="rgba(33, 122, 80, 0.10)" />
-            )}
-            {/* Status dot / check */}
-            {isActive ? (
-              <g>
-                <circle cx="22" cy={y + 11} r="6" fill="var(--color-accent)" />
-                <path d={`M ${22 - 2.5} ${y + 11} l 2 2 l 4 -4`}
-                  fill="none"
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round" />
-              </g>
-            ) : (
-              <circle cx="22" cy={y + 11} r="3"
-                fill="none"
-                stroke="var(--color-border-strong)"
-                strokeWidth="1" />
-            )}
-            {/* Native label */}
+          <g key={row.lang}>
+            {/* Accent tag: the language Corder worked out by itself. */}
+            <rect
+              x={tagX} y={top}
+              width={row.tagWidth} height={18} rx="9"
+              fill="rgba(33, 122, 80, 0.10)"
+            />
             <text
-              x="36" y={y + 15}
-              fontFamily="var(--font-sans), system-ui, sans-serif"
-              fontSize="12"
-              fontWeight={isActive ? 600 : 500}
-              fill={isActive ? "var(--color-text)" : "var(--color-text-muted)"}
-            >
-              {row.native}
-            </text>
-            {/* English name to the right, smaller */}
-            <text
-              x="304" y={y + 15}
-              textAnchor="end"
+              x={tagX + row.tagWidth / 2} y={top + 13}
+              textAnchor="middle"
               fontFamily="var(--font-sans), system-ui, sans-serif"
               fontSize="10"
-              fontWeight="400"
-              fill="var(--color-text-subtle)"
+              fontWeight="600"
+              fill="var(--color-accent)"
             >
-              {row.label}
+              {row.lang}
             </text>
+
+            {/* The spoken line, in its own script. */}
+            <text
+              x="16" y={top + 14}
+              fontFamily="var(--font-sans), system-ui, sans-serif"
+              fontSize="12"
+              fontWeight="500"
+              fill="var(--color-text)"
+            >
+              {row.line}
+            </text>
+
+            {/* Hairline under every row but the last. */}
+            {i < rows.length - 1 && (
+              <rect x="16" y={top + 36} width="288" height="1" fill="var(--color-border)" />
+            )}
           </g>
         );
       })}

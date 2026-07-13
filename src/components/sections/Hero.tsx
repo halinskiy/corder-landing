@@ -135,7 +135,10 @@ export function Hero() {
                   href={hero.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="cta-pill cta-pill--ghost inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-border)] px-6 text-[17px] font-medium text-[var(--color-text)] md:w-auto md:min-w-[220px] md:px-9"
+                  // Opaque white fill, not the usual transparent ghost: the
+                  // hero blobs pass right under this button and their edge
+                  // showed through the pill.
+                  className="cta-pill cta-pill--ghost inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-border)] bg-[var(--color-bg)] px-6 text-[17px] font-medium text-[var(--color-text)] md:w-auto md:min-w-[220px] md:px-9"
                   data-track-event="cta_github_click"
                   data-track-source="hero"
                 >

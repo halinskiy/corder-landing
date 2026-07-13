@@ -608,7 +608,7 @@ function Main({
       </div>
 
       {view === "dashboard" ? (
-        <DashboardView onOpenMeeting={onOpenMeeting} />
+        <DashboardView />
       ) : (
       <div className="hl-detail">
         <div className="hl-detail-tabs">
@@ -682,104 +682,61 @@ function Main({
 }
 
 /* Dashboard view — shown when the breadcrumb "Dashboard" is clicked.
- * Mirrors the app's Dashboard: left column with Stats / Upcoming tabs and
- * a "Longest" sort on the right, over a recent-recordings list. */
-function DashboardView({ onOpenMeeting }: { onOpenMeeting: () => void }) {
-  const [dashTab, setDashTab] = useState<"stats" | "upcoming">("upcoming");
+ *
+ * Mirrors Web/src/components/Dashboard.tsx as shipped. It used to show
+ * Stats / Upcoming tabs, a "Longest" sort and a recent-recordings column,
+ * none of which exist any more: the calendar tab is hidden until Google
+ * verifies the readonly scope, the session list moved to the left sidebar,
+ * and the right column now hosts the ghost recording preview. One tab,
+ * Home. Copy is lifted verbatim from the app's i18n strings. */
+function DashboardView() {
   return (
     <div className="hl-detail">
       <div className="hl-detail-tabs">
         <div className="hl-detail-tab-col hl-detail-tab-col-left">
-          {(["stats", "upcoming"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              className={`hl-tab${dashTab === t ? " active" : ""}`}
-              onClick={() => setDashTab(t)}
-              aria-pressed={dashTab === t}
-              data-component={`HeroLibraryDemo.DashTab.${t}`}
-              data-source={DATA_SOURCE}
-            >
-              {t === "stats" ? "Stats" : "Upcoming"}
-            </button>
-          ))}
+          <span className="hl-tab active">Home</span>
         </div>
-        <div className="hl-detail-tab-col hl-detail-tab-col-right">
-          <span className="hl-dash-sort" aria-hidden="true">
-            Longest
-            <ChevronDownIcon />
-          </span>
-        </div>
+        <div className="hl-detail-tab-col hl-detail-tab-col-right" />
       </div>
 
       <div className="hl-detail-body">
         <div className="hl-dash-left">
-          {dashTab === "upcoming" ? (
-            <>
-              <div className="hl-dash-section-label">Up next</div>
-              <DashUpcoming title="Investor sync — Mike + Paul" meta="Today, 15:00" />
-              <div className="hl-dash-section-label">This week</div>
-              <DashUpcoming title="Product weekly" meta="Jun 10, 17:30" />
-              <DashUpcoming title="1:1 with Dima" meta="Jun 12, 10:00" />
-              <DashUpcoming title="Design review — Corder landing" meta="Jun 14, 14:00" />
-            </>
-          ) : (
-            <>
-              <div className="hl-dash-banner">
-                <div className="hl-dash-banner-title">Ready when you are.</div>
-                <div className="hl-dash-banner-sub">
-                  For the most accurate transcript, wear headphones during calls.
-                </div>
-              </div>
-            </>
-          )}
+          <div className="hl-dash-banner">
+            <div className="hl-dash-banner-title">Ready when you are.</div>
+            <div className="hl-dash-banner-sub">
+              For the most accurate transcript, wear headphones during calls.
+            </div>
+            <button type="button" className="hl-dash-start" tabIndex={-1}>
+              Start recording
+            </button>
+          </div>
+
+          <div className="hl-dash-stats-card">
+            <DashStat label="Recordings" value="66" />
+            <DashStat label="Total recorded" value="3h 12m" />
+            <DashStat label="This week" value="8" />
+          </div>
         </div>
 
-        <div className="hl-dash-recent">
-          <DashRecent title="Q3 roadmap, eng all-hands" meta="40m 00s · Jun 5" people={3} onOpen={onOpenMeeting} />
-          <DashRecent title="Pricing strategy review" meta="12m 04s · Jun 5" people={3} onOpen={onOpenMeeting} />
-          <DashRecent title="Tested Stripe and booking flow" meta="6m 11s · Jun 5" people={2} onOpen={onOpenMeeting} />
-          <DashRecent title="Cats expo and games" meta="1m 40s · Jun 6" people={4} onOpen={onOpenMeeting} />
-          <DashRecent title="Blob reacting to sound" meta="56s · Jun 7" people={1} onOpen={onOpenMeeting} />
+        {/* Right column: the ghost recording preview, exactly where the
+            real RightPanel sits during a session. */}
+        <div className="hl-dash-ghost">
+          <div className="hl-dash-ghost-title">Screen video</div>
+          <div className="hl-dash-ghost-sub">
+            Your screen video appears here after you finish recording.
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function DashUpcoming({ title, meta }: { title: string; meta: string }) {
+function DashStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="hl-dash-up-card">
-      <div className="hl-dash-up-title">{title}</div>
-      <div className="hl-dash-up-meta">{meta}</div>
+    <div className="hl-dash-stat-row">
+      <div className="hl-dash-stat-label">{label}</div>
+      <div className="hl-dash-stat-value">{value}</div>
     </div>
-  );
-}
-
-function DashRecent({
-  title,
-  meta,
-  people,
-  onOpen,
-}: {
-  title: string;
-  meta: string;
-  people: number;
-  onOpen: () => void;
-}) {
-  return (
-    <button type="button" className="hl-dash-recent-card" onClick={onOpen}>
-      <div className="hl-dash-recent-row">
-        <div className="hl-dash-recent-title-row">
-          <span className="hl-dash-recent-title">{title}</span>
-          <span className="hl-meeting-people">
-            <span>{people}</span>
-            <PeopleIcon />
-          </span>
-        </div>
-        <div className="hl-dash-recent-meta">{meta}</div>
-      </div>
-    </button>
   );
 }
 
@@ -1757,23 +1714,6 @@ function RefreshIcon() {
       <path d="M21 3v5h-5" />
       <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
       <path d="M3 21v-5h5" />
-    </svg>
-  );
-}
-
-// Chevron-down — the Dashboard "Longest" sort trigger.
-function ChevronDownIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="m6 9 6 6 6-6" />
     </svg>
   );
 }
