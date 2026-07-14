@@ -241,7 +241,7 @@
           "billNote": "No credit card"
         },
         "features": [
-          "Unlimited on-device transcription",
+          "Unlimited transcription, on your Mac, forever",
           "Speakers labelled on every call",
           "Searchable transcript, drag out to Notion",
           "Screen video captured alongside the audio",
@@ -271,9 +271,9 @@
         },
         "features": [
           "Everything in Free, plus:",
-          "25 hours a month included",
-          "Auto-summary with sections and action items",
-          "Custom summary templates for your call type",
+          "Cloud transcription, 25 hours a month. A long call comes back in seconds instead of minutes, and your Mac stays quiet",
+          "Summaries that name the decisions and who owns what next",
+          "Chapters, so an hour long call is skimmable in a minute",
           "Priority support, direct line to the maker"
         ],
         "cta": "Coming soon",
@@ -300,9 +300,7 @@
         },
         "features": [
           "Everything in Pro, plus:",
-          "Unlimited transcription, fair use applies",
-          "Stronger handling of accents and crosstalk",
-          "Early builds before public release",
+          "250 hours a month, ten times Pro. Enough to record every call you take",
           "Dedicated support, same-day reply"
         ],
         "cta": "Coming soon",
