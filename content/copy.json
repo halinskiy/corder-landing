@@ -94,7 +94,7 @@
       {
         "tag": "Local storage",
         "heading": "Your files, your Mac",
-        "body": "The transcript and the original audio live in ~/Library/Application Support/Corder/ until you delete them. Optional Dropbox archive uploads a copy to your own Dropbox app folder, off by default. On a paid plan you can switch to cloud transcription for tougher audio, and even then the audio is discarded once the transcript is back",
+        "body": "The transcript and the original audio live in ~/Library/Application Support/Corder/ until you delete them. On a paid plan you can switch to cloud transcription for tougher audio, and even then the audio is discarded the moment the transcript is back",
         "specList": [
           {
             "key": "Transcript",
@@ -105,8 +105,8 @@
             "value": "Same folder, .m4a format"
           },
           {
-            "key": "Dropbox archive",
-            "value": "Off by default, your Dropbox only"
+            "key": "Cloud",
+            "value": "Free tier never uploads. Nothing leaves the Mac"
           },
           {
             "key": "Delete",
@@ -140,8 +140,8 @@
       },
       {
         "number": "04",
-        "heading": "No subscription. BYO Gemini key",
-        "body": "Bring your own Gemini API key. You pay Google about $0.30 per recorded hour at Flash rates, however many projects you're juggling",
+        "heading": "Free, and it stays free",
+        "body": "Unlimited transcription on your Mac. No account, no API key, no monthly bill.",
         "liveDemo": "byok"
       }
     ]
@@ -529,7 +529,7 @@
     "lineUs": "Free download. About $0.30 per recorded hour goes to Google",
     "cta": "Download for Mac",
     "ctaHref": "/install/",
-    "footer": "macOS 14+, Apple Silicon, Bring your own Gemini API key",
+    "footer": "macOS 14+, Apple Silicon, free to download",
     "ratePerHour": 0.3,
     "defaultHours": 30,
     "minHours": 1,
