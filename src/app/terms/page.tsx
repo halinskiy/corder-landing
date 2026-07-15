@@ -37,21 +37,22 @@ export default function TermsPage() {
             <h2>The deal</h2>
             <p>
               You install Corder on your Mac. The app records audio that
-              plays through your speakers and microphone, and (with your
-              consent) sends chunks of that audio to the Google Gemini API
-              for transcription. The audio, the transcript, the summary,
-              and the database live on your Mac unless you choose to
-              archive recordings to your own Dropbox.
+              plays through your speakers and microphone and transcribes
+              it. On the Free tier that transcription runs entirely on
+              your Mac. On the paid tiers, with your consent, chunks of
+              audio are sent to our cloud transcription provider (Groq).
+              The audio, the transcript, the summary, and the database
+              live on your Mac.
             </p>
 
-            <h2>Free and Pro tiers</h2>
+            <h2>Free and paid tiers</h2>
             <p>
-              The Free tier allows recordings up to 60 minutes each and
-              uses the default Gemini Flash model. The Pro tier removes
-              the recording length limit, enables auto-summary, gives you
-              the slower-but-stronger Pro model option, and includes
-              priority support. Pro is billed monthly or annually with a
-              31% saving on the annual plan.
+              The Free tier transcribes on your Mac with a local Whisper
+              model, with no account and no usage limit. The paid tiers
+              (Pro and Max) add cloud transcription, which returns long
+              recordings in seconds, plus auto-summary and chapters. Paid
+              tiers are not on sale yet. When they launch, they will be
+              billed monthly or annually.
             </p>
 
             <h2>Cancel anytime</h2>
@@ -72,7 +73,7 @@ export default function TermsPage() {
             <h2>No warranty</h2>
             <p>
               Corder is provided as is. Transcription accuracy depends on
-              the Gemini API and on audio quality. We do not warrant any
+              the Whisper model and on audio quality. We do not warrant any
               specific level of accuracy and we are not liable for damage
               caused by transcription errors.
             </p>

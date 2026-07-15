@@ -15,7 +15,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Corder. The Mac meeting recorder",
     short_name: "Corder",
     description:
-      "Mac meeting recorder. Records system audio and transcribes the call. No bot joins, nothing leaves your Mac except the audio chunk sent to Gemini for transcription.",
+      "Mac meeting recorder. Records system audio and transcribes the call on your Mac. No bot joins the call, and your audio never leaves the machine.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

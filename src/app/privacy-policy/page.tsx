@@ -58,7 +58,7 @@ export default function PrivacyPolicyPage() {
               on your tier.
             </p>
 
-            <h4>Free tier (Bring Your Own Key, on-device only)</h4>
+            <h4>Free tier (on-device, nothing leaves your Mac)</h4>
             <ul>
               <li>
                 Recordings, transcripts, summaries, and the application
@@ -66,14 +66,9 @@ export default function PrivacyPolicyPage() {
                 <code>~/Library/Application Support/Corder/</code>.
               </li>
               <li>
-                Transcription runs via the Google Gemini API using a
-                key you supply in Settings. Audio chunks travel from
-                your Mac directly to Google. We do not see them and we
-                do not proxy them.
-              </li>
-              <li>
-                Optional local Whisper model (Apple Silicon only) keeps
-                transcription fully on-device. Nothing leaves the Mac.
+                Transcription runs entirely on your Mac with a local
+                Whisper model on the Apple Neural Engine. No account,
+                no network, nothing leaves the machine.
               </li>
             </ul>
 
@@ -82,11 +77,11 @@ export default function PrivacyPolicyPage() {
               <li>
                 Audio chunks are uploaded from your Mac to our
                 infrastructure for transcription. We hand each chunk to
-                Google Gemini (default) or OpenAI Whisper (Max), wait
-                for the transcript, and discard the audio chunk
-                immediately afterwards. The retention window inside our
-                cloud is at most 48 hours and only as long as the
-                transcription queue holds it.
+                Groq (running Whisper large-v3-turbo), wait for the
+                transcript, and discard the audio chunk immediately
+                afterwards. The retention window inside our cloud is at
+                most 48 hours and only as long as the transcription
+                queue holds it.
               </li>
               <li>
                 The transcript, summary, speaker labels, and meeting
@@ -163,14 +158,14 @@ export default function PrivacyPolicyPage() {
                   <td>EU (Frankfurt)</td>
                 </tr>
                 <tr>
-                  <td>Google Cloud (Gemini API)</td>
-                  <td>Transcription, summarisation</td>
-                  <td>Global (Google&apos;s default region routing)</td>
+                  <td>Groq</td>
+                  <td>Cloud transcription (Pro and Max tiers)</td>
+                  <td>United States</td>
                 </tr>
                 <tr>
-                  <td>OpenAI (Whisper API)</td>
-                  <td>Transcription option on Max tier</td>
-                  <td>United States</td>
+                  <td>Google Cloud (Gemini API)</td>
+                  <td>Summaries and chapters (paid tiers)</td>
+                  <td>Global (Google&apos;s default region routing)</td>
                 </tr>
                 <tr>
                   <td>Paddle</td>
@@ -291,9 +286,10 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 No training of any AI model on your data. The
-                providers we forward chunks to (Google Gemini, OpenAI
-                Whisper) operate under their API terms which prohibit
-                training on data sent through the API.
+                providers we forward chunks to (Groq for transcription,
+                Google Gemini for summaries) operate under their API
+                terms which prohibit training on data sent through the
+                API.
               </li>
               <li>
                 No advertising profiles built from your meetings.
