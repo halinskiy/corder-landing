@@ -4,9 +4,22 @@ Inherits from `~/Aisoldier/CLAUDE.md`. Project-specific overrides only.
 
 ## Project identity
 
-- **Product:** Corder — a macOS meeting recorder. Status-bar app, captures system audio, no bot in the call, sends audio to Gemini 2.5 Flash for transcription.
+- **Product:** Corder — a macOS meeting recorder. Status-bar app, captures system audio, no bot in the call, transcribes via Groq Whisper (cloud, paid) or an on-device Whisper model (free, Apple Silicon). Positioning hook is "no bot in the call", not "fully local".
 - **Audience:** Founders, indie makers, freelance designers/developers/consultants, coaches, solo thinkers. People who do not want a third-party SaaS bot in their meetings.
 - **Source dossier:** `assets/CORDER-BRAND.md` is the authoritative product brief. Read it before any decision about copy, layout, or art direction.
+
+## Brand mark
+
+**Read `BRAND-MARK.md` before rendering the logo anywhere.** There are two
+legitimate versions (3D for web, flat for macOS) and one pre-crushed file that
+must not be used. Short version:
+
+- Web (this landing, share.getcorder.com, emails, social): resample from
+  `assets/corder-mark-3d-2048.png`.
+- macOS (Dock, DMG): the flat mark in `/Users/3mpq/corder-brand/`. macOS draws
+  its own shadow, which is why the app icon carries no baked-in depth.
+- `public/brand-mark-128.png` is 128px crushed to 2 KB and looks like mush at
+  any real size. Nav still points at it; re-cut it from the 2048 source.
 
 ## Accent
 

@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     "no bot meeting recorder",
     "private meeting recorder",
     "local meeting transcription",
-    "on-device transcription",
+    "record calls without a bot",
     "corder app",
   ],
   category: "productivity",
