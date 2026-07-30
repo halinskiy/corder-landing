@@ -2,9 +2,9 @@
   "meta": {
     "lang": "en",
     "title": "Corder: Record what was said",
-    "description": "Corder records system audio and transcribes your meetings on your Mac. Speaker labels, searchable transcript, no bot in the call. Free to download for macOS 14+",
+    "description": "Corder records system audio and transcribes your meetings, with no bot in the call. Speaker labels, searchable transcript, recordings stored on your Mac. Free to download for macOS 14+",
     "ogTitle": "Corder. The Mac recorder with no bot in the call",
-    "ogDescription": "Record any meeting on macOS. Speakers labelled, transcript searchable. Transcription runs on your Mac, so your audio stays local. No third participant ever joins your call"
+    "ogDescription": "Record any meeting on macOS. Speakers labelled, transcript searchable. No bot joins the call, and your recordings stay on your Mac. No third participant ever joins"
   },
   "nav": {
     "links": [
@@ -65,21 +65,21 @@
   },
   "privacy": {
     "eyebrow": "What happens to your audio",
-    "heading": "Your audio stays on your Mac",
-    "subhead": "By default, transcription runs on your Mac and your audio never leaves it. The transcript and the audio file stay on your Mac until you delete them",
+    "heading": "Your recordings stay on your Mac",
+    "subhead": "By default your recordings and transcripts are stored on your Mac, and no bot ever joins the call. They stay in your own folder until you delete them",
     "cards": [
       {
         "tag": "Default",
         "heading": "Fast, accurate, free",
-        "body": "On Apple Silicon, transcription runs on your Mac. Your audio never leaves the machine, so there is nothing to retain and nothing to train on. You get a labelled transcript in seconds, with no monthly cap",
+        "body": "Corder records system audio and your microphone at the OS level, so no bot joins the call and no participant tile shows up. On the free plan transcription runs on your Mac, and you get a labelled transcript in seconds",
         "specList": [
           {
             "key": "Engine",
-            "value": "On-device, Apple Silicon"
+            "value": "Free on your Mac, paid in the cloud"
           },
           {
             "key": "Transit",
-            "value": "Nothing leaves your Mac"
+            "value": "Recordings stay on your Mac by default"
           },
           {
             "key": "Audio retention",
@@ -87,7 +87,7 @@
           },
           {
             "key": "Cost",
-            "value": "Free, no monthly cap"
+            "value": "Free to start"
           }
         ]
       },
@@ -106,7 +106,7 @@
           },
           {
             "key": "Cloud",
-            "value": "Free tier never uploads. Nothing leaves the Mac"
+            "value": "Free runs on your Mac, paid uses the cloud"
           },
           {
             "key": "Delete",
@@ -141,7 +141,7 @@
       {
         "number": "04",
         "heading": "Free, and it stays free",
-        "body": "Unlimited transcription on your Mac. No account, no API key, no monthly bill.",
+        "body": "Free to start. No account, no API key, no monthly bill. Just download and record.",
         "liveDemo": "byok"
       }
     ]
@@ -319,7 +319,7 @@
     "items": [
       {
         "q": "Does Corder send my audio to the cloud?",
-        "a": "Your audio never leaves your Mac. Not signed in, which is how Corder starts, nothing leaves at all: transcription runs on your Mac with a local Whisper model, and the recording, the transcript and the database sit in your own folder. Sign in and the text of your transcripts syncs to your account so your library opens on another Mac. The audio still stays local. The code is open, so you can check this rather than take our word for it."
+        "a": "By default your recordings and transcripts are stored on your Mac, in your own folder. On the free plan transcription runs on your Mac with a local Whisper model. Paid plans send the audio to the cloud for higher accuracy, where it is used to make the transcript and not kept in a dashboard. No bot ever joins the call. Corder is open source, so you can read exactly what it does rather than take our word for it."
       },
       {
         "q": "Is it legal to record a call?",
@@ -331,7 +331,7 @@
       },
       {
         "q": "Is Corder open source?",
-        "a": "Yes, under the GPL-3.0. The capture and transcription code is on GitHub, so if you want to verify that your audio stays on your Mac, you can read the part that would have to send it away. Anyone can build it from source."
+        "a": "Yes, under the GPL-3.0. The capture and transcription code is on GitHub, so you can read exactly how it handles your audio and where it goes. Anyone can build it from source."
       },
       {
         "q": "Where does my audio live?",
@@ -347,11 +347,11 @@
       },
       {
         "q": "Does it need an internet connection?",
-        "a": "No. Recording and transcription both run offline on your Mac. A meeting recorded on a plane transcribes on the plane."
+        "a": "Recording never needs a connection. On the free plan transcription also runs on your Mac, so a meeting recorded on a plane transcribes on the plane. Paid cloud transcription needs a connection."
       },
       {
         "q": "Which version of macOS does it require?",
-        "a": "macOS 14 (Sonoma) or later. Apple Silicon gets on-device transcription through the Neural Engine."
+        "a": "macOS 14 (Sonoma) or later, on Apple Silicon or an Intel Mac."
       },
       {
         "q": "Can I export the transcript?",
@@ -650,7 +650,7 @@
   "yoursPrivacy": {
     "eyebrow": "Private by design",
     "heading": "Your meetings stay yours",
-    "subhead": "Built different. Local-first, no cloud lock-in.",
+    "subhead": "No bot in the call. Your recordings stay on your Mac.",
     "cards": [
       {
         "icon": "lock",
