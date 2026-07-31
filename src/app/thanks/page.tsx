@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 
-import { ActivationStatus } from "@/components/thanks/ActivationStatus";
-
 export const metadata: Metadata = {
   title: "You're in",
   description:
@@ -34,8 +32,7 @@ export default function ThanksPage() {
     >
       <div className="page-container py-16 md:py-24">
         <div className="install-page__inner mx-auto max-w-[1080px]">
-          <ActivationStatus />
-            <h1 className="install-page__heading">You&apos;re in.</h1>
+          <h1 className="install-page__heading">You&apos;re in.</h1>
           <p className="install-page__sub install-page__sub--multi">
             A receipt from Paddle is on its way to your inbox. Open
             Corder on your Mac to start using your subscription.
@@ -58,7 +55,7 @@ export default function ThanksPage() {
             </a>
 
             <a
-              href="mailto:support@corder.app?subject=Cannot%20find%20my%20licence%20email"
+              href="/contact/"
               className="thanks-card thanks-card--secondary"
               data-track-event="thanks_no_email"
             >

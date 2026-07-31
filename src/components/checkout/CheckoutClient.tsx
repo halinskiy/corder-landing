@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
 
 import { copy } from "@/content/copy";
+import { getSupabase, SUPABASE_CONFIGURED } from "@/lib/supabase";
 import {
   PADDLE_SUCCESS_URL,
   isLaunchTier,
@@ -16,7 +18,12 @@ import {
 const DATA_SOURCE =
   "projects/corder-landing/src/components/checkout/CheckoutClient.tsx";
 
-type CheckoutState = "loading" | "ready" | "invalid" | "paddle-missing";
+type CheckoutState =
+  | "loading"
+  | "signin"
+  | "ready"
+  | "invalid"
+  | "paddle-missing";
 
 /**
  * Inline Paddle checkout, embedded inside our own /checkout/ shell.
@@ -28,21 +35,16 @@ type CheckoutState = "loading" | "ready" | "invalid" | "paddle-missing";
  * uses ("pro" / "pro_launch" / "max" / "max_launch") so a future
  * pricing-page change does not have to coordinate with this page.
  *
- * The order summary on the left is rendered from copy.json --
- * same source of truth as the Pricing section, so any maker-side
- * edit to plan name, features or billing copy automatically flows
- * into the checkout shell with no additional wiring.
+ * A purchase MUST be linked to a Corder (Supabase) account: the Paddle
+ * webhook reads `custom_data.supabase_user_id` to flip that account's
+ * tier. So the visitor signs in (magic link) before Paddle opens; an
+ * anonymous checkout would take money and grant nothing. We sign in
+ * inline (reusing the shared `.account-auth-*` styles) rather than
+ * bouncing to /login, which is a Phase-1 mock with no real session.
  *
- * The Paddle iframe on the right is mounted via
- * `Paddle.Checkout.open({ settings.displayMode: "inline",
- * settings.frameTarget: "paddle-checkout-frame" })`. Custom colours,
- * fonts and radii live in Paddle dashboard -> Checkout Settings ->
- * Inline tab; nothing here forces a particular palette so the
- * dashboard remains the single point of styling control.
- *
- * On successful payment Paddle navigates the top-level page to
- * settings.successUrl (PADDLE_SUCCESS_URL = /thanks/?_ptxn=...) and
- * ActivationStatus picks the txn id off the query string.
+ * On success Paddle navigates the top-level page to
+ * settings.successUrl (PADDLE_SUCCESS_URL = /thanks/) and the app picks
+ * up the new tier via SupabaseTierSync on next foreground.
  */
 export function CheckoutClient() {
   const params = useSearchParams();
@@ -71,19 +73,48 @@ export function CheckoutClient() {
   }, [trackBilling]);
 
   const [state, setState] = useState<CheckoutState>("loading");
-  const mountedRef = useRef(false);
 
+  // ── Auth. The buyer must be signed in so the webhook can map the
+  // payment back to their Supabase account. We read the session and
+  // keep it live via onAuthStateChange (the magic-link return re-fires
+  // it, which resumes the flow below without a manual refresh).
+  const [user, setUser] = useState<User | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   useEffect(() => {
-    if (mountedRef.current) return;
+    if (!SUPABASE_CONFIGURED) {
+      setAuthChecked(true);
+      return;
+    }
+    const supabase = getSupabase();
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+      setAuthChecked(true);
+    });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setAuthChecked(true);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // ── Paddle. Open the inline checkout once we have a valid plan AND a
+  // signed-in user. Paddle.js is loaded with `defer` in app/layout.tsx,
+  // so poll briefly for window.Paddle on slow networks.
+  const mountedRef = useRef(false);
+  useEffect(() => {
+    if (!authChecked) return;
     if (!priceId || !trackBilling) {
       setState("invalid");
       return;
     }
+    if (!user) {
+      setState("signin");
+      return;
+    }
+    if (mountedRef.current) return;
 
-    // Paddle.js is loaded with `defer` in app/layout.tsx, so by the
-    // time this client component hydrates window.Paddle should be
-    // ready. A short polling fallback covers slow networks where
-    // the deferred script hasn't yet executed.
     let attempts = 0;
     const interval = window.setInterval(() => {
       attempts += 1;
@@ -102,6 +133,7 @@ export function CheckoutClient() {
       mountedRef.current = true;
       const tierName = resolveTier(trackBilling);
       const launch = isLaunchTier(trackBilling) && billing === "monthly";
+      const buyer = user!;
       try {
         // Cast lets us pass `frameTarget` / `frameInitialHeight` /
         // `frameStyle` -- Paddle.js v2 inline-mode keys that our
@@ -121,10 +153,15 @@ export function CheckoutClient() {
           settings: settings as Parameters<
             NonNullable<typeof window.Paddle>["Checkout"]["open"]
           >[0]["settings"],
+          // `customer.email` prefills the Paddle form; `supabase_user_id`
+          // is the load-bearing link the webhook reads to upgrade the
+          // right account. tier/billing/launch ride along for analytics.
+          customer: buyer.email ? { email: buyer.email } : undefined,
           customData: {
             tier: tierName ?? "unknown",
             billing,
             launch,
+            supabase_user_id: buyer.id,
           },
         });
         setState("ready");
@@ -134,7 +171,7 @@ export function CheckoutClient() {
     }
 
     return () => window.clearInterval(interval);
-  }, [priceId, trackBilling, billing]);
+  }, [authChecked, user, priceId, trackBilling, billing]);
 
   if (state === "invalid") {
     return (
@@ -235,6 +272,7 @@ export function CheckoutClient() {
             Loading checkout
           </div>
         )}
+        {state === "signin" && <CheckoutSignIn />}
         {state === "paddle-missing" && (
           <div className="checkout-page__paddle-error">
             <p>Checkout could not start. Try refreshing the page.</p>
@@ -251,5 +289,191 @@ export function CheckoutClient() {
         <div className="checkout-page__paddle-frame" />
       </div>
     </div>
+  );
+}
+
+/**
+ * Magic-link sign-in shown inside the checkout column before Paddle
+ * opens. Sends a Supabase OTP link that returns to THIS checkout URL
+ * (tier + billing preserved), so the purchase resumes the moment the
+ * session lands. Mirrors AdminGuard's real signInWithOtp call.
+ */
+function CheckoutSignIn() {
+  // Google is the primary path: one click, no email round-trip (so no
+  // provider email-rate-limit), and it matches how people sign into the
+  // Corder app. Magic-link email stays as a secondary option behind a
+  // toggle for anyone who prefers it.
+  const [showEmail, setShowEmail] = useState(false);
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function withGoogle() {
+    setError(null);
+    if (!SUPABASE_CONFIGURED) {
+      setError("Sign-in is not configured on this build.");
+      return;
+    }
+    setSubmitting(true);
+    const { error: oauthError } = await getSupabase().auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        // Return to THIS checkout (tier + billing preserved) so the
+        // purchase resumes the moment the session lands.
+        redirectTo:
+          typeof window !== "undefined" ? window.location.href : undefined,
+      },
+    });
+    // On success the browser navigates to Google, so we keep the button
+    // busy; only an immediate error needs surfacing.
+    if (oauthError) {
+      setSubmitting(false);
+      setError(oauthError.message);
+    }
+  }
+
+  async function sendLink(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    if (!SUPABASE_CONFIGURED) {
+      setError("Sign-in is not configured on this build.");
+      return;
+    }
+    const trimmed = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setError("That does not look like a valid email.");
+      return;
+    }
+    setSubmitting(true);
+    const { error: otpError } = await getSupabase().auth.signInWithOtp({
+      email: trimmed,
+      options: {
+        emailRedirectTo:
+          typeof window !== "undefined" ? window.location.href : undefined,
+      },
+    });
+    setSubmitting(false);
+    if (otpError) {
+      setError(otpError.message);
+      return;
+    }
+    setSent(true);
+  }
+
+  // Same `.checkout-page__signin` wrapper in every state so the column
+  // width never jumps between sign-in and the sent confirmation.
+  if (sent) {
+    return (
+      <div className="checkout-page__signin">
+        <div className="account-auth-sent" role="status">
+          <h2 className="account-auth-sent__heading">Check your inbox</h2>
+          <p className="account-auth-sent__body">
+            We sent a one-time sign-in link to <strong>{email}</strong>. Open it
+            on this device and we will bring you straight back to checkout.
+          </p>
+          <p className="account-auth-sent__hint">
+            Wrong email?{" "}
+            <button
+              type="button"
+              className="account-auth-link"
+              onClick={() => {
+                setSent(false);
+                setEmail("");
+              }}
+            >
+              Try a different address
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="checkout-page__signin">
+      <h2 className="checkout-page__signin-heading">Sign in to continue</h2>
+      <p className="checkout-page__signin-sub">
+        Your plan is tied to your Corder account. Sign in with the account you
+        use in the app and we will bring you right back to finish.
+      </p>
+
+      <button
+        type="button"
+        onClick={withGoogle}
+        disabled={submitting}
+        className="cta-pill account-auth-submit checkout-page__google-btn inline-flex items-center justify-center gap-2"
+      >
+        <GoogleGlyph />
+        Continue with Google
+      </button>
+
+      {showEmail ? (
+        <form className="account-auth-form" onSubmit={sendLink} noValidate>
+          <label htmlFor="checkout-email" className="account-auth-label">
+            Email
+          </label>
+          <input
+            id="checkout-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            inputMode="email"
+            required
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="account-auth-input"
+            disabled={submitting}
+            aria-describedby={error ? "checkout-email-error" : undefined}
+          />
+          <button
+            type="submit"
+            className="cta-pill cta-pill--ghost account-auth-submit"
+            disabled={submitting}
+          >
+            {submitting ? "Sending…" : "Send magic link"}
+          </button>
+        </form>
+      ) : (
+        <button
+          type="button"
+          className="account-auth-link checkout-page__signin-alt"
+          onClick={() => setShowEmail(true)}
+        >
+          or sign in with email
+        </button>
+      )}
+
+      {error && (
+        <p id="checkout-email-error" className="account-auth-error" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// Google "G" logomark, inlined (no icon dependency).
+function GoogleGlyph() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A9 9 0 0 0 9 18z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M3.97 10.71a5.4 5.4 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3.01-2.33z"
+      />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"
+      />
+    </svg>
   );
 }
