@@ -155,7 +155,7 @@ function ProfileCard({
       <dl className="acct-rows">
         <div className="acct-row">
           <dt className="acct-row__k">Email</dt>
-          <dd className="acct-row__v">{me.email ?? "—"}</dd>
+          <dd className="acct-row__v">{me.email ?? "Not set"}</dd>
         </div>
         <div className="acct-row">
           <dt className="acct-row__k">Name</dt>
@@ -197,7 +197,7 @@ function ProfileCard({
         <div className="acct-row">
           <dt className="acct-row__k">Member since</dt>
           <dd className="acct-row__v acct-row__v--muted">
-            {formatDate(me.created_at) ?? "—"}
+            {formatDate(me.created_at) ?? "Not available"}
           </dd>
         </div>
       </dl>
@@ -247,18 +247,28 @@ function PlanCard({ me, token }: { me: Me; token: string | null }) {
     <section className="acct-card">
       <h2 className="acct-card__title">Plan</h2>
 
-      <div className="acct-plan">
-        <span className={`acct-plan__badge acct-plan__badge--${me.tier}`}>
-          {PLAN_LABEL[me.tier]}
-        </span>
-        {me.tier !== "free" && me.subscription.status && (
-          <span className="acct-plan__status">
-            {canceling ? "Cancels" : "Active"}
-          </span>
+      <dl className="acct-rows">
+        <div className="acct-row">
+          <dt className="acct-row__k">Plan</dt>
+          <dd
+            className={`acct-row__v acct-plan-value${
+              me.tier !== "free" ? " acct-plan-value--paid" : ""
+            }`}
+          >
+            {PLAN_LABEL[me.tier]}
+          </dd>
+        </div>
+        {me.tier !== "free" && me.subscription.current_period_end && (
+          <div className="acct-row">
+            <dt className="acct-row__k">{canceling ? "Access ends" : "Renews"}</dt>
+            <dd className="acct-row__v">
+              {formatDate(me.subscription.current_period_end)}
+            </dd>
+          </div>
         )}
-      </div>
+      </dl>
 
-      {capH != null && (
+      {me.tier !== "free" && capH != null && (
         <div className="acct-usage">
           <div className="acct-usage__head">
             <span>Cloud hours this month</span>
@@ -272,15 +282,9 @@ function PlanCard({ me, token }: { me: Me; token: string | null }) {
         </div>
       )}
 
-      {me.tier !== "free" && me.subscription.current_period_end && (
-        <p className="acct-line">
-          {canceling ? "Access ends on " : "Renews on "}
-          <strong>{formatDate(me.subscription.current_period_end)}</strong>.
-        </p>
-      )}
       {me.tier === "free" && (
         <p className="acct-line acct-line--muted">
-          You are on the free plan. Cloud transcription runs on your Mac.
+          You are on the free plan. Transcription runs on your Mac.
         </p>
       )}
 
@@ -316,7 +320,7 @@ function BillingCard({ txns }: { txns: Txn[] }) {
         <ul className="acct-txns">
           {txns.map((t) => (
             <li key={t.id} className="acct-txn">
-              <span className="acct-txn__date">{formatDate(t.billed_at) ?? "—"}</span>
+              <span className="acct-txn__date">{formatDate(t.billed_at) ?? "Pending"}</span>
               <span className="acct-txn__amt">
                 {formatMoney(t.grand_total, t.currency_code)}
               </span>
@@ -498,7 +502,7 @@ function formatDate(iso: string | null): string | null {
 }
 
 function formatMoney(total: string | null, currency: string | null): string {
-  if (!total) return "—";
+  if (!total) return "n/a";
   // Paddle grand_total is a minor-unit integer string (e.g. "1400" = $14.00).
   const n = Number(total);
   if (Number.isNaN(n)) return "—";
