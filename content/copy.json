@@ -243,6 +243,7 @@
         "features": [
           "Unlimited transcription, on your Mac, forever",
           "Speakers labelled on every call",
+          "Summaries and chapters on every recording",
           "Searchable transcript, drag out to Notion",
           "Screen video captured alongside the audio",
           "No bot joins the call"
@@ -272,8 +273,7 @@
         "features": [
           "Everything in Free, plus:",
           "Cloud transcription, 25 hours a month. A long call comes back in seconds instead of minutes, and your Mac stays quiet",
-          "Summaries that name the decisions and who owns what next",
-          "Chapters, so an hour long call is skimmable in a minute",
+          "Sharper speaker labels, worked out in the cloud even when people talk over each other",
           "Priority support, direct line to the maker"
         ],
         "cta": "Coming soon",
@@ -285,7 +285,7 @@
       },
       {
         "name": "Max",
-        "tagline": "Great for people who record daily and want the sharpest summaries.",
+        "tagline": "Great for people who record daily and want the most from every call.",
         "badge": "Soon",
         "monthly": {
           "price": "$24",
@@ -301,7 +301,8 @@
         "features": [
           "Everything in Pro, plus:",
           "250 hours a month, ten times Pro. Enough to record every call you take",
-          "Dedicated support, same-day reply"
+          "Dedicated support, same-day reply",
+          "Early access to what's next"
         ],
         "cta": "Coming soon",
         "ctaStyle": "secondary",
