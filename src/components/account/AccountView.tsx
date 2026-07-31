@@ -1,128 +1,203 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { MOCK_USER, formatBillingDate } from "@/lib/account-mock";
-import type {
-  NotificationPrefs,
-  SubscriptionPlan,
-  SubscriptionStatus,
-  UserAccount,
-} from "@/lib/account-types";
+import { getSupabase, SUPABASE_CONFIGURED } from "@/lib/supabase";
 
 const DATA_SOURCE =
   "projects/corder-landing/src/components/account/AccountView.tsx";
 
-/**
- * Logged-in /account surface. Phase 1: state is seeded from the mock
- * file; all writes are local-only (PATCH /me / DELETE /me will hook
- * in during Phase 3). Five sections rendered top to bottom.
- */
+const API_BASE = "https://corder-api.empqwork.workers.dev";
+
+type Me = {
+  email: string | null;
+  name: string | null;
+  created_at: string | null;
+  tier: "free" | "pro" | "max";
+  subscription: {
+    has_subscription: boolean;
+    status: string | null;
+    current_period_end: string | null;
+  };
+  usage: { used_seconds: number; cap_seconds: number | null; period: string };
+};
+
+type Txn = {
+  id: string;
+  billed_at: string | null;
+  currency_code: string | null;
+  grand_total: string | null;
+};
+
+type View = "loading" | "signin" | "ready" | "error";
+
+const PLAN_LABEL: Record<Me["tier"], string> = {
+  free: "Free",
+  pro: "Pro",
+  max: "Max",
+};
+
+/** /account -- the signed-in surface. Reads the real account over the
+ *  Supabase JWT from corder-api, and drives cancel / manage through the
+ *  Paddle customer portal. */
 export function AccountView() {
-  const [user, setUser] = useState<UserAccount>(MOCK_USER);
+  const [view, setView] = useState<View>("loading");
+  const [me, setMe] = useState<Me | null>(null);
+  const [txns, setTxns] = useState<Txn[]>([]);
+  const [token, setToken] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    if (!SUPABASE_CONFIGURED) {
+      setView("error");
+      return;
+    }
+    const { data } = await getSupabase().auth.getSession();
+    const accessToken = data.session?.access_token ?? null;
+    if (!accessToken) {
+      setView("signin");
+      return;
+    }
+    setToken(accessToken);
+    try {
+      const [meRes, histRes] = await Promise.all([
+        fetch(`${API_BASE}/me`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+        fetch(`${API_BASE}/billing/history`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+      ]);
+      if (!meRes.ok) {
+        setView("error");
+        return;
+      }
+      setMe((await meRes.json()) as Me);
+      if (histRes.ok) {
+        const hj = (await histRes.json()) as { transactions?: Txn[] };
+        setTxns(hj.transactions ?? []);
+      }
+      setView("ready");
+    } catch {
+      setView("error");
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  if (view === "loading") {
+    return (
+      <p className="acct-note" aria-live="polite" data-source={DATA_SOURCE}>
+        Loading your account…
+      </p>
+    );
+  }
+  if (view === "signin") return <AccountSignIn />;
+  if (view === "error" || !me) {
+    return (
+      <p className="acct-note" data-source={DATA_SOURCE}>
+        Could not load your account. Refresh to try again.
+      </p>
+    );
+  }
 
   return (
-    <div className="account-sections" data-source={DATA_SOURCE}>
-      <ProfileSection user={user} setUser={setUser} />
-      <SubscriptionSection user={user} />
-      <NotificationsSection user={user} setUser={setUser} />
-      <ReferralSection user={user} />
-      <DangerSection email={user.email} />
+    <div className="acct" data-source={DATA_SOURCE}>
+      <ProfileCard me={me} token={token} onNameSaved={(n) => setMe({ ...me, name: n })} />
+      <PlanCard me={me} token={token} />
+      <BillingCard txns={txns} />
+      <DeleteCard token={token} />
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-//  Profile
-// ---------------------------------------------------------------------------
+// ── Profile ──────────────────────────────────────────────────────────
 
-function ProfileSection({
-  user,
-  setUser,
+function ProfileCard({
+  me,
+  token,
+  onNameSaved,
 }: {
-  user: UserAccount;
-  setUser: (u: UserAccount) => void;
+  me: Me;
+  token: string | null;
+  onNameSaved: (name: string) => void;
 }) {
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(user.name);
+  const [draft, setDraft] = useState(me.name ?? "");
+  const [saving, setSaving] = useState(false);
 
-  function save() {
-    setUser({ ...user, name: draft.trim() || user.name });
+  async function save() {
+    const value = draft.trim();
+    setSaving(true);
+    try {
+      const { data } = await getSupabase().auth.getUser();
+      const uid = data.user?.id;
+      if (uid) {
+        await getSupabase()
+          .from("profiles")
+          .update({ display_name: value || null })
+          .eq("id", uid);
+      }
+      onNameSaved(value || (me.email?.split("@")[0] ?? ""));
+    } catch {
+      /* keep the old name on failure */
+    }
+    setSaving(false);
     setEditing(false);
   }
-  function cancel() {
-    setDraft(user.name);
-    setEditing(false);
-  }
+
+  const displayName = me.name || me.email?.split("@")[0] || "Account";
 
   return (
-    <section className="account-card" aria-labelledby="profile-heading">
-      <h2 id="profile-heading" className="account-card__heading">
-        Profile
-      </h2>
-      <dl className="account-defs">
-        <div className="account-defs__row">
-          <dt>Email</dt>
-          <dd className="account-defs__value">{user.email}</dd>
+    <section className="acct-card">
+      <h2 className="acct-card__title">Profile</h2>
+      <dl className="acct-rows">
+        <div className="acct-row">
+          <dt className="acct-row__k">Email</dt>
+          <dd className="acct-row__v">{me.email ?? "—"}</dd>
         </div>
-        <div className="account-defs__row">
-          <dt>Name</dt>
-          <dd className="account-defs__value account-defs__value--editable">
+        <div className="acct-row">
+          <dt className="acct-row__k">Name</dt>
+          <dd className="acct-row__v">
             {editing ? (
-              <span className="account-name-edit">
+              <span className="acct-name-edit">
                 <input
-                  type="text"
+                  className="acct-input"
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
-                  className="account-name-edit__input"
                   autoFocus
-                  aria-label="Edit display name"
+                  aria-label="Display name"
+                  disabled={saving}
                 />
-                <button
-                  type="button"
-                  className="account-name-edit__save"
-                  onClick={save}
-                >
-                  Save
+                <button className="acct-link" onClick={save} disabled={saving}>
+                  {saving ? "Saving…" : "Save"}
                 </button>
                 <button
-                  type="button"
-                  className="account-name-edit__cancel"
-                  onClick={cancel}
+                  className="acct-link acct-link--muted"
+                  onClick={() => {
+                    setDraft(me.name ?? "");
+                    setEditing(false);
+                  }}
+                  disabled={saving}
                 >
                   Cancel
                 </button>
               </span>
             ) : (
-              <span className="account-name-display">
-                <span>{user.name}</span>
-                <button
-                  type="button"
-                  className="account-name-edit__edit"
-                  onClick={() => setEditing(true)}
-                  aria-label="Edit name"
-                >
+              <span className="acct-name">
+                <span>{displayName}</span>
+                <button className="acct-link" onClick={() => setEditing(true)}>
                   Edit
                 </button>
               </span>
             )}
           </dd>
         </div>
-        <div className="account-defs__row">
-          <dt>Apple ID</dt>
-          <dd className="account-defs__value account-defs__value--muted">
-            {user.appleId ?? (
-              <em>
-                Not connected. Sign in with Apple from the Mac app to link
-                your subscription across devices.
-              </em>
-            )}
-          </dd>
-        </div>
-        <div className="account-defs__row">
-          <dt>Member since</dt>
-          <dd className="account-defs__value account-defs__value--muted">
-            {formatBillingDate(user.createdAt)}
+        <div className="acct-row">
+          <dt className="acct-row__k">Member since</dt>
+          <dd className="acct-row__v acct-row__v--muted">
+            {formatDate(me.created_at) ?? "—"}
           </dd>
         </div>
       </dl>
@@ -130,289 +205,279 @@ function ProfileSection({
   );
 }
 
-// ---------------------------------------------------------------------------
-//  Subscription
-// ---------------------------------------------------------------------------
+// ── Plan + usage ─────────────────────────────────────────────────────
 
-const PLAN_LABEL: Record<SubscriptionPlan, string> = {
-  free: "Free",
-  pro_monthly: "Pro Monthly",
-  pro_annual: "Pro Annual",
-};
+function PlanCard({ me, token }: { me: Me; token: string | null }) {
+  const [opening, setOpening] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
-const STATUS_LABEL: Record<SubscriptionStatus, string> = {
-  active: "Active",
-  trialing: "Trialing",
-  past_due: "Past due",
-  canceled: "Canceled",
-  paused: "Paused",
-};
+  const usedH = me.usage.used_seconds / 3600;
+  const capH = me.usage.cap_seconds != null ? me.usage.cap_seconds / 3600 : null;
+  const pct =
+    capH && capH > 0 ? Math.min(100, Math.round((usedH / capH) * 100)) : 0;
 
-function SubscriptionSection({ user }: { user: UserAccount }) {
-  const sub = user.subscription;
-  const planLabel = PLAN_LABEL[sub.plan];
-  const statusLabel = STATUS_LABEL[sub.status];
-  const nextBilling = formatBillingDate(sub.nextBillingAt);
+  const canceling =
+    me.subscription.status === "canceled" ||
+    (me.subscription.status != null &&
+      me.subscription.status !== "active" &&
+      me.subscription.status !== "trialing");
+
+  async function openPortal() {
+    if (!token) return;
+    setErr(null);
+    setOpening(true);
+    try {
+      const r = await fetch(`${API_BASE}/billing/portal`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const j = (await r.json()) as { ok?: boolean; url?: string | null };
+      if (j.ok && j.url) {
+        window.location.href = j.url;
+        return;
+      }
+      setErr("Could not open the billing portal. Try again in a moment.");
+    } catch {
+      setErr("Could not open the billing portal. Try again in a moment.");
+    }
+    setOpening(false);
+  }
 
   return (
-    <section className="account-card" aria-labelledby="sub-heading">
-      <h2 id="sub-heading" className="account-card__heading">
-        Subscription
-      </h2>
-      <div className="account-sub-row">
-        <span
-          className={`account-plan-badge account-plan-badge--${sub.plan}`}
-        >
-          {planLabel}
+    <section className="acct-card">
+      <h2 className="acct-card__title">Plan</h2>
+
+      <div className="acct-plan">
+        <span className={`acct-plan__badge acct-plan__badge--${me.tier}`}>
+          {PLAN_LABEL[me.tier]}
         </span>
-        <span className="account-sub-status" data-status={sub.status}>
-          {statusLabel}
-        </span>
-      </div>
-      {nextBilling ? (
-        <p className="account-sub-line">
-          Next billing on <strong>{nextBilling}</strong>.
-        </p>
-      ) : (
-        <p className="account-sub-line">
-          Free tier. Upgrade to Pro anytime from the pricing page.
-        </p>
-      )}
-      <div className="account-sub-actions">
-        {sub.managePortalUrl ? (
-          <a
-            href={sub.managePortalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cta-pill cta-pill--ghost account-sub-manage"
-          >
-            Manage subscription
-          </a>
-        ) : (
-          <a
-            href="/#pricing"
-            className="cta-pill cta-pill--primary account-sub-upgrade"
-          >
-            Upgrade to Pro
-          </a>
+        {me.tier !== "free" && me.subscription.status && (
+          <span className="acct-plan__status">
+            {canceling ? "Cancels" : "Active"}
+          </span>
         )}
       </div>
-    </section>
-  );
-}
 
-// ---------------------------------------------------------------------------
-//  Notifications
-// ---------------------------------------------------------------------------
+      {capH != null && (
+        <div className="acct-usage">
+          <div className="acct-usage__head">
+            <span>Cloud hours this month</span>
+            <span className="acct-usage__num">
+              {usedH.toFixed(1)} / {Math.round(capH)} h
+            </span>
+          </div>
+          <div className="acct-usage__track" aria-hidden>
+            <span className="acct-usage__fill" style={{ width: `${pct}%` }} />
+          </div>
+        </div>
+      )}
 
-const NOTIFICATION_FIELDS: ReadonlyArray<{
-  key: keyof NotificationPrefs;
-  label: string;
-  body: string;
-}> = [
-  {
-    key: "productUpdates",
-    label: "Product updates",
-    body: "New versions, breaking changes, important announcements.",
-  },
-  {
-    key: "tipsAndTricks",
-    label: "Tips & tricks",
-    body: "Monthly digest of workflows other Corder users came up with.",
-  },
-  {
-    key: "newFeatures",
-    label: "Early access to new features",
-    body: "Heads-up when a beta is open. Opt-in, no spam.",
-  },
-];
+      {me.tier !== "free" && me.subscription.current_period_end && (
+        <p className="acct-line">
+          {canceling ? "Access ends on " : "Renews on "}
+          <strong>{formatDate(me.subscription.current_period_end)}</strong>.
+        </p>
+      )}
+      {me.tier === "free" && (
+        <p className="acct-line acct-line--muted">
+          You are on the free plan. Cloud transcription runs on your Mac.
+        </p>
+      )}
 
-function NotificationsSection({
-  user,
-  setUser,
-}: {
-  user: UserAccount;
-  setUser: (u: UserAccount) => void;
-}) {
-  function toggle(key: keyof NotificationPrefs) {
-    setUser({
-      ...user,
-      notifications: {
-        ...user.notifications,
-        [key]: !user.notifications[key],
-      },
-    });
-  }
-  return (
-    <section className="account-card" aria-labelledby="notif-heading">
-      <h2 id="notif-heading" className="account-card__heading">
-        Notifications
-      </h2>
-      <ul className="account-toggle-list">
-        {NOTIFICATION_FIELDS.map((field) => {
-          const value = user.notifications[field.key];
-          return (
-            <li key={field.key} className="account-toggle-item">
-              <div className="account-toggle-text">
-                <div className="account-toggle-label">{field.label}</div>
-                <p className="account-toggle-body">{field.body}</p>
-              </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={value}
-                aria-label={field.label}
-                className={`account-toggle${value ? " account-toggle--on" : ""}`}
-                onClick={() => toggle(field.key)}
-              >
-                <span className="account-toggle__thumb" />
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-  );
-}
-
-// ---------------------------------------------------------------------------
-//  Referrals
-// ---------------------------------------------------------------------------
-
-function ReferralSection({ user }: { user: UserAccount }) {
-  const shareUrl = `https://getcorder.com/?ref=${user.referral.code}`;
-  const [copied, setCopied] = useState(false);
-
-  function copyLink() {
-    if (typeof navigator === "undefined" || !navigator.clipboard) return;
-    navigator.clipboard
-      .writeText(shareUrl)
-      .then(() => {
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 1800);
-      })
-      .catch(() => {
-        setCopied(false);
-      });
-  }
-
-  return (
-    <section className="account-card" aria-labelledby="ref-heading">
-      <h2 id="ref-heading" className="account-card__heading">
-        Refer a friend
-      </h2>
-      <p className="account-ref-explain">
-        Share your link. Whoever signs up through it and stays Pro for at
-        least one month gets a free month -- and so do you.
-      </p>
-      <div className="account-ref-row">
-        <code className="account-ref-link" aria-label="Your referral link">
-          {shareUrl}
-        </code>
-        <button
-          type="button"
-          className="cta-pill cta-pill--ghost account-ref-copy"
-          onClick={copyLink}
-          aria-live="polite"
-        >
-          {copied ? "Copied" : "Copy link"}
-        </button>
+      <div className="acct-actions">
+        {me.tier === "free" ? (
+          <a href="/#pricing" className="cta-pill cta-pill--primary acct-btn">
+            Upgrade
+          </a>
+        ) : (
+          <button
+            className="cta-pill cta-pill--ghost acct-btn"
+            onClick={openPortal}
+            disabled={opening}
+          >
+            {opening ? "Opening…" : "Manage subscription"}
+          </button>
+        )}
       </div>
-      <dl className="account-ref-stats">
-        <div className="account-ref-stat">
-          <dt>Qualified referrals</dt>
-          <dd>{user.referral.qualifiedCount}</dd>
-        </div>
-        <div className="account-ref-stat">
-          <dt>Free months earned</dt>
-          <dd>{user.referral.freeMonthsEarned}</dd>
-        </div>
-      </dl>
+      {err && <p className="acct-err">{err}</p>}
     </section>
   );
 }
 
-// ---------------------------------------------------------------------------
-//  Danger zone
-// ---------------------------------------------------------------------------
+// ── Billing history ──────────────────────────────────────────────────
 
-function DangerSection({ email }: { email: string }) {
+function BillingCard({ txns }: { txns: Txn[] }) {
+  return (
+    <section className="acct-card">
+      <h2 className="acct-card__title">Billing history</h2>
+      {txns.length === 0 ? (
+        <p className="acct-line acct-line--muted">No payments yet.</p>
+      ) : (
+        <ul className="acct-txns">
+          {txns.map((t) => (
+            <li key={t.id} className="acct-txn">
+              <span className="acct-txn__date">{formatDate(t.billed_at) ?? "—"}</span>
+              <span className="acct-txn__amt">
+                {formatMoney(t.grand_total, t.currency_code)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+// ── Delete account ───────────────────────────────────────────────────
+
+function DeleteCard({ token }: { token: string | null }) {
   const [confirming, setConfirming] = useState(false);
   const [typed, setTyped] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const armed = typed === "DELETE";
 
-  function reset() {
-    setTyped("");
-    setConfirming(false);
-  }
-
-  function confirmDelete() {
-    if (!armed) return;
-    // Phase 1 mock: would call DELETE /me + show a goodbye screen.
-    // Phase 3 wires this to the Worker which kicks off the 30-day
-    // grace deletion + cancels the Paddle subscription.
-    alert(
-      `Account ${email} marked for deletion.\n\n(Phase 1 mock — no real deletion happens yet.)`,
-    );
-    reset();
+  async function del() {
+    if (!armed || !token) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      const r = await fetch(`${API_BASE}/me/delete`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const j = (await r.json()) as { ok?: boolean };
+      if (j.ok) {
+        await getSupabase().auth.signOut();
+        window.location.href = "/";
+        return;
+      }
+      setErr("Could not delete the account. Contact support and we will sort it.");
+    } catch {
+      setErr("Could not delete the account. Contact support and we will sort it.");
+    }
+    setBusy(false);
   }
 
   return (
-    <section
-      className="account-card account-danger"
-      aria-labelledby="danger-heading"
-    >
-      <h2 id="danger-heading" className="account-card__heading">
-        Delete account
-      </h2>
-      <p className="account-danger__body">
-        Permanently delete your account and cancel any active subscription.
-        We keep your data for 30 days in case you change your mind, then
-        delete it completely.
+    <section className="acct-card acct-card--danger">
+      <h2 className="acct-card__title">Delete account</h2>
+      <p className="acct-line acct-line--muted">
+        Permanently delete your account and cancel any active subscription. This
+        cannot be undone.
       </p>
       {!confirming ? (
         <button
-          type="button"
-          className="account-danger__trigger"
+          className="acct-danger-trigger"
           onClick={() => setConfirming(true)}
         >
           Delete account…
         </button>
       ) : (
-        <div className="account-danger__confirm">
-          <p>
-            Type <code>DELETE</code> below to confirm. This cannot be undone
-            after the 30-day grace window.
+        <div className="acct-danger-confirm">
+          <p className="acct-line">
+            Type <code>DELETE</code> to confirm.
           </p>
           <input
-            type="text"
-            className="account-danger__input"
+            className="acct-input"
             value={typed}
             onChange={(e) => setTyped(e.target.value)}
             placeholder="DELETE"
             aria-label="Type DELETE to confirm"
             autoFocus
+            disabled={busy}
           />
-          <div className="account-danger__buttons">
+          <div className="acct-danger-buttons">
             <button
-              type="button"
-              className="cta-pill cta-pill--ghost"
-              onClick={reset}
+              className="cta-pill cta-pill--ghost acct-btn"
+              onClick={() => {
+                setTyped("");
+                setConfirming(false);
+              }}
+              disabled={busy}
             >
               Cancel
             </button>
             <button
-              type="button"
-              className="account-danger__final"
-              onClick={confirmDelete}
-              disabled={!armed}
-              aria-disabled={!armed}
+              className="acct-danger-final"
+              onClick={del}
+              disabled={!armed || busy}
+              aria-disabled={!armed || busy}
             >
-              Delete account
+              {busy ? "Deleting…" : "Delete account"}
             </button>
           </div>
+          {err && <p className="acct-err">{err}</p>}
         </div>
       )}
     </section>
   );
+}
+
+// ── Signed-out ───────────────────────────────────────────────────────
+
+function AccountSignIn() {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function withGoogle() {
+    setErr(null);
+    if (!SUPABASE_CONFIGURED) {
+      setErr("Sign-in is not configured on this build.");
+      return;
+    }
+    setBusy(true);
+    const { error } = await getSupabase().auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo:
+          typeof window !== "undefined" ? window.location.href : undefined,
+      },
+    });
+    if (error) {
+      setBusy(false);
+      setErr(error.message);
+    }
+  }
+
+  return (
+    <section className="acct-card acct-signin" data-source={DATA_SOURCE}>
+      <h2 className="acct-card__title">Sign in</h2>
+      <p className="acct-line acct-line--muted">
+        Sign in with the account you use in the Corder app to manage your
+        subscription.
+      </p>
+      <button
+        className="cta-pill cta-pill--primary acct-btn"
+        onClick={withGoogle}
+        disabled={busy}
+      >
+        Continue with Google
+      </button>
+      {err && <p className="acct-err">{err}</p>}
+    </section>
+  );
+}
+
+// ── helpers ──────────────────────────────────────────────────────────
+
+function formatDate(iso: string | null): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function formatMoney(total: string | null, currency: string | null): string {
+  if (!total) return "—";
+  // Paddle grand_total is a minor-unit integer string (e.g. "1400" = $14.00).
+  const n = Number(total);
+  if (Number.isNaN(n)) return "—";
+  const amount = (n / 100).toFixed(2);
+  const cur = currency ?? "USD";
+  return `${cur} ${amount}`;
 }
