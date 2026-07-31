@@ -120,13 +120,17 @@ export function Nav() {
 }
 
 function CorderMark() {
-  // 3D Tahoe-style brand mark (rasterised 2048 -> 128 by
-  // scripts/generate-seo-assets.mjs). Displayed at 32 px so the 128
-  // source covers up to 4x retina. PNG carries its own drop shadow
-  // baked into the alpha channel -- no CSS filter needed.
+  // 3D Tahoe-style brand mark, cut from assets/corder-mark-3d-2048.png. The
+  // PNG carries its own drop shadow in the alpha channel, so no CSS filter.
+  //
+  // srcSet, not a lone 128: the file this pointed at had been crushed to 2 KB,
+  // and on an image that is entirely gradients and soft shadows that reads as
+  // mush (reported 2026-07-17). 128 now covers 1x honestly; 2x and 3x take the
+  // 256. See BRAND-MARK.md before touching the logo anywhere.
   return (
     <img
       src="/brand-mark-128.png"
+      srcSet="/brand-mark-128.png 1x, /brand-mark-256.png 2x"
       width={32}
       height={32}
       alt=""
