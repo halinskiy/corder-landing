@@ -7066,3 +7066,10 @@ button:focus:not(:focus-visible) {
 
 .acct-err { font-family: var(--font-sans); font-size: 14px; color: #b7443c; margin: 8px 0 0; }
 .acct-signin { margin: 24px 0 0; }
+/* Tighter gap between the sign-in card's title and its one-line subhead. */
+.acct-signin .acct-card__title { margin-bottom: 6px; }
+
+/* Centered page heading, matching the other standalone pages (install /
+ * thanks / checkout). Overrides the .legal-page left-align for /account. */
+.account-page .install-page__heading { text-align: center; }
+.account-page .account-header { text-align: center; }
