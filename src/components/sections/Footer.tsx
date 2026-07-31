@@ -152,11 +152,13 @@ function renderSloganWithRec(slogan: string) {
 }
 
 function FooterMark() {
-  // 3D Tahoe-style brand mark. Displayed at 40 px; the 128 source
-  // covers ~3x retina. Drop shadow is baked into the PNG's alpha.
+  // 3D Tahoe-style brand mark, cut from assets/corder-mark-3d-2048.png. Drop
+  // shadow is baked into the PNG's alpha. At 40px a 2x screen needs 80 real
+  // pixels and a 3x one 120, so retina takes the 256. See BRAND-MARK.md.
   return (
     <img
       src="/brand-mark-128.png"
+      srcSet="/brand-mark-128.png 1x, /brand-mark-256.png 2x"
       width={40}
       height={40}
       alt=""

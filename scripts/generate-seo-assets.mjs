@@ -98,6 +98,10 @@ async function main() {
     { name: "icon-192.png", size: 192 },
     { name: "icon-512.png", size: 512 },
     { name: "brand-mark-128.png", size: 128 },
+    // 2x for the Nav/Footer marks. Without it they fall back to the 128 on
+    // retina, where 32px needs 96 real pixels and 40px needs 120 — covered,
+    // but with nothing to spare on an image made of gradients.
+    { name: "brand-mark-256.png", size: 256 },
   ];
   for (const { name, size } of fullSizes) {
     await sharp(brandPng)
