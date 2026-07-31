@@ -5814,6 +5814,12 @@ button:focus:not(:focus-visible) {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
+  /* Fill the shell instead of shrinking to content: install-page__inner is a
+     centering flex column, so without this the grid sized to whatever the
+     right column held (wide sign-in form vs narrow Paddle spinner), making the
+     columns jump between states. */
+  width: 100%;
+  align-self: stretch;
 }
 @media (min-width: 768px) {
   .checkout-page__grid {
@@ -5997,6 +6003,51 @@ button:focus:not(:focus-visible) {
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
+}
+
+/* Sign-in gate inside the Paddle column. Shown when the visitor is not
+ * signed in yet: the purchase must be linked to a Corder account so the
+ * webhook can flip the right tier, so we collect a magic-link sign-in
+ * before opening Paddle. Reuses the shared .account-auth-* form styles;
+ * only the intro copy is scoped here. */
+.checkout-page__signin {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+.checkout-page__signin-heading {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-text, #161616);
+  margin: 0;
+}
+.checkout-page__signin-sub {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-muted, #666666);
+  margin: 0 0 8px;
+  max-width: 46ch;
+}
+/* Secondary "or sign in with email" toggle, centered under the Google button. */
+.checkout-page__signin-alt {
+  align-self: center;
+  margin-top: 6px;
+  font-size: 15px;
+}
+/* Google is a secondary, white-with-border control (not the green primary)
+   per the maker's checkout direction. */
+.checkout-page__google-btn {
+  background-color: var(--color-bg, #ffffff);
+  border: 1px solid var(--color-border-strong, var(--color-border, #d8dad9));
+  color: var(--color-text, #161616);
+}
+.checkout-page__google-btn:hover {
+  background-color: var(--color-surface, #f7f7f6);
+  border-color: var(--color-text, #161616);
 }
 
 /* Error and fallback states */
