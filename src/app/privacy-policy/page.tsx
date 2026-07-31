@@ -66,9 +66,39 @@ export default function PrivacyPolicyPage() {
                 <code>~/Library/Application Support/Corder/</code>.
               </li>
               <li>
-                Transcription runs entirely on your Mac with a local
-                Whisper model on the Apple Neural Engine. No account,
-                no network, nothing leaves the machine.
+                Transcription runs on your Mac with a local Whisper
+                model on the Apple Neural Engine. No account, no
+                network, nothing leaves the machine.
+              </li>
+              <li>
+                One exception, only on the very first transcript: the
+                on-device model is a ~1.5 GB download, and if you are
+                signed in and transcribe before it finishes, that first
+                recording is transcribed by our cloud transcription
+                provider (Groq) so you are not left waiting. The audio
+                chunk is discarded right after, as described above.
+                Every transcript after that runs on your Mac. If you
+                are not signed in, this never happens — Corder simply
+                waits for the model.
+              </li>
+            </ul>
+
+            <h4>Sharing a meeting (optional, any tier)</h4>
+            <ul>
+              <li>
+                Nothing is shared until you click Share on a specific
+                meeting. There is no automatic sharing.
+              </li>
+              <li>
+                Share creates a private link with an unguessable
+                address. Anyone you send it to can open that meeting in
+                a browser and see its transcript, summary and audio.
+              </li>
+              <li>
+                The link works for 30 days. After that it stops working
+                and the shared copy is deleted automatically. Sharing
+                the same meeting again refreshes the same link for
+                another 30 days.
               </li>
             </ul>
 
