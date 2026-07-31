@@ -180,7 +180,119 @@ function CorderPresenceCorner() {
   if (motionDisabled) return null;
   if (!pastHowItWorks) return null;
 
-  return pastFormZone ? <CorderPresenceForm /> : <CorderPresenceOrb />;
+  if (pastFormZone) {
+    // The download card (final morph) plus the Product Hunt badge pinned
+    // just above it, same width, appearing as the card lands.
+    return (
+      <>
+        <CorderPresenceForm />
+        <CorderPresencePHBanner />
+      </>
+    );
+  }
+  return <CorderPresenceOrb />;
+}
+
+// ---------------------------------------------------------------------------
+// Product Hunt badge — a separate 360px banner pinned directly above the
+// download card once it has morphed into place (state C). It is NOT part of
+// the card (so the card's own width/geometry is untouched); it tracks the
+// card's live top edge so it stays glued to it as the card settles against
+// the footer on scroll. Desktop only; hidden on mobile where the card goes
+// inline. Fades in a beat after the morph so it reads as an arrival.
+// ---------------------------------------------------------------------------
+
+function CorderPresencePHBanner() {
+  const [bottomPx, setBottomPx] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let raf = 0;
+
+    const measure = () => {
+      raf = 0;
+      // Hidden on mobile: the card there is inline/bottom-pinned and a second
+      // floating strip would stomp the footer.
+      if (window.innerWidth <= 640) {
+        setBottomPx(null);
+        return;
+      }
+      const card = document.querySelector('[data-component="CorderPresenceForm"]');
+      if (!card) {
+        setBottomPx(null);
+        return;
+      }
+      const r = (card as HTMLElement).getBoundingClientRect();
+      // Banner sits `gap` above the card's top edge.
+      const gap = 12;
+      setBottomPx(Math.round(window.innerHeight - r.top + gap));
+    };
+
+    const schedule = () => {
+      if (!raf) raf = window.requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+
+    // Follow the 0.4s card morph into place instead of snapping to its final
+    // rect: re-measure each frame for ~0.7s, then rely on scroll/resize.
+    let ticks = 0;
+    const track = () => {
+      measure();
+      if (ticks++ < 42) window.requestAnimationFrame(track);
+    };
+    window.requestAnimationFrame(track);
+
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  if (bottomPx === null) return null;
+
+  return (
+    <motion.a
+      href="https://www.producthunt.com/products/corder?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-corder"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-component="CorderPresencePHBanner"
+      data-source={DATA_SOURCE_PROVIDER}
+      aria-label="Corder on Product Hunt"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+      style={{
+        position: "fixed",
+        right: "32px",
+        bottom: `${bottomPx}px`,
+        width: "360px",
+        zIndex: 31,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "10px",
+        background: "var(--color-bg)",
+        border: "1px solid var(--color-border)",
+        borderRadius: "var(--radius-window)",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.08)",
+        boxSizing: "border-box",
+        pointerEvents: "auto",
+      }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1183830&theme=light"
+        alt="Corder on Product Hunt"
+        width={250}
+        height={54}
+        style={{ display: "block", maxWidth: "100%", height: "auto" }}
+      />
+    </motion.a>
+  );
 }
 
 // ---------------------------------------------------------------------------
