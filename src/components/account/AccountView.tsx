@@ -291,7 +291,7 @@ function PlanCard({ me, token }: { me: Me; token: string | null }) {
           </a>
         ) : (
           <button
-            className="cta-pill cta-pill--ghost acct-btn"
+            className="acct-btn acct-btn--outline"
             onClick={openPortal}
             disabled={opening}
           >
@@ -308,7 +308,7 @@ function PlanCard({ me, token }: { me: Me; token: string | null }) {
 
 function BillingCard({ txns }: { txns: Txn[] }) {
   return (
-    <section className="acct-card">
+    <section className="acct-card acct-card--wide">
       <h2 className="acct-card__title">Billing history</h2>
       {txns.length === 0 ? (
         <p className="acct-line acct-line--muted">No payments yet.</p>
@@ -360,7 +360,7 @@ function DeleteCard({ token }: { token: string | null }) {
   }
 
   return (
-    <section className="acct-card acct-card--danger">
+    <section className="acct-card acct-card--danger acct-card--wide">
       <h2 className="acct-card__title">Delete account</h2>
       <p className="acct-line acct-line--muted">
         Permanently delete your account and cancel any active subscription. This
