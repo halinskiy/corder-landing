@@ -6,6 +6,7 @@ import { Hero } from "@/components/sections/Hero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Nav } from "@/components/sections/Nav";
 import { Pricing } from "@/components/sections/Pricing";
+import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
 import { WorksWith } from "@/components/sections/WorksWith";
 import { YoursPrivacy } from "@/components/sections/YoursPrivacy";
 import {
@@ -16,6 +17,7 @@ import {
 export default function HomePage() {
   return (
     <main id="top">
+      <SmoothAnchors />
       <Nav />
       <Hero />
       <hr className="section-divider" />

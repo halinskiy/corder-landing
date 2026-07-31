@@ -208,46 +208,46 @@ function CorderPresencePHBanner() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     let raf = 0;
+    // Last value we pushed to state, so the per-frame loop only re-renders
+    // when the banner actually needs to move (idle at rest = zero renders).
+    let last: number | null | undefined = undefined;
 
-    const measure = () => {
-      raf = 0;
+    // A CONTINUOUS rAF sync, not a scroll listener. The download card
+    // repositions itself via React state as it settles against the footer
+    // baseline at the very bottom of the page; a scroll listener reads the
+    // card's rect one frame BEFORE that state-driven reposition commits, and
+    // since no further scroll event fires once the user stops, the banner used
+    // to freeze one step stale and overlap the card's top (reported 2026-07-31).
+    // Re-measuring every frame while mounted (the banner only exists at the
+    // bottom of the page) always reflects the card's final rect. setBottomPx
+    // fires only on change, so at rest this is a cheap read with no renders.
+    const loop = () => {
       // Hidden on mobile: the card there is inline/bottom-pinned and a second
       // floating strip would stomp the footer.
+      let next: number | null;
       if (window.innerWidth <= 640) {
-        setBottomPx(null);
-        return;
+        next = null;
+      } else {
+        const card = document.querySelector(
+          '[data-component="CorderPresenceForm"]',
+        );
+        if (!card) {
+          next = null;
+        } else {
+          const r = (card as HTMLElement).getBoundingClientRect();
+          const gap = 12; // banner sits this far above the card's top edge
+          next = Math.round(window.innerHeight - r.top + gap);
+        }
       }
-      const card = document.querySelector('[data-component="CorderPresenceForm"]');
-      if (!card) {
-        setBottomPx(null);
-        return;
+      if (next !== last) {
+        last = next;
+        setBottomPx(next);
       }
-      const r = (card as HTMLElement).getBoundingClientRect();
-      // Banner sits `gap` above the card's top edge.
-      const gap = 12;
-      setBottomPx(Math.round(window.innerHeight - r.top + gap));
+      raf = window.requestAnimationFrame(loop);
     };
 
-    const schedule = () => {
-      if (!raf) raf = window.requestAnimationFrame(measure);
-    };
-
-    measure();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-
-    // Follow the 0.4s card morph into place instead of snapping to its final
-    // rect: re-measure each frame for ~0.7s, then rely on scroll/resize.
-    let ticks = 0;
-    const track = () => {
-      measure();
-      if (ticks++ < 42) window.requestAnimationFrame(track);
-    };
-    window.requestAnimationFrame(track);
-
+    raf = window.requestAnimationFrame(loop);
     return () => {
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
       if (raf) window.cancelAnimationFrame(raf);
     };
   }, []);
