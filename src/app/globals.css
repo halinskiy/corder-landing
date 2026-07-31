@@ -4722,7 +4722,9 @@ button:focus:not(:focus-visible) {
 }
 
 /* ---- /account page layout ---- */
-.account-page .account-body { max-width: 940px; }
+/* Match the homepage content width (page-container 1260 - 80 gutters = 1180),
+ * so the two-up cards line up with the privacy section's two cards. */
+.account-page .account-body { max-width: 1180px; }
 .account-header { margin-bottom: 32px; }
 
 .account-sections {
@@ -6875,7 +6877,8 @@ button:focus:not(:focus-visible) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
-  align-items: start;
+  /* stretch, not start, so Profile and Plan share one height on the top row */
+  align-items: stretch;
   margin: 44px 0 0;
   text-align: left;
 }
@@ -6894,11 +6897,15 @@ button:focus:not(:focus-visible) {
 .acct-card {
   background: var(--color-bg, #ffffff);
   border: 1px solid var(--color-border, #e5e5e5);
-  border-radius: 14px;
-  padding: 30px 32px;
+  /* 12 px window radius + 40 px padding = the homepage privacy-card frame */
+  border-radius: var(--radius-window, 12px);
+  padding: 40px;
   text-align: left;
   display: flex;
   flex-direction: column;
+}
+@media (max-width: 560px) {
+  .acct-card { padding: 28px 24px; }
 }
 .acct-card__title {
   font-family: var(--font-serif);
@@ -6908,12 +6915,16 @@ button:focus:not(:focus-visible) {
   color: var(--color-text);
   margin: 0 0 22px;
 }
-.acct-rows { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+/* Hairline-separated key/value rows, same organizing pattern as the
+ * homepage privacy-card spec list: a top rule, then one rule per row. */
+.acct-rows { margin: 0; display: flex; flex-direction: column; border-top: 1px solid var(--color-border); }
 .acct-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 16px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--color-border);
 }
 .acct-row__k {
   font-family: var(--font-sans);
@@ -6953,28 +6964,12 @@ button:focus:not(:focus-visible) {
 .acct-link--muted { color: var(--color-text-muted); }
 .acct-link:disabled { opacity: 0.5; cursor: default; }
 
-.acct-plan { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.acct-plan__badge {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  padding: 0 12px;
-  border-radius: var(--radius-pill, 999px);
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-.acct-plan__badge--free { background: rgba(0, 0, 0, 0.06); color: var(--color-text); }
-.acct-plan__badge--pro,
-.acct-plan__badge--max { background: rgba(33, 122, 80, 0.12); color: var(--color-accent); }
-.acct-plan__status {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--color-text-muted);
-}
+/* Plan row value: the tier name reads as the focal value, accent-tinted
+ * on a paid plan (replaces the old standalone pill chip). */
+.acct-plan-value { font-weight: 600; }
+.acct-plan-value--paid { color: var(--color-accent); }
 
-.acct-usage { margin-bottom: 16px; }
+.acct-usage { margin: 24px 0 0; }
 .acct-usage__head {
   display: flex;
   justify-content: space-between;
@@ -7007,6 +7002,8 @@ button:focus:not(:focus-visible) {
 }
 .acct-line--muted { color: var(--color-text-muted); }
 .acct-line:last-child { margin-bottom: 0; }
+/* A note that follows the hairline rows (free-plan blurb) gets breathing room. */
+.acct-rows + .acct-line { margin-top: 18px; }
 .acct-line code {
   font-family: var(--font-mono, monospace);
   font-size: 13px;
@@ -7015,7 +7012,8 @@ button:focus:not(:focus-visible) {
   border-radius: 4px;
 }
 
-.acct-actions { margin-top: 4px; }
+/* Pin the action to the bottom so it lines up across the equal-height row. */
+.acct-actions { margin-top: auto; padding-top: 24px; }
 .acct-btn {
   display: inline-flex;
   align-items: center;
