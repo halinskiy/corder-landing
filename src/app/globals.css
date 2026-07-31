@@ -4722,7 +4722,7 @@ button:focus:not(:focus-visible) {
 }
 
 /* ---- /account page layout ---- */
-.account-page .account-body { max-width: 760px; }
+.account-page .account-body { max-width: 640px; }
 .account-header { margin-bottom: 32px; }
 
 .account-sections {
@@ -6875,13 +6875,11 @@ button:focus:not(:focus-visible) {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 640px;
-  margin: 40px auto 0;
+  margin: 32px 0 0;
   text-align: left;
 }
 .acct-note {
-  max-width: 640px;
-  margin: 40px auto 0;
+  margin: 32px 0 0;
   font-family: var(--font-sans);
   font-size: 16px;
   color: var(--color-text-muted);
@@ -7067,4 +7065,4 @@ button:focus:not(:focus-visible) {
 .acct-danger-final:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .acct-err { font-family: var(--font-sans); font-size: 14px; color: #b7443c; margin: 8px 0 0; }
-.acct-signin { max-width: 640px; margin: 40px auto 0; }
+.acct-signin { margin: 24px 0 0; }
