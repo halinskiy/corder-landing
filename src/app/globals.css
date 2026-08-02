@@ -6006,12 +6006,6 @@ button:focus:not(:focus-visible) {
   align-items: flex-start;
   gap: 16px;
 }
-/* Refresh + Contact support sit side by side under the failed-load message. */
-.checkout-page__paddle-error-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
 
 /* Sign-in gate inside the Paddle column. Shown when the visitor is not
  * signed in yet: the purchase must be linked to a Corder account so the
