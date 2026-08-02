@@ -103,12 +103,65 @@ export function AccountView() {
   }
 
   return (
-    <div className="acct" data-source={DATA_SOURCE}>
-      <ProfileCard me={me} token={token} onNameSaved={(n) => setMe({ ...me, name: n })} />
-      <PlanCard me={me} token={token} />
-      <BillingCard txns={txns} />
-      <DeleteCard token={token} />
-    </div>
+    <>
+      <AccountSignOut />
+      <div className="acct" data-source={DATA_SOURCE}>
+        <ProfileCard me={me} token={token} onNameSaved={(n) => setMe({ ...me, name: n })} />
+        <PlanCard me={me} token={token} />
+        <BillingCard txns={txns} />
+        <DeleteCard token={token} />
+      </div>
+    </>
+  );
+}
+
+// ── Sign out ─────────────────────────────────────────────────────────
+
+/** Top-left circle, same shell as the other pages' back arrow, but this one
+ *  signs the user out (the /account page hides the global BackToHomeBtn and
+ *  owns this slot instead -- there is nothing useful to go "back" to here). */
+function AccountSignOut() {
+  const [busy, setBusy] = useState(false);
+  async function signOut() {
+    setBusy(true);
+    try {
+      await getSupabase().auth.signOut();
+    } catch {
+      /* fall through to the redirect regardless */
+    }
+    window.location.href = "/";
+  }
+  return (
+    <button
+      type="button"
+      className="standalone-back acct-signout"
+      onClick={signOut}
+      disabled={busy}
+      title="Sign out"
+      aria-label="Sign out"
+    >
+      <LogOutGlyph />
+    </button>
+  );
+}
+
+function LogOutGlyph() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" x2="9" y1="12" y2="12" />
+    </svg>
   );
 }
 
