@@ -45,23 +45,16 @@ export default function RefundsPage() {
             </p>
 
             <h2>How to request a refund</h2>
-            <p>Two options, either works:</p>
-            <ol>
-              <li>
-                <strong>Self-serve via Paddle.</strong> Open the receipt
-                email from <code>noreply@paddle.com</code> you received at
-                purchase, click the "Manage subscription" link, and use
-                the refund option in the customer portal.
-              </li>
-              <li>
-                <strong>Email us.</strong> Send a message to{" "}
-                <a href="mailto:support@corder.app">
-                  <strong>support@corder.app</strong>
-                </a>{" "}
-                with the email address you used for purchase. We respond
-                within one business day.
-              </li>
-            </ol>
+            <p>
+              Email us at{" "}
+              <a href="mailto:hello@getcorder.com">
+                <strong>hello@getcorder.com</strong>
+              </a>{" "}
+              from the address you used at purchase and ask for a refund.
+              We approve it and Paddle, our merchant of record, returns the
+              money to your original card. We respond within one business
+              day.
+            </p>
 
             <h2>Processing time</h2>
             <p>
@@ -94,8 +87,8 @@ export default function RefundsPage() {
             <h2>Questions</h2>
             <p>
               For anything not covered here, email{" "}
-              <a href="mailto:support@corder.app">
-                <strong>support@corder.app</strong>
+              <a href="mailto:hello@getcorder.com">
+                <strong>hello@getcorder.com</strong>
               </a>
               . We read every message.
             </p>
