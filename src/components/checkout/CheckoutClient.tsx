@@ -9,7 +9,6 @@ import { copy } from "@/content/copy";
 import { getSupabase, SUPABASE_CONFIGURED } from "@/lib/supabase";
 import {
   PADDLE_SUCCESS_URL,
-  PADDLE_TOKEN,
   isLaunchTier,
   resolvePriceId,
   resolveTier,
@@ -24,8 +23,7 @@ type CheckoutState =
   | "signin"
   | "ready"
   | "invalid"
-  | "paddle-missing"
-  | "checkout-failed";
+  | "paddle-missing";
 
 /**
  * Inline Paddle checkout, embedded inside our own /checkout/ shell.
@@ -105,10 +103,6 @@ export function CheckoutClient() {
   // signed-in user. Paddle.js is loaded with `defer` in app/layout.tsx,
   // so poll briefly for window.Paddle on slow networks.
   const mountedRef = useRef(false);
-  // Set true the moment Paddle fires checkout.loaded, so the failsafe below
-  // knows the frame actually rendered.
-  const loadedRef = useRef(false);
-  const failTimerRef = useRef<number | null>(null);
   useEffect(() => {
     if (!authChecked) return;
     if (!priceId || !trackBilling) {
@@ -141,40 +135,6 @@ export function CheckoutClient() {
       const launch = isLaunchTier(trackBilling) && billing === "monthly";
       const buyer = user!;
       try {
-        // Own the Paddle event callback for the lifetime of this checkout so
-        // we can tell whether the inline frame actually rendered. Paddle
-        // serves its OWN "Page Not Found" page INSIDE the iframe for some
-        // failures (e.g. an unapproved domain) WITHOUT firing checkout.error,
-        // so a raw Paddle 404 is otherwise invisible to us. checkout.loaded
-        // confirms success; the failsafe timer below catches the silent 404.
-        // We keep the completed-analytics here too so the layout callback we
-        // override on this page loses nothing.
-        window.Paddle!.Initialize?.({
-          token: PADDLE_TOKEN,
-          eventCallback: (d) => {
-            const name = d?.name;
-            if (name === "checkout.loaded") {
-              loadedRef.current = true;
-              if (failTimerRef.current !== null) {
-                window.clearTimeout(failTimerRef.current);
-                failTimerRef.current = null;
-              }
-            } else if (name === "checkout.error") {
-              setState("checkout-failed");
-            } else if (name === "checkout.completed") {
-              try {
-                const w = window as unknown as {
-                  plausible?: (e: string) => void;
-                  twq?: (a: string, b: string, c: Record<string, unknown>) => void;
-                };
-                w.plausible?.("checkout_completed");
-                w.twq?.("event", "tw-checkout-completed", {});
-              } catch {
-                /* analytics best-effort */
-              }
-            }
-          },
-        });
         // Cast lets us pass `frameTarget` / `frameInitialHeight` /
         // `frameStyle` -- Paddle.js v2 inline-mode keys that our
         // minimal Window.Paddle type does not enumerate.
@@ -205,24 +165,12 @@ export function CheckoutClient() {
           },
         });
         setState("ready");
-        // Failsafe: if Paddle never confirms the frame loaded within 10s,
-        // assume it failed (the silent-404 case above) and show OUR error
-        // instead of leaving the user on Paddle's bare "Page Not Found".
-        failTimerRef.current = window.setTimeout(() => {
-          if (!loadedRef.current) setState("checkout-failed");
-        }, 10000);
       } catch {
         setState("paddle-missing");
       }
     }
 
-    return () => {
-      window.clearInterval(interval);
-      if (failTimerRef.current !== null) {
-        window.clearTimeout(failTimerRef.current);
-        failTimerRef.current = null;
-      }
-    };
+    return () => window.clearInterval(interval);
   }, [authChecked, user, priceId, trackBilling, billing]);
 
   if (state === "invalid") {
@@ -336,41 +284,9 @@ export function CheckoutClient() {
             </Link>
           </div>
         )}
-        {state === "checkout-failed" && (
-          <div className="checkout-page__paddle-error">
-            <p>
-              The checkout could not load. Refresh the page and try again. If it
-              keeps happening, contact us and we will sort it out.
-            </p>
-            <div className="checkout-page__paddle-error-actions">
-              <button
-                type="button"
-                onClick={() => {
-                  if (typeof window !== "undefined") window.location.reload();
-                }}
-                className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] px-7 text-[16px] font-medium"
-              >
-                Refresh
-              </button>
-              <Link
-                href="/contact/"
-                className="cta-pill cta-pill--ghost inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] px-7 text-[16px] font-medium"
-              >
-                Contact support
-              </Link>
-            </div>
-          </div>
-        )}
         {/* Paddle inline iframe mounts inside this container. The
-            class name is what `settings.frameTarget` above points at.
-            Hidden on a failed load so Paddle's own bare 404 page inside
-            the iframe doesn't show under our error card. */}
-        <div
-          className="checkout-page__paddle-frame"
-          style={
-            state === "checkout-failed" ? { display: "none" } : undefined
-          }
-        />
+            class name is what `settings.frameTarget` above points at. */}
+        <div className="checkout-page__paddle-frame" />
       </div>
     </div>
   );
