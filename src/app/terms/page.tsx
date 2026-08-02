@@ -95,7 +95,7 @@ export default function TermsPage() {
             <p>
               If a charge looks wrong or if Corder did not work as
               described, write to{" "}
-              <a href="mailto:hello@corder.app">hello@corder.app</a> within
+              <a href="mailto:hello@getcorder.com">hello@getcorder.com</a> within
               14 days of the charge and we will sort it out.
             </p>
 

@@ -3932,7 +3932,7 @@ button:focus:not(:focus-visible) {
 }
 
 /* Quiet status row at the page bottom -- "14-day refund . Cancel
- * anytime . Back to corder.app". Dot separators are CSS-painted
+ * anytime . Back to getcorder.com". Dot separators are CSS-painted
  * circles (no unicode middle-dot characters in the markup, per the
  * ASCII-only copy rule). */
 .thanks-page__status-row {

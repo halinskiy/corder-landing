@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: { absolute: "Not found  -  Corder" },
   description:
-    "The page you were looking for moved or never existed. Head back to corder.app.",
+    "The page you were looking for moved or never existed. Head back to getcorder.com.",
   robots: { index: false, follow: true },
 };
 
