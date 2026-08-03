@@ -220,7 +220,9 @@ function BarChart({ data }: { data: { label: string; value: number }[] }) {
         </svg>
         {hover !== null && (
           <div
-            className="chart__tip"
+            className={`chart__tip${
+              data[hover].value / max > 0.7 ? " chart__tip--below" : ""
+            }`}
             style={{
               left: `${((padX + hover * colW + colW / 2) / W) * 100}%`,
               top: `${(barTop(data[hover].value) / H) * 100}%`,
