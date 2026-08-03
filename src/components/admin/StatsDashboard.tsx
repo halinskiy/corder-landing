@@ -60,7 +60,7 @@ export function StatsDashboard() {
       <div className="stats-cards">
         <StatCard label="Registered users" value={r.total} delta={`+${r.new24h} today`} />
         <StatCard label="New this week" value={r.new7d} sub={`${r.new30d} this month`} />
-        <StatCard label="Paid" value={paid} sub={`${r.tiers.pro} Pro · ${r.tiers.max} Max`} accent />
+        <StatCard label="Paid" value={paid} sub={`${r.tiers.pro} Pro · ${r.tiers.max} Max`} />
         <StatCard label="Active now (24h)" value={d.active24h} sub={`${d.active7d} / 7d · ${d.active30d} / 30d`} />
       </div>
 
