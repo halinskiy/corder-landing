@@ -5978,22 +5978,20 @@ button:focus:not(:focus-visible) {
   border: 1px solid var(--color-border, #e5e5e5);
   border-radius: 12px;
   padding: 20px;
-  min-height: 520px;
   position: relative;
-  /* Same cascade override as the summary -- loading and error
-   * placeholders inside read left-aligned. The Paddle iframe lives
-   * in its own document so its content is unaffected either way. */
+  /* No fixed min-height: the column hugs its content. In the sign-in /
+   * loading states that keeps the card short instead of a tall empty grey
+   * box; once Paddle mounts its inline iframe (frameInitialHeight 450) the
+   * card grows to fit it. */
   text-align: left;
 }
 @media (min-width: 768px) {
   .checkout-page__paddle {
     padding: 28px;
-    min-height: 640px;
   }
 }
 .checkout-page__paddle-frame {
   width: 100%;
-  min-height: 480px;
 }
 .checkout-page__paddle-loading,
 .checkout-page__paddle-error {
@@ -6015,6 +6013,8 @@ button:focus:not(:focus-visible) {
 .checkout-page__signin {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 8px;
   padding: 4px 0;
 }
@@ -6490,6 +6490,20 @@ button:focus:not(:focus-visible) {
 }
 .admin-gate__actions { margin-top: 24px; }
 .admin-gate__signout { height: 48px; display: inline-flex; align-items: center; padding-inline: 24px; }
+/* Sign-in gate: centered, narrow, tight -- like the other standalone auth
+ * surfaces. Overrides the .legal-page left-align + wide sub margin. */
+.admin-gate .account-auth-body { max-width: 460px; }
+.admin-gate .install-page__heading {
+  text-align: center;
+  white-space: normal;
+  margin: 0 0 4px;
+}
+.admin-gate .install-page__sub {
+  text-align: center;
+  white-space: normal;
+  max-width: none;
+  margin: 0 0 16px;
+}
 
 /* ---- react-day-picker, themed to the Corder palette ---- */
 /* Compound .admin-rdp.rdp-root selector (0,2,0) is required: the library
