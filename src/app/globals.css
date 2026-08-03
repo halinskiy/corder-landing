@@ -7196,6 +7196,13 @@ button:focus:not(:focus-visible) {
   justify-content: center;
   margin-top: 40px;
 }
+/* Secondary pill: hairline border at rest (cta-pill--ghost only borders on
+ * hover), matching the pricing "Get Pro" / "Download for Mac" buttons. */
+.testimonials-cta .cta-pill--ghost {
+  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
 
 /* ======================================================================
  *  Admin Overview dashboard (/admin) -- traction at a glance.
