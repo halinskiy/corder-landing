@@ -59,8 +59,16 @@ export function BackToHomeBtn() {
    * "/" when there is no in-app history to return to -- a direct deep
    * link, a fresh tab, or an arrival from an external referrer.
    */
+  // Checkout gets a fresh nav straight to pricing, never router.back():
+  // after a Google OAuth round-trip the history stack holds the sign-in
+  // step, so "back" would loop the user back into the login instead of out.
+  const isCheckout = pathname === "/checkout" || pathname === "/checkout/";
+  const backHref = isCheckout ? "/#pricing" : "/";
+
   const handleBack = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (typeof window === "undefined") return;
+    // From checkout, let the <Link href="/#pricing"> navigate normally.
+    if (isCheckout) return;
     // history.length > 1 means this tab has a previous entry to return
     // to -- the normal /#pricing -> /checkout flow. router.back() lets
     // the browser + Next restore the prior scroll position (and the
@@ -74,7 +82,7 @@ export function BackToHomeBtn() {
 
   return (
     <Link
-      href="/"
+      href={backHref}
       onClick={handleBack}
       className="standalone-back"
       aria-label="Back to Corder"
