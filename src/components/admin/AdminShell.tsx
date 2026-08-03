@@ -10,7 +10,8 @@ const DATA_SOURCE =
   "projects/corder-landing/src/components/admin/AdminShell.tsx";
 
 const TABS = [
-  { href: "/admin/", label: "Users", match: (p: string) => p === "/admin" || p === "/admin/" },
+  { href: "/admin/", label: "Overview", match: (p: string) => p === "/admin" || p === "/admin/" },
+  { href: "/admin/users/", label: "Users", match: (p: string) => p.startsWith("/admin/users") },
   { href: "/admin/news/", label: "News", match: (p: string) => p.startsWith("/admin/news") },
   { href: "/admin/logs/", label: "Logs", match: (p: string) => p.startsWith("/admin/logs") },
 ] as const;

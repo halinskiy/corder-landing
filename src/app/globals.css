@@ -7090,3 +7090,66 @@ button:focus:not(:focus-visible) {
  * thanks / checkout). Overrides the .legal-page left-align for /account. */
 .account-page .install-page__heading { text-align: center; }
 .account-page .account-header { text-align: center; }
+
+/* ======================================================================
+ *  Admin Overview dashboard (/admin) -- traction at a glance.
+ * ====================================================================== */
+.stats { display: flex; flex-direction: column; gap: 24px; margin-top: 8px; }
+.stats-note { font-family: var(--font-sans); font-size: 16px; color: var(--color-text-muted); }
+.stats-note--err { color: #b7443c; }
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 780px) { .stats-cards { grid-template-columns: repeat(2, 1fr); } }
+.stats-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+}
+.stats-card--accent { background: var(--color-accent-subtle); border-color: var(--color-accent-soft); }
+.stats-card__label { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-muted); }
+.stats-card__value {
+  font-family: var(--font-serif);
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.stats-card__delta { font-family: var(--font-sans); font-size: 14px; color: var(--color-accent); font-weight: 500; }
+.stats-card__sub { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-muted); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+@media (max-width: 780px) { .stats-grid { grid-template-columns: 1fr; } }
+.stats-panel {
+  padding: 24px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+}
+.stats-panel__head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 18px; }
+.stats-panel__title { font-family: var(--font-serif); font-size: 20px; font-weight: 500; color: var(--color-text); margin: 0; }
+.stats-panel__sub { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-muted); }
+
+.stats-bars { display: block; width: 100%; height: auto; overflow: visible; }
+.stats-bar { fill: var(--color-accent); }
+.stats-bar__val { fill: var(--color-text-muted); font-family: var(--font-sans); font-size: 11px; }
+.stats-bar__lbl { fill: var(--color-text-muted); font-family: var(--font-sans); font-size: 11px; }
+
+.stats-split { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.stats-split__row { display: grid; grid-template-columns: 96px 1fr 40px; align-items: center; gap: 12px; }
+.stats-split__label { font-family: var(--font-sans); font-size: 14px; color: var(--color-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stats-split__track { height: 10px; background: rgba(0,0,0,0.06); border-radius: 999px; overflow: hidden; }
+.stats-split__fill { display: block; height: 100%; background: var(--color-accent); border-radius: 999px; }
+.stats-split__value { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+.stats-empty { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-muted); margin: 0; padding: 20px 0; }
+.stats-foot { font-family: var(--font-sans); font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin: 0; }

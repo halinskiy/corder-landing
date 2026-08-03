@@ -1,8 +1,9 @@
-import { UsersTable } from "@/components/admin/UsersTable";
+import { StatsDashboard } from "@/components/admin/StatsDashboard";
 
 const DATA_SOURCE = "projects/corder-landing/src/app/admin/page.tsx";
 
-/** /admin -- users tab. Auth + chrome come from admin/layout.tsx. */
-export default function AdminUsersPage() {
-  return <UsersTable key={DATA_SOURCE} />;
+/** /admin -- Overview (traction dashboard). Auth + chrome come from
+ *  admin/layout.tsx; the Users table now lives at /admin/users/. */
+export default function AdminOverviewPage() {
+  return <StatsDashboard key={DATA_SOURCE} />;
 }

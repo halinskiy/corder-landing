@@ -110,6 +110,33 @@ async function adminFetch<T>(
   return (await res.json()) as T;
 }
 
+// --- stats / dashboard ----------------------------------------------------
+
+export type AdminStats = {
+  registrations: {
+    total: number;
+    new24h: number;
+    new7d: number;
+    new30d: number;
+    tiers: { free: number; pro: number; max: number };
+    daily: { date: string; count: number }[];
+  };
+  devices: {
+    active24h: number;
+    active7d: number;
+    active30d: number;
+    ever: number;
+    withFailures: number;
+    activeDaily: { date: string; devices: number }[];
+    tierSplit: { tier: string | null; devices: number }[];
+    versionSplit: { version: string | null; devices: number }[];
+  };
+};
+
+export async function getStats(): Promise<AdminStats> {
+  return adminFetch<AdminStats>("/admin/stats");
+}
+
 // --- users API ------------------------------------------------------------
 
 export async function listUsers(
