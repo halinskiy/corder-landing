@@ -7189,6 +7189,9 @@ button:focus:not(:focus-visible) {
   z-index: 3;
   font-family: var(--font-sans);
 }
+/* A tall bar's tooltip flips below its top edge so it never covers the panel
+ * title above the chart. */
+.chart__tip--below { transform: translate(-50%, 12px); }
 .chart__tip-val { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .chart__tip-lbl { font-size: 12px; opacity: 0.72; }
 .chart__xaxis { display: flex; margin-top: 12px; }
@@ -7200,7 +7203,9 @@ button:focus:not(:focus-visible) {
   font-size: 13px;
   color: var(--color-text-muted);
   white-space: nowrap;
-  overflow: hidden;
+  /* Only every Nth cell carries text and its neighbours are empty, so let a
+   * label spill into that empty space instead of clipping it. */
+  overflow: visible;
 }
 
 .stats-split { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
