@@ -35,38 +35,58 @@ export function Testimonials() {
               rel="noopener noreferrer"
               className="testimonial-card"
               data-track-event="testimonial_click"
+              aria-label={`${item.name} ${t.sourceLabel}`}
             >
               <p className="testimonial-card__quote">{item.quote}</p>
               <span className="testimonial-card__meta">
-                <span className="testimonial-card__name">{item.name}</span>
-                <span className="testimonial-card__src">
-                  {t.sourceLabel}
-                  <ArrowUpRight />
+                <span className="testimonial-card__person">
+                  <span className="testimonial-card__name">{item.name}</span>
+                  {"title" in item && item.title && (
+                    <span className="testimonial-card__title">{item.title}</span>
+                  )}
                 </span>
+                <ProductHuntLogo />
               </span>
             </a>
           ))}
         </div>
+
+        {t.ctaLabel && (
+          <div className="testimonials-cta">
+            <a
+              href={t.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cta-pill cta-pill--ghost inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] px-7 text-[16px] font-medium"
+              data-track-event="testimonial_feedback_click"
+            >
+              {t.ctaLabel}
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-function ArrowUpRight() {
+// Product Hunt logomark (official: orange circle + white "P").
+function ProductHuntLogo() {
   return (
     <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      width="18"
+      height="18"
+      viewBox="0 0 240 240"
       aria-hidden
+      className="testimonial-card__ph"
     >
-      <path d="M7 17 17 7" />
-      <path d="M7 7h10v10" />
+      <path
+        fill="#DA552F"
+        d="M240 120c0 66.3-53.7 120-120 120S0 186.3 0 120 53.7 0 120 0s120 53.7 120 120"
+      />
+      <path
+        fill="#fff"
+        d="M136 120h-34v-36h34c9.94 0 18 8.06 18 18s-8.06 18-18 18m0-60h-58v120h24v-36h34c26.51 0 48-21.49 48-48s-21.49-48-48-48"
+      />
     </svg>
   );
 }
