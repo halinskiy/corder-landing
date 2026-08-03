@@ -6062,6 +6062,9 @@ button:focus:not(:focus-visible) {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  /* Left-align the copy so it reads with the flush-left "Back to pricing"
+   * button instead of centered text over a left button. */
+  text-align: left;
   gap: 20px;
 }
 .checkout-page__error-text {
@@ -6492,6 +6495,14 @@ button:focus:not(:focus-visible) {
 .admin-gate__signout { height: 48px; display: inline-flex; align-items: center; padding-inline: 24px; }
 /* Sign-in gate: centered, narrow, tight -- like the other standalone auth
  * surfaces. Overrides the .legal-page left-align + wide sub margin. */
+/* Vertically centre the whole gate in the viewport instead of pinning it to
+ * the top -- there is no nav on /admin, so the card floats in the middle. */
+.admin-gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.admin-gate > .page-container { width: 100%; }
 .admin-gate .account-auth-body { max-width: 460px; }
 .admin-gate .install-page__heading {
   text-align: center;
