@@ -148,41 +148,97 @@ function Panel({
   );
 }
 
-/** Minimal SVG bar chart, responsive via viewBox. */
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+/** "2026-05-28" -> "May 28". Falls back to the raw label if it isn't ISO. */
+function fmtDate(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m) return iso;
+  return `${MONTHS[Number(m[2]) - 1]} ${Number(m[3])}`;
+}
+
+/**
+ * Interactive bar chart. Shapes are SVG (scale with the panel); the axis
+ * labels and the hover tooltip are HTML so they stay crisp at a real size
+ * instead of shrinking with the viewBox. Hovering a column highlights it,
+ * dims the rest, and floats a tooltip with the exact date + value.
+ */
 function BarChart({ data }: { data: { label: string; value: number }[] }) {
-  if (data.length === 0)
-    return <p className="stats-empty">No data yet.</p>;
-  const W = 640;
-  const H = 180;
-  const pad = { t: 12, r: 8, b: 22, l: 8 };
+  const [hover, setHover] = useState<number | null>(null);
+  if (data.length === 0) return <p className="stats-empty">No data yet.</p>;
+
+  const W = 1000;
+  const H = 360;
+  const padT = 24;
+  const padB = 8;
+  const padX = 6;
+  const plotH = H - padT - padB;
   const max = Math.max(1, ...data.map((d) => d.value));
-  const bw = (W - pad.l - pad.r) / data.length;
-  const barW = Math.max(2, bw * 0.7);
+  const n = data.length;
+  const colW = (W - padX * 2) / n;
+  const barW = Math.min(40, colW * 0.62);
+  const labelEvery = Math.max(1, Math.ceil(n / 8));
+
+  const barTop = (v: number) => padT + plotH - Math.max(2, (plotH * v) / max);
+
   return (
-    <svg className="stats-bars" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Bar chart">
-      {data.map((d, i) => {
-        const x = pad.l + i * bw + (bw - barW) / 2;
-        const h = ((H - pad.t - pad.b) * d.value) / max;
-        const y = H - pad.b - h;
-        const showLabel =
-          data.length <= 12 || i === 0 || i === data.length - 1 || i === Math.floor(data.length / 2);
-        return (
-          <g key={d.label}>
-            <rect x={x} y={y} width={barW} height={h} rx={2} className="stats-bar" />
-            {d.value > 0 && (
-              <text x={x + barW / 2} y={y - 3} className="stats-bar__val" textAnchor="middle">
-                {d.value}
-              </text>
-            )}
-            {showLabel && (
-              <text x={x + barW / 2} y={H - 6} className="stats-bar__lbl" textAnchor="middle">
-                {d.label.slice(5)}
-              </text>
-            )}
-          </g>
-        );
-      })}
-    </svg>
+    <div
+      className={`chart${hover !== null ? " chart--hovering" : ""}`}
+      onMouseLeave={() => setHover(null)}
+    >
+      <div className="chart__plot">
+        <svg className="chart__svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Bar chart">
+          {[0.25, 0.5, 0.75, 1].map((f) => {
+            const y = padT + plotH - plotH * f;
+            return <line key={f} className="chart__grid" x1={0} x2={W} y1={y} y2={y} />;
+          })}
+          <line className="chart__axis" x1={0} x2={W} y1={padT + plotH} y2={padT + plotH} />
+          {data.map((d, i) => {
+            const x = padX + i * colW + (colW - barW) / 2;
+            const y = barTop(d.value);
+            const h = padT + plotH - y;
+            return (
+              <g key={d.label}>
+                <rect
+                  x={x}
+                  y={y}
+                  width={barW}
+                  height={h}
+                  rx={3}
+                  className={`chart__bar${hover === i ? " chart__bar--on" : ""}`}
+                />
+                <rect
+                  x={padX + i * colW}
+                  y={padT}
+                  width={colW}
+                  height={plotH}
+                  fill="transparent"
+                  onMouseEnter={() => setHover(i)}
+                />
+              </g>
+            );
+          })}
+        </svg>
+        {hover !== null && (
+          <div
+            className="chart__tip"
+            style={{
+              left: `${((padX + hover * colW + colW / 2) / W) * 100}%`,
+              top: `${(barTop(data[hover].value) / H) * 100}%`,
+            }}
+          >
+            <span className="chart__tip-val">{data[hover].value}</span>
+            <span className="chart__tip-lbl">{fmtDate(data[hover].label)}</span>
+          </div>
+        )}
+      </div>
+      <div className="chart__xaxis" aria-hidden>
+        {data.map((d, i) => (
+          <span key={d.label} className="chart__xlbl">
+            {i % labelEvery === 0 || i === n - 1 ? fmtDate(d.label) : ""}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
