@@ -7,6 +7,7 @@ import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Nav } from "@/components/sections/Nav";
 import { Pricing } from "@/components/sections/Pricing";
 import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
+import { Testimonials } from "@/components/sections/Testimonials";
 import { WorksWith } from "@/components/sections/WorksWith";
 import { YoursPrivacy } from "@/components/sections/YoursPrivacy";
 import {
@@ -34,6 +35,8 @@ export default function HomePage() {
       <WorksWith />
       <hr className="section-divider" />
       <Features />
+      <hr className="section-divider" />
+      <Testimonials />
       <hr className="section-divider" />
       <Pricing />
       <hr className="section-divider" />

@@ -314,6 +314,27 @@
     ],
     "microcopy": "Prices in USD. No credit card to download. macOS 14 or later"
   },
+  "testimonials": {
+    "eyebrow": "Early users",
+    "heading": "What early users say",
+    "subhead": "Real comments from the Product Hunt launch.",
+    "sourceLabel": "on Product Hunt",
+    "sourceUrl": "https://www.producthunt.com/products/corder",
+    "items": [
+      {
+        "quote": "Finally, a meeting recorder that doesn't make me look like I'm running surveillance on my own calls. Tried it in Meet and the system audio split is genuinely clean.",
+        "name": "Sedanur"
+      },
+      {
+        "quote": "I've been using Corder for about two months. Bugs get fixed within a day or two, which is not what I expected from a one-person project. I use it for real calls now.",
+        "name": "Maksym Boiko"
+      },
+      {
+        "quote": "Recording at the OS level is a smart workaround. Love that it sidesteps bot blocking entirely.",
+        "name": "Mustafa Soba"
+      }
+    ]
+  },
   "faq": {
     "eyebrow": "Questions",
     "heading": "Things people ask",
