@@ -315,23 +315,36 @@
     "microcopy": "Prices in USD. No credit card to download. macOS 14 or later"
   },
   "testimonials": {
-    "eyebrow": "Early users",
-    "heading": "What early users say",
+    "heading": "Reviews",
     "subhead": "Real comments from the Product Hunt launch.",
     "sourceLabel": "on Product Hunt",
     "sourceUrl": "https://www.producthunt.com/products/corder",
+    "ctaLabel": "Leave feedback",
     "items": [
       {
         "quote": "Finally, a meeting recorder that doesn't make me look like I'm running surveillance on my own calls. Tried it in Meet and the system audio split is genuinely clean.",
-        "name": "Sedanur"
+        "name": "Sedanur",
+        "title": "Co-founder, Chronolex"
       },
       {
         "quote": "I've been using Corder for about two months. Bugs get fixed within a day or two, which is not what I expected from a one-person project. I use it for real calls now.",
-        "name": "Maksym Boiko"
+        "name": "Maksym Boiko",
+        "title": "CEO, NoCorny Agency"
       },
       {
         "quote": "Recording at the OS level is a smart workaround. Love that it sidesteps bot blocking entirely.",
-        "name": "Mustafa Soba"
+        "name": "Mustafa Soba",
+        "title": "Founder, Seekstone"
+      },
+      {
+        "quote": "I'm a Windows user so I'm biased, but I highly value open source products and prioritize them over closed source ones, especially when it comes down to personal data.",
+        "name": "Umberto",
+        "title": "Co-founder, Matterly"
+      },
+      {
+        "quote": "My days are back-to-back product and user calls, and I used to leave each one with half a page of messy notes. Corder records quietly with no bot in the call, and the speaker-labeled transcript is clean enough to lift real quotes straight into my product docs.",
+        "name": "Asti Pili",
+        "title": "Head of Product"
       }
     ]
   },
