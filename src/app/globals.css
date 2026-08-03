@@ -7127,18 +7127,53 @@ button:focus:not(:focus-visible) {
   line-height: 1.55;
   color: var(--color-text-muted);
 }
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+/* Infinite marquee of review cards -- one row, seamless loop. */
+.testimonials-marquee {
+  position: relative;
+  overflow-x: clip;
+  overflow-y: visible;
+  padding-block: 6px;
 }
-@media (max-width: 960px) {
-  .testimonials-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.testimonials-marquee::before,
+.testimonials-marquee::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 7%;
+  z-index: 2;
+  pointer-events: none;
 }
-@media (max-width: 600px) {
-  .testimonials-grid { grid-template-columns: 1fr; }
+.testimonials-marquee::before {
+  left: 0;
+  background: linear-gradient(to right, var(--color-bg), rgba(255, 255, 255, 0));
+}
+.testimonials-marquee::after {
+  right: 0;
+  background: linear-gradient(to left, var(--color-bg), rgba(255, 255, 255, 0));
+}
+.testimonials-track {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  animation: testimonials-scroll 48s linear infinite;
+}
+.testimonials-marquee:hover .testimonials-track {
+  animation-play-state: paused;
+}
+@keyframes testimonials-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  /* the item set is doubled, so -50% is exactly one set (incl. its trailing
+   * card margins), giving a seamless loop. */
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-track { animation: none; }
 }
 .testimonial-card {
+  /* Fixed-width tiles that live in the marquee row. */
+  flex: 0 0 340px;
+  margin-right: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

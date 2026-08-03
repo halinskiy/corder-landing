@@ -26,29 +26,38 @@ export function Testimonials() {
           <p className="testimonials-head__sub">{t.subhead}</p>
         </div>
 
-        <div className="testimonials-grid">
-          {t.items.map((item, i) => (
-            <a
-              key={i}
-              href={t.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="testimonial-card"
-              data-track-event="testimonial_click"
-              aria-label={`${item.name} ${t.sourceLabel}`}
-            >
-              <p className="testimonial-card__quote">{item.quote}</p>
-              <span className="testimonial-card__meta">
-                <span className="testimonial-card__person">
-                  <span className="testimonial-card__name">{item.name}</span>
-                  {"title" in item && item.title && (
-                    <span className="testimonial-card__title">{item.title}</span>
-                  )}
-                </span>
-                <ProductHuntLogo />
-              </span>
-            </a>
-          ))}
+        {/* Infinite marquee: the item set is rendered twice so the track can
+            loop seamlessly (translate -50%). Pauses on hover and off-screen. */}
+        <div className="testimonials-marquee" data-pauseable>
+          <div className="testimonials-track">
+            {[...t.items, ...t.items].map((item, i) => {
+              const dup = i >= t.items.length;
+              return (
+                <a
+                  key={i}
+                  href={t.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="testimonial-card"
+                  data-track-event="testimonial_click"
+                  aria-hidden={dup || undefined}
+                  tabIndex={dup ? -1 : undefined}
+                  aria-label={dup ? undefined : `${item.name} ${t.sourceLabel}`}
+                >
+                  <p className="testimonial-card__quote">{item.quote}</p>
+                  <span className="testimonial-card__meta">
+                    <span className="testimonial-card__person">
+                      <span className="testimonial-card__name">{item.name}</span>
+                      {"title" in item && item.title && (
+                        <span className="testimonial-card__title">{item.title}</span>
+                      )}
+                    </span>
+                    <ProductHuntLogo />
+                  </span>
+                </a>
+              );
+            })}
+          </div>
         </div>
 
         {t.ctaLabel && (
