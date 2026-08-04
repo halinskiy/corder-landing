@@ -7348,7 +7348,9 @@ button:focus:not(:focus-visible) {
  *  physics constants live in CaseView.tsx and are copied 1:1.
  * ---------------------------------------------------------------------- */
 
-.case-head { padding: 96px 0 72px; }
+/* longhand only: the shorthand zeroed page-container's side gutters and
+   shifted the hero 40px left of every chapter (user caught it). */
+.case-head { padding-top: 96px; padding-bottom: 72px; }
 /* The window is sized to fit inside the viewport (height-capped, app
    aspect); .case-fit is that SAME width applied to every text block so
    headings, chapter copy and the CTA all align to the window's edges. */
