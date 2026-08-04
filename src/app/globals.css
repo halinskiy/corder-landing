@@ -7349,6 +7349,14 @@ button:focus:not(:focus-visible) {
  * ---------------------------------------------------------------------- */
 
 .case-head { padding-top: 96px; }
+/* The window is sized to fit inside the viewport (height-capped, app
+   aspect); .case-fit is that SAME width applied to every text block so
+   headings, chapter copy and the CTA all align to the window's edges. */
+.case-fit {
+  width: min(100%, calc((100vh - 150px) * (1180 / 788)));
+  margin-left: auto;
+  margin-right: auto;
+}
 .case-head__brand {
   display: inline-block;
   font-family: var(--font-sans);
@@ -7362,10 +7370,9 @@ button:focus:not(:focus-visible) {
 .case-head__heading { max-width: 20ch; }
 .case-head__subhead { max-width: 62ch; }
 
-.case-track { position: relative; margin-top: 24px; }
 
-.case-row { position: relative; z-index: 1; padding: 96px 0 40px; }
 .case-static__row { padding: 72px 0 0; }
+.case-static__row .case-window { width: 100%; margin-top: 44px; }
 .case-static { padding-bottom: 40px; }
 
 .case-text { display: flex; flex-direction: column; gap: 14px; }
@@ -7396,28 +7403,7 @@ button:focus:not(:focus-visible) {
   max-width: 60ch;
 }
 
-/* Slot: full content width, app aspect (1180x760 viewport + 28px bar). */
-.case-slot {
-  position: relative;
-  margin-top: 44px;
-  width: 100%;
-  aspect-ratio: 1180 / 788;
-}
-.case-ghost { position: absolute; inset: 0; }
-.case-ghost__frame { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 
-/* The one travelling window. Wrap is transparent to events; only the
-   window itself is interactive (the wipe). */
-.case-window-wrap {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
-  pointer-events: none;
-  will-change: transform;
-}
-.case-window-inner { pointer-events: none; }
 .case-window {
   pointer-events: auto;
   position: relative;
