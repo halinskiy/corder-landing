@@ -728,5 +728,40 @@
         "body": "Toggle screen video, its resolution, auto-transcribe, and meeting auto-detect. Switch between light and dark with a click. Defaults you can change anytime, not preferences buried five menus deep"
       }
     ]
+  },
+  "caseStudy": {
+    "metaTitle": "Corder, before and after",
+    "metaDescription": "The same macOS app four months apart. Real screens from the first shipped build against the current one, and the finishing work between them.",
+    "eyebrow": "Case study",
+    "heading": "The same app, four months apart",
+    "subhead": "Corder started as AI output: it worked, it looked like a prototype. Every window below is the real interface with the same data. First shipped build on the left, today's on the right. Move the line.",
+    "chapters": [
+      {
+        "heading": "First launch",
+        "body": "The first build opened to a blank pane and a note to go press Start somewhere in the menu bar. Today the first screen is the product: one clear action, your first recording sketched in, nothing to figure out."
+      },
+      {
+        "heading": "A finished meeting",
+        "body": "Same transcript, same speakers, same timestamps. The early view dumped turns under a breadcrumb. The current one gives the meeting a title, tabs for summary and chapters, sharing, and a timeline you can read at a glance."
+      },
+      {
+        "heading": "The archive",
+        "body": "A modal that covered your transcript became a drawer beside it. Rows restore in place, retention is stated in plain words, and the window underneath stays visible and usable."
+      },
+      {
+        "heading": "Settings",
+        "body": "From a paste-your-API-key field to a system: grouped cards, one switch style, one accent color, every row written in the same voice. Boring in the best way."
+      }
+    ],
+    "resultLine": "Corder today is a notarized, paid macOS product with a landing page, checkout and auto-updates. Built solo, finished deliberately.",
+    "cta": {
+      "heading": "I do this for AI-built products",
+      "subhead": "You bring a product an AI helped you build. In about two weeks I make it consistent, branded and shippable: components, spacing, states, copy. Async process, written updates, before-and-after pairs like the ones above. From £1,500, fixed scope.",
+      "buttonLabel": "Get this for your product",
+      "buttonHref": "mailto:hello@getcorder.com?subject=Finish%20my%20product",
+      "secondaryLabel": "See Corder live",
+      "secondaryHref": "/"
+    },
+    "floatLabel": "Want this finish?"
   }
 }
