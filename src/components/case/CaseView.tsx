@@ -31,14 +31,18 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
   // flies into place and becomes "Get this for your product". Same shared
   // layoutId + morph transition pattern (and the exact transition value)
   // as the homepage's CorderPresence.
-  const ctaRef = useRef<HTMLElement | null>(null);
+  // Observe the BUTTON ROW itself (not the whole section) with a small
+  // bottom inset, so the pill docks exactly when its destination slot is
+  // genuinely on screen -- a short believable hop instead of a long
+  // cross-screen flight the moment the section's top edge appears.
+  const dockRowRef = useRef<HTMLDivElement | null>(null);
   const [docked, setDocked] = useState(false);
   useEffect(() => {
-    const el = ctaRef.current;
+    const el = dockRowRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
       ([entry]) => setDocked(entry.isIntersecting),
-      { threshold: 0.3 },
+      { rootMargin: "0px 0px -10% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -88,18 +92,12 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
 
       <hr className="section-divider" />
 
-      <section
-        id="pricing"
-        className="case-cta"
-        ref={(node) => {
-          ctaRef.current = node;
-        }}
-      >
+      <section id="pricing" className="case-cta">
         <div className="page-container">
           <div className="case-fit">
           <h2 className="case-cta__heading">{t.cta.heading}</h2>
           <p className="case-cta__subhead">{t.cta.subhead}</p>
-          <div className="case-cta__actions">
+          <div className="case-cta__actions" ref={dockRowRef}>
             {/* Morph dock: an invisible ghost keeps the slot's size so the
                 layout never jumps; when the section is in view the REAL
                 button mounts on top under the shared layoutId and the
@@ -119,7 +117,11 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
                   className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium case-cta-dock__live"
                   data-track-event="case_cta_click"
                 >
-                  {t.cta.buttonLabel}
+                  {/* layout="position" keeps the glyphs from stretching while
+                      the pill's box morphs between the two widths. */}
+                  <motion.span layout="position" className="whitespace-nowrap">
+                    {t.cta.buttonLabel}
+                  </motion.span>
                 </motion.a>
               )}
             </span>
@@ -142,7 +144,9 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
           className="case-float cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
           data-track-event="case_float_click"
         >
-          {t.floatLabel}
+          <motion.span layout="position" className="whitespace-nowrap">
+            {t.floatLabel}
+          </motion.span>
         </motion.a>
       )}
     </div>
