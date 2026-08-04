@@ -7354,7 +7354,9 @@ button:focus:not(:focus-visible) {
    headings, chapter copy and the CTA all align to the window's edges. */
 .case-fit {
   width: min(100%, calc((100vh - 150px) * (1180 / 788)));
-  margin-left: auto;
+  /* Left-aligned to the container edge (auto-centring drifted the whole
+     page to the middle on tall screens and read as a layout break). */
+  margin-left: 0;
   margin-right: auto;
 }
 .case-head__heading { max-width: 20ch; }
