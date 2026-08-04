@@ -7349,8 +7349,9 @@ button:focus:not(:focus-visible) {
  * ---------------------------------------------------------------------- */
 
 /* longhand only: the shorthand zeroed page-container's side gutters and
-   shifted the hero 40px left of every chapter (user caught it). */
-.case-head { padding-top: 96px; padding-bottom: 72px; }
+   shifted the hero 40px left of every chapter (user caught it).
+   Top padding clears the fixed homepage Nav (56px pill + 16px inset). */
+.case-head { padding-top: 150px; padding-bottom: 72px; }
 /* The window is sized to fit inside the viewport (height-capped, app
    aspect); .case-fit is that SAME width applied to every text block so
    headings, chapter copy and the CTA all align to the window's edges. */
@@ -7531,12 +7532,6 @@ button:focus:not(:focus-visible) {
 /* Mirrors .cookie-trigger's bottom formula (+4px: the pill is 48px tall
    vs the cookie's 56px circle) so both bottom-corner controls sit on ONE
    horizontal centreline; right offset matches the cookie's left. */
-/* Morph dock: the invisible ghost holds the button's slot size; the live
-   morphing button overlays it exactly. */
-.case-cta-dock { position: relative; display: inline-flex; }
-.case-cta-dock__ghost { visibility: hidden; }
-.case-cta-dock__live { position: absolute; inset: 0; }
-
 .case-float {
   position: fixed;
   right: 32px;

@@ -2,10 +2,10 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { copy } from "@/content/copy";
-import { CORDER_PRESENCE_MORPH_TRANSITION } from "@/components/presence/CorderPresence";
+import { Nav } from "@/components/sections/Nav";
 import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/case/CaseView.tsx";
@@ -24,13 +24,9 @@ type Pair = { before: string; after: string };
 export function CaseView({ pairs }: { pairs: Pair[] }) {
   const t = copy.caseStudy;
 
-  // CTA morph: ONE pill exists the whole time. While the service block is
-  // off-screen it floats bottom-right ("Want this finish?"); when the block
-  // scrolls into view the floating pill unmounts and the block's primary
-  // button mounts under the SAME framer layoutId, so the pill visibly
-  // flies into place and becomes "Get this for your product". Same shared
-  // layoutId + morph transition pattern (and the exact transition value)
-  // as the homepage's CorderPresence.
+  // Floating CTA: visible from the top, fades out once the service
+  // block's button row is on screen (a full layoutId morph was tried and
+  // pulled -- the label swap mid-flight read as a glitch).
   // Observe the BUTTON ROW itself (not the whole section) with a small
   // bottom inset, so the pill docks exactly when its destination slot is
   // genuinely on screen -- a short believable hop instead of a long
@@ -49,9 +45,9 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
   }, []);
 
   return (
-    <LayoutGroup id="case">
     <div data-component="CaseView" data-source={DATA_SOURCE}>
       <SmoothAnchors />
+      <Nav />
       <header className="page-container case-head">
         <div className="case-fit">
           <h1 className="section-heading case-head__heading">{t.heading}</h1>
@@ -98,33 +94,13 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
           <h2 className="case-cta__heading">{t.cta.heading}</h2>
           <p className="case-cta__subhead">{t.cta.subhead}</p>
           <div className="case-cta__actions" ref={dockRowRef}>
-            {/* Morph dock: an invisible ghost keeps the slot's size so the
-                layout never jumps; when the section is in view the REAL
-                button mounts on top under the shared layoutId and the
-                floating pill flies in to become it. */}
-            <span className="case-cta-dock">
-              <span
-                className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium case-cta-dock__ghost"
-                aria-hidden
-              >
-                {t.cta.buttonLabel}
-              </span>
-              {docked && (
-                <motion.a
-                  layoutId="case-cta-pill"
-                  transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
-                  href={t.cta.buttonHref}
-                  className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium case-cta-dock__live"
-                  data-track-event="case_cta_click"
-                >
-                  {/* layout="position" keeps the glyphs from stretching while
-                      the pill's box morphs between the two widths. */}
-                  <motion.span layout="position" className="whitespace-nowrap">
-                    {t.cta.buttonLabel}
-                  </motion.span>
-                </motion.a>
-              )}
-            </span>
+            <a
+              href={t.cta.buttonHref}
+              className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
+              data-track-event="case_cta_click"
+            >
+              {t.cta.buttonLabel}
+            </a>
             <a
               href={t.cta.secondaryHref}
               className="cta-pill cta-pill--ghost inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
@@ -136,21 +112,22 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
         </div>
       </section>
 
-      {!docked && (
-        <motion.a
-          layoutId="case-cta-pill"
-          transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
-          href="#pricing"
-          className="case-float cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
-          data-track-event="case_float_click"
-        >
-          <motion.span layout="position" className="whitespace-nowrap">
+      <AnimatePresence>
+        {!docked && (
+          <motion.a
+            initial={{ opacity: 0, y: 14, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 14, scale: 0.94 }}
+            transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+            href="#pricing"
+            className="case-float cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
+            data-track-event="case_float_click"
+          >
             {t.floatLabel}
-          </motion.span>
-        </motion.a>
-      )}
+          </motion.a>
+        )}
+      </AnimatePresence>
     </div>
-    </LayoutGroup>
   );
 }
 
@@ -215,17 +192,13 @@ function BeforeAfter({ pair }: { pair: Pair }) {
       target = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
       schedule();
     };
-    const onLeave = () => {
-      target = 0.5;
-      schedule();
-    };
+    // The divider STAYS where the user left it on pointer leave (a
+    // spring back to centre threw away the comparison they had set up).
     host.addEventListener("pointermove", onMove);
     host.addEventListener("pointerdown", onMove);
-    host.addEventListener("pointerleave", onLeave);
     return () => {
       host.removeEventListener("pointermove", onMove);
       host.removeEventListener("pointerdown", onMove);
-      host.removeEventListener("pointerleave", onLeave);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);

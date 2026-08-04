@@ -24,6 +24,10 @@ const HIDE_ON = new Set([
   "/install/",
   "/contact",
   "/contact/",
+  // /case mounts the homepage Nav (brand goes home), so the floating
+  // house button would double the same affordance under the fixed bar.
+  "/case",
+  "/case/",
   // /account owns its top-left slot: signed in it's a Sign-out button
   // (rendered by AccountView), so the global back arrow must not compete.
   "/account",

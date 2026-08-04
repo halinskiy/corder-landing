@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 import { copy } from "@/content/copy";
 import { AppleIcon } from "@/components/icons/AppleIcon";
@@ -9,6 +10,12 @@ const DATA_SOURCE = "projects/corder-landing/src/components/sections/Nav.tsx";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  // The nav also mounts on subpages (/case). There the section anchors
+  // don't exist, so links lead back to the homepage sections and the
+  // brand goes home instead of scrolling to #top. On the homepage
+  // everything behaves exactly as before.
+  const pathname = usePathname();
+  const onHome = pathname === "/" || pathname === null;
 
   useEffect(() => {
     const onScroll = () => {
@@ -47,7 +54,7 @@ export function Nav() {
         }}
       >
         <a
-          href="#top"
+          href={onHome ? "#top" : "/"}
           aria-label="Corder, home"
           className="inline-flex items-center gap-2"
         >
@@ -70,7 +77,7 @@ export function Nav() {
           {nav.links.map((link) => (
             <a
               key={link.href}
-              href={link.href}
+              href={onHome ? link.href : `/${link.href}`}
               className="nav-link px-3 py-2 text-[15px] font-medium"
               style={{ color: "var(--color-text-muted)" }}
             >
