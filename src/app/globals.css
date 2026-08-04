@@ -7340,3 +7340,216 @@ button:focus:not(:focus-visible) {
 
 .stats-empty { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-muted); margin: 0; padding: 20px 0; }
 .stats-foot { font-family: var(--font-sans); font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin: 0; }
+
+/* ----------------------------------------------------------------------
+ *  /case -- the before/after case-study page. The window mechanic
+ *  (spring snap between slots, lift pulse, content crossfade, dashed
+ *  ghost destinations) is the homepage HowItWorks mechanic verticalised;
+ *  physics constants live in CaseView.tsx and are copied 1:1.
+ * ---------------------------------------------------------------------- */
+
+.case-head { padding-top: 96px; }
+.case-head__brand {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+  text-decoration: none;
+  margin-bottom: 40px;
+}
+.case-head__heading { max-width: 20ch; }
+.case-head__subhead { max-width: 62ch; }
+
+.case-track { position: relative; margin-top: 24px; }
+
+.case-row { position: relative; z-index: 1; padding: 96px 0 40px; }
+.case-static__row { padding: 72px 0 0; }
+.case-static { padding-bottom: 40px; }
+
+.case-text { display: flex; flex-direction: column; gap: 14px; }
+.case-text__index {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(40px, 4vw, 64px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--color-accent);
+  margin: 0;
+}
+.case-text__heading {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  margin: 0;
+}
+.case-text__body {
+  font-family: var(--font-sans);
+  font-size: clamp(17px, 1.25vw, 19px);
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* Slot: full content width, app aspect (1180x760 viewport + 28px bar). */
+.case-slot {
+  position: relative;
+  margin-top: 44px;
+  width: 100%;
+  aspect-ratio: 1180 / 788;
+}
+.case-ghost { position: absolute; inset: 0; }
+.case-ghost__frame { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+/* The one travelling window. Wrap is transparent to events; only the
+   window itself is interactive (the wipe). */
+.case-window-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  pointer-events: none;
+  will-change: transform;
+}
+.case-window-inner { pointer-events: none; }
+.case-window {
+  pointer-events: auto;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1180 / 788;
+  background: var(--color-bg, #fff);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-window);
+  overflow: hidden;
+}
+.case-titlebar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  background: #f7f7f6;
+  border-bottom: 1px solid var(--color-border);
+  z-index: 6;
+}
+.case-traffic { width: 12px; height: 12px; border-radius: 999px; }
+.case-traffic--close { background: #ff5f57; }
+.case-traffic--min { background: #febc2e; }
+.case-traffic--max { background: #28c840; }
+
+/* Absolute so outgoing/incoming chapters overlap during the crossfade
+   (same trick as the homepage window). */
+.case-window-content { position: absolute; inset: 28px 0 0 0; }
+
+/* Before/after wipe. The divider IS the cursor inside the window. */
+.case-ba { position: absolute; inset: 0; overflow: hidden; cursor: none; }
+.case-ba__layer { position: absolute; inset: 0; }
+.case-ba__layer--top { will-change: clip-path; }
+.case-ba__frame {
+  display: block;
+  width: 1180px;
+  height: 760px;
+  border: 0;
+  background: #fff;
+  transform-origin: 0 0;
+  transform: scale(var(--ba-scale, 1));
+  pointer-events: none;
+}
+.case-ba__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--color-text);
+  pointer-events: none;
+  z-index: 4;
+}
+.case-ba__grip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--color-bg, #fff);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: 0 2px 8px rgba(10, 10, 10, 0.12);
+}
+.case-ba__grip::before,
+.case-ba__grip::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transform: translateY(-50%);
+}
+.case-ba__grip::before { left: 6px; border-right: 5px solid var(--color-text-muted); }
+.case-ba__grip::after { right: 6px; border-left: 5px solid var(--color-text-muted); }
+
+.case-ba__badge {
+  position: absolute;
+  bottom: 12px;
+  z-index: 5;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  pointer-events: none;
+}
+.case-ba__badge--left { left: 12px; }
+.case-ba__badge--right { right: 12px; }
+
+/* Service block (the case page's own pricing). */
+.case-cta { padding: 140px 0 110px; }
+.case-cta__result {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+  padding-top: 40px;
+  margin: 0 0 56px;
+  max-width: 62ch;
+}
+.case-cta__heading {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  color: var(--color-text);
+  margin: 0;
+}
+.case-cta__subhead {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 14px 0 0;
+  max-width: 60ch;
+}
+.case-cta__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+/* Rest border for the ghost secondary, same treatment as the reviews CTA. */
+.case-cta__actions .cta-pill--ghost {
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg);
+}
+
+.case-float { position: fixed; right: 24px; bottom: 24px; z-index: 60; }
