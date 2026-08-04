@@ -63,12 +63,17 @@ export function BackToHomeBtn() {
   // after a Google OAuth round-trip the history stack holds the sign-in
   // step, so "back" would loop the user back into the login instead of out.
   const isCheckout = pathname === "/checkout" || pathname === "/checkout/";
+  // The case study is an OUTREACH landing: visitors arrive from a direct
+  // link, so "back" would bounce them to LinkedIn/mail instead of Corder.
+  // It gets a HOME affordance (house icon, fresh nav to /) instead.
+  const isCase = pathname === "/case" || pathname === "/case/";
   const backHref = isCheckout ? "/#pricing" : "/";
 
   const handleBack = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (typeof window === "undefined") return;
     // From checkout, let the <Link href="/#pricing"> navigate normally.
-    if (isCheckout) return;
+    // From the case page, let the <Link href="/"> navigate normally too.
+    if (isCheckout || isCase) return;
     // history.length > 1 means this tab has a previous entry to return
     // to -- the normal /#pricing -> /checkout flow. router.back() lets
     // the browser + Next restore the prior scroll position (and the
@@ -85,26 +90,45 @@ export function BackToHomeBtn() {
       href={backHref}
       onClick={handleBack}
       className="standalone-back"
-      aria-label="Back to Corder"
-      title="Back to Corder"
+      aria-label={isCase ? "Corder home" : "Back to Corder"}
+      title={isCase ? "Corder home" : "Back to Corder"}
       data-component="BackToHomeBtn"
       data-source={DATA_SOURCE}
       data-track-event="standalone_back_home"
     >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M19 12H5" />
-        <path d="m11 18-6-6 6-6" />
-      </svg>
+      {isCase ? (
+        /* lucide "house" -- same icon set as the arrow below. */
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+          <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        </svg>
+      ) : (
+        /* lucide "arrow-left" */
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M19 12H5" />
+          <path d="m11 18-6-6 6-6" />
+        </svg>
+      )}
     </Link>
   );
 }
