@@ -7353,11 +7353,10 @@ button:focus:not(:focus-visible) {
    aspect); .case-fit is that SAME width applied to every text block so
    headings, chapter copy and the CTA all align to the window's edges. */
 .case-fit {
-  width: min(100%, calc((100vh - 150px) * (1180 / 788)));
-  /* Left-aligned to the container edge (auto-centring drifted the whole
-     page to the middle on tall screens and read as a layout break). */
-  margin-left: 0;
-  margin-right: auto;
+  /* Full container width; the app screen inside scales proportionally
+     to it (--ba-scale), so the window shrinks WITH the column instead of
+     the column shrinking to the viewport. */
+  width: 100%;
 }
 .case-head__heading { max-width: 20ch; }
 /* Body copy is ONE size across the page (page subhead, chapter copy,
