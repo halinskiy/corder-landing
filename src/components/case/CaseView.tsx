@@ -2,9 +2,10 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { LayoutGroup, motion } from "framer-motion";
 
 import { copy } from "@/content/copy";
+import { CORDER_PRESENCE_MORPH_TRANSITION } from "@/components/presence/CorderPresence";
 import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/case/CaseView.tsx";
@@ -22,25 +23,44 @@ type Pair = { before: string; after: string };
  */
 export function CaseView({ pairs }: { pairs: Pair[] }) {
   const t = copy.caseStudy;
+
+  // CTA morph: ONE pill exists the whole time. While the service block is
+  // off-screen it floats bottom-right ("Want this finish?"); when the block
+  // scrolls into view the floating pill unmounts and the block's primary
+  // button mounts under the SAME framer layoutId, so the pill visibly
+  // flies into place and becomes "Get this for your product". Same shared
+  // layoutId + morph transition pattern (and the exact transition value)
+  // as the homepage's CorderPresence.
+  const ctaRef = useRef<HTMLElement | null>(null);
+  const [docked, setDocked] = useState(false);
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setDocked(entry.isIntersecting),
+      { threshold: 0.3 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
+    <LayoutGroup id="case">
     <div data-component="CaseView" data-source={DATA_SOURCE}>
       <SmoothAnchors />
       <header className="page-container case-head">
         <div className="case-fit">
-          <a href="/" className="case-head__brand" aria-label="Corder home">
-            Corder
-          </a>
-          <p className="eyebrow-label">{t.eyebrow}</p>
           <h1 className="section-heading case-head__heading">{t.heading}</h1>
           <p className="section-subhead case-head__subhead">{t.subhead}</p>
         </div>
       </header>
 
+      <hr className="section-divider" />
+
       <div className="page-container case-static">
         {t.chapters.map((ch, i) => (
           <article key={ch.heading} className="case-static__row case-fit">
             <div className="case-text">
-              <p className="case-text__index">{String(i + 1).padStart(2, "0")}</p>
               <h3 className="case-text__heading">{ch.heading}</h3>
               <p className="case-text__body">{ch.body}</p>
             </div>
@@ -58,20 +78,51 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
         ))}
       </div>
 
-      <section id="pricing" className="case-cta">
+      <section className="case-result">
         <div className="page-container">
           <div className="case-fit">
-          <p className="case-cta__result">{t.resultLine}</p>
+            <p className="case-cta__result">{t.resultLine}</p>
+          </div>
+        </div>
+      </section>
+
+      <hr className="section-divider" />
+
+      <section
+        id="pricing"
+        className="case-cta"
+        ref={(node) => {
+          ctaRef.current = node;
+        }}
+      >
+        <div className="page-container">
+          <div className="case-fit">
           <h2 className="case-cta__heading">{t.cta.heading}</h2>
           <p className="case-cta__subhead">{t.cta.subhead}</p>
           <div className="case-cta__actions">
-            <a
-              href={t.cta.buttonHref}
-              className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
-              data-track-event="case_cta_click"
-            >
-              {t.cta.buttonLabel}
-            </a>
+            {/* Morph dock: an invisible ghost keeps the slot's size so the
+                layout never jumps; when the section is in view the REAL
+                button mounts on top under the shared layoutId and the
+                floating pill flies in to become it. */}
+            <span className="case-cta-dock">
+              <span
+                className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium case-cta-dock__ghost"
+                aria-hidden
+              >
+                {t.cta.buttonLabel}
+              </span>
+              {docked && (
+                <motion.a
+                  layoutId="case-cta-pill"
+                  transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
+                  href={t.cta.buttonHref}
+                  className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium case-cta-dock__live"
+                  data-track-event="case_cta_click"
+                >
+                  {t.cta.buttonLabel}
+                </motion.a>
+              )}
+            </span>
             <a
               href={t.cta.secondaryHref}
               className="cta-pill cta-pill--ghost inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
@@ -83,8 +134,19 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
         </div>
       </section>
 
-      <FloatingCta label={t.floatLabel} />
+      {!docked && (
+        <motion.a
+          layoutId="case-cta-pill"
+          transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
+          href="#pricing"
+          className="case-float cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
+          data-track-event="case_float_click"
+        >
+          {t.floatLabel}
+        </motion.a>
+      )}
     </div>
+    </LayoutGroup>
   );
 }
 
@@ -193,40 +255,3 @@ function BeforeAfter({ pair }: { pair: Pair }) {
   );
 }
 
-/* ────────────────────────────────────────────────────────────────────
- * Floating CTA -- a right-side pill that appears once the reader is
- * into the chapters and anchors to the pricing block. Same pill classes
- * as every primary button on the homepage.
- * ──────────────────────────────────────────────────────────────────── */
-
-function FloatingCta({ label }: { label: string }) {
-  const [shown, setShown] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShown(window.scrollY > window.innerHeight * 0.9);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <AnimatePresence>
-      {shown && (
-        <motion.div
-          className="case-float"
-          initial={{ opacity: 0, y: 14, scale: 0.94 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 14, scale: 0.94 }}
-          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <a
-            href="#pricing"
-            className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
-            data-track-event="case_float_click"
-          >
-            {label}
-          </a>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}

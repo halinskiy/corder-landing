@@ -7348,7 +7348,7 @@ button:focus:not(:focus-visible) {
  *  physics constants live in CaseView.tsx and are copied 1:1.
  * ---------------------------------------------------------------------- */
 
-.case-head { padding-top: 96px; }
+.case-head { padding: 96px 0 72px; }
 /* The window is sized to fit inside the viewport (height-capped, app
    aspect); .case-fit is that SAME width applied to every text block so
    headings, chapter copy and the CTA all align to the window's edges. */
@@ -7357,18 +7357,14 @@ button:focus:not(:focus-visible) {
   margin-left: auto;
   margin-right: auto;
 }
-.case-head__brand {
-  display: inline-block;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--color-text);
-  text-decoration: none;
-  margin-bottom: 40px;
-}
 .case-head__heading { max-width: 20ch; }
-.case-head__subhead { max-width: 62ch; }
+/* Body copy is ONE size across the page (page subhead, chapter copy,
+   result line, CTA subhead) -- the chapter body's clamp. */
+.case-head__subhead {
+  max-width: 62ch;
+  font-size: clamp(17px, 1.25vw, 19px);
+  line-height: 1.6;
+}
 
 
 .case-static__row { padding: 72px 0 0; }
@@ -7376,15 +7372,6 @@ button:focus:not(:focus-visible) {
 .case-static { padding-bottom: 40px; }
 
 .case-text { display: flex; flex-direction: column; gap: 14px; }
-.case-text__index {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: clamp(40px, 4vw, 64px);
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-  color: var(--color-accent);
-  margin: 0;
-}
 .case-text__heading {
   font-family: var(--font-serif);
   font-weight: 500;
@@ -7503,29 +7490,29 @@ button:focus:not(:focus-visible) {
 .case-ba__badge--right { right: 12px; }
 
 /* Service block (the case page's own pricing). */
-.case-cta { padding: 140px 0 110px; }
+.case-cta { padding: 88px 0 110px; }
+.case-result { padding: 96px 0 72px; }
 .case-cta__result {
   font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.55;
+  font-size: clamp(17px, 1.25vw, 19px);
+  line-height: 1.6;
   color: var(--color-text-muted);
-  border-top: 1px solid var(--color-border);
-  padding-top: 40px;
-  margin: 0 0 56px;
+  margin: 0;
   max-width: 62ch;
 }
 .case-cta__heading {
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: clamp(28px, 3.4vw, 40px);
-  line-height: 1.15;
-  letter-spacing: -0.018em;
+  /* Same size as .case-text__heading: every heading below the H1 matches. */
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
   color: var(--color-text);
   margin: 0;
 }
 .case-cta__subhead {
   font-family: var(--font-sans);
-  font-size: 17px;
+  font-size: clamp(17px, 1.25vw, 19px);
   line-height: 1.6;
   color: var(--color-text-muted);
   margin: 14px 0 0;
@@ -7538,4 +7525,18 @@ button:focus:not(:focus-visible) {
   background: var(--color-bg);
 }
 
-.case-float { position: fixed; right: 24px; bottom: 24px; z-index: 60; }
+/* Mirrors .cookie-trigger's bottom formula (+4px: the pill is 48px tall
+   vs the cookie's 56px circle) so both bottom-corner controls sit on ONE
+   horizontal centreline; right offset matches the cookie's left. */
+/* Morph dock: the invisible ghost holds the button's slot size; the live
+   morphing button overlays it exactly. */
+.case-cta-dock { position: relative; display: inline-flex; }
+.case-cta-dock__ghost { visibility: hidden; }
+.case-cta-dock__live { position: absolute; inset: 0; }
+
+.case-float {
+  position: fixed;
+  right: 32px;
+  bottom: calc(max(32px, env(safe-area-inset-bottom, 0px) + 28px) + 4px);
+  z-index: 60;
+}
