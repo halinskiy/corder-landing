@@ -7754,16 +7754,6 @@ button.cta-pill { cursor: pointer; }
   flex-direction: column;
   gap: 12px;
 }
-.case-ph-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-window);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.08);
-}
 .case-presence-card {
   width: 100%;
   background: var(--color-bg);
@@ -7794,3 +7784,117 @@ button.cta-pill { cursor: pointer; }
 /* Hero CTA slot on /case: fixed height so the layout is stable while the
    button morphs between hero, corner circle and corner card. */
 .case-hero-cta { height: 56px; margin-top: 28px; }
+
+/* ----------------------------------------------------------------------
+ *  Mobile nav -- plain full-width bar (brand left, burger right) with an
+ *  animated dropdown sheet. The floating pill covered content on phones.
+ * ---------------------------------------------------------------------- */
+.nav-mbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--color-border);
+}
+.nav-mbar__brand {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+.nav-burger {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+.nav-burger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-text);
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease;
+}
+.nav-burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.is-open span:nth-child(2) { opacity: 0; }
+.nav-burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.nav-msheet {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 20px;
+  /* Solid: backdrop-filter is unreliable (old WebKit, headless), and a
+     see-through menu over the hero read as broken. */
+  background: var(--color-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.18);
+}
+.nav-msheet__link {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+.nav-msheet__link:last-of-type { border-bottom: 0; }
+.nav-msheet__cta { margin-top: 12px; }
+
+/* The floating back/home circle duplicates the mobile bar's brand link
+   and collides with it; phones rely on the bar. */
+@media (max-width: 767px) {
+  .standalone-back { display: none; }
+}
+
+/* Phone mode of the before/after: one build at a time + a small
+   segmented toggle pinned to the window's top centre. */
+.case-ba--tap { cursor: default; }
+.case-ba__switch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.case-ba__switch-btn {
+  border: 0;
+  background: none;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+.case-ba__switch-btn.is-active {
+  background: var(--color-accent);
+  color: #fff;
+}

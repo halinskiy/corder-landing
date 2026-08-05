@@ -4,7 +4,6 @@ import { Features } from "@/components/sections/Features";
 import { Footer } from "@/components/sections/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
-import { Nav } from "@/components/sections/Nav";
 import { Pricing } from "@/components/sections/Pricing";
 import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
 import { Testimonials } from "@/components/sections/Testimonials";
@@ -19,7 +18,6 @@ export default function HomePage() {
   return (
     <main id="top">
       <SmoothAnchors />
-      <Nav />
       <Hero />
       <hr className="section-divider" />
       <HowItWorks />

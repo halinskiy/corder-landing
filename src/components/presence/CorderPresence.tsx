@@ -181,120 +181,14 @@ function CorderPresenceCorner() {
   if (!pastHowItWorks) return null;
 
   if (pastFormZone) {
-    // The download card (final morph) plus the Product Hunt badge pinned
-    // just above it, same width, appearing as the card lands.
-    return (
-      <>
-        <CorderPresenceForm />
-        <CorderPresencePHBanner />
-      </>
-    );
+    // The download card (final morph). The Product Hunt badge that used
+    // to ride above it was removed 2026-08-05 per user request.
+    return <CorderPresenceForm />;
   }
   return <CorderPresenceOrb />;
 }
 
 // ---------------------------------------------------------------------------
-// Product Hunt badge — a separate 360px banner pinned directly above the
-// download card once it has morphed into place (state C). It is NOT part of
-// the card (so the card's own width/geometry is untouched); it tracks the
-// card's live top edge so it stays glued to it as the card settles against
-// the footer on scroll. Desktop only; hidden on mobile where the card goes
-// inline. Fades in a beat after the morph so it reads as an arrival.
-// ---------------------------------------------------------------------------
-
-function CorderPresencePHBanner() {
-  const [bottomPx, setBottomPx] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    let raf = 0;
-    // Last value we pushed to state, so the per-frame loop only re-renders
-    // when the banner actually needs to move (idle at rest = zero renders).
-    let last: number | null | undefined = undefined;
-
-    // A CONTINUOUS rAF sync, not a scroll listener. The download card
-    // repositions itself via React state as it settles against the footer
-    // baseline at the very bottom of the page; a scroll listener reads the
-    // card's rect one frame BEFORE that state-driven reposition commits, and
-    // since no further scroll event fires once the user stops, the banner used
-    // to freeze one step stale and overlap the card's top (reported 2026-07-31).
-    // Re-measuring every frame while mounted (the banner only exists at the
-    // bottom of the page) always reflects the card's final rect. setBottomPx
-    // fires only on change, so at rest this is a cheap read with no renders.
-    const loop = () => {
-      // Hidden on mobile: the card there is inline/bottom-pinned and a second
-      // floating strip would stomp the footer.
-      let next: number | null;
-      if (window.innerWidth <= 640) {
-        next = null;
-      } else {
-        const card = document.querySelector(
-          '[data-component="CorderPresenceForm"]',
-        );
-        if (!card) {
-          next = null;
-        } else {
-          const r = (card as HTMLElement).getBoundingClientRect();
-          const gap = 12; // banner sits this far above the card's top edge
-          next = Math.round(window.innerHeight - r.top + gap);
-        }
-      }
-      if (next !== last) {
-        last = next;
-        setBottomPx(next);
-      }
-      raf = window.requestAnimationFrame(loop);
-    };
-
-    raf = window.requestAnimationFrame(loop);
-    return () => {
-      if (raf) window.cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  if (bottomPx === null) return null;
-
-  return (
-    <motion.a
-      href="https://www.producthunt.com/products/corder?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-corder"
-      target="_blank"
-      rel="noopener noreferrer"
-      data-component="CorderPresencePHBanner"
-      data-source={DATA_SOURCE_PROVIDER}
-      aria-label="Corder on Product Hunt"
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-      style={{
-        position: "fixed",
-        right: "32px",
-        bottom: `${bottomPx}px`,
-        width: "360px",
-        zIndex: 31,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "10px",
-        background: "var(--color-bg)",
-        border: "1px solid var(--color-border)",
-        borderRadius: "var(--radius-window)",
-        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.08)",
-        boxSizing: "border-box",
-        pointerEvents: "auto",
-      }}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1183830&theme=light"
-        alt="Corder on Product Hunt"
-        width={250}
-        height={54}
-        style={{ display: "block", maxWidth: "100%", height: "auto" }}
-      />
-    </motion.a>
-  );
-}
-
 // ---------------------------------------------------------------------------
 // Orb (state B) — the bottom-right green CTA the window morphs into.
 // Interactive: clicking smooth-scrolls to the FAQ section so the user

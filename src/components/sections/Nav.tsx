@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { copy } from "@/content/copy";
 import { AppleIcon } from "@/components/icons/AppleIcon";
@@ -10,6 +11,21 @@ const DATA_SOURCE = "projects/corder-landing/src/components/sections/Nav.tsx";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  // Mobile burger menu. The floating pill reads as an island that covers
+  // content on small screens, so below md the nav is a plain full-width
+  // bar: brand left, burger right, links in an animated dropdown.
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
   // The nav also mounts on subpages (/case). There the section anchors
   // don't exist, so links lead back to the homepage sections and the
   // brand goes home instead of scrolling to #top. On the homepage
@@ -29,12 +45,13 @@ export function Nav() {
   const { nav } = copy;
 
   return (
+    <>
     <header
       data-component="Nav"
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-text,color-border,color-accent,radius-pill"
       data-scrolled={scrolled ? "true" : "false"}
-      className="pointer-events-none fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4"
+      className="pointer-events-none fixed inset-x-0 top-0 z-40 hidden justify-center px-4 pt-4 md:flex"
     >
       <div
         className="nav-pill pointer-events-auto flex w-full items-center justify-between gap-2 rounded-full pl-4 pr-2 md:w-auto md:justify-start"
@@ -114,21 +131,99 @@ export function Nav() {
           {nav.ctaPrimary}
         </a>
 
-        {/* Mobile: compact CTA only */}
-        <a
-          href="/install/"
-          data-component="NavCta"
-          data-source={DATA_SOURCE}
-          data-tokens="radius-pill,color-accent,color-bg,ease-out"
-          data-track-event="cta_download_click"
-          data-track-source="nav"
-          className="nav-cta nav-cta--scroll-state ml-2 inline-flex h-10 items-center gap-1.5 rounded-full pl-3 pr-4 text-[14px] font-medium md:hidden"
-        >
-          <AppleIcon size={18} />
-          {nav.ctaPrimaryMobile}
-        </a>
       </div>
     </header>
+
+    {/* ── Mobile: plain full-width bar + animated burger menu ───────── */}
+    <header
+      data-component="NavMobile"
+      data-source={DATA_SOURCE}
+      className="fixed inset-x-0 top-0 z-40 md:hidden"
+    >
+      <div className="nav-mbar">
+        <a
+          href={onHome ? "#top" : "/"}
+          aria-label="Corder, home"
+          className="inline-flex items-center gap-2"
+          onClick={() => setOpen(false)}
+        >
+          <CorderMark />
+          <span className="nav-mbar__brand">Corder</span>
+        </a>
+        <button
+          type="button"
+          className={`nav-burger${open ? " is-open" : ""}`}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            key="mnav"
+            className="nav-msheet"
+            initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+            exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {nav.links.map((link, i) => (
+              <motion.a
+                key={link.href}
+                href={
+                  link.href.startsWith("#")
+                    ? onHome
+                      ? link.href
+                      : `/${link.href}`
+                    : link.href
+                }
+                className="nav-msheet__link"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    delay: 0.08 + i * 0.05,
+                    duration: 0.3,
+                    ease: [0.16, 1, 0.3, 1],
+                  },
+                }}
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </motion.a>
+            ))}
+            <motion.a
+              href="/install/"
+              data-track-event="cta_download_click"
+              data-track-source="nav-mobile"
+              className="nav-msheet__cta cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] text-[16px] font-medium"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  delay: 0.08 + nav.links.length * 0.05,
+                  duration: 0.3,
+                  ease: [0.16, 1, 0.3, 1],
+                },
+              }}
+              onClick={() => setOpen(false)}
+            >
+              <AppleIcon size={20} />
+              {nav.ctaPrimary}
+            </motion.a>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </header>
+    </>
   );
 }
 

@@ -7,6 +7,7 @@ import { CorderPresenceProvider } from "@/components/presence/CorderPresence";
 import { ConsentProvider } from "@/components/consent/ConsentProvider";
 import { CookieConsentButton } from "@/components/consent/CookieConsentButton";
 import { BackToHomeBtn } from "@/components/ui/BackToHomeBtn";
+import { Nav } from "@/components/sections/Nav";
 
 import { copy } from "@/content/copy";
 import { PADDLE_ENV, PADDLE_TOKEN } from "@/lib/paddle";
@@ -317,6 +318,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <PauseOffscreen />
+        <Nav />
         <MotionProvider>
           <CorderPresenceProvider>{children}</CorderPresenceProvider>
         </MotionProvider>
