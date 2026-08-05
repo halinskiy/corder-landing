@@ -79,7 +79,9 @@ export function CaseContactModal({
     let py = 0;
     // Lighter than the app's update modal (11deg): this card is a form
     // people READ and type into, steep corners made it hard to scan.
-    const max = 5;
+    // 5deg was still heavy on a wide overlay; 3deg keeps the life
+    // without bending the text.
+    const max = 3;
     const apply = () => {
       raf = 0;
       const nx = ((px - oRect.left) / oRect.width) * 2 - 1;
