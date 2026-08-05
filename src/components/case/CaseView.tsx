@@ -271,6 +271,26 @@ function BeforeAfter({ pair }: { pair: Pair }) {
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);
   }, []);
+  // srcDoc iframes ignore loading="lazy", so ALL 8 full app DOMs used to
+  // render on page load and starve the compositor (the hero-to-circle
+  // morph visibly dropped frames). Mount each pair's iframes only once
+  // the window approaches the viewport.
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const el = hostRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setReady(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // Scale the fixed 1180x760 app viewport to the host width.
   useLayoutEffect(() => {
@@ -334,13 +354,14 @@ function BeforeAfter({ pair }: { pair: Pair }) {
     return (
       <div ref={hostRef} className="case-ba case-ba--tap">
         <div className="case-ba__layer">
-          <iframe
-            className="case-ba__frame"
-            srcDoc={side === "before" ? pair.before : pair.after}
-            tabIndex={-1}
-            loading="lazy"
-            title={side === "before" ? "First shipped build" : "Current build"}
-          />
+          {ready && (
+            <iframe
+              className="case-ba__frame"
+              srcDoc={side === "before" ? pair.before : pair.after}
+              tabIndex={-1}
+              title={side === "before" ? "First shipped build" : "Current build"}
+            />
+          )}
         </div>
         <div className="case-ba__switch" role="tablist" aria-label="Before or after">
           <button
@@ -369,22 +390,24 @@ function BeforeAfter({ pair }: { pair: Pair }) {
   return (
     <div ref={hostRef} className="case-ba">
       <div className="case-ba__layer" aria-hidden="true">
-        <iframe
-          className="case-ba__frame"
-          srcDoc={pair.before}
-          tabIndex={-1}
-          loading="lazy"
-          title="First shipped build"
-        />
+        {ready && (
+          <iframe
+            className="case-ba__frame"
+            srcDoc={pair.before}
+            tabIndex={-1}
+            title="First shipped build"
+          />
+        )}
       </div>
       <div ref={topRef} className="case-ba__layer case-ba__layer--top" aria-hidden="true">
-        <iframe
-          className="case-ba__frame"
-          srcDoc={pair.after}
-          tabIndex={-1}
-          loading="lazy"
-          title="Current build"
-        />
+        {ready && (
+          <iframe
+            className="case-ba__frame"
+            srcDoc={pair.after}
+            tabIndex={-1}
+            title="Current build"
+          />
+        )}
       </div>
       <div ref={lineRef} className="case-ba__line" aria-hidden="true">
         <span className="case-ba__grip" />
