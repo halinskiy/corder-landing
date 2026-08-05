@@ -7371,9 +7371,12 @@ button:focus:not(:focus-visible) {
 }
 
 
-.case-static__row { padding: 72px 0 0; }
+/* Generous window-to-next-heading gap so chapters read as separate
+   beats; the FIRST row keeps the tighter gap to the hero divider. */
+.case-static__row { padding: 128px 0 0; }
+.case-static__row:first-child { padding-top: 72px; }
 .case-static__row .case-window { width: 100%; margin-top: 44px; }
-.case-static { padding-bottom: 40px; }
+.case-static { padding-bottom: 0; }
 
 .case-text { display: flex; flex-direction: column; gap: 14px; }
 .case-text__heading {
@@ -7495,7 +7498,8 @@ button:focus:not(:focus-visible) {
 
 /* Service block (the case page's own pricing). */
 .case-cta { padding: 88px 0 110px; }
-.case-result { padding: 96px 0 72px; }
+/* window-to-result gap matches the chapter text-to-window gap (44px). */
+.case-result { padding: 44px 0 72px; }
 .case-cta__result {
   font-family: var(--font-sans);
   font-size: clamp(17px, 1.25vw, 19px);
@@ -7529,12 +7533,23 @@ button:focus:not(:focus-visible) {
   background: var(--color-bg);
 }
 
-/* Mirrors .cookie-trigger's bottom formula (+4px: the pill is 48px tall
-   vs the cookie's 56px circle) so both bottom-corner controls sit on ONE
-   horizontal centreline; right offset matches the cookie's left. */
+/* Ghost circle in the cookie-trigger's language (56px, white, hairline),
+   mirrored to the bottom-RIGHT corner on the same centreline. */
 .case-float {
   position: fixed;
   right: 32px;
-  bottom: calc(max(32px, env(safe-area-inset-bottom, 0px) + 28px) + 4px);
+  bottom: max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px));
   z-index: 60;
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: background 150ms ease, box-shadow 150ms ease;
 }
+.case-float:hover { background: var(--color-bg-elev, #f7f7f6); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); }
