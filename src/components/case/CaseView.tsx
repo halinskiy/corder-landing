@@ -36,6 +36,18 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
   // cross-screen flight the moment the section's top edge appears.
   const dockRowRef = useRef<HTMLDivElement | null>(null);
   const [docked, setDocked] = useState(false);
+  // Hero CTA slot visibility: while the hero button is on screen the
+  // presence element lives IN the hero; scrolled past, it morphs into
+  // the floating mail circle (and later into the corner card).
+  const heroSlotRef = useRef<HTMLDivElement | null>(null);
+  const [heroVisible, setHeroVisible] = useState(true);
+  useEffect(() => {
+    const el = heroSlotRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setHeroVisible(entry.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   // Contact modal (the Corder-update-modal shell with the lead form).
   const [contactOpen, setContactOpen] = useState(false);
   useEffect(() => {
@@ -57,6 +69,30 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
         <div className="case-fit">
           <h1 className="section-heading case-head__heading">{t.heading}</h1>
           <p className="section-subhead case-head__subhead">{t.subhead}</p>
+          {/* Constant-height slot so the hero never jumps when the button
+              morphs out to the corner and back. Button sizing mirrors the
+              homepage hero CTA (h-14 / 17px / min-w 260). */}
+          <div ref={heroSlotRef} className="case-hero-cta">
+            {heroVisible && !docked && (
+              <motion.button
+                type="button"
+                layoutId="case-presence-pill"
+                transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
+                style={{ borderRadius: 999 }}
+                onClick={() => setContactOpen(true)}
+                className="cta-pill cta-pill--primary inline-flex h-14 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-9 text-[17px] font-medium md:min-w-[260px]"
+                data-track-event="case_hero_cta_click"
+              >
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, transition: { delay: 0.12, duration: 0.2 } }}
+                  className="whitespace-nowrap"
+                >
+                  {t.cta.buttonLabel}
+                </motion.span>
+              </motion.button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -184,7 +220,7 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
             </motion.div>
           </motion.div>
           </div>
-        ) : (
+        ) : !heroVisible ? (
           <motion.a
             layoutId="case-presence-pill"
             transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
@@ -220,7 +256,7 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
               </svg>
             </motion.span>
           </motion.a>
-        )}
+        ) : null}
       </LayoutGroup>
 
       <hr className="section-divider" />

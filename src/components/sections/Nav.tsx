@@ -77,7 +77,13 @@ export function Nav() {
           {nav.links.map((link) => (
             <a
               key={link.href}
-              href={onHome ? link.href : `/${link.href}`}
+              href={
+                link.href.startsWith("#")
+                  ? onHome
+                    ? link.href
+                    : `/${link.href}`
+                  : link.href
+              }
               className="nav-link px-3 py-2 text-[15px] font-medium"
               style={{ color: "var(--color-text-muted)" }}
             >
