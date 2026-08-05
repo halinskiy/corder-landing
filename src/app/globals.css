@@ -7790,3 +7790,7 @@ button.cta-pill { cursor: pointer; }
   margin: 0 0 10px;
 }
 .case-float__icon { display: inline-flex; }
+
+/* Hero CTA slot on /case: fixed height so the layout is stable while the
+   button morphs between hero, corner circle and corner card. */
+.case-hero-cta { height: 56px; margin-top: 28px; }

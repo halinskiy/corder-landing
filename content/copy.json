@@ -23,6 +23,10 @@
       {
         "label": "FAQ",
         "href": "#faq"
+      },
+      {
+        "label": "Case study",
+        "href": "/case/"
       }
     ],
     "ctaPrimary": "Download",
@@ -741,10 +745,10 @@
     ]
   },
   "caseStudy": {
-    "metaTitle": "Corder, before and after",
+    "metaTitle": "The making of Corder",
     "metaDescription": "The same macOS app 4 months apart. Real screens from the first shipped build against the current one, and the finishing work between them.",
     "eyebrow": "Case study",
-    "heading": "The same app, 4 months apart",
+    "heading": "The making of Corder",
     "subhead": "Corder started as AI output: it worked, it looked like a prototype. Every window below is the real interface with the same data. First shipped build on the left, today's on the right. Move the line.",
     "chapters": [
       {
