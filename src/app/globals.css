@@ -7660,15 +7660,16 @@ button:focus:not(:focus-visible) {
 }
 .case-modal-sub {
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
   color: var(--color-text-muted);
-  margin: 0 0 4px;
+  /* tight to the heading: the body's gap alone read as a hole. */
+  margin: -6px 0 4px;
 }
 .case-modal-input {
   width: 100%;
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 16px;
   color: var(--color-text);
   background: var(--color-bg);
   border: 1px solid var(--color-border-strong);
@@ -7682,7 +7683,7 @@ button:focus:not(:focus-visible) {
 .case-modal-textarea { resize: vertical; min-height: 96px; }
 .case-modal-error {
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 16px;
   color: #b3401e;
   margin: 0;
 }
@@ -7690,30 +7691,18 @@ button:focus:not(:focus-visible) {
 .case-modal-socials { border-top: 1px solid var(--color-border); padding-top: 16px; }
 .case-modal-socials__label {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 16px;
   color: var(--color-text-muted);
-  margin: 0 0 10px;
+  margin: 0 0 12px;
 }
-.case-modal-socials__grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.case-modal-social {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 14px;
+.case-modal-socials__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+/* Rest border for ghost pills inside the modal (same treatment as the
+   page CTA's secondary). */
+.case-modal-socials__grid .cta-pill--ghost {
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
   background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 120ms ease, border-color 120ms ease;
-}
-.case-modal-social:hover { background: #f2f2f0; border-color: #b8b8b4; }
-.case-modal-social__text { display: flex; flex-direction: column; line-height: 1.2; }
-.case-modal-social__meta {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--color-text-muted);
 }

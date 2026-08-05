@@ -785,29 +785,19 @@
       "socials": [
         {
           "label": "Telegram",
-          "href": "https://t.me/MrEmpq",
-          "icon": "send"
+          "href": "https://t.me/MrEmpq"
         },
         {
           "label": "WhatsApp",
-          "href": "https://wa.me/447400620636",
-          "icon": "chat",
-          "meta": "+44 7400 620636"
+          "href": "https://wa.me/447400620636"
         },
         {
           "label": "LinkedIn",
-          "href": "https://www.linkedin.com/in/3mpq",
-          "icon": "linkedin"
+          "href": "https://www.linkedin.com/in/3mpq"
         },
         {
           "label": "Instagram",
-          "href": "https://www.instagram.com/cntw8",
-          "icon": "instagram"
-        },
-        {
-          "label": "X",
-          "href": "https://x.com/getcorder",
-          "icon": "x"
+          "href": "https://www.instagram.com/cntw8"
         }
       ]
     }

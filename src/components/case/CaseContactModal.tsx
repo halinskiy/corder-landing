@@ -227,16 +227,10 @@ export function CaseContactModal({
                 href={s.href}
                 target="_blank"
                 rel="me noopener noreferrer"
-                className="case-modal-social"
+                className="cta-pill cta-pill--ghost inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] text-[15px] font-medium"
                 data-track-event="case_social_click"
               >
-                <SocialIcon name={s.icon} />
-                <span className="case-modal-social__text">
-                  <span className="case-modal-social__label">{s.label}</span>
-                  {"meta" in s && s.meta && (
-                    <span className="case-modal-social__meta">{s.meta}</span>
-                  )}
-                </span>
+                {s.label}
               </a>
             ))}
           </div>
@@ -244,59 +238,4 @@ export function CaseContactModal({
       </div>
     </div>
   );
-}
-
-/* lucide icon paths (same set as the rest of the site). */
-function SocialIcon({ name }: { name: string }) {
-  const common = {
-    width: 18,
-    height: 18,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 2,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    "aria-hidden": true,
-  };
-  switch (name) {
-    case "send":
-      return (
-        <svg {...common}>
-          <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
-          <path d="m21.854 2.147-10.94 10.939" />
-        </svg>
-      );
-    case "chat":
-      return (
-        <svg {...common}>
-          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-        </svg>
-      );
-    case "linkedin":
-      return (
-        <svg {...common}>
-          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-          <rect width="4" height="12" x="2" y="9" />
-          <circle cx="4" cy="4" r="2" />
-        </svg>
-      );
-    case "instagram":
-      return (
-        <svg {...common}>
-          <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-          <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-        </svg>
-      );
-    case "x":
-      return (
-        <svg {...common}>
-          <path d="M4 4l16 16" />
-          <path d="M20 4L4 20" />
-        </svg>
-      );
-    default:
-      return null;
-  }
 }
