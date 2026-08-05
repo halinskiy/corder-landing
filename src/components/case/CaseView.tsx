@@ -2,11 +2,13 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { LayoutGroup, motion } from "framer-motion";
-
 import { copy } from "@/content/copy";
-import { CaseContactModal } from "@/components/case/CaseContactModal";
-import { CORDER_PRESENCE_MORPH_TRANSITION } from "@/components/presence/CorderPresence";
+import {
+  CASE_DOCK_ROW_ID,
+  CaseHeroCta,
+  CasePresenceProvider,
+  useCasePresence,
+} from "@/components/case/CasePresence";
 import { Footer } from "@/components/sections/Footer";
 import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
 
@@ -47,8 +49,6 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  // Contact modal (the Corder-update-modal shell with the lead form).
-  const [contactOpen, setContactOpen] = useState(false);
   useEffect(() => {
     const el = dockRowRef.current;
     if (!el) return;
@@ -61,37 +61,14 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
   }, []);
 
   return (
-    <LayoutGroup id="case">
+    <CasePresenceProvider>
     <div data-component="CaseView" data-source={DATA_SOURCE}>
       <SmoothAnchors />
       <header className="page-container case-head">
         <div className="case-fit">
           <h1 className="section-heading case-head__heading">{t.heading}</h1>
           <p className="section-subhead case-head__subhead">{t.subhead}</p>
-          {/* Constant-height slot so the hero never jumps when the button
-              morphs out to the corner and back. Button sizing mirrors the
-              homepage hero CTA (h-14 / 17px / min-w 260). */}
-          <div ref={heroSlotRef} className="case-hero-cta">
-            {heroVisible && !docked && (
-              <motion.button
-                type="button"
-                layoutId="case-presence-pill"
-                transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
-                style={{ borderRadius: 999 }}
-                onClick={() => setContactOpen(true)}
-                className="cta-pill cta-pill--primary inline-flex h-14 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-9 text-[17px] font-medium md:min-w-[260px]"
-                data-track-event="case_hero_cta_click"
-              >
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { delay: 0.12, duration: 0.2 } }}
-                  className="whitespace-nowrap"
-                >
-                  {t.cta.buttonLabel}
-                </motion.span>
-              </motion.button>
-            )}
-          </div>
+          <CaseHeroCta />
         </div>
       </header>
 
@@ -146,15 +123,8 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
           <div className="case-fit">
           <h2 className="case-cta__heading">{t.cta.heading}</h2>
           <p className="case-cta__subhead">{t.cta.subhead}</p>
-          <div className="case-cta__actions" ref={dockRowRef}>
-            <button
-              type="button"
-              onClick={() => setContactOpen(true)}
-              className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
-              data-track-event="case_cta_click"
-            >
-              {t.cta.buttonLabel}
-            </button>
+          <div className="case-cta__actions" id={CASE_DOCK_ROW_ID}>
+            <CaseCtaButton label={t.cta.buttonLabel} />
             <a
               href={t.cta.secondaryHref}
               className="cta-pill cta-pill--ghost inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
@@ -166,82 +136,28 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
         </div>
       </section>
 
-      {/* One shared element, two states (the homepage CorderPresence
-          pattern, same morph transition): a floating mail circle while
-          the reader is in the chapters, MORPHING into a compact service
-          card (like the homepage's "Ready to record?") once the service
-          block is on screen. Both open the contact modal. */}
-      {docked ? (
-          <div className="case-presence-stack">
-          <motion.div
-            layoutId="case-presence-pill"
-            transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
-            style={{ borderRadius: 16 }}
-            className="case-presence-card"
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { delay: 0.18, duration: 0.24 } }}
-              className="case-presence-card__inner"
-            >
-              <h3 className="case-presence-card__heading">{t.floatCard.heading}</h3>
-              <p className="case-presence-card__sub">{t.floatCard.sub}</p>
-              <button
-                type="button"
-                onClick={() => setContactOpen(true)}
-                className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] text-[15px] font-medium"
-                data-track-event="case_float_click"
-              >
-                {t.floatCard.buttonLabel}
-              </button>
-            </motion.div>
-          </motion.div>
-          </div>
-        ) : !heroVisible ? (
-          <motion.a
-            layoutId="case-presence-pill"
-            transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
-            style={{ borderRadius: 999 }}
-            href="#pricing"
-            onClick={(e) => {
-              e.preventDefault();
-              setContactOpen(true);
-            }}
-            className="case-float"
-            aria-label={t.floatLabel}
-            title={t.floatLabel}
-            data-track-event="case_float_click"
-          >
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { delay: 0.12, duration: 0.2 } }}
-              className="case-float__icon"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <rect width="20" height="16" x="2" y="4" rx="2" />
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-              </svg>
-            </motion.span>
-          </motion.a>
-      ) : null}
 
       <hr className="section-divider" />
 
       <Footer />
-
-      <CaseContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </div>
-    </LayoutGroup>
+    </CasePresenceProvider>
+  );
+}
+
+/** Tiny subscriber so clicking the block CTA opens the contact modal
+ *  without the heavy page tree holding modal state. */
+function CaseCtaButton({ label }: { label: string }) {
+  const { openContact } = useCasePresence();
+  return (
+    <button
+      type="button"
+      onClick={openContact}
+      className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
+      data-track-event="case_cta_click"
+    >
+      {label}
+    </button>
   );
 }
 
