@@ -123,8 +123,6 @@ export function Footer() {
             >
               3mpq Studio
             </a>
-            {" "}
-            <span aria-hidden="true" className="site-footer__heart">❤️</span>
           </span>
           {/* The "Cookie preferences" link was removed 2026-08-05: the
               bottom-left cookie circle already reopens the banner, and on
