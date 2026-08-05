@@ -7552,3 +7552,168 @@ button:focus:not(:focus-visible) {
   transition: background 150ms ease, box-shadow 150ms ease;
 }
 .case-float:hover { background: var(--color-accent-hover, #0a5e34); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16); }
+
+/* ----------------------------------------------------------------------
+ *  /case contact modal -- a 1:1 port of the Corder app's update-modal
+ *  shell (dimmed perspective overlay, cursor-tilt card with radial
+ *  sheen, identical enter/exit curves), holding the lead form.
+ * ---------------------------------------------------------------------- */
+.case-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: safe center;
+  justify-content: center;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.36);
+  animation: case-modal-overlay-in 180ms ease-out;
+  perspective: 900px;
+  padding: 24px;
+}
+.case-modal-overlay.is-leaving {
+  animation: case-modal-overlay-out 200ms ease-out forwards;
+}
+@keyframes case-modal-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes case-modal-overlay-out { from { opacity: 1; } to { opacity: 0; } }
+
+.case-modal-card {
+  position: relative;
+  z-index: 1;
+  width: 420px;
+  max-width: 100%;
+  padding: 28px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.45);
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --tilt-shine-x: 50%;
+  --tilt-shine-y: 50%;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  animation: case-modal-card-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: center 70%;
+  overflow: hidden;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.case-modal-card.tilt-snap-back {
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.case-modal-card.is-leaving {
+  animation: case-modal-card-out 200ms cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+@keyframes case-modal-card-in {
+  from { opacity: 0; transform: perspective(900px) rotateX(10deg) scale(0.9); }
+  to { opacity: 1; transform: perspective(900px) rotateX(0) scale(1); }
+}
+@keyframes case-modal-card-out {
+  from { opacity: 1; transform: perspective(900px) rotateX(0) scale(1); }
+  to { opacity: 0; transform: perspective(900px) rotateX(8deg) scale(0.88); }
+}
+.case-modal-sheen {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(
+    320px circle at var(--tilt-shine-x) var(--tilt-shine-y),
+    rgba(255, 255, 255, 0.22),
+    transparent 65%
+  );
+}
+.case-modal-x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.case-modal-x:hover { background: #f2f2f0; color: var(--color-text); }
+
+.case-modal-body { display: flex; flex-direction: column; gap: 12px; }
+.case-modal-heading {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0;
+  padding-right: 36px;
+}
+.case-modal-sub {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  margin: 0 0 4px;
+}
+.case-modal-input {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 120ms ease;
+}
+.case-modal-input::placeholder { color: var(--color-text-muted); }
+.case-modal-input:focus { border-color: var(--color-accent); }
+.case-modal-textarea { resize: vertical; min-height: 96px; }
+.case-modal-error {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: #b3401e;
+  margin: 0;
+}
+
+.case-modal-socials { border-top: 1px solid var(--color-border); padding-top: 16px; }
+.case-modal-socials__label {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0 0 10px;
+}
+.case-modal-socials__grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.case-modal-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.case-modal-social:hover { background: #f2f2f0; border-color: #b8b8b4; }
+.case-modal-social__text { display: flex; flex-direction: column; line-height: 1.2; }
+.case-modal-social__meta {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}

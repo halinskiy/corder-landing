@@ -5,6 +5,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { copy } from "@/content/copy";
+import { CaseContactModal } from "@/components/case/CaseContactModal";
+import { Footer } from "@/components/sections/Footer";
 import { Nav } from "@/components/sections/Nav";
 import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
 
@@ -33,6 +35,8 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
   // cross-screen flight the moment the section's top edge appears.
   const dockRowRef = useRef<HTMLDivElement | null>(null);
   const [docked, setDocked] = useState(false);
+  // Contact modal (the Corder-update-modal shell with the lead form).
+  const [contactOpen, setContactOpen] = useState(false);
   useEffect(() => {
     const el = dockRowRef.current;
     if (!el) return;
@@ -94,13 +98,14 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
           <h2 className="case-cta__heading">{t.cta.heading}</h2>
           <p className="case-cta__subhead">{t.cta.subhead}</p>
           <div className="case-cta__actions" ref={dockRowRef}>
-            <a
-              href={t.cta.buttonHref}
+            <button
+              type="button"
+              onClick={() => setContactOpen(true)}
               className="cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
               data-track-event="case_cta_click"
             >
               {t.cta.buttonLabel}
-            </a>
+            </button>
             <a
               href={t.cta.secondaryHref}
               className="cta-pill cta-pill--ghost inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] px-7 text-[15px] font-medium"
@@ -120,6 +125,10 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
             exit={{ opacity: 0, y: 14, scale: 0.94 }}
             transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
             href="#pricing"
+            onClick={(e) => {
+              e.preventDefault();
+              setContactOpen(true);
+            }}
             className="case-float"
             aria-label={t.floatLabel}
             title={t.floatLabel}
@@ -144,6 +153,10 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
           </motion.a>
         )}
       </AnimatePresence>
+
+      <Footer />
+
+      <CaseContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { copy } from "@/content/copy";
 import { openConsentBanner } from "@/components/consent/ConsentProvider";
 
@@ -23,6 +24,10 @@ type SocialIcon = "x" | "github" | "mail";
  * просто к футеру якорить в самый низ страницы").
  */
 export function Footer() {
+  // Off the homepage (e.g. /case) the section anchors don't exist, so
+  // anchor links route back to the homepage sections. Same pattern as Nav.
+  const pathname = usePathname();
+  const onHome = pathname === "/" || pathname === null;
   const { footer } = copy;
   const socials = (footer as typeof footer & { socials?: Array<{ label: string; href: string; icon: SocialIcon }> }).socials ?? [];
 
@@ -77,11 +82,13 @@ export function Footer() {
                 <ul className="site-footer__list">
                   {column.links.map((link) => {
                     const external = /^https?:\/\//.test(link.href);
+                    const href =
+                      !onHome && link.href.startsWith("#") ? `/${link.href}` : link.href;
                     return (
                       <li key={link.label}>
                         <a
                           className="site-footer__link"
-                          href={link.href}
+                          href={href}
                           {...(external && {
                             target: "_blank",
                             rel: "noopener noreferrer",

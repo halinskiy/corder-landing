@@ -770,6 +770,46 @@
       "secondaryLabel": "See Corder live",
       "secondaryHref": "/"
     },
-    "floatLabel": "Want this finish?"
+    "floatLabel": "Want this finish?",
+    "modal": {
+      "heading": "Get this for your product",
+      "sub": "2 lines about what you're building is enough.",
+      "emailPlaceholder": "you@company.com",
+      "messagePlaceholder": "What are you building, and what feels unfinished?",
+      "submitLabel": "Send",
+      "sendingLabel": "Sending",
+      "sentTitle": "Sent",
+      "sentBody": "Thanks. I read everything myself and reply within a day.",
+      "errorBody": "Couldn't send. Try again, or use any button below.",
+      "socialsLabel": "Or reach me directly",
+      "socials": [
+        {
+          "label": "Telegram",
+          "href": "https://t.me/MrEmpq",
+          "icon": "send"
+        },
+        {
+          "label": "WhatsApp",
+          "href": "https://wa.me/447400620636",
+          "icon": "chat",
+          "meta": "+44 7400 620636"
+        },
+        {
+          "label": "LinkedIn",
+          "href": "https://www.linkedin.com/in/3mpq",
+          "icon": "linkedin"
+        },
+        {
+          "label": "Instagram",
+          "href": "https://www.instagram.com/cntw8",
+          "icon": "instagram"
+        },
+        {
+          "label": "X",
+          "href": "https://x.com/getcorder",
+          "icon": "x"
+        }
+      ]
+    }
   }
 }
