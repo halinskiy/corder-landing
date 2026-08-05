@@ -24,10 +24,6 @@ const HIDE_ON = new Set([
   "/install/",
   "/contact",
   "/contact/",
-  // /case mounts the homepage Nav (brand goes home), so the floating
-  // house button would double the same affordance under the fixed bar.
-  "/case",
-  "/case/",
   // /account owns its top-left slot: signed in it's a Sign-out button
   // (rendered by AccountView), so the global back arrow must not compete.
   "/account",
@@ -100,39 +96,22 @@ export function BackToHomeBtn() {
       data-source={DATA_SOURCE}
       data-track-event="standalone_back_home"
     >
-      {isCase ? (
-        /* lucide "house" -- same icon set as the arrow below. */
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-          <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        </svg>
-      ) : (
-        /* lucide "arrow-left" */
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M19 12H5" />
-          <path d="m11 18-6-6 6-6" />
-        </svg>
-      )}
+      {/* lucide "arrow-left". On /case it still reads as "back", but it
+          navigates HOME with a fresh nav (see isCase above). */}
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M19 12H5" />
+        <path d="m11 18-6-6 6-6" />
+      </svg>
     </Link>
   );
 }
