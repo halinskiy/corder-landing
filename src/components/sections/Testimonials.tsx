@@ -32,6 +32,36 @@ export function Testimonials() {
           <div className="testimonials-track">
             {[...t.items, ...t.items].map((item, i) => {
               const dup = i >= t.items.length;
+              // Quotes sent to Kostya in DMs carry the Telegram mark and do
+              // NOT link out (there is no public thread to land on); Product
+              // Hunt quotes keep linking to the PH page.
+              const fromDm =
+                "source" in item && (item as { source?: string }).source === "telegram";
+              const body = (
+                <>
+                  <p className="testimonial-card__quote">{item.quote}</p>
+                  <span className="testimonial-card__meta">
+                    <span className="testimonial-card__person">
+                      <span className="testimonial-card__name">{item.name}</span>
+                      {"title" in item && item.title && (
+                        <span className="testimonial-card__title">{item.title}</span>
+                      )}
+                    </span>
+                    {fromDm ? <TelegramLogo /> : <ProductHuntLogo />}
+                  </span>
+                </>
+              );
+              if (fromDm) {
+                return (
+                  <div
+                    key={i}
+                    className="testimonial-card testimonial-card--static"
+                    aria-hidden={dup || undefined}
+                  >
+                    {body}
+                  </div>
+                );
+              }
               return (
                 <a
                   key={i}
@@ -44,16 +74,7 @@ export function Testimonials() {
                   tabIndex={dup ? -1 : undefined}
                   aria-label={dup ? undefined : `${item.name} ${t.sourceLabel}`}
                 >
-                  <p className="testimonial-card__quote">{item.quote}</p>
-                  <span className="testimonial-card__meta">
-                    <span className="testimonial-card__person">
-                      <span className="testimonial-card__name">{item.name}</span>
-                      {"title" in item && item.title && (
-                        <span className="testimonial-card__title">{item.title}</span>
-                      )}
-                    </span>
-                    <ProductHuntLogo />
-                  </span>
+                  {body}
                 </a>
               );
             })}
@@ -75,6 +96,26 @@ export function Testimonials() {
         )}
       </div>
     </section>
+  );
+}
+
+// Telegram logomark (official: blue circle + white paper plane) for
+// quotes that arrived as direct messages.
+function TelegramLogo() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 240 240"
+      aria-hidden
+      className="testimonial-card__ph"
+    >
+      <circle cx="120" cy="120" r="120" fill="#229ED9" />
+      <path
+        fill="#fff"
+        d="M53.6 118.9c34.5-15 57.5-25 69-29.8 32.9-13.7 39.7-16.1 44.2-16.2 1 0 3.2.2 4.6 1.4 1.2 1 1.5 2.3 1.7 3.3.2 1 .4 3.2.2 4.9-1.8 18.7-9.5 64.1-13.4 85-1.7 8.9-4.9 11.8-8.1 12.1-6.9.6-12.1-4.5-18.8-8.9-10.4-6.8-16.3-11.1-26.4-17.7-11.7-7.7-4.1-11.9 2.5-18.8 1.7-1.8 31.9-29.2 32.4-31.7.1-.3.2-1.5-.6-2.1s-1.8-.4-2.6-.2c-1.1.3-18.5 11.8-52.3 34.5-5 3.4-9.4 5.1-13.5 5-4.4-.1-13-2.5-19.3-4.6-7.8-2.5-14-3.9-13.4-8.2.3-2.2 3.4-4.5 9.3-6.9z"
+      />
+    </svg>
   );
 }
 

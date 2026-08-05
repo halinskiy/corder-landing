@@ -7193,6 +7193,14 @@ button:focus:not(:focus-visible) {
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
 }
+/* DM-sourced quotes are not links: no hover lift, default cursor. */
+.testimonial-card--static,
+.testimonial-card--static:hover {
+  cursor: default;
+  border-color: var(--color-border);
+  transform: none;
+  box-shadow: none;
+}
 .testimonial-card__quote {
   margin: 0;
   font-family: var(--font-serif);
