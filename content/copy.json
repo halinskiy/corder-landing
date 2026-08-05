@@ -752,8 +752,8 @@
     "subhead": "Corder today is a notarized, paid macOS product with a landing page, checkout and auto-updates. Built solo, finished deliberately.",
     "chapters": [
       {
-        "heading": "First launch",
-        "body": "The first build opened to a blank pane and a note to go press Start somewhere in the menu bar. Today the first screen is the product: one clear action, your first recording sketched in, nothing to figure out.",
+        "heading": "The archive",
+        "body": "A modal that covered your transcript became a drawer beside it. Rows restore in place, retention is stated in plain words, and the window underneath stays visible and usable.",
         "beforeLabel": "May 2026"
       },
       {
@@ -762,13 +762,13 @@
         "beforeLabel": "June 2026"
       },
       {
-        "heading": "The archive",
-        "body": "A modal that covered your transcript became a drawer beside it. Rows restore in place, retention is stated in plain words, and the window underneath stays visible and usable.",
+        "heading": "Settings",
+        "body": "From a paste-your-API-key field to a system: grouped cards, one switch style, one accent color, every row written in the same voice. Boring in the best way.",
         "beforeLabel": "June 2026"
       },
       {
-        "heading": "Settings",
-        "body": "From a paste-your-API-key field to a system: grouped cards, one switch style, one accent color, every row written in the same voice. Boring in the best way.",
+        "heading": "First launch",
+        "body": "The first build opened to a blank pane and a note to go press Start somewhere in the menu bar. Today the first screen is the product: one clear action, your first recording sketched in, nothing to figure out.",
         "beforeLabel": "July 2026"
       }
     ],

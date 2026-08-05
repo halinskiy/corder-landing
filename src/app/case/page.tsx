@@ -27,11 +27,13 @@ function snap(name: string): string {
 }
 
 export default function CasePage() {
+  // Order mirrors copy.json chapters: archive first (the most
+  // representative pair), first-launch last.
   const pairs = [
-    { before: snap("old-empty"), after: snap("new-welcome") },
-    { before: snap("old-main"), after: snap("new-main") },
     { before: snap("old-archive"), after: snap("new-archive") },
+    { before: snap("old-main"), after: snap("new-main") },
     { before: snap("old-settings"), after: snap("new-settings") },
+    { before: snap("old-empty"), after: snap("new-welcome") },
   ];
   return <CaseView pairs={pairs} />;
 }
