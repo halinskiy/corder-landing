@@ -2,10 +2,11 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { LayoutGroup, motion } from "framer-motion";
 
 import { copy } from "@/content/copy";
 import { CaseContactModal } from "@/components/case/CaseContactModal";
+import { CORDER_PRESENCE_MORPH_TRANSITION } from "@/components/presence/CorderPresence";
 import { Footer } from "@/components/sections/Footer";
 import { Nav } from "@/components/sections/Nav";
 import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
@@ -68,14 +69,27 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
               <h3 className="case-text__heading">{ch.heading}</h3>
               <p className="case-text__body">{ch.body}</p>
             </div>
-            <div className="case-window">
-              <div className="case-titlebar" aria-hidden="true">
-                <span className="case-traffic case-traffic--close" />
-                <span className="case-traffic case-traffic--min" />
-                <span className="case-traffic case-traffic--max" />
+            <div className="case-window-hold">
+              <div className="case-window">
+                <div className="case-titlebar" aria-hidden="true">
+                  <span className="case-traffic case-traffic--close" />
+                  <span className="case-traffic case-traffic--min" />
+                  <span className="case-traffic case-traffic--max" />
+                </div>
+                <div className="case-window-content">
+                  <BeforeAfter pair={pairs[i]} />
+                </div>
               </div>
-              <div className="case-window-content">
-                <BeforeAfter pair={pairs[i]} beforeLabel={ch.beforeLabel} />
+              {/* Era chips OUTSIDE the window (its overflow:hidden would kill
+                  sticky): each rides the viewport bottom while the window
+                  scrolls past, then parks at the window's bottom corner. */}
+              <div className="case-badges" aria-hidden="true">
+                <div className="case-badges__col">
+                  <span className="case-ba__badge">{ch.beforeLabel}</span>
+                </div>
+                <div className="case-badges__col">
+                  <span className="case-ba__badge">Today</span>
+                </div>
               </div>
             </div>
           </article>
@@ -117,13 +131,41 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
         </div>
       </section>
 
-      <AnimatePresence>
-        {!docked && (
+      {/* One shared element, two states (the homepage CorderPresence
+          pattern, same morph transition): a floating mail circle while
+          the reader is in the chapters, MORPHING into a compact service
+          card (like the homepage's "Ready to record?") once the service
+          block is on screen. Both open the contact modal. */}
+      <LayoutGroup id="case-presence">
+        {docked ? (
+          <motion.div
+            layoutId="case-presence-pill"
+            transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
+            style={{ borderRadius: 16 }}
+            className="case-presence-card"
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { delay: 0.18, duration: 0.24 } }}
+              className="case-presence-card__inner"
+            >
+              <h3 className="case-presence-card__heading">{t.floatCard.heading}</h3>
+              <p className="case-presence-card__sub">{t.floatCard.sub}</p>
+              <button
+                type="button"
+                onClick={() => setContactOpen(true)}
+                className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-pill)] text-[15px] font-medium"
+                data-track-event="case_float_click"
+              >
+                {t.floatCard.buttonLabel}
+              </button>
+            </motion.div>
+          </motion.div>
+        ) : (
           <motion.a
-            initial={{ opacity: 0, y: 14, scale: 0.94 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 14, scale: 0.94 }}
-            transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+            layoutId="case-presence-pill"
+            transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
+            style={{ borderRadius: 999 }}
             href="#pricing"
             onClick={(e) => {
               e.preventDefault();
@@ -134,25 +176,29 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
             title={t.floatLabel}
             data-track-event="case_float_click"
           >
-            {/* lucide "mail" -- same ghost-circle language as the cookie
-                and back buttons, so it never competes with the content. */}
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { delay: 0.12, duration: 0.2 } }}
+              className="case-float__icon"
             >
-              <rect width="20" height="16" x="2" y="4" rx="2" />
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-            </svg>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+            </motion.span>
           </motion.a>
         )}
-      </AnimatePresence>
+      </LayoutGroup>
 
       <hr className="section-divider" />
 
@@ -173,7 +219,7 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
 
 const APP_W = 1180;
 
-function BeforeAfter({ pair, beforeLabel }: { pair: Pair; beforeLabel: string }) {
+function BeforeAfter({ pair }: { pair: Pair }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
@@ -258,8 +304,6 @@ function BeforeAfter({ pair, beforeLabel }: { pair: Pair; beforeLabel: string })
       <div ref={lineRef} className="case-ba__line" aria-hidden="true">
         <span className="case-ba__grip" />
       </div>
-      <span className="case-ba__badge case-ba__badge--left">{beforeLabel}</span>
-      <span className="case-ba__badge case-ba__badge--right">Today</span>
     </div>
   );
 }

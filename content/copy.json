@@ -800,6 +800,11 @@
           "href": "https://www.instagram.com/cntw8"
         }
       ]
+    },
+    "floatCard": {
+      "heading": "Want this finish?",
+      "sub": "Same treatment for your product. Async, about 2 weeks.",
+      "buttonLabel": "Get this for your product"
     }
   }
 }

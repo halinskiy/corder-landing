@@ -7481,20 +7481,41 @@ button:focus:not(:focus-visible) {
 .case-ba__grip::after { right: 6px; border-left: 5px solid var(--color-text-muted); }
 
 .case-ba__badge {
-  position: absolute;
-  bottom: 12px;
-  z-index: 5;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 16px;
   color: var(--color-text-muted);
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
-  padding: 4px 12px;
+  padding: 5px 14px;
   pointer-events: none;
 }
-.case-ba__badge--left { left: 12px; }
-.case-ba__badge--right { right: 12px; }
+
+/* Sticky era chips: the overlay spans the window, each column is full
+   height, the chip sits at the column's END (margin-top:auto) and is
+   position:sticky against the viewport bottom -- so it appears the
+   moment the window's top enters the screen, rides the display's lower
+   edge through the scroll, and PARKS in the window's bottom corner. */
+.case-window-hold { position: relative; }
+.case-badges {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+}
+.case-badges__col {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.case-badges__col .case-ba__badge {
+  margin-top: auto;
+  position: sticky;
+  bottom: 12px;
+}
 
 /* Service block (the case page's own pricing). */
 .case-cta { padding: 88px 0 110px; }
@@ -7663,8 +7684,8 @@ button:focus:not(:focus-visible) {
   font-size: 16px;
   line-height: 1.5;
   color: var(--color-text-muted);
-  /* tight to the heading: the body's gap alone read as a hole. */
-  margin: -6px 0 4px;
+  /* tight to the heading, a touch more air before the first input. */
+  margin: -8px 0 8px;
 }
 .case-modal-input {
   width: 100%;
@@ -7710,3 +7731,38 @@ button:focus:not(:focus-visible) {
 /* <button class="cta-pill"> lacked the pointer <a> gets for free (the
    case modal's Send + the case CTA are buttons now). One rule, site-wide. */
 button.cta-pill { cursor: pointer; }
+
+/* The docked state of the floating mail circle: a compact service card
+   in the same corner (mirrors the homepage's bottom-right presence
+   card), sharing the circle's layoutId so the morph is seamless. */
+.case-presence-card {
+  position: fixed;
+  right: 32px;
+  bottom: max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px));
+  z-index: 60;
+  width: 360px;
+  max-width: calc(100vw - 64px);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 18px 44px -16px rgba(0, 0, 0, 0.22);
+  padding: 20px;
+  overflow: hidden;
+}
+.case-presence-card__inner { display: flex; flex-direction: column; gap: 6px; }
+.case-presence-card__heading {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+  color: var(--color-text);
+  margin: 0;
+}
+.case-presence-card__sub {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  margin: 0 0 10px;
+}
+.case-float__icon { display: inline-flex; }
