@@ -8,7 +8,6 @@ import { copy } from "@/content/copy";
 import { CaseContactModal } from "@/components/case/CaseContactModal";
 import { CORDER_PRESENCE_MORPH_TRANSITION } from "@/components/presence/CorderPresence";
 import { Footer } from "@/components/sections/Footer";
-import { Nav } from "@/components/sections/Nav";
 import { SmoothAnchors } from "@/components/nav/SmoothAnchors";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/case/CaseView.tsx";
@@ -62,9 +61,9 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
   }, []);
 
   return (
+    <LayoutGroup id="case">
     <div data-component="CaseView" data-source={DATA_SOURCE}>
       <SmoothAnchors />
-      <Nav />
       <header className="page-container case-head">
         <div className="case-fit">
           <h1 className="section-heading case-head__heading">{t.heading}</h1>
@@ -172,30 +171,8 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
           the reader is in the chapters, MORPHING into a compact service
           card (like the homepage's "Ready to record?") once the service
           block is on screen. Both open the contact modal. */}
-      <LayoutGroup id="case-presence">
-        {docked ? (
+      {docked ? (
           <div className="case-presence-stack">
-            {/* Product Hunt badge above the card, same treatment as the
-                homepage's presence stack (fade-in a beat after the morph). */}
-            <motion.a
-              href="https://www.producthunt.com/products/corder?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-corder"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Corder on Product Hunt"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-              className="case-ph-banner"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1183830&theme=light"
-                alt="Corder on Product Hunt"
-                width={250}
-                height={54}
-                style={{ display: "block", maxWidth: "100%", height: "auto" }}
-              />
-            </motion.a>
           <motion.div
             layoutId="case-presence-pill"
             transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
@@ -256,8 +233,7 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
               </svg>
             </motion.span>
           </motion.a>
-        ) : null}
-      </LayoutGroup>
+      ) : null}
 
       <hr className="section-divider" />
 
@@ -265,6 +241,7 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
 
       <CaseContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </div>
+    </LayoutGroup>
   );
 }
 
@@ -282,6 +259,18 @@ function BeforeAfter({ pair }: { pair: Pair }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
+  // Phones: the cursor wipe is unreadable at ~0.3 scale and there is no
+  // hover anyway, so the pair becomes a two-tab toggle showing ONE build
+  // full-width at a time.
+  const [narrow, setNarrow] = useState(false);
+  const [side, setSide] = useState<"before" | "after">("after");
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => setNarrow(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   // Scale the fixed 1180x760 app viewport to the host width.
   useLayoutEffect(() => {
@@ -299,6 +288,7 @@ function BeforeAfter({ pair }: { pair: Pair }) {
   // Cursor-chasing divider. Direct style mutation (no setState) -- the
   // same pattern and lerp factor as the homepage window tilt.
   useEffect(() => {
+    if (narrow) return;
     const host = hostRef.current;
     const top = topRef.current;
     const line = lineRef.current;
@@ -338,7 +328,43 @@ function BeforeAfter({ pair }: { pair: Pair }) {
       host.removeEventListener("pointerdown", onMove);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [narrow]);
+
+  if (narrow) {
+    return (
+      <div ref={hostRef} className="case-ba case-ba--tap">
+        <div className="case-ba__layer">
+          <iframe
+            className="case-ba__frame"
+            srcDoc={side === "before" ? pair.before : pair.after}
+            tabIndex={-1}
+            loading="lazy"
+            title={side === "before" ? "First shipped build" : "Current build"}
+          />
+        </div>
+        <div className="case-ba__switch" role="tablist" aria-label="Before or after">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={side === "before"}
+            className={`case-ba__switch-btn${side === "before" ? " is-active" : ""}`}
+            onClick={() => setSide("before")}
+          >
+            Before
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={side === "after"}
+            className={`case-ba__switch-btn${side === "after" ? " is-active" : ""}`}
+            onClick={() => setSide("after")}
+          >
+            After
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={hostRef} className="case-ba">
