@@ -738,19 +738,23 @@
     "chapters": [
       {
         "heading": "First launch",
-        "body": "The first build opened to a blank pane and a note to go press Start somewhere in the menu bar. Today the first screen is the product: one clear action, your first recording sketched in, nothing to figure out."
+        "body": "The first build opened to a blank pane and a note to go press Start somewhere in the menu bar. Today the first screen is the product: one clear action, your first recording sketched in, nothing to figure out.",
+        "beforeLabel": "May 2026"
       },
       {
         "heading": "A finished meeting",
-        "body": "Same transcript, same speakers, same timestamps. The early view dumped turns under a breadcrumb. The current one gives the meeting a title, tabs for summary and chapters, sharing, and a timeline you can read at a glance."
+        "body": "Same transcript, same speakers, same timestamps. The early view dumped turns under a breadcrumb. The current one gives the meeting a title, tabs for summary and chapters, sharing, and a timeline you can read at a glance.",
+        "beforeLabel": "June 2026"
       },
       {
         "heading": "The archive",
-        "body": "A modal that covered your transcript became a drawer beside it. Rows restore in place, retention is stated in plain words, and the window underneath stays visible and usable."
+        "body": "A modal that covered your transcript became a drawer beside it. Rows restore in place, retention is stated in plain words, and the window underneath stays visible and usable.",
+        "beforeLabel": "June 2026"
       },
       {
         "heading": "Settings",
-        "body": "From a paste-your-API-key field to a system: grouped cards, one switch style, one accent color, every row written in the same voice. Boring in the best way."
+        "body": "From a paste-your-API-key field to a system: grouped cards, one switch style, one accent color, every row written in the same voice. Boring in the best way.",
+        "beforeLabel": "July 2026"
       }
     ],
     "resultLine": "Corder today is a notarized, paid macOS product with a landing page, checkout and auto-updates. Built solo, finished deliberately.",

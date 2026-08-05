@@ -71,7 +71,7 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
                 <span className="case-traffic case-traffic--max" />
               </div>
               <div className="case-window-content">
-                <BeforeAfter pair={pairs[i]} />
+                <BeforeAfter pair={pairs[i]} beforeLabel={ch.beforeLabel} />
               </div>
             </div>
           </article>
@@ -120,10 +120,27 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
             exit={{ opacity: 0, y: 14, scale: 0.94 }}
             transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
             href="#pricing"
-            className="case-float cta-pill cta-pill--primary inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
+            className="case-float"
+            aria-label={t.floatLabel}
+            title={t.floatLabel}
             data-track-event="case_float_click"
           >
-            {t.floatLabel}
+            {/* lucide "mail" -- same ghost-circle language as the cookie
+                and back buttons, so it never competes with the content. */}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect width="20" height="16" x="2" y="4" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
           </motion.a>
         )}
       </AnimatePresence>
@@ -141,7 +158,7 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
 
 const APP_W = 1180;
 
-function BeforeAfter({ pair }: { pair: Pair }) {
+function BeforeAfter({ pair, beforeLabel }: { pair: Pair; beforeLabel: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
@@ -226,7 +243,7 @@ function BeforeAfter({ pair }: { pair: Pair }) {
       <div ref={lineRef} className="case-ba__line" aria-hidden="true">
         <span className="case-ba__grip" />
       </div>
-      <span className="case-ba__badge case-ba__badge--left">May 2026</span>
+      <span className="case-ba__badge case-ba__badge--left">{beforeLabel}</span>
       <span className="case-ba__badge case-ba__badge--right">Today</span>
     </div>
   );
