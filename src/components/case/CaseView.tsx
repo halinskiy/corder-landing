@@ -154,6 +154,8 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
         )}
       </AnimatePresence>
 
+      <hr className="section-divider" />
+
       <Footer />
 
       <CaseContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
