@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { copy } from "@/content/copy";
-import { openConsentBanner } from "@/components/consent/ConsentProvider";
 
 const DATA_SOURCE = "projects/corder-landing/src/components/sections/Footer.tsx";
 
@@ -127,13 +126,9 @@ export function Footer() {
             {" "}
             <span aria-hidden="true" className="site-footer__heart">❤️</span>
           </span>
-          <button
-            type="button"
-            className="site-footer__consent-link"
-            onClick={openConsentBanner}
-          >
-            Cookie preferences
-          </button>
+          {/* The "Cookie preferences" link was removed 2026-08-05: the
+              bottom-left cookie circle already reopens the banner, and on
+              /case the corner card covered the link anyway. */}
         </div>
       </div>
     </footer>
