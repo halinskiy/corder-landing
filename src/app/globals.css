@@ -7533,8 +7533,8 @@ button:focus:not(:focus-visible) {
   background: var(--color-bg);
 }
 
-/* Ghost circle in the cookie-trigger's language (56px, white, hairline),
-   mirrored to the bottom-RIGHT corner on the same centreline. */
+/* PRIMARY circle (accent-filled, like every primary CTA), sized and
+   positioned to mirror the cookie trigger's corner + centreline. */
 .case-float {
   position: fixed;
   right: 32px;
@@ -7546,10 +7546,9 @@ button:focus:not(:focus-visible) {
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-bg);
-  color: var(--color-text);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
   transition: background 150ms ease, box-shadow 150ms ease;
 }
-.case-float:hover { background: var(--color-bg-elev, #f7f7f6); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); }
+.case-float:hover { background: var(--color-accent-hover, #0a5e34); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16); }
