@@ -63,6 +63,10 @@ export function ConsentProvider() {
   // are evicted; same-session JS can't unload a vendor script cleanly.
   const previousChoiceRef = useRef<ConsentState>(null);
   const injectedRef = useRef(false);
+  // Exit animation: the banner rises in via CSS, so it must SINK out the
+  // same way instead of vanishing on click. `leaving` plays the reverse
+  // keyframes, then the timeout commits the real decision (unmount).
+  const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -118,6 +122,15 @@ export function ConsentProvider() {
   }, [state]);
 
   function persist(value: "accepted" | "declined") {
+    if (leaving) return;
+    setLeaving(true);
+    window.setTimeout(() => {
+      setLeaving(false);
+      commit(value);
+    }, 300);
+  }
+
+  function commit(value: "accepted" | "declined") {
     const prev = previousChoiceRef.current;
     try {
       window.localStorage.setItem(STORAGE_KEY, value);
@@ -147,7 +160,7 @@ export function ConsentProvider() {
       data-component="ConsentBanner"
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-border,color-text,color-text-muted,color-accent,radius-window,radius-pill,ease-out"
-      className="consent-banner"
+      className={`consent-banner${leaving ? " consent-banner--leaving" : ""}`}
     >
       <h2 id="consent-title" className="consent-banner__title">
         Help improve this site

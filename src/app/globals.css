@@ -5726,6 +5726,16 @@ button:focus:not(:focus-visible) {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Mirrored exit: sink + fade with the same curve, held by `both` until
+   React unmounts after the 300ms timeout. */
+.consent-banner--leaving {
+  animation: consent-banner-sink 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes consent-banner-sink {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(16px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .consent-banner { animation: none; }
 }
