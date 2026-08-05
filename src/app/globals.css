@@ -7735,13 +7735,29 @@ button.cta-pill { cursor: pointer; }
 /* The docked state of the floating mail circle: a compact service card
    in the same corner (mirrors the homepage's bottom-right presence
    card), sharing the circle's layoutId so the morph is seamless. */
-.case-presence-card {
+.case-presence-stack {
   position: fixed;
   right: 32px;
   bottom: max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px));
   z-index: 60;
   width: 360px;
   max-width: calc(100vw - 64px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.case-ph-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-window);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.08);
+}
+.case-presence-card {
+  width: 100%;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   box-shadow: 0 18px 44px -16px rgba(0, 0, 0, 0.22);

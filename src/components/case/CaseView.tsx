@@ -138,6 +138,28 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
           block is on screen. Both open the contact modal. */}
       <LayoutGroup id="case-presence">
         {docked ? (
+          <div className="case-presence-stack">
+            {/* Product Hunt badge above the card, same treatment as the
+                homepage's presence stack (fade-in a beat after the morph). */}
+            <motion.a
+              href="https://www.producthunt.com/products/corder?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-corder"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Corder on Product Hunt"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+              className="case-ph-banner"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1183830&theme=light"
+                alt="Corder on Product Hunt"
+                width={250}
+                height={54}
+                style={{ display: "block", maxWidth: "100%", height: "auto" }}
+              />
+            </motion.a>
           <motion.div
             layoutId="case-presence-pill"
             transition={{ layout: CORDER_PRESENCE_MORPH_TRANSITION }}
@@ -161,6 +183,7 @@ export function CaseView({ pairs }: { pairs: Pair[] }) {
               </button>
             </motion.div>
           </motion.div>
+          </div>
         ) : (
           <motion.a
             layoutId="case-presence-pill"
