@@ -7631,14 +7631,14 @@ button:focus:not(:focus-visible) {
 }
 .case-modal-x {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 16px;
+  right: 16px;
   z-index: 3;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   border-radius: 999px;
   border: 1px solid var(--color-border);
   background: var(--color-bg);
@@ -7706,3 +7706,7 @@ button:focus:not(:focus-visible) {
   border: 1px solid var(--color-border-strong);
   background: var(--color-bg);
 }
+
+/* <button class="cta-pill"> lacked the pointer <a> gets for free (the
+   case modal's Send + the case CTA are buttons now). One rule, site-wide. */
+button.cta-pill { cursor: pointer; }
