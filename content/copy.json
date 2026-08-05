@@ -640,6 +640,10 @@
             "href": "#faq"
           },
           {
+            "label": "Case study",
+            "href": "/case/"
+          },
+          {
             "label": "Contact Us",
             "href": "/contact/"
           }
