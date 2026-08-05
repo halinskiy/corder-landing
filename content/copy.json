@@ -749,7 +749,7 @@
     "metaDescription": "The same macOS app 4 months apart. Real screens from the first shipped build against the current one, and the finishing work between them.",
     "eyebrow": "Case study",
     "heading": "The making of Corder",
-    "subhead": "Corder started as AI output: it worked, it looked like a prototype. Every window below is the real interface with the same data. First shipped build on the left, today's on the right. Move the line.",
+    "subhead": "Corder today is a notarized, paid macOS product with a landing page, checkout and auto-updates. Built solo, finished deliberately.",
     "chapters": [
       {
         "heading": "First launch",
@@ -772,7 +772,7 @@
         "beforeLabel": "July 2026"
       }
     ],
-    "resultLine": "Corder today is a notarized, paid macOS product with a landing page, checkout and auto-updates. Built solo, finished deliberately.",
+    "resultLine": "Corder started as AI output: it worked, it looked like a prototype. Every window below is the real interface with the same data. First shipped build on the left, today's on the right. Move the line.",
     "cta": {
       "heading": "I do this for AI-built products",
       "subhead": "You bring a product an AI helped you build. In about 2 weeks I make it consistent, branded and shippable: components, spacing, states, copy. Async process, written updates, before-and-after pairs like the ones above.",
