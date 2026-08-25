@@ -71,6 +71,23 @@ export function Footer() {
                 ))}
               </ul>
             )}
+            {/* Sell With Boost listing badge — social proof, pinned to the
+                bottom of the brand column (see .site-footer__boost). */}
+            <a
+              className="site-footer__boost"
+              href="https://sellwithboost.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Listed on Sell With Boost"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://sellwithboost.com/badge/listing.svg"
+                alt="Listed on Sell With Boost"
+                style={{ height: 40, width: "auto" }}
+                loading="lazy"
+              />
+            </a>
           </div>
 
           {footer.columns

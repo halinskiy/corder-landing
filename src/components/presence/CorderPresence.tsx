@@ -175,16 +175,19 @@ export function CorderPresenceProvider({ children }: { children: ReactNode }) {
 function CorderPresenceCorner() {
   const { pastHowItWorks, pastFormZone, motionDisabled } = useCorderPresence();
 
-  // Motion killswitch: no orb, no form. The inline static section
-  // (rendered separately by page.tsx) carries the subscribe affordance.
+  // Motion killswitch: no orb. The inline Final CTA section
+  // (CorderPresenceStaticSection, always rendered by page.tsx) carries the
+  // download call to action.
   if (motionDisabled) return null;
   if (!pastHowItWorks) return null;
 
-  if (pastFormZone) {
-    // The download card (final morph). The Product Hunt badge that used
-    // to ride above it was removed 2026-08-05 per user request.
-    return <CorderPresenceForm />;
-  }
+  // Step aside at the form zone: the always-present inline Final CTA section
+  // is the single download call to action at the bottom of the page. The
+  // corner only carries the lightweight scroll orb on the way down. We no
+  // longer expand the orb into a fixed floating card here — that framer-motion
+  // shared-element card silently failed to render in some browsers (desktop
+  // Safari), leaving the page with no download CTA at all.
+  if (pastFormZone) return null;
   return <CorderPresenceOrb />;
 }
 
@@ -587,7 +590,15 @@ export function CorderPresenceStaticSection() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  if (!motionDisabled && !isMobile) return null;
+  // Always render this inline Final CTA. It used to render ONLY when the
+  // corner morph was off (reduced-motion / mobile), with the fixed floating
+  // card carrying the CTA otherwise. But that framer-motion `layoutId` card
+  // silently fails to appear in some browsers (reported on desktop Safari:
+  // the whole "download" call to action vanished between FAQ and footer). The
+  // final download CTA is too important to hang on a fragile shared-element
+  // animation, so it now lives here as a real, always-present section for
+  // everyone; the corner keeps only the lightweight scroll orb.
+  void motionDisabled; void isMobile;
 
   return (
     <section
