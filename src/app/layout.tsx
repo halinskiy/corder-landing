@@ -141,7 +141,7 @@ const JSON_LD = {
       operatingSystem: "macOS 14",
       description: copy.meta.description,
       image: `${SITE_URL}/og-image.png`,
-      softwareVersion: "0.15.54",
+      softwareVersion: "0.15.66",
       downloadUrl: `${SITE_URL}/install/`,
       featureList: copy.features.cells.map((c) => c.heading).join(", "),
       offers: [
@@ -152,7 +152,7 @@ const JSON_LD = {
           priceCurrency: "USD",
           category: "free",
           description:
-            "5 hours of transcription a month, speaker labels, searchable transcript. No credit card, no sign-up.",
+            "5 hours of transcription a month, speaker labels, searchable transcript. No sign-up.",
         },
         {
           "@type": "Offer",
@@ -160,7 +160,7 @@ const JSON_LD = {
           price: "10",
           priceCurrency: "USD",
           description:
-            "25 hours a month, auto-summary, custom templates, priority support. $10/mo first 3 months, $14/mo after.",
+            "25 hours a month, auto-summary, custom templates, priority support. $10/mo.",
         },
         {
           "@type": "Offer",
@@ -176,7 +176,7 @@ const JSON_LD = {
           price: "24",
           priceCurrency: "USD",
           description:
-            "Unlimited transcription, stronger accents handling, early builds. $24/mo first 3 months, $29/mo after.",
+            "Unlimited transcription, stronger accents handling, early builds. $24/mo.",
         },
         {
           "@type": "Offer",
