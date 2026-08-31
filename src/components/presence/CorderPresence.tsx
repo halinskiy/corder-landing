@@ -217,12 +217,30 @@ function CorderPresenceCornerBody({ isCard }: { isCard: boolean }) {
   const { setCornerActive } = useCorderPresence();
 
   // Announce the corner's LIVE presence so the inline Final CTA section can
-  // step aside. Flag flips only while this element is truly mounted: any
-  // failure to get here (dead JS, a crash above) leaves the section in
-  // place, so the page never loses its download CTA.
+  // step aside. Flag flips only while this element is truly mounted AND
+  // actually visible: an adblocker's cosmetic filter can display:none the
+  // node while React thinks it is fine (AdLock did exactly that,
+  // 2026-08-31), and the page must never end up with no download CTA at
+  // all. If the check finds the node hidden, the flag stays false and the
+  // inline section keeps carrying the CTA.
+  const rootRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    setCornerActive(true);
-    return () => setCornerActive(false);
+    let cancelled = false;
+    // Give the blocker's stylesheet a beat to apply before measuring.
+    const t = window.setTimeout(() => {
+      if (cancelled) return;
+      const el = rootRef.current;
+      const visible =
+        !!el &&
+        getComputedStyle(el).display !== "none" &&
+        el.getBoundingClientRect().width > 0;
+      setCornerActive(visible);
+    }, 250);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t);
+      setCornerActive(false);
+    };
   }, [setCornerActive]);
 
   // Card state: `bottom` is recomputed on scroll so the card pins above the
@@ -271,13 +289,13 @@ function CorderPresenceCornerBody({ isCard }: { isCard: boolean }) {
     }
   };
 
+  // NOTE: no position / right / bottom / zIndex here — that geometry lives
+  // in the .presence-corner classes (globals.css). Putting "position: fixed"
+  // together with "z-index" into the inline style attribute gets the element
+  // display:none'd by AdLock-class blockers.
   const orbStyle = {
-    position: "fixed",
-    right: "32px",
-    bottom: "max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px))",
     width: "56px",
     height: "56px",
-    zIndex: 30,
     background: "var(--color-accent)",
     border: "1px solid var(--color-accent)",
     borderRadius: "9999px",
@@ -296,12 +314,9 @@ function CorderPresenceCornerBody({ isCard }: { isCard: boolean }) {
   } as const;
 
   const cardStyle = {
-    position: "fixed",
-    right: "32px",
-    bottom: `max(${bottomPx}px, calc(env(safe-area-inset-bottom, 0px) + 28px))`,
+    ["--presence-bottom" as string]: `${bottomPx}px`,
     width: "360px",
     height: "auto",
-    zIndex: 31,
     background: "var(--color-bg)",
     border: "1px solid var(--color-border)",
     borderRadius: "var(--radius-window)",
@@ -324,8 +339,13 @@ function CorderPresenceCornerBody({ isCard }: { isCard: boolean }) {
 
   return (
     <motion.div
+      ref={rootRef}
       layoutId="corder-presence"
       layout
+      className={
+        "presence-corner " +
+        (isCard ? "presence-corner--card" : "presence-corner--orb")
+      }
       data-component="CorderPresenceCorner"
       data-state={isCard ? "card" : "orb"}
       data-source={DATA_SOURCE_PROVIDER}
