@@ -7937,3 +7937,25 @@ button.cta-pill { cursor: pointer; }
   background: var(--color-accent);
   color: #fff;
 }
+
+/* Corner presence (orb / download card). The GEOMETRY lives in classes, not
+   in the inline style attribute: AdLock-style blockers hide any element whose
+   inline style contains BOTH "position: fixed" and "z-index" (verified against
+   AdLock 0.2.0, 2026-08-31) — which is why the corner vanished for a user
+   while the class-positioned nav pill and cookie button survived. Keep
+   position / right / bottom / z-index OUT of the style attribute. */
+.presence-corner {
+  position: fixed;
+  right: 32px;
+}
+.presence-corner--orb {
+  bottom: max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px));
+  z-index: 30;
+}
+.presence-corner--card {
+  /* --presence-bottom is set inline by the component (a bare length value,
+     harmless to inline-style filters) so the card can track the footer
+     baseline on scroll. */
+  bottom: max(var(--presence-bottom, 32px), calc(env(safe-area-inset-bottom, 0px) + 28px));
+  z-index: 31;
+}
