@@ -1818,10 +1818,9 @@ button:focus:not(:focus-visible) {
 
 @media (min-width: 1024px) {
   .faq-list {
-    /* Was 346px to clear the floating CorderPresenceForm card; that card
-       was removed (the download CTA is the inline Final CTA section now),
-       so the FAQ uses full width again. */
-    margin-right: 0;
+    /* Clears the floating corner card (CorderPresenceCorner, state card)
+       pinned bottom-right. */
+    margin-right: 346px;
   }
 }
 
@@ -3579,8 +3578,8 @@ button:focus:not(:focus-visible) {
  * newsletter card. */
 @media (min-width: 1024px) {
   .site-footer__grid {
-    /* Floating CorderPresenceForm card removed; no gutter to reserve. */
-    margin-right: 0;
+    /* Clears the floating corner card pinned bottom-right. */
+    margin-right: 346px;
   }
 }
 
@@ -3738,8 +3737,8 @@ button:focus:not(:focus-visible) {
 }
 @media (min-width: 1024px) {
   .site-footer__divider {
-    /* Floating CorderPresenceForm card removed; hairline runs full width. */
-    margin-right: 0;
+    /* Clears the floating corner card pinned bottom-right. */
+    margin-right: 346px;
   }
 }
 
