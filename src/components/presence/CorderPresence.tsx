@@ -81,6 +81,13 @@ type CorderPresenceContextValue = {
   setPastHowItWorks: (value: boolean) => void;
   pastFormZone: boolean;
   setPastFormZone: (value: boolean) => void;
+  /** True while the corner element (orb or card) is actually MOUNTED. The
+   *  inline Final CTA section yields to the corner only on this flag, never
+   *  on a prediction: if client JS fails to run or the corner fails to
+   *  mount for any reason, the section stays and the page always carries a
+   *  download CTA (it is also prerendered into the static HTML). */
+  cornerActive: boolean;
+  setCornerActive: (value: boolean) => void;
   /** True when motion is disabled (reduced motion OR ?motion=0). Consumers
    *  use this to render the standard non-morphing window directly instead
    *  of the framer.motion variant, and the inline static contact section. */
@@ -103,6 +110,8 @@ function useCorderPresence(): CorderPresenceContextValue {
       setPastHowItWorks: () => {},
       pastFormZone: false,
       setPastFormZone: () => {},
+      cornerActive: false,
+      setCornerActive: () => {},
       motionDisabled: true,
     };
   }
@@ -120,6 +129,7 @@ export function CorderPresenceProvider({ children }: { children: ReactNode }) {
   const [pastHero, setPastHero] = useState(false);
   const [pastHowItWorks, setPastHowItWorks] = useState(false);
   const [pastFormZone, setPastFormZone] = useState(false);
+  const [cornerActive, setCornerActive] = useState(false);
   const framerPrefersReduced = useReducedMotion() ?? false;
   const [htmlMotionOff, setHtmlMotionOff] = useState(false);
 
@@ -148,9 +158,11 @@ export function CorderPresenceProvider({ children }: { children: ReactNode }) {
       setPastHowItWorks,
       pastFormZone,
       setPastFormZone,
+      cornerActive,
+      setCornerActive,
       motionDisabled,
     }),
-    [pastHero, pastHowItWorks, pastFormZone, motionDisabled],
+    [pastHero, pastHowItWorks, pastFormZone, cornerActive, motionDisabled],
   );
 
   return (
@@ -202,6 +214,16 @@ function CorderPresenceCorner() {
 
 function CorderPresenceCornerBody({ isCard }: { isCard: boolean }) {
   const cta = copy.presenceCta;
+  const { setCornerActive } = useCorderPresence();
+
+  // Announce the corner's LIVE presence so the inline Final CTA section can
+  // step aside. Flag flips only while this element is truly mounted: any
+  // failure to get here (dead JS, a crash above) leaves the section in
+  // place, so the page never loses its download CTA.
+  useEffect(() => {
+    setCornerActive(true);
+    return () => setCornerActive(false);
+  }, [setCornerActive]);
 
   // Card state: `bottom` is recomputed on scroll so the card pins above the
   // footer baseline ("© 2026 Corder…") once the baseline approaches the
@@ -564,7 +586,7 @@ export function CorderPresenceFormSentinel() {
 // ---------------------------------------------------------------------------
 
 export function CorderPresenceStaticSection() {
-  const { motionDisabled } = useCorderPresence();
+  const { cornerActive } = useCorderPresence();
   const cta = copy.presenceCta;
   // Mobile: a fixed-corner card stomps on footer content, so the
   // download CTA moves inline at the bottom of the page even when
@@ -580,12 +602,14 @@ export function CorderPresenceStaticSection() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // Desktop with motion on: the corner card (the morph's final form) is the
-  // download CTA, so the inline section stays out of the flow. The corner is
-  // now ONE continuously-mounted element (no shared-element handoff), which
-  // removes the Safari failure mode that once justified always rendering
-  // this section.
-  if (!motionDisabled && !isMobile) return null;
+  // The section yields ONLY to a corner element that is literally mounted
+  // right now (desktop, motion on, user past HowItWorks), and stays on
+  // mobile where the corner card overlaps footer content. Everywhere else,
+  // including prerendered static HTML and any tab where client JS failed to
+  // run, this section IS the download CTA. Never gate it on a prediction
+  // (motion flags, viewport) alone: that is exactly how the page shipped
+  // with no CTA at the bottom when a stale tab's JS died (2026-08-31).
+  if (cornerActive && !isMobile) return null;
 
   return (
     <section
