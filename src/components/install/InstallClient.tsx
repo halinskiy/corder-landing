@@ -19,10 +19,10 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.15.54/Corder-0.15.54.dmg";
-const FALLBACK_NAME = "Corder-0.15.54.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.15.66/Corder-0.15.66.dmg";
+const FALLBACK_NAME = "Corder-0.15.66.dmg";
 
-const VERSION = "0.15.54";
+const VERSION = "0.15.66";
 
 // Fallback "What is new" notes, shown ONLY when the GitHub release API is
 // unreachable (rate-limit / CORS / offline). It is the raw Keep-a-Changelog
@@ -30,7 +30,7 @@ const VERSION = "0.15.54";
 // identically. Kept fresh automatically at build by sync-corder-version.mjs,
 // so it stays a recent snapshot, not a hand-maintained list.
 const FALLBACK_NOTES_RAW =
-  "### Fixed\n- Transcription is more resilient under load: if the cloud service is briefly rate-limited, Corder now finishes the chunk through a backup path instead of failing the whole recording.";
+  "### Fixed\n\n- When the primary speech service is out of capacity, the rest of the recording switches to the backup model at once. Every piece used to retry the exhausted service for 15 seconds before switching, so a long recording could sit for minutes; the service's own \"try again in N seconds\" is now honoured and remembered for the following pieces. Free plans are pointed to the on-device model just as quickly.\n- A failed transcription now records its reason in your account, so support can see what went wrong even if you never send a report.";
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
 // might upload. Version suffix (e.g. Corder-0.13.2.dmg) and naked names

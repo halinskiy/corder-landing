@@ -236,13 +236,11 @@
         "badge": null,
         "monthly": {
           "price": "$0",
-          "priceUnit": "forever",
-          "billNote": "No credit card"
+          "priceUnit": "forever"
         },
         "annual": {
           "price": "$0",
-          "priceUnit": "forever",
-          "billNote": "No credit card"
+          "priceUnit": "forever"
         },
         "features": [
           "Unlimited transcription, on your Mac, forever",
@@ -265,9 +263,7 @@
         "badge": null,
         "monthly": {
           "price": "$10",
-          "priceOriginal": "$14",
-          "priceUnit": "month",
-          "billNote": "$10/mo for the first 3 months. $14/mo after"
+          "priceUnit": "month"
         },
         "annual": {
           "price": "$8.25",
@@ -293,9 +289,7 @@
         "badge": null,
         "monthly": {
           "price": "$24",
-          "priceOriginal": "$29",
-          "priceUnit": "month",
-          "billNote": "$24/mo for the first 3 months. $29/mo after"
+          "priceUnit": "month"
         },
         "annual": {
           "price": "$19.92",
@@ -316,7 +310,7 @@
         "comingSoon": false
       }
     ],
-    "microcopy": "Prices in USD. No credit card to download. macOS 14 or later"
+    "microcopy": "Prices in USD. macOS 14 or later"
   },
   "testimonials": {
     "heading": "Reviews",
