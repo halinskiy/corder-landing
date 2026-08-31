@@ -175,34 +175,73 @@ export function CorderPresenceProvider({ children }: { children: ReactNode }) {
 function CorderPresenceCorner() {
   const { pastHowItWorks, pastFormZone, motionDisabled } = useCorderPresence();
 
-  // Motion killswitch: no orb. The inline Final CTA section
-  // (CorderPresenceStaticSection, always rendered by page.tsx) carries the
-  // download call to action.
+  // Motion killswitch: no corner at all. The inline Final CTA section
+  // (CorderPresenceStaticSection) carries the download call to action.
   if (motionDisabled) return null;
   if (!pastHowItWorks) return null;
 
-  // Step aside at the form zone: the always-present inline Final CTA section
-  // is the single download call to action at the bottom of the page. The
-  // corner only carries the lightweight scroll orb on the way down. We no
-  // longer expand the orb into a fixed floating card here — that framer-motion
-  // shared-element card silently failed to render in some browsers (desktop
-  // Safari), leaving the page with no download CTA at all.
-  if (pastFormZone) return null;
-  return <CorderPresenceOrb />;
+  // ONE continuously-mounted element renders both corner states (orb and
+  // card) and morphs between them by re-laying itself out. The previous
+  // implementation mounted two separate `layoutId` elements and handed the
+  // shared element over on unmount/mount — desktop Safari sometimes dropped
+  // that handoff and the card never appeared, leaving the page without its
+  // final morph. Keeping the node mounted removes the race entirely: the
+  // `layout` prop animates bounds + radius in place.
+  return <CorderPresenceCornerBody isCard={pastFormZone} />;
 }
 
 // ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// Orb (state B) — the bottom-right green CTA the window morphs into.
-// Interactive: clicking smooth-scrolls to the FAQ section so the user
-// crosses the form-zone sentinel and the orb morphs into the contact
-// card (state C). Visual: accent-filled circle with a white lucide
-// HelpCircle icon. Same `layoutId` as the form so framer interpolates
-// the bounds + radius when the corner switches state.
+// Corner body — orb (state B) and download card (state C) as ONE element.
+//
+// Orb: 56x56 (48 mobile) accent circle bottom-right; clicking smooth-scrolls
+// to Pricing. Card: the orb unfolds into the download card at the same inset
+// once the user crosses the form-zone sentinel, and folds back to the orb
+// when they scroll back up. Same `layoutId` as the Hero/HIW window, so the
+// window still FLIPs into the corner when this mounts.
 // ---------------------------------------------------------------------------
 
-function CorderPresenceOrb() {
-  const handleClick = () => {
+function CorderPresenceCornerBody({ isCard }: { isCard: boolean }) {
+  const cta = copy.presenceCta;
+
+  // Card state: `bottom` is recomputed on scroll so the card pins above the
+  // footer baseline ("© 2026 Corder…") once the baseline approaches the
+  // viewport bottom — user feedback 2026-05-25 ("должен еще ниже опускаться
+  // вплоть до высоты © ..."). Listener stays attached across both states so
+  // the morph never waits on a fresh subscription.
+  const [bottomPx, setBottomPx] = useState(32);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const baseline = document.querySelector(".site-footer__baseline");
+      const viewportH = window.innerHeight;
+      if (!baseline) {
+        setBottomPx(32);
+        return;
+      }
+      const r = (baseline as HTMLElement).getBoundingClientRect();
+      if (r.bottom >= viewportH) {
+        setBottomPx(32);
+      } else {
+        setBottomPx(Math.max(32, Math.round(viewportH - r.bottom)));
+      }
+    };
+    const onScrollOrResize = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(measure);
+    };
+    measure();
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+    return () => {
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
+    };
+  }, []);
+
+  const handleOrbClick = () => {
     if (typeof document === "undefined") return;
     const target = document.getElementById("pricing");
     if (target) {
@@ -210,56 +249,151 @@ function CorderPresenceOrb() {
     }
   };
 
+  const orbStyle = {
+    position: "fixed",
+    right: "32px",
+    bottom: "max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px))",
+    width: "56px",
+    height: "56px",
+    zIndex: 30,
+    background: "var(--color-accent)",
+    border: "1px solid var(--color-accent)",
+    borderRadius: "9999px",
+    boxShadow: "none",
+    pointerEvents: "auto",
+    cursor: "pointer",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 0,
+    padding: 0,
+    boxSizing: "border-box",
+    overflow: "hidden",
+    color: "#ffffff",
+  } as const;
+
+  const cardStyle = {
+    position: "fixed",
+    right: "32px",
+    bottom: `max(${bottomPx}px, calc(env(safe-area-inset-bottom, 0px) + 28px))`,
+    width: "360px",
+    height: "auto",
+    zIndex: 31,
+    background: "var(--color-bg)",
+    border: "1px solid var(--color-border)",
+    borderRadius: "var(--radius-window)",
+    // Two-stop shadow matches the nav pill so both floating surfaces feel
+    // like a family.
+    boxShadow:
+      "0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.08)",
+    pointerEvents: "auto",
+    cursor: "default",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "stretch",
+    justifyContent: "flex-start",
+    gap: "16px",
+    padding: "22px",
+    boxSizing: "border-box",
+    overflow: "hidden",
+    color: "var(--color-text)",
+  } as const;
+
   return (
-    <motion.button
-      type="button"
+    <motion.div
       layoutId="corder-presence"
-      data-component="CorderPresenceOrb"
+      layout
+      data-component="CorderPresenceCorner"
+      data-state={isCard ? "card" : "orb"}
       data-source={DATA_SOURCE_PROVIDER}
-      data-tokens="color-accent,color-accent-contrast,radius-window"
-      aria-label="Jump to Pricing and download"
-      onClick={handleClick}
-      style={{
-        position: "fixed",
-        right: "32px",
-        bottom: "max(32px, calc(env(safe-area-inset-bottom, 0px) + 28px))",
-        width: "56px",
-        height: "56px",
-        zIndex: 30,
-        background: "var(--color-accent)",
-        border: 0,
-        borderRadius: "9999px",
-        pointerEvents: "auto",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 0,
-        color: "#ffffff",
-      }}
-      whileHover={{ scale: 1.06 }}
-      whileTap={{ scale: 0.96 }}
+      data-tokens="color-bg,color-border,color-text,color-accent,radius-window,font-serif,font-sans"
+      role={isCard ? "region" : "button"}
+      aria-label={isCard ? "Download Corder" : "Jump to Pricing and download"}
+      tabIndex={isCard ? undefined : 0}
+      onClick={isCard ? undefined : handleOrbClick}
+      onKeyDown={
+        isCard
+          ? undefined
+          : (e: React.KeyboardEvent) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleOrbClick();
+              }
+            }
+      }
+      style={isCard ? cardStyle : orbStyle}
+      whileHover={isCard ? undefined : { scale: 1.06 }}
+      whileTap={isCard ? undefined : { scale: 0.96 }}
       transition={{ layout: MORPH_TRANSITION }}
     >
-      <CloudDownloadIcon />
+      {isCard ? (
+        <>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <h3
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontWeight: 500,
+                fontSize: "24px",
+                lineHeight: 1.18,
+                letterSpacing: "-0.012em",
+                color: "var(--color-text)",
+                margin: 0,
+              }}
+            >
+              {cta.heading}
+            </h3>
+            <p
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "14px",
+                lineHeight: 1.5,
+                color: "var(--color-text-muted)",
+                margin: 0,
+              }}
+            >
+              {cta.subhead}
+            </p>
+          </div>
+          <a
+            href={cta.ctaHref}
+            data-track-event="cta_download_click"
+            data-track-source="presence-card"
+            className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
+          >
+            <AppleIcon size={24} />
+            {cta.cta}
+          </a>
+        </>
+      ) : (
+        <CloudDownloadIcon />
+      )}
       <style>{`
         @media (max-width: 640px) {
-          [data-component="CorderPresenceOrb"] {
+          [data-component="CorderPresenceCorner"][data-state="orb"] {
             width: 48px !important;
             height: 48px !important;
             right: 28px !important;
             bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
           }
+          /* Mobile card: equal insets on left + right + bottom so it is
+           * symmetrically pinned, not cornered. */
+          [data-component="CorderPresenceCorner"][data-state="card"] {
+            width: auto !important;
+            left: 28px !important;
+            right: 28px !important;
+            bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
+          }
         }
-        [data-component="CorderPresenceOrb"]:hover {
-          background: var(--color-accent-hover, var(--color-accent));
+        [data-component="CorderPresenceCorner"][data-state="orb"]:hover {
+          background: var(--color-accent-hover, var(--color-accent)) !important;
         }
-        [data-component="CorderPresenceOrb"]:focus-visible {
+        [data-component="CorderPresenceCorner"][data-state="orb"]:focus-visible {
           outline: 2px solid var(--color-accent);
           outline-offset: 3px;
         }
       `}</style>
-    </motion.button>
+    </motion.div>
   );
 }
 
@@ -281,150 +415,6 @@ function CloudDownloadIcon() {
       <path d="m12 21 4-4" />
       <path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284" />
     </svg>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Form (state C) — the orb expands into a contact card. Reuses the
-// content/copy.json#newsletter block. Real interactive form.
-// ---------------------------------------------------------------------------
-
-function CorderPresenceForm() {
-  const cta = copy.presenceCta;
-  // `bottom` is recomputed on scroll so the card pins 64px above the
-  // footer baseline once the baseline approaches the viewport bottom.
-  // Default = 32px viewport-bottom inset.
-  const [bottomPx, setBottomPx] = useState(32);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    let raf = 0;
-    const measure = () => {
-      raf = 0;
-      const baseline = document.querySelector(".site-footer__baseline");
-      const viewportH = window.innerHeight;
-      if (!baseline) {
-        setBottomPx(32);
-        return;
-      }
-      const r = (baseline as HTMLElement).getBoundingClientRect();
-      // Form's bottom edge should align with the bottom of the footer
-      // baseline ("© 2026 Corder. Powered by 3mpq Studio") so the
-      // floating card visually extends down to the copyright line --
-      // user feedback 2026-05-25 ("должен еще ниже опускаться вплоть
-      // до высоты © ..."). While the baseline is still below the
-      // viewport, default to 32px viewport-bottom inset.
-      if (r.bottom >= viewportH) {
-        setBottomPx(32);
-      } else {
-        setBottomPx(Math.max(32, Math.round(viewportH - r.bottom)));
-      }
-    };
-    const onScrollOrResize = () => {
-      if (raf) return;
-      raf = window.requestAnimationFrame(measure);
-    };
-    measure();
-    window.addEventListener("scroll", onScrollOrResize, { passive: true });
-    window.addEventListener("resize", onScrollOrResize);
-    return () => {
-      if (raf) window.cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScrollOrResize);
-      window.removeEventListener("resize", onScrollOrResize);
-    };
-  }, []);
-
-  // Content lives directly inside the morphing motion.div — no inner
-  // motion.div wrapper. With AnimatePresence removed in the corner switch
-  // there's only ONE element on screen at a time, so the bounds + radius
-  // interpolation reads as a clean unfold from the orb to the card.
-  return (
-    <motion.div
-      layoutId="corder-presence"
-      data-component="CorderPresenceForm"
-      data-source={DATA_SOURCE_PROVIDER}
-      data-tokens="color-bg,color-border,color-text,color-accent,radius-window,font-serif,font-sans"
-      role="region"
-      aria-label="Download Corder"
-      style={{
-        position: "fixed",
-        right: "32px",
-        bottom: `max(${bottomPx}px, calc(env(safe-area-inset-bottom, 0px) + 28px))`,
-        width: "360px",
-        height: "auto",
-        zIndex: 31,
-        background: "var(--color-bg)",
-        border: "1px solid var(--color-border)",
-        borderRadius: "var(--radius-window)",
-        // Two-stop shadow matches the nav pill so both floating
-        // surfaces feel like a family.
-        boxShadow:
-          "0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.08)",
-        pointerEvents: "auto",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        gap: "16px",
-        padding: "22px",
-        boxSizing: "border-box",
-      }}
-      transition={{ layout: MORPH_TRANSITION }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "6px",
-        }}
-      >
-        <h3
-          style={{
-            fontFamily: "var(--font-serif)",
-            fontWeight: 500,
-            fontSize: "24px",
-            lineHeight: 1.18,
-            letterSpacing: "-0.012em",
-            color: "var(--color-text)",
-            margin: 0,
-          }}
-        >
-          {cta.heading}
-        </h3>
-        <p
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: "14px",
-            lineHeight: 1.5,
-            color: "var(--color-text-muted)",
-            margin: 0,
-          }}
-        >
-          {cta.subhead}
-        </p>
-      </div>
-
-      <a
-        href={cta.ctaHref}
-        data-track-event="cta_download_click"
-        data-track-source="presence-card"
-        className="cta-pill cta-pill--primary inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-6 text-[15px] font-medium"
-      >
-        <AppleIcon size={24} />
-        {cta.cta}
-      </a>
-      <style>{`
-        @media (max-width: 640px) {
-          /* Mobile: equal insets on left + right + bottom so the card is
-           * symmetrically pinned, not cornered. */
-          [data-component="CorderPresenceForm"] {
-            width: auto !important;
-            left: 28px !important;
-            right: 28px !important;
-            bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px)) !important;
-          }
-        }
-      `}</style>
-    </motion.div>
   );
 }
 
@@ -590,15 +580,12 @@ export function CorderPresenceStaticSection() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // Always render this inline Final CTA. It used to render ONLY when the
-  // corner morph was off (reduced-motion / mobile), with the fixed floating
-  // card carrying the CTA otherwise. But that framer-motion `layoutId` card
-  // silently fails to appear in some browsers (reported on desktop Safari:
-  // the whole "download" call to action vanished between FAQ and footer). The
-  // final download CTA is too important to hang on a fragile shared-element
-  // animation, so it now lives here as a real, always-present section for
-  // everyone; the corner keeps only the lightweight scroll orb.
-  void motionDisabled; void isMobile;
+  // Desktop with motion on: the corner card (the morph's final form) is the
+  // download CTA, so the inline section stays out of the flow. The corner is
+  // now ONE continuously-mounted element (no shared-element handoff), which
+  // removes the Safari failure mode that once justified always rendering
+  // this section.
+  if (!motionDisabled && !isMobile) return null;
 
   return (
     <section
