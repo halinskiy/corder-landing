@@ -141,7 +141,7 @@ const JSON_LD = {
       operatingSystem: "macOS 14",
       description: copy.meta.description,
       image: `${SITE_URL}/og-image.png`,
-      softwareVersion: "0.15.66",
+      softwareVersion: "0.15.67",
       downloadUrl: `${SITE_URL}/install/`,
       featureList: copy.features.cells.map((c) => c.heading).join(", "),
       offers: [
