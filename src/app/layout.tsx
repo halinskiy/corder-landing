@@ -152,7 +152,7 @@ const JSON_LD = {
           priceCurrency: "USD",
           category: "free",
           description:
-            "5 hours of transcription a month, speaker labels, searchable transcript. No sign-up.",
+            "Unlimited transcription on your Mac, speaker labels, summaries and chapters, searchable transcript.",
         },
         {
           "@type": "Offer",

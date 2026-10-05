@@ -12,6 +12,18 @@ Format:
 
 ---
 
+## 2026-10-05 Launch prices, Monthly first, SEO basics
+- Pricing: launch prices. Pro $3 a month or $29 a year, Max $7 a month or $69 a year. The earlier prices ($10, $24, $99, $239) show struck through via `priceOriginal`, each paid card carries a "Launch price" note, and the subhead says "Launch prices on Pro and Max while Corder is new". No end date is promised anywhere.
+- Yearly prices are now shown as the yearly total (`priceUnit: "year"`), with the per-month figure in the note. "$19.92 $5.75 /month" did not fit the price row at 1440 and pushed the Max CTA 11px lower than the other two.
+- `src/lib/paddle.ts`: launch monthly ids point at the new Paddle prices, and there are launch ANNUAL ids now (`pro_launch_annual`, `max_launch_annual` used to collapse to the regular annual price). The Worker's `PADDLE_PRO/MAX_PRICE_IDS` list the new ids. Old Paddle prices stay active.
+- The billing toggle opens on Monthly (was Yearly), on the maker's request.
+- JSON-LD offers follow the new prices. The Free offer no longer claims "5 hours of transcription a month" (the stale item noted on 2026-06-30), and the "Price locked forever" line is gone from the yearly offers.
+- SEO: the title tag is "Corder: Mac meeting recorder with no bot in the call" (was "Corder: Record what was said", which carried no search term). `/case/` now has its own canonical (it inherited "/" from the root layout, so it was folded into the homepage) and is in the sitemap.
+- Measured the pricing section before and after at 390, 820 and 1440 in both billing modes: 0 flags before, 0 after (price block 104px, CTA tops equal, notes on one line).
+- Next, not done: pages aimed at search intent (record Zoom, Meet, Teams on a Mac without a bot; comparisons), and the hero H1 still carries no search term.
+
+---
+
 ## 2026-06-30 Dynamic "What is new" + version bump
 - The install page now pulls the version label AND the "What is new" notes from the GitHub release it already fetches for the DMG, so the notes are always current with no hand-editing. New `src/lib/release-notes.ts` parses a Keep-a-Changelog body into grouped bullets (drops the `## [x]` title line, re-joins wrapped lines, normalises typographic dashes to ASCII via char codes so the parser source stays glyph-free). InstallClient holds version + notes as state, seeded from a build-time fallback snapshot for the static render and replaced with the live release once the API resolves; the hardcoded WHATS_NEW array is gone.
 - `scripts/sync-corder-version.mjs` now also snapshots the release body into `FALLBACK_NOTES_RAW` (title line stripped, dashes normalised), so even the offline/rate-limited fallback path stays fresh. The script already patched FALLBACK_URL/NAME, VERSION and softwareVersion.
