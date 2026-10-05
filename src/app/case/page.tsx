@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: copy.caseStudy.metaTitle,
   description: copy.caseStudy.metaDescription,
   robots: { index: true, follow: true },
+  // Without this the page inherits the root layout's canonical ("/") and
+  // search engines fold it into the homepage instead of indexing it.
+  alternates: { canonical: "/case/" },
 };
 
 // Self-contained DOM snapshots of the REAL app (old builds resurrected
