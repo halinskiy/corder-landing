@@ -67,7 +67,7 @@ function PlusIcon({ size = 14, strokeWidth = 2.4 }: { size?: number; strokeWidth
  */
 export function Pricing() {
   const { pricing } = copy;
-  const [billing, setBilling] = useState<PricingBilling>("annual");
+  const [billing, setBilling] = useState<PricingBilling>("monthly");
 
   return (
     <section
