@@ -224,7 +224,7 @@
   "pricing": {
     "eyebrow": "Pricing",
     "heading": "Pricing",
-    "subhead": "The free tier always ships with the download",
+    "subhead": "Launch prices on Pro and Max while Corder is new. The free tier always ships with the download",
     "billing": {
       "monthlyLabel": "Monthly",
       "annualLabel": "Yearly"
@@ -262,13 +262,16 @@
         "tagline": "Great for regular meetings, customer calls and design reviews.",
         "badge": null,
         "monthly": {
-          "price": "$10",
-          "priceUnit": "month"
+          "price": "$3",
+          "priceOriginal": "$10",
+          "priceUnit": "month",
+          "billNote": "Launch price"
         },
         "annual": {
-          "price": "$8.25",
-          "priceUnit": "month",
-          "billNote": "$99 billed yearly"
+          "price": "$29",
+          "priceOriginal": "$99",
+          "priceUnit": "year",
+          "billNote": "Launch price, works out to $2.42 a month"
         },
         "features": [
           "Everything in Free, plus:",
@@ -288,13 +291,16 @@
         "tagline": "Great for people who record daily and want the most from every call.",
         "badge": null,
         "monthly": {
-          "price": "$24",
-          "priceUnit": "month"
+          "price": "$7",
+          "priceOriginal": "$24",
+          "priceUnit": "month",
+          "billNote": "Launch price"
         },
         "annual": {
-          "price": "$19.92",
-          "priceUnit": "month",
-          "billNote": "$239 billed yearly"
+          "price": "$69",
+          "priceOriginal": "$239",
+          "priceUnit": "year",
+          "billNote": "Launch price, works out to $5.75 a month"
         },
         "features": [
           "Everything in Pro, plus:",

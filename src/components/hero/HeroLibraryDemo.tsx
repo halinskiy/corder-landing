@@ -899,9 +899,9 @@ function SummaryPane() {
         <h3 className="hl-md-h3">Key points</h3>
         <ul className="hl-md-ul">
           <li className="hl-md-li">
-            Pro lands at <strong>$8.25/mo</strong> billed yearly, Max at $19.92
+            Pro lands at <strong>$2.42/mo</strong> billed yearly, Max at $5.75
           </li>
-          <li className="hl-md-li">Launch discount stays monthly-only by design</li>
+          <li className="hl-md-li">Launch prices cover monthly and yearly plans</li>
           <li className="hl-md-li">Free tier keeps the full on-device transcript</li>
         </ul>
         <h3 className="hl-md-h3">Action items</h3>
