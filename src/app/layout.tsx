@@ -157,34 +157,34 @@ const JSON_LD = {
         {
           "@type": "Offer",
           name: "Pro Monthly",
-          price: "10",
+          price: "3",
           priceCurrency: "USD",
           description:
-            "25 hours a month, auto-summary, custom templates, priority support. $10/mo.",
+            "Cloud transcription, 25 hours a month, priority support. Launch price, $3 a month.",
         },
         {
           "@type": "Offer",
           name: "Pro Annual",
-          price: "99",
+          price: "29",
           priceCurrency: "USD",
           description:
-            "$99 billed yearly. Locks $8.25/mo effective rate. Price locked forever.",
+            "Launch price, $29 billed yearly. Works out to $2.42 a month.",
         },
         {
           "@type": "Offer",
           name: "Max Monthly",
-          price: "24",
+          price: "7",
           priceCurrency: "USD",
           description:
-            "Unlimited transcription, stronger accents handling, early builds. $24/mo.",
+            "Cloud transcription, 250 hours a month, dedicated support, early access. Launch price, $7 a month.",
         },
         {
           "@type": "Offer",
           name: "Max Annual",
-          price: "239",
+          price: "69",
           priceCurrency: "USD",
           description:
-            "$239 billed yearly. Locks $19.92/mo effective rate. Price locked forever.",
+            "Launch price, $69 billed yearly. Works out to $5.75 a month.",
         },
       ],
     },

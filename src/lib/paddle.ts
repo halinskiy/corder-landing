@@ -30,22 +30,24 @@ export const PADDLE_TOKEN =
   process.env.NEXT_PUBLIC_PADDLE_TOKEN ??
   "live_5b954efa46f5dcfab151b3e66a3";
 
-// Six priceIds, two per tier x billing period.
+// Eight priceIds: regular and launch, per tier x billing period.
 //
-// `*_launch_monthly` exists only while the launch promotion is live.
+// The `*_launch_*` ids exist only while the launch promotion is live.
 // When copy.json#pricing flips trackBilling from "pro_launch" /
 // "max_launch" back to "pro" / "max", new purchases route to the
-// regular monthly priceIds and the launch ones quietly retire.
+// regular priceIds and the launch ones quietly retire.
 //
-// Annual priceIds have no launch variant by design -- the launch
-// discount was monthly-only.
+// Launch prices since 2026-10-05: Pro $3/mo or $29/yr, Max $7/mo or
+// $69/yr. The earlier launch ids ($10 and $24 monthly) stay active in
+// Paddle and in the Worker's tier lists, they are just no longer sold
+// from here.
 const PRICE_PRO_MONTHLY =
   process.env.NEXT_PUBLIC_PADDLE_PRICE_PRO_MONTHLY ??
   "pri_01kszshrfje0safhq8e2yfe8rh";
 
 const PRICE_PRO_LAUNCH_MONTHLY =
   process.env.NEXT_PUBLIC_PADDLE_PRICE_PRO_LAUNCH_MONTHLY ??
-  "pri_01kszsmvs5qvch2mkgcmdaqqk1";
+  "pri_01m45v0c3k2dq064w02cwmm5r5";
 
 const PRICE_PRO_ANNUAL =
   process.env.NEXT_PUBLIC_PADDLE_PRICE_PRO_ANNUAL ??
@@ -57,11 +59,24 @@ const PRICE_MAX_MONTHLY =
 
 const PRICE_MAX_LAUNCH_MONTHLY =
   process.env.NEXT_PUBLIC_PADDLE_PRICE_MAX_LAUNCH_MONTHLY ??
-  "pri_01kt01r6bx872y0s6zamg719k3";
+  "pri_01m45v0ckryw7yv3c046rypdm6";
 
 const PRICE_MAX_ANNUAL =
   process.env.NEXT_PUBLIC_PADDLE_PRICE_MAX_ANNUAL ??
   "pri_01kt025kjhgrbj1nxhz9bsz9mn";
+
+// Launch annual. A sandbox .env.local that only knows the regular annual
+// id keeps working: the launch key falls back to it before the production
+// default.
+const PRICE_PRO_LAUNCH_ANNUAL =
+  process.env.NEXT_PUBLIC_PADDLE_PRICE_PRO_LAUNCH_ANNUAL ??
+  process.env.NEXT_PUBLIC_PADDLE_PRICE_PRO_ANNUAL ??
+  "pri_01m45v0cba2mbqb15dvcr9phjf";
+
+const PRICE_MAX_LAUNCH_ANNUAL =
+  process.env.NEXT_PUBLIC_PADDLE_PRICE_MAX_LAUNCH_ANNUAL ??
+  process.env.NEXT_PUBLIC_PADDLE_PRICE_MAX_ANNUAL ??
+  "pri_01m45v0cx3e6w8y8wmvqha88hy";
 
 /**
  * Catalogue keyed by `${trackBilling}_${billing}` -- the shape the
@@ -69,18 +84,16 @@ const PRICE_MAX_ANNUAL =
  * the tier hint ("pro" / "pro_launch" / "max" / "max_launch");
  * billing is the active toggle position ("monthly" / "annual").
  *
- * The `*_launch_annual` keys intentionally collapse to the regular
- * annual priceId -- annual has no launch variant.
  */
 const CATALOGUE: Record<string, string | undefined> = {
   pro_monthly: PRICE_PRO_MONTHLY,
   pro_annual: PRICE_PRO_ANNUAL,
   pro_launch_monthly: PRICE_PRO_LAUNCH_MONTHLY,
-  pro_launch_annual: PRICE_PRO_ANNUAL,
+  pro_launch_annual: PRICE_PRO_LAUNCH_ANNUAL,
   max_monthly: PRICE_MAX_MONTHLY,
   max_annual: PRICE_MAX_ANNUAL,
   max_launch_monthly: PRICE_MAX_LAUNCH_MONTHLY,
-  max_launch_annual: PRICE_MAX_ANNUAL,
+  max_launch_annual: PRICE_MAX_LAUNCH_ANNUAL,
 };
 
 export type PaddleBilling = "monthly" | "annual";
