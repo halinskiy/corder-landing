@@ -20,6 +20,7 @@ Format:
 - JSON-LD offers follow the new prices. The Free offer no longer claims "5 hours of transcription a month" (the stale item noted on 2026-06-30), and the "Price locked forever" line is gone from the yearly offers.
 - SEO: the title tag is "Corder: Mac meeting recorder with no bot in the call" (was "Corder: Record what was said", which carried no search term). `/case/` now has its own canonical (it inherited "/" from the root layout, so it was folded into the homepage) and is in the sitemap.
 - Measured the pricing section before and after at 390, 820 and 1440 in both billing modes: 0 flags before, 0 after (price block 104px, CTA tops equal, notes on one line).
+- Pricing cards are clickable as a whole (`pricing-card--clickable`): pointer anywhere on the card, the pill shows its hover state while the pointer is on the card, and a click outside the pill forwards to the pill's link (cmd/ctrl-click opens a new tab, a text selection is left alone). The pill stays a real link for keyboard and the click tracker.
 - Next, not done: pages aimed at search intent (record Zoom, Meet, Teams on a Mac without a bot; comparisons), and the hero H1 still carries no search term.
 
 ---

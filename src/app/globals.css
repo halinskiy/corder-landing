@@ -2225,6 +2225,22 @@ button:focus:not(:focus-visible) {
   font-weight: 500;
   text-decoration: none;
 }
+/* The whole card is clickable (see PricingCard.onCardClick): pointer on
+ * the card, and the pill shows its own hover state while the pointer is
+ * anywhere on the card. Mirrors .cta-pill--ghost:hover / --primary:hover,
+ * !important included, because the ghost pill's resting look is inline. */
+.pricing-card--clickable {
+  cursor: pointer;
+}
+.pricing-card--clickable:hover .pricing-card__cta.cta-pill--ghost {
+  border-color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+}
+.pricing-card--clickable:hover .pricing-card__cta.cta-pill--primary {
+  background-color: var(--color-accent-hover, #0a5e34) !important;
+  border-color: var(--color-accent-hover, #0a5e34) !important;
+  transform: translateY(-1px);
+}
 /* Announced, not on sale. Reads as unavailable at a glance: muted
  * border and text, no hover, no pointer. It is a real disabled
  * <button>, so it is also skipped by the keyboard. */
