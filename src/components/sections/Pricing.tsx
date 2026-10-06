@@ -162,9 +162,31 @@ function PricingCard({ tier, billing }: { tier: Tier; billing: PricingBilling })
     ? `/checkout/?tier=${encodeURIComponent(tier.trackBilling)}&billing=${billing}`
     : (tier.ctaHref ?? "#download");
 
+  // The whole card is the click target, not just the pill: hovering
+  // anywhere on it shows the pointer and lights the CTA's hover state, a
+  // click anywhere goes where the CTA goes. The pill stays a real link
+  // (keyboard, middle click, the click tracker on data-track-event), so
+  // the card only forwards clicks that did not land on it, and leaves a
+  // text selection alone.
+  const clickable = !tier.comingSoon;
+  const onCardClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (!clickable) return;
+    const target = e.target as HTMLElement;
+    if (target.closest("a, button")) return;
+    if (window.getSelection()?.toString()) return;
+    const cta = e.currentTarget.querySelector<HTMLAnchorElement>("a.pricing-card__cta");
+    if (!cta) return;
+    if (e.metaKey || e.ctrlKey) {
+      window.open(cta.href, "_blank", "noopener");
+      return;
+    }
+    cta.click();
+  };
+
   return (
     <article
-      className={`pricing-card pricing-card--vertical${tier.highlight ? " pricing-card--highlight" : ""}`}
+      className={`pricing-card pricing-card--vertical${tier.highlight ? " pricing-card--highlight" : ""}${clickable ? " pricing-card--clickable" : ""}`}
+      onClick={onCardClick}
       data-component="PricingCard"
       data-source={DATA_SOURCE}
       data-tokens="color-bg,color-text,color-border,color-accent,radius-window,font-serif,font-sans"
