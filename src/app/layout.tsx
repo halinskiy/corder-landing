@@ -138,10 +138,10 @@ const JSON_LD = {
       name: "Corder",
       url: SITE_URL,
       applicationCategory: ["BusinessApplication", "ProductivityApplication"],
-      operatingSystem: "macOS 14",
+      operatingSystem: "macOS 14.2 or later (Apple Silicon)",
       description: copy.meta.description,
       image: `${SITE_URL}/og-image.png`,
-      softwareVersion: "0.15.67",
+      softwareVersion: "0.15.74",
       downloadUrl: `${SITE_URL}/install/`,
       featureList: copy.features.cells.map((c) => c.heading).join(", "),
       offers: [

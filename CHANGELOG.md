@@ -1,3 +1,9 @@
+## 2026-10-09
+
+- Copy aligned with the product: Apple Silicon and macOS 14.2 everywhere (hero hint, pricing microcopy, FAQ, floating download card); FAQ says Pro and Max are on sale at the launch price; the Pro cloud line counts audio hours of both tracks and no longer promises cloud speaker labels (diarization is on-device for every tier), replaced by transcript polish; the cloud FAQ explains the signed-in exceptions on Free and what an account stores.
+- Privacy policy rewritten around signed-out / signed-in / sharing / paid flows: Supabase stores transcript text for every signed-in tier, Gemini generates titles and summaries for all tiers, Cloudflare Workers AI and OpenAI listed as transcription fallbacks, OpenAI gpt-4o-mini as the paid polish step, GitHub Pages as the host, no more "cloud sync toggle" that the app does not have. Terms no longer call themselves a draft or say paid tiers are not on sale.
+- JSON-LD: operating system macOS 14.2 (Apple Silicon), software version 0.15.74.
+
 # corder-landing — Changelog
 
 Dated log of changes to this project. Write an entry every session, even short ones.

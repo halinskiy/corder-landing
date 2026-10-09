@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px]">
             <h1 className="install-page__heading">Privacy Policy</h1>
-          <p className="install-page__sub">Last updated: 28 May 2026.</p>
+          <p className="install-page__sub">Last updated: 9 October 2026.</p>
 
           <div className="legal-body">
             <h2>Who runs Corder</h2>
@@ -55,87 +55,106 @@ export default function PrivacyPolicyPage() {
               The macOS application records audio that plays through
               your speakers and microphone, transcribes it, and saves a
               transcript + summary. What happens to that data depends
-              on your tier.
+              on whether you are signed in, and on your tier.
             </p>
 
-            <h4>Free tier (on-device, nothing leaves your Mac)</h4>
+            <h4>Without an account</h4>
             <ul>
               <li>
-                Recordings, transcripts, summaries, and the application
-                database live ONLY on your Mac, under{" "}
+                Recordings, transcripts and the application database live
+                only on your Mac, under{" "}
                 <code>~/Library/Application Support/Corder/</code>.
               </li>
               <li>
-                Transcription runs on your Mac with a local Whisper
-                model on the Apple Neural Engine. No account, no
-                network, nothing leaves the machine.
+                Transcription runs on your Mac with a local Whisper model
+                (a one-time 1.5 GB download). Nothing about your meetings
+                leaves the machine. The app only talks to the network to
+                download the model, to check for updates, and to send the
+                diagnostics described below if you leave them on.
               </li>
               <li>
-                One exception, only on the very first transcript: the
-                on-device model is a ~1.5 GB download, and if you are
-                signed in and transcribe before it finishes, that first
-                recording is transcribed by our cloud transcription
-                provider (Groq) so you are not left waiting. The audio
-                chunk is discarded right after, as described above.
-                Every transcript after that runs on your Mac. If you
-                are not signed in, this never happens — Corder simply
-                waits for the model.
+                Without an account the app keeps two recordings at a time;
+                delete one to record another.
               </li>
             </ul>
 
-            <h4>Sharing a meeting (optional, any tier)</h4>
+            <h4>With an account (Free, Pro and Max)</h4>
+            <ul>
+              <li>
+                Audio stays on your Mac. The transcript text, speaker
+                labels, titles, summaries, chapters and meeting metadata
+                are also stored in your Corder account, in a Supabase
+                Postgres database hosted in the EU (Frankfurt), encrypted at
+                rest and in transit. This is what makes titles, summaries,
+                chapters and sharing work, and it keeps your library if you
+                reinstall. Deleting a meeting in the app deletes it there
+                too.
+              </li>
+              <li>
+                Titles, summaries and chapters are generated from the
+                transcript text by Google Gemini, called through our
+                Cloudflare Worker. The audio is never sent for this. We do
+                not store the prompt or the completion anywhere except your
+                meeting record.
+              </li>
+              <li>
+                On the Free tier transcription still runs on your Mac. Two
+                exceptions send the audio of that one recording to our cloud
+                transcription provider instead, up to 2 hours of audio a
+                month: when the on-device model is not ready or cannot run on
+                your Mac, and when your Mac decodes far slower than real
+                time. The audio chunks are used to make the transcript and
+                discarded right after.
+              </li>
+            </ul>
+
+            <h4>Sharing a meeting (optional, any tier with an account)</h4>
             <ul>
               <li>
                 Nothing is shared until you click Share on a specific
                 meeting. There is no automatic sharing.
               </li>
               <li>
-                Share creates a private link with an unguessable
-                address. Anyone you send it to can open that meeting in
-                a browser and see its transcript, summary and audio.
+                Share creates a private link with an unguessable address.
+                Anyone you send it to can open that meeting in a browser and
+                see its transcript, summary and audio. To make the audio
+                playable in the browser, a compressed copy of it is uploaded
+                to storage in your account at that moment.
               </li>
               <li>
-                The link works for 30 days. After that it stops working
-                and the shared copy is deleted automatically. Sharing
-                the same meeting again refreshes the same link for
-                another 30 days.
+                The link works for 30 days, then stops working. Sharing the
+                same meeting again refreshes the link for another 30 days.
+                The uploaded audio copy stays with the meeting in your account
+                until you delete the meeting.
               </li>
             </ul>
 
-            <h4>Pro and Max tiers (Corder-hosted transcription)</h4>
+            <h4>Pro and Max tiers (cloud transcription)</h4>
             <ul>
               <li>
-                Audio chunks are uploaded from your Mac to our
-                infrastructure for transcription. We hand each chunk to
-                Groq (running Whisper large-v3-turbo), wait for the
-                transcript, and discard the audio chunk immediately
-                afterwards. The retention window inside our cloud is at
-                most 48 hours and only as long as the transcription
-                queue holds it.
+                Audio chunks are uploaded from your Mac to our Cloudflare
+                Worker for transcription. The Worker hands each chunk to
+                Groq (running Whisper large-v3-turbo); when Groq is rate
+                limited the chunk goes to Cloudflare Workers AI (the same
+                model), and as a last resort to OpenAI (whisper-1). We wait
+                for the transcript and discard the audio chunk immediately
+                afterwards; nothing is queued or kept on our side.
               </li>
               <li>
-                The transcript, summary, speaker labels, and meeting
-                metadata are stored in a Supabase Postgres database
-                hosted in the EU (Frankfurt region). Encrypted at rest
-                (AES-256) and in transit (TLS 1.2+).
+                The finished transcript text is sent to OpenAI (gpt-4o-mini)
+                once to tidy punctuation, names and terms. Only text, never
+                audio.
               </li>
               <li>
-                Optional screen video and a copy of the original audio
-                file may be uploaded to Supabase Storage if you turn on
-                cloud sync. You can disable cloud sync per-meeting or
-                globally in Settings. With cloud sync off, Pro and Max
-                fall back to the on-device flow of the Free tier.
-              </li>
-              <li>
-                Auto-summary and summary template processing call
-                Google Gemini and never store the prompt or completion
-                anywhere except your meeting record in Supabase.
+                Usage is metered in hours of audio sent, counting both sides
+                of a call (25 hours a month on Pro, 250 on Max). The meter is
+                a running total, not a copy of the audio.
               </li>
             </ul>
 
             <h3>2. The marketing site (getcorder.com)</h3>
             <p>
-              The site is a static export hosted on Vercel. It loads
+              The site is a static export hosted on GitHub Pages. It loads up to
               three third-party analytics scripts. None of these see
               anything that happens inside the Mac app.
             </p>
@@ -184,17 +203,22 @@ export default function PrivacyPolicyPage() {
               <tbody>
                 <tr>
                   <td>Supabase</td>
-                  <td>Auth, Postgres database, object storage for cloud-synced recordings (Pro / Max)</td>
+                  <td>Auth, Postgres database (transcripts, summaries, metadata for signed-in users), object storage for shared audio</td>
                   <td>EU (Frankfurt)</td>
                 </tr>
                 <tr>
                   <td>Groq</td>
-                  <td>Cloud transcription (Pro and Max tiers)</td>
+                  <td>Cloud transcription (paid tiers, and the Free-tier exceptions above)</td>
+                  <td>United States</td>
+                </tr>
+                <tr>
+                  <td>OpenAI</td>
+                  <td>Transcription fallback (whisper-1) and transcript polish (gpt-4o-mini), paid tiers</td>
                   <td>United States</td>
                 </tr>
                 <tr>
                   <td>Google Cloud (Gemini API)</td>
-                  <td>Summaries and chapters (paid tiers)</td>
+                  <td>Titles, summaries and chapters (all tiers, with an account)</td>
                   <td>Global (Google&apos;s default region routing)</td>
                 </tr>
                 <tr>
@@ -209,11 +233,11 @@ export default function PrivacyPolicyPage() {
                 </tr>
                 <tr>
                   <td>Cloudflare</td>
-                  <td>DNS, Workers, CDN for api.getcorder.com</td>
+                  <td>DNS, Workers, CDN for api.getcorder.com, Workers AI transcription overflow, usage metering (D1)</td>
                   <td>Global edge</td>
                 </tr>
                 <tr>
-                  <td>Vercel</td>
+                  <td>GitHub Pages</td>
                   <td>Static hosting for getcorder.com</td>
                   <td>Global edge</td>
                 </tr>
@@ -241,8 +265,9 @@ export default function PrivacyPolicyPage() {
               email address, your display name (which you choose, can
               edit anytime, and defaults to the local part of your
               email), an opaque internal user id, your subscription
-              status, and a list of meetings you have synced to cloud
-              if any. We use your email to send a one-time magic-link
+              status, and the meetings you recorded while signed in
+              (transcript text, titles, summaries, speaker labels and
+              metadata; never the audio). We use your email to send a one-time magic-link
               sign-in code on request, receipts, and any optional
               product-update emails you opt into in your account
               preferences. We do not sell, rent, or share this data
@@ -264,10 +289,9 @@ export default function PrivacyPolicyPage() {
                 and all derived data.
               </li>
               <li>
-                <strong>Cloud-synced screen recordings + audio
-                originals:</strong> kept as long as your account is
-                active. Delete the meeting to delete the storage
-                object.
+                <strong>Audio copy uploaded when you share a meeting:
+                </strong> kept as long as the meeting exists in your
+                account. Delete the meeting to delete it.
               </li>
               <li>
                 <strong>Account row, after you click Delete account:

@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms",
   description:
-    "Terms of use for Corder, the macOS meeting recorder. Plain-language working draft.",
+    "Terms of use for Corder, the macOS meeting recorder, in plain language.",
   alternates: { canonical: "/terms/" },
 };
 
@@ -30,7 +30,7 @@ export default function TermsPage() {
         <div className="mx-auto max-w-[1080px]">
             <h1 className="install-page__heading">Terms</h1>
           <p className="install-page__sub">
-            Last updated: 25 May 2026. Working draft.
+            Last updated: 9 October 2026.
           </p>
 
           <div className="legal-body">
@@ -38,21 +38,22 @@ export default function TermsPage() {
             <p>
               You install Corder on your Mac. The app records audio that
               plays through your speakers and microphone and transcribes
-              it. On the Free tier that transcription runs entirely on
-              your Mac. On the paid tiers, with your consent, chunks of
-              audio are sent to our cloud transcription provider (Groq).
-              The audio, the transcript, the summary, and the database
-              live on your Mac.
+              it. On the Free tier transcription runs on your Mac, with
+              the exceptions described in the Privacy Policy. On the paid
+              tiers chunks of audio are sent to our cloud transcription
+              providers. The audio lives on your Mac; with an account,
+              transcripts and summaries are also stored in your Corder
+              account.
             </p>
 
             <h2>Free and paid tiers</h2>
             <p>
               The Free tier transcribes on your Mac with a local Whisper
-              model, with no account and no usage limit. The paid tiers
-              (Pro and Max) add cloud transcription, which returns long
-              recordings in seconds, plus auto-summary and chapters. Paid
-              tiers are not on sale yet. When they launch, they will be
-              billed monthly or annually.
+              model, with a free account and no usage limit (without an
+              account the app keeps two recordings). The paid tiers (Pro
+              and Max) add cloud transcription with a monthly allowance of
+              audio hours, plus transcript polish. Paid tiers are billed
+              monthly or yearly through Paddle, our merchant of record.
             </p>
 
             <h2>Cancel anytime</h2>

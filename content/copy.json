@@ -45,7 +45,7 @@
     "subhead": "Keeps the {{Transcript}} on your Mac. No bot joins the call",
     "ctaPrimary": "Download for Mac",
     "ctaSecondary": "How it works",
-    "ctaHint": "Requires macOS 14 (Sonoma) or later",
+    "ctaHint": "Requires macOS 14.2 or later on Apple Silicon",
     "ctaGithub": "Star on GitHub",
     "githubUrl": "https://github.com/halinskiy/Corder"
   },
@@ -243,7 +243,7 @@
           "priceUnit": "forever"
         },
         "features": [
-          "Unlimited transcription, on your Mac, forever",
+          "Unlimited on-device transcription with a free account",
           "Speakers labelled on every call",
           "Summaries and chapters on every recording",
           "Searchable transcript, drag out to Notion",
@@ -275,8 +275,8 @@
         },
         "features": [
           "Everything in Free, plus:",
-          "Cloud transcription, 25 hours a month. A long call comes back in seconds instead of minutes, and your Mac stays quiet",
-          "Sharper speaker labels, worked out in the cloud even when people talk over each other",
+          "Cloud transcription, 25 hours of audio a month (both sides of a call count). Long calls come back faster and your Mac stays cool",
+          "Transcript polish: punctuation, names and terms tidied up by a language model",
           "Priority support, direct line to the maker"
         ],
         "cta": "Get Pro",
@@ -304,7 +304,7 @@
         },
         "features": [
           "Everything in Pro, plus:",
-          "250 hours a month, 10x Pro. Enough to record every call you take",
+          "250 hours of audio a month, 10x Pro. Enough to record every call you take",
           "Dedicated support, same-day reply",
           "Early access to what's next"
         ],
@@ -316,7 +316,7 @@
         "comingSoon": false
       }
     ],
-    "microcopy": "Prices in USD. macOS 14 or later"
+    "microcopy": "Prices in USD. macOS 14.2 or later, Apple Silicon"
   },
   "testimonials": {
     "heading": "Reviews",
@@ -365,7 +365,7 @@
     "items": [
       {
         "q": "Does Corder send my audio to the cloud?",
-        "a": "By default your recordings and transcripts are stored on your Mac, in your own folder. On the free plan transcription runs on your Mac with a local Whisper model. Paid plans send the audio to the cloud for higher accuracy, where it is used to make the transcript and not kept in a dashboard. No bot ever joins the call. Corder is open source, so you can read exactly what it does rather than take our word for it."
+        "a": "On the free plan transcription runs on your Mac with a local Whisper model, and the audio does not leave the Mac. There are two exceptions, both only when you are signed in: if your Mac cannot run the model, or runs it far slower than real time, that recording is transcribed in the cloud instead, up to 2 hours a month. Paid plans send the audio to the cloud for every transcript, where it is used to make the transcript and not kept. With an account, the transcript text, titles and summaries are stored in your Corder account so they can be generated and shared; the audio itself stays on your Mac. No bot ever joins the call. Corder is open source, so you can read exactly what it does rather than take our word for it."
       },
       {
         "q": "Is it legal to record a call?",
@@ -393,11 +393,11 @@
       },
       {
         "q": "Does it need an internet connection?",
-        "a": "Recording never needs a connection. On the free plan transcription also runs on your Mac, so a meeting recorded on a plane transcribes on the plane. Paid cloud transcription needs a connection."
+        "a": "Recording never needs a connection. On the free plan transcription runs on your Mac once the 1.5 GB model has downloaded, so a meeting recorded on a plane transcribes on the plane. Titles, summaries, sharing and paid cloud transcription need a connection."
       },
       {
         "q": "Which version of macOS does it require?",
-        "a": "macOS 14 (Sonoma) or later, on Apple Silicon or an Intel Mac."
+        "a": "macOS 14.2 or later on an Apple Silicon Mac (M1 and newer). Intel Macs are not supported: the on-device model needs the Neural Engine."
       },
       {
         "q": "Can I export the transcript?",
@@ -409,7 +409,7 @@
       },
       {
         "q": "What do Pro and Max cost?",
-        "a": "Nothing yet, because they are not on sale. The prices on this page are what they are meant to be. Everything you can use today is the free tier, and the free tier is not a trial: it does not expire and it does not cap how much you record."
+        "a": "Pro is $3 a month or $29 a year, Max is $7 a month or $69 a year, at the launch price shown on this page. Both add cloud transcription with a monthly allowance of audio hours. The free tier is not a trial: it does not expire and it does not cap how much you transcribe on your Mac."
       }
     ]
   },
@@ -693,7 +693,7 @@
   "presenceCta": {
     "_note": "Powers the floating CorderPresenceForm card and the inline CorderPresenceStaticSection (mobile / reduced-motion fallback). Replaced the newsletter form on 2026-05-27 -- the floating affordance is now a Download trigger, single goal.",
     "heading": "Ready to record?",
-    "subhead": "Free download. macOS 14 or later",
+    "subhead": "Free download. macOS 14.2 or later, Apple Silicon",
     "cta": "Download for Mac",
     "ctaHref": "/install/"
   },
@@ -715,7 +715,7 @@
       {
         "icon": "eye-off",
         "heading": "Private by default",
-        "body": "Recordings and transcripts stay on your Mac. Diagnostics are anonymous."
+        "body": "Recordings stay on your Mac. Diagnostics carry no meeting content and can be switched off."
       }
     ]
   },
