@@ -2,7 +2,7 @@
   "meta": {
     "lang": "en",
     "title": "Corder: Mac meeting recorder with no bot in the call",
-    "description": "Corder records system audio and transcribes your meetings, with no bot in the call. Speaker labels, searchable transcript, recordings stored on your Mac. Free to download for macOS 14+",
+    "description": "Corder records system audio and transcribes your meetings, with no bot in the call. Speaker labels, searchable transcript, recordings stored on your Mac. Free to download for macOS 14.2 or later on Apple Silicon",
     "ogTitle": "Corder. The Mac recorder with no bot in the call",
     "ogDescription": "Record any meeting on macOS. Speakers labelled, transcript searchable. No bot joins the call, and your recordings stay on your Mac. No third participant ever joins"
   },
@@ -177,7 +177,7 @@
         ]
       }
     ],
-    "footnote": "Records anything that plays through your Mac, including Teams meetings where bot-based recorders are being blocked from mid-2026"
+    "footnote": "Records anything that plays through your Mac, Teams included"
   },
   "features": {
     "eyebrow": "Built for the Mac",
@@ -365,7 +365,7 @@
     "items": [
       {
         "q": "Does Corder send my audio to the cloud?",
-        "a": "On the free plan transcription runs on your Mac with a local Whisper model, and the audio does not leave the Mac. There are two exceptions, both only when you are signed in: if your Mac cannot run the model, or runs it far slower than real time, that recording is transcribed in the cloud instead, up to 2 hours a month. Paid plans send the audio to the cloud for every transcript, where it is used to make the transcript and not kept. With an account, the transcript text, titles and summaries are stored in your Corder account so they can be generated and shared; the audio itself stays on your Mac. No bot ever joins the call. Corder is open source, so you can read exactly what it does rather than take our word for it."
+        "a": "On the free plan transcription runs on your Mac with a local Whisper model, and the audio does not leave the Mac. There are two exceptions, both only when you are signed in: if your Mac cannot run the model, or runs it far slower than real time, that recording is transcribed in the cloud instead, up to 2 hours a month. Paid plans send the audio to the cloud for every transcript, where it is used to make the transcript and not kept by Corder; the provider holds it only for that job under its API terms. With an account, the transcript text, titles and summaries are stored in your Corder account so they can be generated and shared; the audio itself stays on your Mac. No bot ever joins the call. Corder is open source, so you can read exactly what it does rather than take our word for it."
       },
       {
         "q": "Is it legal to record a call?",
@@ -575,7 +575,7 @@
     "lineUs": "Free download. About $0.30 per recorded hour goes to Google",
     "cta": "Download for Mac",
     "ctaHref": "/install/",
-    "footer": "macOS 14+, Apple Silicon, free to download",
+    "footer": "macOS 14.2 or later, Apple Silicon, free to download",
     "ratePerHour": 0.3,
     "defaultHours": 30,
     "minHours": 1,
@@ -705,7 +705,7 @@
       {
         "icon": "lock",
         "heading": "Local storage",
-        "body": "Recordings stay on this Mac. Browse them in Finder anytime."
+        "body": "Recordings stay on this Mac, browse them in Finder anytime. Transcripts sync to your account when you sign in."
       },
       {
         "icon": "user-x",

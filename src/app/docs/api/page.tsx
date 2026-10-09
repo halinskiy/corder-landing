@@ -37,9 +37,11 @@ export default function DocsApiPage() {
           <div className="legal-body">
             <h2>Use the MCP server today</h2>
             <p>
-              The MCP server reads from your local Corder database and
-              exposes meetings, transcripts, summaries, and search to any
-              MCP-aware client (Claude, Cursor, and others). Install:
+              The MCP server (early access) reads your Corder account
+              through our API with a personal token and exposes meetings,
+              transcripts, summaries and search to any MCP-aware client
+              (Claude, Cursor, and others). The token flow is not in the
+              Mac app yet, so end users cannot connect it today. Package:
             </p>
             <pre className="docs-code">
               <code>npx -y corder-mcp</code>
