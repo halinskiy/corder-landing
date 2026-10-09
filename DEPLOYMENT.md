@@ -1,4 +1,6 @@
-# Corder Landing — Deployment Guide
+# Corder Landing, Deployment Guide
+
+> Current state (2026-10-09): getcorder.com is served by GitHub Pages. A push to `main` runs `.github/workflows/deploy.yml`, which builds and publishes. Everything below about Vercel is historical and no longer used for this site.
 
 ## Status
 - **Code:** Ready for production (`npm run build` passes, typecheck clean, judge PASSED 2026-05-09)

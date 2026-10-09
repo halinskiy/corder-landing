@@ -76,6 +76,13 @@ export default function PrivacyPolicyPage() {
                 Without an account the app keeps two recordings at a time;
                 delete one to record another.
               </li>
+              <li>
+                When Corder detects a call it can keep a few seconds of
+                audio from before you press Record (pre-roll, on by
+                default). That buffer stays on this Mac, becomes part of
+                the recording only if you start one, and is discarded
+                otherwise. You can turn it off in Settings.
+              </li>
             </ul>
 
             <h4>With an account (Free, Pro and Max)</h4>
@@ -84,7 +91,7 @@ export default function PrivacyPolicyPage() {
                 Audio stays on your Mac. The transcript text, speaker
                 labels, titles, summaries, chapters and meeting metadata
                 are also stored in your Corder account, in a Supabase
-                Postgres database hosted in the EU (Frankfurt), encrypted at
+                Postgres database hosted in the EU (Ireland), encrypted at
                 rest and in transit. This is what makes titles, summaries,
                 chapters and sharing work, and it keeps your library if you
                 reinstall. Deleting a meeting in the app deletes it there
@@ -124,8 +131,8 @@ export default function PrivacyPolicyPage() {
               <li>
                 The link works for 30 days, then stops working. Sharing the
                 same meeting again refreshes the link for another 30 days.
-                The uploaded audio copy stays with the meeting in your account
-                until you delete the meeting.
+                The uploaded audio copy is removed by a nightly cleanup once
+                the link has expired, 30 days after the last share.
               </li>
             </ul>
 
@@ -204,7 +211,7 @@ export default function PrivacyPolicyPage() {
                 <tr>
                   <td>Supabase</td>
                   <td>Auth, Postgres database (transcripts, summaries, metadata for signed-in users), object storage for shared audio</td>
-                  <td>EU (Frankfurt)</td>
+                  <td>EU (Ireland)</td>
                 </tr>
                 <tr>
                   <td>Groq</td>
@@ -228,7 +235,7 @@ export default function PrivacyPolicyPage() {
                 </tr>
                 <tr>
                   <td>Resend</td>
-                  <td>Transactional email (magic-link sign-in, receipts, product updates)</td>
+                  <td>Transactional email (one-time sign-in links for getcorder.com, receipts, product updates)</td>
                   <td>United States</td>
                 </tr>
                 <tr>
@@ -267,8 +274,11 @@ export default function PrivacyPolicyPage() {
               email), an opaque internal user id, your subscription
               status, and the meetings you recorded while signed in
               (transcript text, titles, summaries, speaker labels and
-              metadata; never the audio). We use your email to send a one-time magic-link
-              sign-in code on request, receipts, and any optional
+              metadata; the audio only when you share a meeting, see
+              Sharing a meeting above). In the Mac app you sign in with
+              email and password or with Google; on getcorder.com with
+              Google or a one-time sign-in link sent to your email. We use
+              your email for those links, receipts, and any optional
               product-update emails you opt into in your account
               preferences. We do not sell, rent, or share this data
               with anyone outside the sub-processors named above.
@@ -290,8 +300,8 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong>Audio copy uploaded when you share a meeting:
-                </strong> kept as long as the meeting exists in your
-                account. Delete the meeting to delete it.
+                </strong> kept until the share link expires, 30 days after
+                the last share, then removed by a nightly cleanup.
               </li>
               <li>
                 <strong>Account row, after you click Delete account:
@@ -299,10 +309,14 @@ export default function PrivacyPolicyPage() {
                 (Profile menu &rarr; Delete account, confirmation
                 prompt). The app immediately removes every row tied
                 to your user id (meetings cascade to speakers,
-                segments, summaries, recording metadata) and lists +
-                deletes every Storage object stored under your user
-                id. The linked Paddle subscription is canceled and
-                your email is unsubscribed from every list. A residual
+                segments, summaries, recording metadata) and deletes
+                the recording files stored under your user id; shared
+                audio copies expire with their links. Deleting the
+                account from the Mac app does not cancel a paid
+                subscription yet: cancel it first under Manage
+                subscription, or delete the account from your account
+                page on getcorder.com, which cancels the subscription
+                as well. Your email is unsubscribed from every list. A residual
                 empty auth row may remain in our identity provider
                 (Supabase auth.users) until a scheduled cleanup
                 removes it; that row contains no personal data after
@@ -339,11 +353,12 @@ export default function PrivacyPolicyPage() {
                 transcripts, summaries, or any derived data.
               </li>
               <li>
-                No training of any AI model on your data. The
-                providers we forward chunks to (Groq for transcription,
-                Google Gemini for summaries) operate under their API
-                terms which prohibit training on data sent through the
-                API.
+                No training of any AI model on your data by us. The
+                providers we forward chunks to (Groq, Cloudflare Workers AI
+                and OpenAI for transcription, Google Gemini for summaries)
+                receive only what is needed for that one job under their
+                API terms, and we grant none of them any right to train
+                on it.
               </li>
               <li>
                 No advertising profiles built from your meetings.

@@ -141,7 +141,7 @@ const JSON_LD = {
       operatingSystem: "macOS 14.2 or later (Apple Silicon)",
       description: copy.meta.description,
       image: `${SITE_URL}/og-image.png`,
-      softwareVersion: "0.15.74",
+      softwareVersion: "0.15.78",
       downloadUrl: `${SITE_URL}/install/`,
       featureList: copy.features.cells.map((c) => c.heading).join(", "),
       offers: [
@@ -160,7 +160,7 @@ const JSON_LD = {
           price: "3",
           priceCurrency: "USD",
           description:
-            "Cloud transcription, 25 hours a month, priority support. Launch price, $3 a month.",
+            "Cloud transcription, 25 hours of audio a month, priority support. Launch price, $3 a month.",
         },
         {
           "@type": "Offer",
@@ -176,7 +176,7 @@ const JSON_LD = {
           price: "7",
           priceCurrency: "USD",
           description:
-            "Cloud transcription, 250 hours a month, dedicated support, early access. Launch price, $7 a month.",
+            "Cloud transcription, 250 hours of audio a month, dedicated support, early access. Launch price, $7 a month.",
         },
         {
           "@type": "Offer",

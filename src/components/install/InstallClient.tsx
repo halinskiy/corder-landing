@@ -19,10 +19,10 @@ const RELEASES_API =
 // succeeds, so users on a fresh deploy with a fresh release get the
 // new asset automatically and this hardcode is only the safety net.
 const FALLBACK_URL =
-  "https://github.com/halinskiy/corder-updates/releases/download/v0.15.67/Corder-0.15.67.dmg";
-const FALLBACK_NAME = "Corder-0.15.67.dmg";
+  "https://github.com/halinskiy/corder-updates/releases/download/v0.15.78/Corder-0.15.78.dmg";
+const FALLBACK_NAME = "Corder-0.15.78.dmg";
 
-const VERSION = "0.15.67";
+const VERSION = "0.15.78";
 
 // Fallback "What is new" notes, shown ONLY when the GitHub release API is
 // unreachable (rate-limit / CORS / offline). It is the raw Keep-a-Changelog
@@ -30,7 +30,7 @@ const VERSION = "0.15.67";
 // identically. Kept fresh automatically at build by sync-corder-version.mjs,
 // so it stays a recent snapshot, not a hand-maintained list.
 const FALLBACK_NOTES_RAW =
-  "Playback stays alive with Bluetooth headphones connected (device scans no longer block the app's local server), stuck audio exports time out instead of hanging, the player self-recovers a failed load, and the Copy button flashes green with a checkmark when it worked.";
+  "### Changed\n\n- Hovering a session in the sidebar hides the divider above it and the one below it, the same way selecting it does, so the rounded hover fill never touches a straight line.";
 
 // Match any .zip or .dmg asset Sparkle / a hand-rolled release pipeline
 // might upload. Version suffix (e.g. Corder-0.13.2.dmg) and naked names

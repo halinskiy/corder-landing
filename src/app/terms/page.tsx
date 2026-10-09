@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const DATA_SOURCE = "projects/corder-landing/src/app/terms/page.tsx";
 
 /**
- * Terms of Use — placeholder ahead of the paid ad test.
+ * Terms of Use. Updated 2026-10-09 to match the shipped app and the paid tiers.
  *
  * Plain-language draft. The maker will replace this with the canonical
  * legal copy before launching a paid sales channel; in the meantime the
@@ -58,7 +58,7 @@ export default function TermsPage() {
 
             <h2>Cancel anytime</h2>
             <p>
-              You can cancel the Pro subscription at any time. Cancellation
+              You can cancel a Pro or Max subscription at any time. Cancellation
               takes effect at the end of the current billing period. No
               credit card is needed to download or use Free.
             </p>
@@ -79,15 +79,16 @@ export default function TermsPage() {
               caused by transcription errors.
             </p>
 
-            <h2>Account and magic-link sign-in</h2>
+            <h2>Account and sign-in</h2>
             <p>
               You can use Corder anonymously by downloading the Mac app and
               recording locally. Creating an account on getcorder.com is
-              optional, and unlocks Pro features, subscription management,
-              referrals, and product update emails you opt into. We do not
-              use passwords; sign-in is via a one-time link sent to the
-              email you provided. Magic links expire 15 minutes after they
-              are generated. Refer to our{" "}
+              optional, and unlocks paid tiers, subscription management,
+              and product update emails you opt into. On getcorder.com you
+              sign in with Google or with a one-time link sent to the
+              email you provided; those links expire 15 minutes after
+              they are generated. In the Mac app you can also sign in
+              with an email and password. Refer to our{" "}
               <Link href="/privacy-policy/">Privacy Policy</Link> for how
               account data is stored and when it is removed.
             </p>

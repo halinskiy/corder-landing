@@ -28,7 +28,7 @@ export default function RefundsPage() {
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px]">
             <h1 className="install-page__heading">Refund Policy</h1>
-          <p className="install-page__sub">Last updated: 22 May 2026.</p>
+          <p className="install-page__sub">Last updated: 9 October 2026.</p>
 
           <div className="legal-body">
             <p>
@@ -38,7 +38,7 @@ export default function RefundsPage() {
 
             <h2>14-day no-questions-asked refund</h2>
             <p>
-              For both monthly and annual Pro subscriptions, you can
+              For monthly and annual Pro and Max subscriptions, you can
               request a full refund within <strong>14 days</strong> of your
               purchase. We will not ask you why, and we will not try to
               talk you out of it.

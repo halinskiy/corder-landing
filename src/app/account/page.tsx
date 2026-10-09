@@ -5,7 +5,7 @@ import { AccountView } from "@/components/account/AccountView";
 export const metadata: Metadata = {
   title: "Account",
   description:
-    "Manage your Corder account, subscription, notification preferences, and referrals.",
+    "Manage your Corder account, subscription and notification preferences.",
   alternates: { canonical: "/account/" },
   robots: { index: false, follow: false },
 };
