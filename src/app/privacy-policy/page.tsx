@@ -77,11 +77,10 @@ export default function PrivacyPolicyPage() {
                 delete one to record another.
               </li>
               <li>
-                When Corder detects a call it can keep a few seconds of
-                audio from before you press Record (pre-roll, on by
-                default). That buffer stays on this Mac, becomes part of
-                the recording only if you start one, and is discarded
-                otherwise. You can turn it off in Settings.
+                When Corder detects a call it keeps a few seconds of
+                audio from before you press Record (pre-roll). That buffer
+                stays on this Mac, becomes part of the recording only if
+                you start one, and is discarded otherwise.
               </li>
             </ul>
 
