@@ -702,7 +702,7 @@ function SettingsMock() {
   return (
     <MockShell
       variant="settings"
-      ariaLabel="Corder transcript with General settings open: recording equalizer, screen video, dark theme, system notifications, launch at login, diagnostics, microphone, and the recordings folder."
+      ariaLabel="Corder transcript with General settings open: recording equalizer, screen video, dark theme, system notifications, launch at login, microphone, and the recordings folder."
     >
       {/* Sidebar */}
       <aside className="hl-sidebar hl-set-sidebar" aria-hidden="true">
@@ -871,13 +871,6 @@ function SettingsMock() {
                 <SettingsToggleRow
                   label="Launch at login"
                   desc="Open Corder automatically when your Mac starts."
-                  on={true}
-                />
-              </div>
-              <div className="hl-settings-card">
-                <SettingsToggleRow
-                  label="Help improve Corder"
-                  desc="Daily diagnostic counts, no meeting content."
                   on={true}
                 />
               </div>

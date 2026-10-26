@@ -1204,13 +1204,6 @@ function SettingsPane({
             />
           </SettingsCard>
           <SettingsCard>
-            <SettingsToggle
-              label="Help improve Corder"
-              desc="Daily diagnostic counts, no meeting content."
-              on={false}
-            />
-          </SettingsCard>
-          <SettingsCard>
             <SettingsDropdown
               label="Microphone"
               desc="Select input device which records your voice"

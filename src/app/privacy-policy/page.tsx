@@ -70,8 +70,7 @@ export default function PrivacyPolicyPage() {
                 (a one-time 1.5 GB download). Meeting content stays on your
                 Mac unless you choose a cloud feature after signing in.
                 Without an account, the app connects to download the model,
-                check for updates, fetch news from our Cloudflare Worker,
-                and send the diagnostics below if you leave them on.
+                check for updates and fetch news from our Cloudflare Worker.
               </li>
               <li>
                 Without an account the app keeps two recordings at a time;
@@ -113,7 +112,7 @@ export default function PrivacyPolicyPage() {
               <li>
                 Local only in Settings works with or without an account.
                 It blocks cloud connections, including
-                sync, titles, diagnostics and news. Only on-device Whisper
+                sync, titles and news. Only on-device Whisper
                 model downloads and app updates may connect externally.
                 Transcription stays local without cloud fallback. Summaries
                 and chapters use your configured local model.
@@ -359,21 +358,6 @@ export default function PrivacyPolicyPage() {
                 <strong>Web analytics (Clarity, Plausible, X pixel):
                 </strong> Clarity 90 days, Plausible 24 months,
                 X pixel 540 days per the providers&apos; defaults.
-              </li>
-            </ul>
-
-            <h2>Diagnostics</h2>
-            <ul>
-              <li>
-                Reliability diagnostics are on by default and can be turned
-                off in Settings. Sent once a day to our Cloudflare Worker,
-                they include aggregate recording counts,
-                audio capture failures, app and macOS version, Mac model,
-                memory and tier. The identifier is pseudonymous: a hash of
-                your email when signed in, or a random installation ID when
-                signed out. Meeting content, including recordings,
-                transcripts, titles, speaker names and audio, is never
-                included.
               </li>
             </ul>
 
