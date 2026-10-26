@@ -15,8 +15,8 @@ const DATA_SOURCE =
  * Privacy Policy.
  *
  * Two distinct surfaces are covered: the Corder Mac app (which records
- * audio + transcribes + optionally syncs to a Corder-hosted cloud on
- * paid tiers) and the marketing site getcorder.com (which uses three
+ * audio + transcribes + optionally syncs to a Corder-hosted cloud)
+ * and the marketing site getcorder.com (which uses three
  * analytics scripts for the paid-ad funnel). The policy spells out
  * which data flows where, who the sub-processors are, what we retain,
  * and how you exercise GDPR rights.
@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
       <div className="page-container py-16 md:py-24">
         <div className="mx-auto max-w-[1080px]">
             <h1 className="install-page__heading">Privacy Policy</h1>
-          <p className="install-page__sub">Last updated: 9 October 2026.</p>
+          <p className="install-page__sub">Last updated: 26 October 2026.</p>
 
           <div className="legal-body">
             <h2>Who runs Corder</h2>
@@ -67,10 +67,11 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 Transcription runs on your Mac with a local Whisper model
-                (a one-time 1.5 GB download). Nothing about your meetings
-                leaves the machine. The app only talks to the network to
-                download the model, to check for updates, and to send the
-                diagnostics described below if you leave them on.
+                (a one-time 1.5 GB download). Meeting content stays on your
+                Mac unless you choose a cloud feature after signing in.
+                Without an account, the app connects to download the model,
+                check for updates, fetch news from our Cloudflare Worker,
+                and send the diagnostics below if you leave them on.
               </li>
               <li>
                 Without an account the app keeps two recordings at a time;
@@ -87,21 +88,43 @@ export default function PrivacyPolicyPage() {
             <h4>With an account (Free, Pro and Max)</h4>
             <ul>
               <li>
-                Audio stays on your Mac. The transcript text, speaker
-                labels, titles, summaries, chapters and meeting metadata
-                are also stored in your Corder account, in a Supabase
-                Postgres database hosted in the EU (Ireland), encrypted at
-                rest and in transit. This is what makes titles, summaries,
-                chapters and sharing work, and it keeps your library if you
-                reinstall. Deleting a meeting in the app deletes it there
-                too.
+                Sync transcripts is on by default. It copies transcript
+                text, speaker labels, titles, summaries, chapters and meeting
+                metadata to your account in Supabase. You can turn it off
+                in Settings to stop content sync and sharing. Data already
+                uploaded stays on the server until you delete the meeting
+                or account. Generating titles, summaries or chapters does
+                not require storing them in Supabase.
               </li>
               <li>
-                Titles, summaries and chapters are generated from the
-                transcript text by Google Gemini, called through our
-                Cloudflare Worker. The audio is never sent for this. We do
-                not store the prompt or the completion anywhere except your
-                meeting record.
+                Auto titles is on by default and can be turned off in
+                Settings. It sends up to three short transcript excerpts,
+                at most 900 characters each, to Google Gemini through our
+                Cloudflare Worker. A short transcript may be sent whole.
+                Audio is not sent to generate titles.
+              </li>
+              <li>
+                Summaries and chapters can use Google Gemini through our
+                Worker, or a local model served by LM Studio, Ollama or
+                llama.cpp on your Mac. The local option also works without
+                an account and sends text only to a loopback address on
+                your Mac. It does not fall back to a cloud model.
+              </li>
+              <li>
+                Local only in Settings works with or without an account.
+                It blocks cloud connections, including
+                sync, titles, diagnostics and news. Only on-device Whisper
+                model downloads and app updates may connect externally.
+                Transcription stays local without cloud fallback. Summaries
+                and chapters use your configured local model.
+              </li>
+              <li>
+                Audio stays on your Mac during local transcription. Share
+                uploads a compressed copy when audio is available. Cloud
+                transcription sends audio chunks through our Worker to a
+                transcription provider. A legacy audio backup option, off
+                by default and not shown in Settings, can also upload
+                recordings to Supabase when enabled.
               </li>
               <li>
                 On the Free tier transcription still runs on your Mac. Two
@@ -123,7 +146,7 @@ export default function PrivacyPolicyPage() {
               <li>
                 Share creates a private link with an unguessable address.
                 Anyone you send it to can open that meeting in a browser and
-                see its transcript, summary and audio. To make the audio
+                see its transcript, summary and any available audio. To make the audio
                 playable in the browser, a compressed copy of it is uploaded
                 to storage in your account at that moment.
               </li>
@@ -224,7 +247,7 @@ export default function PrivacyPolicyPage() {
                 </tr>
                 <tr>
                   <td>Google Cloud (Gemini API)</td>
-                  <td>Titles, summaries and chapters (all tiers, with an account)</td>
+                  <td>Auto titles when enabled, and cloud summaries and chapters (with an account)</td>
                   <td>Global (Google&apos;s default region routing)</td>
                 </tr>
                 <tr>
@@ -271,10 +294,12 @@ export default function PrivacyPolicyPage() {
               email address, your display name (which you choose, can
               edit anytime, and defaults to the local part of your
               email), an opaque internal user id, your subscription
-              status, and the meetings you recorded while signed in
-              (transcript text, titles, summaries, speaker labels and
-              metadata; the audio only when you share a meeting, see
-              Sharing a meeting above). In the Mac app you sign in with
+              status, and meeting content uploaded while Sync transcripts
+              is on (transcripts, titles, summaries, chapters, speaker labels
+              and metadata). Shared audio and any recordings uploaded through
+              the legacy backup option are stored separately. Cloud
+              transcription also sends audio to a provider as described
+              above. In the Mac app you sign in with
               email and password or with Google; on getcorder.com with
               Google or a one-time sign-in link sent to your email. We use
               your email for those links, receipts, and any optional
@@ -292,21 +317,25 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong>Transcripts, summaries, meeting metadata in
-                Supabase:</strong> kept as long as your account is
-                active. You can delete any meeting from the app, which
-                cascades to delete the row, the linked storage object,
-                and all derived data.
+                Supabase:</strong> kept until you delete the meeting or
+                account. Turning Sync transcripts off does not erase data
+                already uploaded. Deleting a meeting removes its cloud
+                rows and stored audio even with sync off. In Local only,
+                the deletion is saved on your Mac and sent when you leave
+                that mode with the same account signed in. Failed cloud
+                deletions stay queued for retry.
               </li>
               <li>
                 <strong>Audio copy uploaded when you share a meeting:
-                </strong> kept until the share link expires, 30 days after
-                the last share, then removed by a nightly cleanup.
+                </strong> removed when you delete the meeting, or by a
+                nightly cleanup after the share link expires, 30 days after
+                the last share.
               </li>
               <li>
                 <strong>Account row, after you click Delete account:
                 </strong> deletion happens from inside the Mac app
                 (Profile menu &rarr; Delete account, confirmation
-                prompt). The app immediately removes every row tied
+                prompt). With cloud access allowed, the app removes rows tied
                 to your user id (meetings cascade to speakers,
                 segments, summaries, recording metadata) and deletes
                 the recording files stored under your user id; shared
@@ -337,7 +366,8 @@ export default function PrivacyPolicyPage() {
             <ul>
               <li>
                 Reliability diagnostics are on by default and can be turned
-                off in Settings. They include aggregate recording counts,
+                off in Settings. Sent once a day to our Cloudflare Worker,
+                they include aggregate recording counts,
                 audio capture failures, app and macOS version, Mac model,
                 memory and tier. The identifier is pseudonymous: a hash of
                 your email when signed in, or a random installation ID when
@@ -392,9 +422,10 @@ export default function PrivacyPolicyPage() {
                 <strong>Delete</strong> your data (right to be
                 forgotten). Open the Corder Mac app, click your
                 profile in the top-right, then Delete account. The
-                app removes every meeting + storage object tied to
-                your account immediately. Individual meetings can
-                also be deleted one-by-one from the Library.
+                app sends an account deletion request when cloud access is
+                allowed. Individual meetings can also be deleted one-by-one
+                from the Library, with cloud deletion deferred in Local only
+                as described above.
               </li>
               <li>
                 <strong>Port</strong> your data to another service.

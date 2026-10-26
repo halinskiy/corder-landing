@@ -1206,7 +1206,7 @@ function SettingsPane({
           <SettingsCard>
             <SettingsToggle
               label="Help improve Corder"
-              desc="Send anonymous diagnostic counts to the maintainer once a day."
+              desc="Daily diagnostic counts, no meeting content."
               on={false}
             />
           </SettingsCard>
