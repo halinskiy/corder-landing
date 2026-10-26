@@ -877,8 +877,8 @@ function SettingsMock() {
               <div className="hl-settings-card">
                 <SettingsToggleRow
                   label="Help improve Corder"
-                  desc="Send anonymous diagnostic counts to the maintainer once a day."
-                  on={false}
+                  desc="Daily diagnostic counts, no meeting content."
+                  on={true}
                 />
               </div>
               <div className="hl-settings-card">

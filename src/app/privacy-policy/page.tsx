@@ -336,12 +336,14 @@ export default function PrivacyPolicyPage() {
             <h2>Diagnostics</h2>
             <ul>
               <li>
-                Corder sends anonymous reliability diagnostics: counts of
-                recordings, whether a recording lost the other side on
-                Bluetooth, app and macOS version, and similar aggregate
-                numbers. No recordings, transcripts, titles, speaker names,
-                or audio are ever included, and your email is sent only as a
-                one-way hash. You can turn diagnostics off in Settings.
+                Reliability diagnostics are on by default and can be turned
+                off in Settings. They include aggregate recording counts,
+                audio capture failures, app and macOS version, Mac model,
+                memory and tier. The identifier is pseudonymous: a hash of
+                your email when signed in, or a random installation ID when
+                signed out. Meeting content, including recordings,
+                transcripts, titles, speaker names and audio, is never
+                included.
               </li>
             </ul>
 
